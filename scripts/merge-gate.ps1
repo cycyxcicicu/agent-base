@@ -95,7 +95,7 @@ foreach ($f in $files) {
   if (-not (Test-Match $f $allow)) { $violations += "OUT OF SCOPE $f" }
 }
 
-Write-Host "Task $id, branch $Branch vs $Base: $($files.Count) changed file(s)"
+Write-Host "Task $id, branch $Branch vs ${Base}: $($files.Count) changed file(s)"
 if ($violations.Count -gt 0) {
   foreach ($v in $violations) { Write-Host "  $v" }
   Write-Host 'FAIL: fix the branch, or ask the task owner to widen scope_edit in the card.'
