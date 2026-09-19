@@ -1,0 +1,7 @@
+# Chủ sở hữu mã: người duyệt cuối. Dùng cùng "Require review from Code Owners" trong bảo vệ nhánh.
+*                       @cycyxcicicu
+/AGENTS.md              @cycyxcicicu
+/agents/roles/          @cycyxcicicu
+/.githooks/             @cycyxcicicu
+/scripts/               @cycyxcicicu
+/.github/               @cycyxcicicu

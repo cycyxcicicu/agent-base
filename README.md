@@ -65,7 +65,12 @@ Vì mỗi agent ghi vào một file riêng, các nhánh chạy song song **khôn
    ```
    powershell -File scripts/sync-adapters.ps1
    ```
-5. **Mở đúng thư mục chứa `.kilo/`** làm workspace trong Antigravity (Kilo chỉ tìm vai trò ở workspace, không tìm ở thư mục cha), cài extension Kilo Code, giao việc cho `orchestrator`.
+5. Bật hook quy tắc Git (một lần cho mỗi bản clone):
+   ```
+   powershell -File scripts/install-hooks.ps1
+   ```
+   Quy tắc nhánh, commit và bảo vệ nhánh nằm ở `agents/protocols/git-rules.md`. Bảo vệ nhánh phía GitHub bạn cài tay một lần (Settings → Branches).
+6. **Mở đúng thư mục chứa `.kilo/`** làm workspace trong Antigravity (Kilo chỉ tìm vai trò ở workspace, không tìm ở thư mục cha), cài extension Kilo Code, giao việc cho `orchestrator`.
 
 Kiểm tra file sinh ra còn khớp nguồn không (dùng được trong CI hoặc trước khi commit):
 

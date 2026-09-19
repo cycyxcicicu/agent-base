@@ -1,0 +1,30 @@
+#!/bin/sh
+# commit-msg: commit message format (see agents/protocols/git-rules.md).
+# Agents are held to the strict format. Humans only get a warning.
+. "$(dirname "$0")/_common.sh"
+
+msg_file="$1"
+subject=$(sed -n '1p' "$msg_file")
+
+# Automatic messages pass.
+case "$subject" in
+  Merge\ *|Revert\ *|fixup!*|squash!*) exit 0 ;;
+esac
+
+types='feat|fix|docs|test|refactor|chore|ci|perf|build|style'
+if ! printf '%s' "$subject" | grep -Eq "^($types)(\([a-z0-9._/-]+\))?!?: .+"; then
+  if is_agent; then
+    fail "subject must look like 'type(scope): message' (types: feat fix docs test refactor chore ci perf build style). Got: $subject"
+  else
+    echo "git-rules warning: subject is not 'type(scope): message'." >&2
+  fi
+fi
+
+if is_agent; then
+  len=${#subject}
+  [ "$len" -le 72 ] || fail "subject is $len chars, the maximum is 72."
+  grep -Eq '^Task: T-[A-Za-z0-9._-]+$' "$msg_file" || fail "missing trailer 'Task: T-xxx' (own line)."
+  grep -Eq '^Agent: [a-z0-9-]+$' "$msg_file" || fail "missing trailer 'Agent: <name>' (own line, e.g. Agent: dev-a)."
+fi
+
+exit 0

@@ -111,7 +111,17 @@ Theo `agents/roles/researcher.md`. Mỗi khẳng định có nguồn kèm ngày 
 
 Merge kiểu squash: mỗi task một commit, gắn tag `T-xxx`. Quay lại một task = `git revert` commit đó trên nhánh mới, chạy test, người dùng duyệt. Git không hoàn tác được thay đổi cơ sở dữ liệu, dữ liệu đã ghi, hay deploy: task nào đụng các thứ này phải có "Kịch bản hoàn tác" trong card.
 
-## 12. Merge gate
+## 12. Quy tắc Git
+
+Chi tiết và lý do: `agents/protocols/git-rules.md`. Tóm tắt:
+
+- Agent chỉ commit và push lên nhánh task (`feat|fix|chore|docs/T-xxx`) trong worktree riêng. **Không** commit hay push vào `main`, `master`, `integration`. Chỉ người dùng merge.
+- Tiêu đề commit `type(scope): nội dung` (tối đa 72 ký tự), cuối commit có hai dòng `Task: T-xxx` và `Agent: <tên>`.
+- Merge kiểu squash, gắn tag `T-xxx`.
+- Cấm: `push --force`, xóa nhánh được bảo vệ, `reset --hard` hay `rebase` trên nhánh đã push, commit khóa bí mật hoặc file lớn, và **`--no-verify`** (bỏ qua hook).
+- Hook cài bằng `scripts/install-hooks.ps1`. Hook bị chặn thì sửa nguyên nhân, không né.
+
+## 13. Merge gate
 
 Trước khi vào nhánh tích hợp, chạy:
 

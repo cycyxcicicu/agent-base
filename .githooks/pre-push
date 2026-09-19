@@ -1,0 +1,26 @@
+#!/bin/sh
+# pre-push: protect main/master/integration (see agents/protocols/git-rules.md).
+. "$(dirname "$0")/_common.sh"
+
+zero=0000000000000000000000000000000000000000
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case "$remote_ref" in
+    refs/heads/*) ;;
+    *) continue ;;
+  esac
+  branch=${remote_ref#refs/heads/}
+  is_protected "$branch" || continue
+
+  if is_agent; then
+    fail "agents may not push to '$branch'. Push your task branch and let the user merge."
+  fi
+  if [ "$local_sha" = "$zero" ]; then
+    fail "refusing to delete protected branch '$branch'."
+  fi
+  if [ "$remote_sha" != "$zero" ] && ! git merge-base --is-ancestor "$remote_sha" "$local_sha" 2>/dev/null; then
+    [ "${ALLOW_FORCE_PUSH:-}" = "1" ] || fail "non-fast-forward (force) push to '$branch' blocked. Fetch and integrate first. If you really mean it: ALLOW_FORCE_PUSH=1 git push ..."
+  fi
+done
+
+exit 0

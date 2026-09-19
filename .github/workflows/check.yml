@@ -1,0 +1,39 @@
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main, integration]
+
+permissions:
+  contents: read
+
+jobs:
+  agent-base:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generated adapter files match their sources
+        shell: powershell
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/sync-adapters.ps1 -Check
+
+      - name: Merge gate (task branches only)
+        if: github.event_name == 'pull_request'
+        shell: powershell
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if ($env:HEAD_REF -match '^(feat|fix|chore|docs)/(T-[A-Za-z0-9._-]+)$') {
+            $card = "tasks/$($Matches[2]).md"
+            if (Test-Path $card) {
+              powershell -NoProfile -ExecutionPolicy Bypass -File scripts/merge-gate.ps1 -Branch "origin/$($env:HEAD_REF)" -Card $card -Base "origin/$($env:BASE_REF)"
+              exit $LASTEXITCODE
+            }
+            Write-Host "No task card $card, skipping merge gate."
+          } else {
+            Write-Host "Not a task branch, skipping merge gate."
+          }
