@@ -95,6 +95,10 @@ powershell -File scripts/merge-gate.ps1 -Branch feat/T-012 -Card tasks/T-012.md
 **Đã kiểm chứng** (bằng `kilo agent list` của Kilo 7.7.5 cài trong Antigravity, ngày 2026-09-19):
 - Kilo đọc đủ các vai trò từ `.kilo/agents/*.md` khi workspace là thư mục chứa `.kilo/`, và hiểu đúng phần `permission` (mẫu đường dẫn cho `edit`, mẫu lệnh cho `bash`, quy tắc khớp cuối cùng thắng).
 - Ba script chạy đúng trên Windows PowerShell 5.1.
+- Hook Git (`.githooks/`) đã thử 14 tình huống với danh tính agent trong worktree: chặn commit sai định dạng hoặc thiếu `Task:`/`Agent:`, chặn `.env` và dòng giống mật khẩu, chặn agent commit hoặc push vào `main`, chặn push ghi đè và xóa `main`, cho qua commit đúng và push nhánh task.
+- Kilo 7.7.5 có công cụ Swarm Board (`board_post`, `board_read`) trong danh sách quyền của agent.
+
+**Chưa cài và chưa thử**: CI (`.github/workflows/check.yml`) và bảo vệ nhánh phía GitHub. MCP: mặc định không cài, xem `agents/protocols/mcp-policy.md`.
 
 **Chưa kiểm chứng** (cần thử ở giai đoạn 2, trong giao diện thật):
 1. Vai trò hiện đúng trong danh sách chọn agent của giao diện Antigravity, và Agent Manager, Swarm Board dùng được.
