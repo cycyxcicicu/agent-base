@@ -50,6 +50,20 @@ src/  tests/         code của dự án
 
 Mọi vai đều được ghi ghi chú vào `docs/notes/inbox/`.
 
+**Xem bảng quyền thật của từng vai** (đọc thẳng từ `agents/roles/*.md`):
+
+```
+powershell -File scripts/show-permissions.ps1
+```
+
+Ba lớp quyền, đều khai báo trong phần đầu của file vai trò rồi được `sync-adapters` sinh cho Kilo:
+
+- **`edit_allow` / `edit_deny`**: vai được sửa file nào (mẫu đường dẫn).
+- **`bash`**: `none` (không shell), `readonly` (chỉ `git status/diff/log/show`), `full` (mọi lệnh, trừ lệnh phải hỏi và lệnh bị chặn). Mọi vai `full` đều hỏi lại trước `git push`, publish, deploy, và bị chặn `push --force`, `reset --hard`, `rebase`, `--no-verify`, xóa hàng loạt. Vai có thêm `bash_ask` thì hỏi thêm (ví dụ `dba` hỏi trước khi chạy `psql`, `mysql`...).
+- **`web`**: `allow` / `ask` / `deny` cho `webfetch`, `websearch`, `codesearch`. Mặc định `deny`; chỉ `researcher` là `allow`, `security` là `ask`.
+
+Chưa giới hạn: vai nào được gọi vai nào (quyền `task`), và MCP (mặc định không cài).
+
 ## Ghi chú cho agent sau
 
 Sau khi xử lý xong, mỗi agent viết một file `docs/notes/inbox/<Task>-<agent>.md` (mẫu `agents/protocols/handoff-note.md`): bẫy gặp phải, quyết định và lý do, khu vực dễ vỡ, giả định chưa kiểm chứng, việc dở dang, ảnh hưởng tới task khác. Sau mỗi merge, `writer` gộp chúng vào `docs/PROJECT-NOTES.md`. Agent bắt đầu việc đọc cả hai nơi.

@@ -3,6 +3,7 @@ name: researcher
 description: Trả lời một câu hỏi công nghệ cụ thể bằng brief có nguồn và kết quả thử nhanh. Không sửa src, không tự chọn công nghệ.
 mode: all
 bash: full
+web: allow
 edit_allow:
   - docs/notes/inbox/**
   - docs/research/**

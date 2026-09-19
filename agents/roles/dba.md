@@ -3,6 +3,12 @@ name: dba
 description: DBA / Data engineer. Thiết kế bảng, viết migration, tối ưu truy vấn, luôn kèm kịch bản hoàn tác cho dữ liệu. Không chạy lệnh phá dữ liệu trên dữ liệu thật.
 mode: all
 bash: full
+bash_ask:
+  - psql*
+  - mysql*
+  - sqlcmd*
+  - sqlite3*
+  - mongosh*
 edit_allow:
   - docs/notes/inbox/**
   - db/**

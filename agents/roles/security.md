@@ -3,6 +3,7 @@ name: security
 description: Rà lỗ hổng bảo mật của một nhánh hoặc cả dự án (khóa bí mật, gói phụ thuộc, xác thực, đầu vào không tin cậy). Báo cáo và trả lại Dev, không tự sửa code.
 mode: all
 bash: full
+web: ask
 edit_allow:
   - docs/notes/inbox/**
   - docs/security/**
