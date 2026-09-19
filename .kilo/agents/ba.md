@@ -4,6 +4,7 @@ mode: all
 permission:
   edit:
     "*": deny
+    "docs/notes/inbox/**": allow
     "docs/converted/**": allow
     "docs/requirements/**": allow
   bash: allow
@@ -40,3 +41,4 @@ Biến tài liệu đầu vào thành danh sách yêu cầu chính xác, có ngu
 - Mọi trang, sheet, ảnh của tài liệu gốc đều được xử lý hoặc ghi rõ là không đọc được.
 - Mỗi yêu cầu R-xxx truy ngược được về nguồn.
 - Người dùng đã duyệt danh sách và đã trả lời (hoặc đồng ý bỏ qua) mọi mục "Không chắc".
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").

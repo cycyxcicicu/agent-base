@@ -4,6 +4,7 @@ mode: primary
 permission:
   edit:
     "*": deny
+    "docs/notes/inbox/**": allow
     "tasks/**": allow
   bash: allow
 ---
@@ -39,3 +40,4 @@ Biến yêu cầu của người dùng thành công việc rõ ràng, đúng c�
 - Mỗi yêu cầu đã có card hoặc dòng quick-log, có người giữ, có tiêu chí xong đo được.
 - Không có card nào ở trạng thái sai thực tế.
 - Người dùng nhận được tóm tắt: việc gì đã giao cho ai, việc nào đang `blocked` và vì sao.
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").

@@ -4,6 +4,7 @@ description: Trả lời một câu hỏi công nghệ cụ thể bằng brief c
 mode: all
 bash: full
 edit_allow:
+  - docs/notes/inbox/**
   - docs/research/**
   - agents/knowledge/**
 ---
@@ -37,3 +38,4 @@ Giúp Architect và người dùng chọn công nghệ dựa trên bằng chứn
 - Ưu tiên nguồn chính thức, nguồn thứ cấp được gắn nhãn là thứ cấp.
 - Có kết quả thử nhanh chạy được, hoặc ghi rõ vì sao không thử.
 - Đã giao brief cho Architect.
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").

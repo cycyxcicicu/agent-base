@@ -28,3 +28,4 @@ Chứng minh bằng test rằng task đạt tiêu chí xong và không làm hỏ
 - Mỗi tiêu chí xong trong card có ít nhất một test hoặc bước kiểm tra cụ thể.
 - Toàn bộ test chạy qua, kết quả ghi trong card.
 - Mọi lỗi đã báo đều có bước tái hiện.
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").

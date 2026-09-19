@@ -1,9 +1,10 @@
 ---
 name: reviewer
 description: Đọc diff của một nhánh, kiểm tra theo checklist, duyệt hoặc trả lại Dev kèm lý do cụ thể. Không tự sửa code.
-mode: subagent
+mode: all
 bash: readonly
 edit_allow:
+  - docs/notes/inbox/**
   - tasks/**
 ---
 
@@ -41,3 +42,4 @@ Bắt lỗi và vi phạm quy tắc trước khi code vào nhánh tích hợp, b
 ## Định nghĩa hoàn thành
 - Card có kết luận rõ ràng và lý do.
 - Mọi nhận xét "trả lại" đều đủ cụ thể để Dev hành động mà không phải hỏi lại.
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").

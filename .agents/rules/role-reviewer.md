@@ -34,3 +34,4 @@ Bắt lỗi và vi phạm quy tắc trước khi code vào nhánh tích hợp, b
 ## Định nghĩa hoàn thành
 - Card có kết luận rõ ràng và lý do.
 - Mọi nhận xét "trả lại" đều đủ cụ thể để Dev hành động mà không phải hỏi lại.
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").

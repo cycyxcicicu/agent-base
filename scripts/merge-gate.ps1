@@ -12,7 +12,8 @@
 #     - src/auth/**
 #   scope_deny:
 #     - package.json
-# scope_deny always wins. The card itself (tasks/<id>.md) is always allowed.
+# scope_deny always wins. The card itself (tasks/<id>.md) and the task's handoff
+# notes (docs/notes/inbox/<id>-*.md) are always allowed.
 # Keep this file ASCII only (Windows PowerShell 5.1 reads BOM-less scripts as ANSI).
 
 param(
@@ -91,6 +92,7 @@ $violations = @()
 foreach ($f in $files) {
   $f = $f.Trim()
   if ($f -eq $cardPath) { continue }
+  if ($f -like "docs/notes/inbox/$id-*.md") { continue }
   if (Test-Match $f $deny) { $violations += "DENIED       $f"; continue }
   if (-not (Test-Match $f $allow)) { $violations += "OUT OF SCOPE $f" }
 }

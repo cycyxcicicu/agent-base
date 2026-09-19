@@ -6,8 +6,9 @@
 
 1. `PROJECT.md`: tên dự án, stack, lệnh build/test/lint, phạm vi.
 2. `agents/stacks/<stack>.md`: quy ước của ngôn ngữ đang dùng.
-3. Task card của bạn trong `tasks/`.
-4. File vai trò của bạn trong `agents/roles/`.
+3. **`docs/PROJECT-NOTES.md`** và các file chưa gộp trong **`docs/notes/inbox/`**: bộ nhớ chung, ghi chú của các agent làm trước bạn (bẫy, quyết định, việc dở dang).
+4. Task card của bạn trong `tasks/`.
+5. File vai trò của bạn trong `agents/roles/`.
 
 Chưa rõ thì hỏi, đừng đoán. Không có nguồn thì không khẳng định.
 
@@ -15,16 +16,31 @@ Chưa rõ thì hỏi, đừng đoán. Không có nguồn thì không khẳng đ�
 
 | Cỡ | Ví dụ | Ai làm | Bắt buộc |
 |---|---|---|---|
-| nhỏ | fix bug, sửa chữ, 1–2 file | 1 Dev | nhánh riêng, 1 commit có Task ID, test chạy, người duyệt xem diff |
+| nhỏ | fix bug, sửa chữ, 1–2 file | 1 Dev | nhánh riêng, 1 commit có Task ID, test chạy, người duyệt xem diff, ghi chú cho agent sau |
 | vừa | thêm chức năng nhỏ | Dev + Reviewer + QA | task card đầy đủ |
-| lớn | tính năng mới, có tài liệu yêu cầu | BA, Researcher (nếu cần), Architect, nhiều Dev, Reviewer, QA, Merge gate | toàn bộ quy trình |
+| lớn | tính năng mới, có tài liệu yêu cầu | đội cần thiết theo mục 3, nhiều Dev song song, Reviewer, QA, Merge gate | toàn bộ quy trình |
 
 Orchestrator phân cỡ. Người dùng ghi đè bằng tiền tố `[nhanh]`, `[vừa]`, `[lớn]`.
 Tự nâng lên từ "vừa" trở lên khi: đụng file dùng chung, đổi API hoặc cấu trúc dữ liệu, liên quan bảo mật, sửa nhiều hơn vài file.
 
-## 3. Luồng việc lớn
+## 3. Vai trò và khi nào gọi
 
-Người dùng → Orchestrator → BA (nếu có tài liệu) → Researcher (nếu có công nghệ chưa rõ) → Architect → Dev song song (mỗi task một worktree) → Reviewer + QA → Merge gate → người dùng duyệt → `main`.
+| Vai trò | Gọi khi |
+|---|---|
+| `orchestrator` | luôn: phân cỡ, tách card, giao việc, hoàn tác |
+| `ba` | có tài liệu mới cần nhập và rút yêu cầu |
+| `analyst` | tài liệu đổi, nhận dự án có sẵn, hoặc nghi tài liệu lỗi thời: phân tích lại, đối chiếu tài liệu với code |
+| `researcher` | có công nghệ chưa rõ cần chọn |
+| `architect` | việc lớn: spec, chia module, khai báo phạm vi |
+| `designer` | có giao diện |
+| `dba` | có cơ sở dữ liệu hoặc migration |
+| `dev` | luôn: cài đặt một task |
+| `devops` | CI/CD, môi trường, deploy |
+| `security` | đổi xác thực, gói phụ thuộc, dữ liệu nhạy cảm, hoặc trước khi phát hành |
+| `reviewer`, `qa` | từ cỡ "vừa" |
+| `writer` | sau mỗi merge: CHANGELOG, tài liệu, gộp ghi chú vào sổ tay dự án |
+
+Luồng việc lớn: Người dùng → Orchestrator → BA / Analyst (nếu có tài liệu) → Researcher (nếu cần) → Architect (+ Designer, DBA nếu cần) → Dev song song (mỗi task một worktree) → Reviewer + QA (+ Security nếu cần) → Merge gate → Writer gộp ghi chú → người dùng duyệt → `main`.
 
 ## 4. Quy định sửa file
 
@@ -46,11 +62,12 @@ Người dùng → Orchestrator → BA (nếu có tài liệu) → Researcher (n
 **Sau khi sửa**
 6. Chạy test và lint theo `PROJECT.md`, ghi kết quả vào card.
 7. Điền vào card: file đã đổi, lý do, việc chưa xong.
+8. Viết ghi chú cho agent sau (mục 8).
 
 **Cấm tuyệt đối**
-8. Không sửa: `.env` và file chứa khóa bí mật, `AGENTS.md`, `agents/roles/`, `docs/source/`, file sinh tự động.
-9. File dùng chung (`package.json`, lockfile, file cấu hình gốc) chỉ task được chỉ định mới sửa.
-10. Không ghi khóa bí mật, mật khẩu, token vào code, log hay task card.
+9. Không sửa: `.env` và file chứa khóa bí mật, `AGENTS.md`, `agents/roles/`, `docs/source/`, file sinh tự động.
+10. File dùng chung (`package.json`, lockfile, file cấu hình gốc) chỉ task được chỉ định mới sửa.
+11. Không ghi khóa bí mật, mật khẩu, token vào code, log, task card hay ghi chú.
 
 ## 5. Task card
 
@@ -72,19 +89,29 @@ Việc cỡ "nhỏ": ghi một dòng vào `tasks/quick-log.md` nếu không tạ
 - Trước khi kết thúc phiên, ghi vào card mục "Nhật ký phiên": đã làm gì, quyết định gì, còn dang dở gì.
 - Lịch sử hội thoại của công cụ (Kilo, Antigravity) chỉ là phụ, không được coi là nơi lưu duy nhất.
 
-## 8. Nhập tài liệu (doc, xlsx, pdf, ảnh)
+## 8. Ghi chú cho agent sau (bộ nhớ dự án)
+
+Card ghi việc đã xong chưa. Ghi chú này ghi **điều agent sau cần biết** mà không suy ra được từ code hay git log: bẫy và hành vi bất ngờ, quyết định và lý do, khu vực dễ vỡ, giả định chưa kiểm chứng, việc dở dang, ảnh hưởng tới task khác, hướng đã thử mà không chạy.
+
+- **Ghi**: sau khi xử lý xong, tạo `docs/notes/inbox/<Task>-<agent>.md` theo `agents/protocols/handoff-note.md`. Bắt buộc, kể cả khi chỉ ghi "không có lưu ý".
+- **Không sửa trực tiếp** `docs/PROJECT-NOTES.md`. Chỉ `writer` gộp hộp thư vào đó sau mỗi lần merge. Nhờ vậy các nhánh song song không xung đột.
+- **Đọc**: đầu mỗi việc, đọc `docs/PROJECT-NOTES.md` và các file chưa gộp trong `docs/notes/inbox/`.
+
+## 9. Nhập và phân tích tài liệu (doc, xlsx, pdf, ảnh)
 
 Theo `agents/protocols/intake.md`. Tóm tắt: giữ bản gốc trong `docs/source/` (không sửa) → chuyển sang md vào `docs/converted/` → BA rút danh sách yêu cầu R-xxx vào `docs/requirements/` → người dùng duyệt danh sách trước khi ai bắt tay làm. Chuyển đổi có thể mất thông tin (bảng, công thức, ô gộp, ảnh, bản scan), luôn ghi rõ chỗ không chắc.
 
-## 9. Nghiên cứu công nghệ
+**Phân tích lại**: khi tài liệu đổi, khi nhận dự án có sẵn, hoặc khi nghi tài liệu lỗi thời, `analyst` đối chiếu tài liệu với code và với danh sách yêu cầu, ghi kết quả vào `docs/analysis/` (tổng quan, báo cáo thay đổi, báo cáo lệch). Analyst không sửa tài liệu gốc hay yêu cầu: BA và Orchestrator quyết định.
+
+## 10. Nghiên cứu công nghệ
 
 Theo `agents/roles/researcher.md`. Mỗi khẳng định có nguồn kèm ngày đọc, ghi rõ điều chưa xác minh, ghim phiên bản, có hạn xem lại 90 ngày. Kết quả đã duyệt cập nhật vào `agents/knowledge/tech-radar.md`.
 
-## 10. Hoàn tác
+## 11. Hoàn tác
 
 Merge kiểu squash: mỗi task một commit, gắn tag `T-xxx`. Quay lại một task = `git revert` commit đó trên nhánh mới, chạy test, người dùng duyệt. Git không hoàn tác được thay đổi cơ sở dữ liệu, dữ liệu đã ghi, hay deploy: task nào đụng các thứ này phải có "Kịch bản hoàn tác" trong card.
 
-## 11. Merge gate
+## 12. Merge gate
 
 Trước khi vào nhánh tích hợp, chạy:
 
@@ -92,4 +119,4 @@ Trước khi vào nhánh tích hợp, chạy:
 powershell -File scripts/merge-gate.ps1 -Branch feat/T-012 -Card tasks/T-012.md
 ```
 
-Script từ chối nếu có file thay đổi nằm ngoài `scope_edit` hoặc trong `scope_deny`. Không agent nào được bỏ qua bước này.
+Script từ chối nếu có file thay đổi nằm ngoài `scope_edit` hoặc trong `scope_deny`. Card của task và ghi chú `docs/notes/inbox/<Task>-*.md` luôn được phép. Không agent nào được bỏ qua bước này.

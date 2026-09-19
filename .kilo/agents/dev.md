@@ -47,3 +47,4 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 - Test và lint chạy qua, kết quả ghi trong card.
 - `scripts/merge-gate.ps1` cho kết quả PASS trên nhánh của bạn.
 - Card có nhật ký phiên và trạng thái `review`.
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").
