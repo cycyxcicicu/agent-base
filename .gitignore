@@ -1,0 +1,27 @@
+# Bí mật
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Phụ thuộc và build
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+bin/
+obj/
+dist/
+build/
+.next/
+
+# Nhật ký, tạm, hệ điều hành
+*.log
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Thư mục worktree nằm cạnh repo (ngoài repo), phòng khi ai đó tạo trong repo
+*-worktrees/
