@@ -38,6 +38,8 @@ class CsoScanner:
          "Hardcoded Private Key found."),
         ("SECRET-03", "HIGH", r"(?i)[\"']?(password|passwd|pwd)[\"']?\s*[:=]\s*['\"][^'\"]{4,}['\"]",
          "Potential hardcoded password found."),
+        ("SECRET-04", "CRITICAL", r"(?i)^\s*(?:export\s+)?[A-Z0-9_]*(?:api[_-]?key|secret[_-]?key|auth[_-]?token|access[_-]?token)\s*=\s*(?!['\"]?(?:your_|fake_|test_|dummy_|sk-ant-dummy|none|<)[A-Za-z0-9_\-]*)[A-Za-z0-9_\-\.]{16,}\s*$",
+         "Hardcoded unquoted or dotenv-style API key / secret token found."),
     ]
 
     COMMAND_INJECTION_PATTERNS = [

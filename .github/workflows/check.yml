@@ -16,6 +16,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Generated adapter files match their sources
         shell: powershell
         run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/sync-adapters.ps1 -Check
@@ -88,11 +93,6 @@ jobs:
           } else {
             Write-Host "Branch is not named after a ticket, skipping merge gate."
           }
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
 
       - name: Run Unit Tests
         shell: powershell

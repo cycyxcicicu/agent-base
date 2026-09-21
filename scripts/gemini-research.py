@@ -11,6 +11,7 @@ import time
 import subprocess
 import argparse
 import secrets
+import hashlib
 from pathlib import Path
 from typing import Tuple, Optional
 
@@ -29,13 +30,16 @@ def check_search_grant(provided_token: Optional[str] = None) -> Tuple[bool, str]
     try:
         data = json.loads(GRANT_FILE.read_text(encoding="utf-8"))
         expires_at = data.get("expires_at", 0)
-        expected_token = data.get("token")
+        expected_hash = data.get("token_hash")
         if time.time() >= expires_at:
             return False, "Phiên ủy quyền con người đã hết hạn."
-        if not expected_token:
+        if not expected_hash:
             return False, "Dữ liệu ủy quyền không hợp lệ."
-        if not provided_token or provided_token.strip() != expected_token.strip():
-            return False, "Mã ủy quyền (--grant-token) không khớp hoặc bị thiếu."
+        if not provided_token:
+            return False, "Mã ủy quyền (--grant-token) bị thiếu."
+        provided_hash = hashlib.sha256(provided_token.strip().encode()).hexdigest()
+        if provided_hash != expected_hash:
+            return False, "Mã ủy quyền (--grant-token) không khớp."
         rem_mins = max(0, int((expires_at - time.time()) / 60))
         return True, f"Ủy quyền con người hợp lệ (còn ~{rem_mins} phút)."
     except Exception as e:
@@ -153,8 +157,9 @@ def main():
         if ans in ["y", "yes"]:
             GRANT_FILE.parent.mkdir(parents=True, exist_ok=True)
             token = secrets.token_hex(16)
+            token_hash = hashlib.sha256(token.encode()).hexdigest()
             grant_data = {
-                "token": token,
+                "token_hash": token_hash,
                 "granted_at": time.time(),
                 "expires_at": time.time() + mins * 60,
                 "duration_minutes": mins

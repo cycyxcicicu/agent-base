@@ -102,8 +102,28 @@ git_write_deny = [
     '*&&*git switch*', '*;*git switch*',
     '*&&*git branch*', '*;*git branch*',
     'git push --force*', 'git push -f*', 'git reset --hard*',
-    'command git *', '/usr/bin/git *', '"git" *', "'git' *"
+    'command git *', '/usr/bin/git *', '"git" *', "'git' *",
+    '*git*commit*', '*git*push*', '*git*reset*', '*git*rebase*', '*git*merge *',
+    '*git*checkout*', '*git*switch*', '*git*restore*',
+    '*git*stash push*', '*git*stash pop*', '*git*stash drop*', '*git*stash clear*', '*git*stash apply*',
+    '*git*tag -a*', '*git*tag -d*', '*git*tag -f*', '*git*tag -m*', '*git*tag --delete*', '*git*tag [a-zA-Z0-9]*',
+    '*git*cherry-pick*', '*git*revert*', '*git*rm *', '*git*mv *', '*git*clean*',
+    '*git*apply*', '*git*am*', '*git*init*', '*git*clone*',
+    '*git*branch -d*', '*git*branch -D*', '*git*branch -m*', '*git*branch -M*',
+    '*git*branch -c*', '*git*branch -C*', '*git*branch --delete*', '*git*branch --move*',
+    '*git*branch --copy*', '*git*branch [!-]**',
+    '*git*worktree add*', '*git*worktree remove*', '*git*worktree prune*', '*git*worktree move*',
+    '*git*worktree lock*', '*git*worktree unlock*',
+    '*git*remote add*', '*git*remote remove*', '*git*remote set-url*', '*git*remote rename*',
+    '*git*config *', '*git.exe*',
+    '*& git*', '*& "git"*', "*& 'git'*", '*& *git.exe*',
+    '*$(*git*)*', '*`*git*`*',
+    '*git*--no-verify*',
+    '*\ngit commit*', '*\ngit push*', '*\ngit reset*', '*\ngit rebase*', '*\ngit checkout*',
+    '*\ngit merge*', '*\n*git commit*', '*\n*git push*'
 ]
+
+danger_deny.append('*search_grant*')
 
 git_read_allow = [
     'git branch --list*', 'git branch -a*', 'git branch -v*', 'git branch --show-current*',
@@ -197,7 +217,7 @@ def build_kilo(meta: dict, body: str, src_rel: str) -> str:
             lines.append(f'    "{c}": allow')
         for c in get_list(meta, 'bash_allow'):
             lines.append(f'    "{c}": allow')
-        chain_deny = ['*;*', '*&&*', '*||*', '*|*']
+        chain_deny = ['*;*', '*&&*', '*||*', '*|*', '*\n*', '*\\n*']
         for c in (chain_deny + git_write_deny + danger_deny + get_list(meta, 'bash_deny')):
             lines.append(f'    "{c}": deny')
     elif bash == 'full':

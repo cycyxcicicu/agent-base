@@ -17,6 +17,7 @@ import ast
 import os
 import re
 import fnmatch
+import builtins
 from dataclasses import dataclass, field, asdict
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -380,18 +381,51 @@ class CodeReviewer:
             ))
             return comments
 
+        # Thu thập các tên đã được định nghĩa ở cấp độ module (functions, classes, variables, imports)
+        module_scope_names = set(dir(builtins))
+        for stmt in tree.body:
+            if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                module_scope_names.add(stmt.name)
+            elif isinstance(stmt, ast.Import):
+                for alias in stmt.names:
+                    module_scope_names.add(alias.asname or alias.name)
+            elif isinstance(stmt, ast.ImportFrom):
+                for alias in stmt.names:
+                    module_scope_names.add(alias.asname or alias.name)
+            elif isinstance(stmt, ast.Assign):
+                for tgt in stmt.targets:
+                    for n in ast.walk(tgt):
+                        if isinstance(n, ast.Name):
+                            module_scope_names.add(n.id)
+            elif isinstance(stmt, (ast.AnnAssign, ast.AugAssign)) and isinstance(stmt.target, ast.Name):
+                module_scope_names.add(stmt.target.id)
+
         class PythonRuleVisitor(ast.NodeVisitor):
-            def __init__(self, filepath: str, lines: List[str]):
+            EXEMPT_NAMES = {
+                "self", "cls", "cursor", "request", "response", "session", "app", "db",
+                "args", "kwargs", "_", "__name__", "__file__", "__doc__", "e"
+            }
+
+            def __init__(self, filepath: str, lines: List[str], module_names: set):
                 self.filepath = filepath
                 self.lines = lines
+                self.module_names = module_names
                 self.issues: List[ReviewComment] = []
 
             def visit_FunctionDef(self, node: ast.FunctionDef):
-                # Quy tắc Python: Mutable default argument (High - Bug)
+                self._check_function(node)
+                self.generic_visit(node)
+
+            def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef):
+                self._check_function(node)
+                self.generic_visit(node)
+
+            def _check_function(self, node):
+                # 1. Quy tắc Python: Mutable default argument (High - Bug)
                 for default in node.args.defaults + node.args.kw_defaults:
                     if default is not None and isinstance(default, (ast.List, ast.Dict, ast.Set)):
                         line_no = getattr(default, "lineno", node.lineno)
-                        snippet = lines[line_no - 1] if line_no <= len(lines) else ""
+                        snippet = self.lines[line_no - 1] if line_no <= len(self.lines) else ""
                         self.issues.append(ReviewComment(
                             path=self.filepath,
                             start_line=line_no,
@@ -403,7 +437,75 @@ class CodeReviewer:
                             existing_code=snippet.strip(),
                             thinking="In Python, default parameter values are evaluated once when function is defined, not per call.",
                         ))
-                self.generic_visit(node)
+
+                # 2. Quy tắc Python: Bắt biến chưa định nghĩa trong phạm vi hàm (Undefined Variable / NameError)
+                local_names = set()
+                for a in node.args.args + getattr(node.args, "posonlyargs", []) + node.args.kwonlyargs:
+                    local_names.add(a.arg)
+                if node.args.vararg:
+                    local_names.add(node.args.vararg.arg)
+                if node.args.kwarg:
+                    local_names.add(node.args.kwarg.arg)
+
+                for child in ast.walk(node):
+                    if isinstance(child, ast.Assign):
+                        for tgt in child.targets:
+                            for n in ast.walk(tgt):
+                                if isinstance(n, ast.Name):
+                                    local_names.add(n.id)
+                    elif isinstance(child, (ast.AnnAssign, ast.AugAssign)) and isinstance(child.target, ast.Name):
+                        local_names.add(child.target.id)
+                    elif isinstance(child, ast.NamedExpr) and isinstance(child.target, ast.Name):
+                        local_names.add(child.target.id)
+                    elif isinstance(child, ast.For):
+                        for n in ast.walk(child.target):
+                            if isinstance(n, ast.Name):
+                                local_names.add(n.id)
+                    elif isinstance(child, ast.ExceptHandler) and child.name:
+                        local_names.add(child.name)
+                    elif isinstance(child, ast.comprehension):
+                        for n in ast.walk(child.target):
+                            if isinstance(n, ast.Name):
+                                local_names.add(n.id)
+                    elif isinstance(child, ast.Lambda):
+                        for a in child.args.args:
+                            local_names.add(a.arg)
+                    elif isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                        local_names.add(child.name)
+                    elif isinstance(child, (ast.Global, ast.Nonlocal)):
+                        local_names.update(child.names)
+                    elif isinstance(child, (ast.Import, ast.ImportFrom)):
+                        for alias in child.names:
+                            local_names.add(alias.asname or alias.name)
+                    elif isinstance(child, ast.With):
+                        for item in child.items:
+                            if item.optional_vars:
+                                for n in ast.walk(item.optional_vars):
+                                    if isinstance(n, ast.Name):
+                                        local_names.add(n.id)
+
+                seen_undefined = set()
+                for child in ast.walk(node):
+                    if isinstance(child, ast.Name) and isinstance(child.ctx, ast.Load):
+                        var_name = child.id
+                        if (var_name not in local_names and
+                            var_name not in self.module_names and
+                            var_name not in self.EXEMPT_NAMES and
+                            var_name not in seen_undefined):
+                            seen_undefined.add(var_name)
+                            line_no = getattr(child, "lineno", node.lineno)
+                            snippet = self.lines[line_no - 1] if line_no <= len(self.lines) else ""
+                            self.issues.append(ReviewComment(
+                                path=self.filepath,
+                                start_line=line_no,
+                                end_line=line_no,
+                                category="bug",
+                                severity="high",
+                                content=f"Biến '{var_name}' được sử dụng nhưng chưa được định nghĩa trong phạm vi hàm hoặc module (Undefined variable / NameError).",
+                                suggestion_code=f"# Khai báo hoặc import '{var_name}' trước khi sử dụng",
+                                existing_code=snippet.strip(),
+                                thinking=f"Referencing '{var_name}' without definition leads to NameError at runtime.",
+                            ))
 
             def visit_ExceptHandler(self, node: ast.ExceptHandler):
                 # Quy tắc Python: Bare except: bắt tất cả ngoại lệ kể cả KeyboardInterrupt/SystemExit
@@ -511,7 +613,7 @@ class CodeReviewer:
 
                 self.generic_visit(node)
 
-        visitor = PythonRuleVisitor(file_path, lines)
+        visitor = PythonRuleVisitor(file_path, lines, module_scope_names)
         visitor.visit(tree)
         comments.extend(visitor.issues)
         return comments

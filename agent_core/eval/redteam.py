@@ -26,6 +26,14 @@ class Deobfuscator:
         "0": "o", "5": "s", "$": "s", "7": "t", "+": "t"
     })
 
+    CYRILLIC_HOMOGLYPH_MAP = str.maketrans({
+        '\u0430': 'a', '\u0435': 'e', '\u043e': 'o', '\u0440': 'p', '\u0441': 'c',
+        '\u0443': 'y', '\u0445': 'x', '\u0456': 'i', '\u0458': 'j', '\u0455': 's',
+        '\u0410': 'A', '\u0412': 'B', '\u0415': 'E', '\u041a': 'K', '\u041c': 'M',
+        '\u041d': 'H', '\u041e': 'O', '\u0420': 'P', '\u0421': 'C', '\u0422': 'T',
+        '\u0425': 'X'
+    })
+
     ZERO_WIDTH_PATTERN = re.compile(r"[\u200B\u200C\u200D\uFEFF\u200E\u200F]")
     UNICODE_TAG_PATTERN = re.compile(r"[\U000E0000-\U000E007F]")
     BIDI_OVERRIDE_PATTERN = re.compile(r"[\u202A-\u202E\u2066-\u2069]")
@@ -54,6 +62,26 @@ class Deobfuscator:
     @classmethod
     def normalize_leetspeak(cls, text: str) -> str:
         return text.translate(cls.LEET_MAP)
+
+    @classmethod
+    def normalize_homoglyphs(cls, text: str) -> str:
+        """Chuẩn hóa các ký tự Cyrillic đồng dạng (Homoglyph spoofing) sang Latin."""
+        return text.translate(cls.CYRILLIC_HOMOGLYPH_MAP)
+
+    @classmethod
+    def has_cyrillic_homoglyphs(cls, text: str) -> bool:
+        """Kiểm tra sự tồn tại của ký tự Cyrillic giả mạo."""
+        return any(ch in cls.CYRILLIC_HOMOGLYPH_MAP for ch in text)
+
+    @classmethod
+    def normalize_spaced_words(cls, text: str) -> str:
+        """Nối các chữ cái bị cố tình ngắt bởi dấu cách (ví dụ: 'i g n o r e' hoặc 'ig nore')."""
+        res = re.sub(r'(?<=\b[a-zA-Z])\s+(?=[a-zA-Z]\b)', '', text)
+        known_keywords = ["ignore", "disregard", "bypass", "system", "override", "developer", "prompt", "rules", "instructions"]
+        for kw in known_keywords:
+            pat = r'(?i)\b' + r'\s*'.join(list(kw)) + r'\b'
+            res = re.sub(pat, kw, res)
+        return res
 
     @classmethod
     def decode_rot13(cls, text: str) -> str:
@@ -165,11 +193,23 @@ class RedTeamScanner:
                 matched_content="[BiDi Override Characters Detected]"
             ))
 
+        # 4. Phát hiện Cyrillic Homoglyph Spoofing
+        if Deobfuscator.has_cyrillic_homoglyphs(text):
+            issues.append(SecurityIssue(
+                category="homoglyph_spoofing",
+                severity="HIGH",
+                description="Phát hiện ký tự Cyrillic/Homoglyph giả dạng ký tự Latin để qua mặt bộ lọc",
+                matched_content="[Cyrillic Homoglyphs Detected]"
+            ))
+
         clean_text = Deobfuscator.strip_zero_width(Deobfuscator.strip_bidi(text))
-        leet_text = Deobfuscator.normalize_leetspeak(clean_text)
+        homoglyph_text = Deobfuscator.normalize_homoglyphs(clean_text)
+        spaced_text = Deobfuscator.normalize_spaced_words(clean_text)
+        homoglyph_spaced = Deobfuscator.normalize_spaced_words(homoglyph_text)
+        leet_text = Deobfuscator.normalize_leetspeak(homoglyph_text)
         b64_decoded = Deobfuscator.extract_and_decode_base64(clean_text)
 
-        candidates = [clean_text, leet_text] + b64_decoded
+        candidates = list(dict.fromkeys([clean_text, homoglyph_text, spaced_text, homoglyph_spaced, leet_text] + b64_decoded))
         if smuggled_text:
             candidates.append(smuggled_text)
 

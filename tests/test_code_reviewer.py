@@ -186,6 +186,14 @@ class TestCodeReviewerAnalysis(unittest.TestCase):
         self.assertIn("✅ PASS", report)
         self.assertIn("no issues found", report)
 
+    def test_python_undefined_variable(self):
+        code = (
+            "def calculate_total(prices):\n"
+            "    return sum(prices) + tax_rate\n"
+        )
+        comments = self.reviewer.analyze_source("src/billing.py", code)
+        self.assertTrue(any(c.category == "bug" and "tax_rate" in c.content for c in comments))
+
 
 if __name__ == "__main__":
     unittest.main()

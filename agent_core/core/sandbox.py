@@ -40,7 +40,8 @@ class SandboxRunner:
         "secret", "private_key", "password", "passwd", "token", "api_key", "apikey",
         "auth", "bearer", "credential", "jwt", "access_key", "client_secret",
         "database_url", "db_password", "db_pass", "conn_str", "cookie", "session_id",
-        "secure_1psid", "openai", "anthropic", "github_token", "gh_token", "gemini"
+        "secure_1psid", "openai", "anthropic", "github_token", "gh_token", "gemini",
+        "webhook", "slack", "discord", "telegram", "sentry", "aws_", "azure_", "gcp_"
     ]
 
     def sanitize_env(

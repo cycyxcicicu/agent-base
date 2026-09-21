@@ -158,6 +158,79 @@ permission:
     "/usr/bin/git *": deny
     ""git" *": deny
     "'git' *": deny
+    "*git*commit*": deny
+    "*git*push*": deny
+    "*git*reset*": deny
+    "*git*rebase*": deny
+    "*git*merge *": deny
+    "*git*checkout*": deny
+    "*git*switch*": deny
+    "*git*restore*": deny
+    "*git*stash push*": deny
+    "*git*stash pop*": deny
+    "*git*stash drop*": deny
+    "*git*stash clear*": deny
+    "*git*stash apply*": deny
+    "*git*tag -a*": deny
+    "*git*tag -d*": deny
+    "*git*tag -f*": deny
+    "*git*tag -m*": deny
+    "*git*tag --delete*": deny
+    "*git*tag [a-zA-Z0-9]*": deny
+    "*git*cherry-pick*": deny
+    "*git*revert*": deny
+    "*git*rm *": deny
+    "*git*mv *": deny
+    "*git*clean*": deny
+    "*git*apply*": deny
+    "*git*am*": deny
+    "*git*init*": deny
+    "*git*clone*": deny
+    "*git*branch -d*": deny
+    "*git*branch -D*": deny
+    "*git*branch -m*": deny
+    "*git*branch -M*": deny
+    "*git*branch -c*": deny
+    "*git*branch -C*": deny
+    "*git*branch --delete*": deny
+    "*git*branch --move*": deny
+    "*git*branch --copy*": deny
+    "*git*branch [!-]**": deny
+    "*git*worktree add*": deny
+    "*git*worktree remove*": deny
+    "*git*worktree prune*": deny
+    "*git*worktree move*": deny
+    "*git*worktree lock*": deny
+    "*git*worktree unlock*": deny
+    "*git*remote add*": deny
+    "*git*remote remove*": deny
+    "*git*remote set-url*": deny
+    "*git*remote rename*": deny
+    "*git*config *": deny
+    "*git.exe*": deny
+    "*& git*": deny
+    "*& "git"*": deny
+    "*& 'git'*": deny
+    "*& *git.exe*": deny
+    "*$(*git*)*": deny
+    "*`*git*`*": deny
+    "*git*--no-verify*": deny
+    "*
+git commit*": deny
+    "*
+git push*": deny
+    "*
+git reset*": deny
+    "*
+git rebase*": deny
+    "*
+git checkout*": deny
+    "*
+git merge*": deny
+    "*
+*git commit*": deny
+    "*
+*git push*": deny
     "*--no-verify*": deny
     "rm -rf /": deny
     "rm -rf *": deny
@@ -203,6 +276,7 @@ permission:
     "*;*Remove-Item*": deny
     "*&&*del *": deny
     "*;*del *": deny
+    "*search_grant*": deny
     "*scripts/gemini-research*": deny
     "git branch --list*": allow
     "git branch -a*": allow

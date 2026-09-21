@@ -26,8 +26,14 @@ class WebCleaner:
         for pattern in cls.NOISY_TAGS:
             clean = re.sub(pattern, "", clean, flags=re.IGNORECASE)
 
-        # Loại bỏ các thẻ ẩn và nội dung bên trong (display:none, visibility:hidden, hidden)
-        clean = re.sub(r"<([a-zA-Z0-9_-]+)\b[^>]*\b(?:style=[\"'][^\"']*display\s*:\s*none[^\"']*[\"']|style=[\"'][^\"']*visibility\s*:\s*hidden[^\"']*[\"']|hidden\b)[^>]*>[\s\S]*?<\/\1>", "", clean, flags=re.IGNORECASE)
+        # Loại bỏ các thẻ ẩn và nội dung bên trong (display:none, visibility:hidden, font-size:0, opacity:0, hidden)
+        hidden_style_pat = r"display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*0(?:px|pt|em|rem)?\b|opacity\s*:\s*0\b"
+        clean = re.sub(rf"<([a-zA-Z0-9_-]+)\b[^>]*\b(?:style=[\"'][^\"']*(?:{hidden_style_pat})[^\"']*[\"']|hidden\b)[^>]*>[\s\S]*?<\/\1>", "", clean, flags=re.IGNORECASE)
+
+        # Loại bỏ chữ ngụy trang cùng màu nền (chữ trắng trên nền trắng: font camouflage)
+        white_val = r"(?:white|#fff(?:fff)?|rgba?\(\s*255\s*,\s*255\s*,\s*255[^)]*\))"
+        white_on_white = rf"color\s*:\s*{white_val}[^\"']*background(?:-color)?\s*:\s*{white_val}|background(?:-color)?\s*:\s*{white_val}[^\"']*color\s*:\s*{white_val}"
+        clean = re.sub(rf"<([a-zA-Z0-9_-]+)\b[^>]*style=[\"'][^\"']*(?:{white_on_white})[^\"']*[\"'][^>]*>[\s\S]*?<\/\1>", "", clean, flags=re.IGNORECASE)
 
         # Chuyển đổi các thẻ tiêu đề thành Markdown
         clean = re.sub(r"<h1[^>]*>(.*?)<\/h1>", r"\n# \1\n", clean, flags=re.IGNORECASE)
