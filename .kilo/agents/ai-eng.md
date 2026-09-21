@@ -37,8 +37,18 @@ permission:
     "git checkout*": deny
     "git switch*": deny
     "git restore*": deny
-    "git stash*": deny
-    "git tag *": deny
+    "git stash push*": deny
+    "git stash pop*": deny
+    "git stash drop*": deny
+    "git stash clear*": deny
+    "git stash apply*": deny
+    "git stash branch*": deny
+    "git tag -a*": deny
+    "git tag -d*": deny
+    "git tag -f*": deny
+    "git tag -m*": deny
+    "git tag --delete*": deny
+    "git tag [a-zA-Z0-9]*": deny
     "git cherry-pick*": deny
     "git revert*": deny
     "git rm*": deny
@@ -48,8 +58,22 @@ permission:
     "git am*": deny
     "git init*": deny
     "git clone*": deny
-    "git branch *": deny
-    "git worktree *": deny
+    "git branch -d*": deny
+    "git branch -D*": deny
+    "git branch -m*": deny
+    "git branch -M*": deny
+    "git branch -c*": deny
+    "git branch -C*": deny
+    "git branch --delete*": deny
+    "git branch --move*": deny
+    "git branch --copy*": deny
+    "git branch [!-]**": deny
+    "git worktree add*": deny
+    "git worktree remove*": deny
+    "git worktree prune*": deny
+    "git worktree move*": deny
+    "git worktree lock*": deny
+    "git worktree unlock*": deny
     "git remote add*": deny
     "git remote remove*": deny
     "git remote set-url*": deny
@@ -57,37 +81,58 @@ permission:
     "git config *": deny
     "*new-worktree*": deny
     "*install-hooks*": deny
-    "git -C *": deny
-    "git -c *": deny
-    "git *commit*": deny
-    "git *push*": deny
-    "git *merge*": deny
-    "git *rebase*": deny
-    "git *reset*": deny
-    "git *revert*": deny
-    "git *checkout*": deny
-    "git *switch*": deny
-    "git *stash*": deny
-    "git *branch*": deny
+    "git -C * commit*": deny
+    "git -C * push*": deny
+    "git -C * merge*": deny
+    "git -C * rebase*": deny
+    "git -C * reset*": deny
+    "git -C * checkout*": deny
+    "git -C * switch*": deny
+    "git -C * branch*": deny
+    "git -C * tag*": deny
+    "git -C * restore*": deny
+    "git -C * rm*": deny
+    "git -C * mv*": deny
+    "git -C * clean*": deny
+    "git -C * apply*": deny
+    "git -C * config*": deny
+    "git -c * commit*": deny
+    "git -c * push*": deny
+    "git -c * merge*": deny
+    "git -c * rebase*": deny
+    "git -c * reset*": deny
+    "git push --force*": deny
+    "git push -f*": deny
+    "git reset --hard*": deny
+    "command git *": deny
+    "/usr/bin/git *": deny
+    ""git" *": deny
+    "'git' *": deny
     "*--no-verify*": deny
     "rm -rf /": deny
     "rm -rf *": deny
     "rm -fr /": deny
     "rm -fr *": deny
-    "rm -r -f*": deny
-    "rm -f -r*": deny
-    "rm -r *": deny
-    "rm -R *": deny
-    "rm -f *": deny
-    "Remove-Item*-Recurse*": deny
+    "rm -r -f *": deny
+    "rm -f -r *": deny
+    "rm -rf .*": deny
+    "rm -r /": deny
+    "rm -R /": deny
+    "rm -r .": deny
+    "rm -rf .": deny
+    "rm --recursive --force*": deny
+    "Remove-Item*-Recurse*-Force*": deny
+    "Remove-Item*-r*-fo*": deny
     "rmdir /s*": deny
-    "del /s*": deny
-    "git push --force*": deny
-    "git push -f*": deny
-    "git reset --hard*": deny
-    "python* -c*": deny
-    "py* -c*": deny
-    "python3* -c*": deny
+    "del /q /s*": deny
+    "del /s /q*": deny
+    "find . -delete*": deny
+    "find * -delete*": deny
+    "python -c*": deny
+    "python.exe -c*": deny
+    "python3 -c*": deny
+    "py -c*": deny
+    "py.exe -c*": deny
     "powershell* -c*": deny
     "powershell* -Command*": deny
     "pwsh* -c*": deny
@@ -99,6 +144,8 @@ permission:
     "node* --eval*": deny
     "ruby* -e*": deny
     "perl* -e*": deny
+    "cmd /c git *": deny
+    "cmd.exe /c git *": deny
   webfetch: deny
   websearch: deny
   codesearch: deny

@@ -56,27 +56,37 @@ danger_ask = [
 ]
 danger_deny = [
     '*--no-verify*', 'rm -rf /', 'rm -rf *', 'rm -fr /', 'rm -fr *',
-    'rm -r -f*', 'rm -f -r*', 'rm -r *', 'rm -R *', 'rm -f *',
-    'Remove-Item*-Recurse*', 'rmdir /s*', 'del /s*',
-    'git push --force*', 'git push -f*', 'git reset --hard*',
-    'python* -c*', 'py* -c*', 'python3* -c*',
+    'rm -r -f *', 'rm -f -r *', 'rm -rf .*', 'rm -r /', 'rm -R /', 'rm -r .', 'rm -rf .',
+    'rm --recursive --force*',
+    'Remove-Item*-Recurse*-Force*', 'Remove-Item*-r*-fo*', 'rmdir /s*',
+    'del /q /s*', 'del /s /q*', 'find . -delete*', 'find * -delete*',
+    'python -c*', 'python.exe -c*', 'python3 -c*', 'py -c*', 'py.exe -c*',
     'powershell* -c*', 'powershell* -Command*', 'pwsh* -c*', 'pwsh* -Command*',
     'bash* -c*', 'sh* -c*', 'zsh* -c*',
     'node* -e*', 'node* --eval*',
-    'ruby* -e*', 'perl* -e*'
+    'ruby* -e*', 'perl* -e*',
+    'cmd /c git *', 'cmd.exe /c git *'
 ]
 
 
 git_write_deny = [
     'git add*', 'git commit*', 'git push*', 'git pull*', 'git fetch*', 'git merge *',
-    'git rebase*', 'git reset*', 'git checkout*', 'git switch*', 'git restore*', 'git stash*',
-    'git tag *', 'git cherry-pick*', 'git revert*', 'git rm*', 'git mv*', 'git clean*',
-    'git apply*', 'git am*', 'git init*', 'git clone*', 'git branch *', 'git worktree *',
+    'git rebase*', 'git reset*', 'git checkout*', 'git switch*', 'git restore*',
+    'git stash push*', 'git stash pop*', 'git stash drop*', 'git stash clear*', 'git stash apply*', 'git stash branch*',
+    'git tag -a*', 'git tag -d*', 'git tag -f*', 'git tag -m*', 'git tag --delete*', 'git tag [a-zA-Z0-9]*',
+    'git cherry-pick*', 'git revert*', 'git rm*', 'git mv*', 'git clean*',
+    'git apply*', 'git am*', 'git init*', 'git clone*',
+    'git branch -d*', 'git branch -D*', 'git branch -m*', 'git branch -M*', 'git branch -c*', 'git branch -C*',
+    'git branch --delete*', 'git branch --move*', 'git branch --copy*', 'git branch [!-]**',
+    'git worktree add*', 'git worktree remove*', 'git worktree prune*', 'git worktree move*', 'git worktree lock*', 'git worktree unlock*',
     'git remote add*', 'git remote remove*', 'git remote set-url*', 'git remote rename*',
     'git config *', '*new-worktree*', '*install-hooks*',
-    'git -C *', 'git -c *',
-    'git *commit*', 'git *push*', 'git *merge*', 'git *rebase*', 'git *reset*',
-    'git *revert*', 'git *checkout*', 'git *switch*', 'git *stash*', 'git *branch*'
+    'git -C * commit*', 'git -C * push*', 'git -C * merge*', 'git -C * rebase*', 'git -C * reset*',
+    'git -C * checkout*', 'git -C * switch*', 'git -C * branch*', 'git -C * tag*', 'git -C * restore*',
+    'git -C * rm*', 'git -C * mv*', 'git -C * clean*', 'git -C * apply*', 'git -C * config*',
+    'git -c * commit*', 'git -c * push*', 'git -c * merge*', 'git -c * rebase*', 'git -c * reset*',
+    'git push --force*', 'git push -f*', 'git reset --hard*',
+    'command git *', '/usr/bin/git *', '"git" *', "'git' *"
 ]
 
 git_read_allow = [
@@ -226,7 +236,8 @@ def main():
     outputs['.agents/rules/agents-core.md'] = f"<!-- {MARKER} from AGENTS.md. Do not edit. -->\n" + agents_md
 
     # Generate .claude/settings.json to enforce deny rules on Claude Code
-    claude_deny = [f"Bash({c})" for c in (git_write_deny + danger_deny)] + (git_write_deny + danger_deny)
+    # Use tool specifiers Bash(...) and PowerShell(...) strictly; no bare strings
+    claude_deny = [f"Bash({c})" for c in (git_write_deny + danger_deny)] + [f"PowerShell({c})" for c in danger_deny]
     claude_settings = {
         "$schema": "https://json.schemastore.org/claude-code-settings.json",
         "permissions": {

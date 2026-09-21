@@ -6,9 +6,12 @@ Tích hợp cổng kiểm tra Ask-Before-Search và tự động định vị co
 
 import os
 import sys
+import json
+import time
 import subprocess
 import argparse
 from pathlib import Path
+from typing import Tuple
 
 # Đảm bảo UTF-8 cho Windows terminal
 if hasattr(sys.stdout, 'reconfigure'):
@@ -17,6 +20,20 @@ if hasattr(sys.stderr, 'reconfigure'):
     sys.stderr.reconfigure(encoding='utf-8')
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
+GRANT_FILE = Path.home() / ".gemini" / "search_grant.json"
+
+def check_search_grant() -> Tuple[bool, str]:
+    if not GRANT_FILE.exists():
+        return False, "Chưa có file ủy quyền."
+    try:
+        data = json.loads(GRANT_FILE.read_text(encoding="utf-8"))
+        expires_at = data.get("expires_at", 0)
+        if time.time() < expires_at:
+            rem_mins = max(0, int((expires_at - time.time()) / 60))
+            return True, f"Ủy quyền con người hợp lệ (còn ~{rem_mins} phút)."
+        return False, "Ủy quyền con người đã hết hạn."
+    except Exception as e:
+        return False, f"Lỗi đọc ủy quyền: {e}"
 # 1. Ưu tiên đường dẫn nội bộ bên trong chính agent-base (Đảm bảo tính độc lập khi copy sang dự án khác)
 INTERNAL_CLI = ROOT_DIR / "tools" / "gemini-api" / "cli.py"
 EXTERNAL_CLI = ROOT_DIR.parent / "Gemini-API" / "cli.py"
@@ -104,7 +121,46 @@ def main():
     r_get.add_argument("chat_id", help="Chat ID của tác vụ nghiên cứu")
     r_get.add_argument("-o", "--output", help="Đường dẫn file markdown lưu kết quả (ví dụ: docs/research/bao-cao.md)")
 
+    # Subcommand: grant
+    grant_parser = subparsers.add_parser("grant", help="Con người ủy quyền tra cứu web cho Agent trong một phiên làm việc")
+    grant_parser.add_argument("--minutes", type=int, default=30, help="Thời hạn cấp quyền (phút, mặc định 30)")
+
+    # Subcommand: revoke
+    subparsers.add_parser("revoke", help="Thu hồi ngay lập tức quyền tra cứu web của Agent")
+
     args = parser.parse_args()
+
+    # Xử lý cấp quyền ủy quyền con người (Chỉ cho phép từ terminal tương tác thật)
+    if args.subcommand == "grant":
+        if not sys.stdin.isatty():
+            print("❌ LỖI BẢO MẬT: Lệnh 'grant' chỉ có thể được thực hiện bởi CON NGƯỜI trong terminal tương tác thật (TTY).")
+            print("Agent hoặc tiến trình tự động không thể tự cấp quyền cho chính mình.")
+            sys.exit(1)
+        mins = max(1, args.minutes)
+        print(f"\n🔐 [CẤP QUYỀN TRA CỨU WEB CHO AGENT]")
+        print(f"👉 Thời hạn hiệu lực: {mins} phút")
+        ans = input("❓ Bạn có đồng ý cho phép Agent tự động gửi truy vấn ra Internet trong thời gian này? [y/N]: ").strip().lower()
+        if ans in ["y", "yes"]:
+            GRANT_FILE.parent.mkdir(parents=True, exist_ok=True)
+            grant_data = {
+                "granted_at": time.time(),
+                "expires_at": time.time() + mins * 60,
+                "duration_minutes": mins
+            }
+            GRANT_FILE.write_text(json.dumps(grant_data, indent=2), encoding="utf-8")
+            print(f"✅ Đã cấp quyền tra cứu thành công (có hiệu lực trong {mins} phút tại {GRANT_FILE}).\n")
+            sys.exit(0)
+        else:
+            print("❌ Đã hủy thao tác cấp quyền.\n")
+            sys.exit(1)
+
+    if args.subcommand == "revoke":
+        if GRANT_FILE.exists():
+            GRANT_FILE.unlink()
+            print("✅ Đã thu hồi quyền tra cứu web của Agent.")
+        else:
+            print("ℹ️ Hiện không có phiên ủy quyền nào đang hoạt động.")
+        sys.exit(0)
 
     # Xử lý các lệnh quản lý bể tài khoản (Không cần confirm ra ngoài)
     if args.subcommand in ["pool-status", "sync-all", "pool-test"]:
@@ -124,7 +180,7 @@ def main():
     # Kiểm tra cổng an toàn: Ask-Before-Search Gate
     requires_confirmation = args.subcommand in ["ask", "research-send"]
     if requires_confirmation:
-        # Nếu đang chạy trong terminal tương tác (có con người ngồi trước máy)
+        # 1. Nếu đang chạy trong terminal tương tác (có con người ngồi trước máy)
         if sys.stdin.isatty():
             print("\n🛑 [CỔNG BẢO VỆ TRA CỨU WEB: ASK-BEFORE-SEARCH]")
             print(f"👉 Thao tác: Gửi truy vấn ra ngoài qua Gemini-API ({args.subcommand})")
@@ -139,16 +195,23 @@ def main():
                 print("\n❌ Đã hủy truy vấn.\n")
                 sys.exit(2)
         else:
-            # Chạy phi tương tác (subagent, automated pipeline)
-            # Yêu cầu biến môi trường CONFIRM_WEB_SEARCH=1 hoặc cờ --confirm từ người điều hành
-            env_confirmed = os.environ.get("CONFIRM_WEB_SEARCH") == "1"
-            if not args.confirm and not env_confirmed:
-                print("\n🛑 [CỔNG BẢO VỆ TRA CỨU WEB: ASK-BEFORE-SEARCH]")
-                print(f"👉 Thao tác: Gửi truy vấn ra ngoài qua Gemini-API ({args.subcommand})")
+            # 2. Chạy phi tương tác (Agent chạy subshell, background runner)
+            # Chống Agent tự gán --confirm để lách: Bắt buộc phải có ủy quyền con người còn hạn hoặc biến override môi trường
+            is_granted, grant_msg = check_search_grant()
+            emergency_override = os.environ.get("EMERGENCY_UNATTENDED_SEARCH_OVERRIDE") == "1"
+
+            if is_granted:
+                print(f"🟢 [ASK-BEFORE-SEARCH] Tác vụ tự động được chấp thuận: {grant_msg}")
+            elif emergency_override:
+                print("⚠️ [ASK-BEFORE-SEARCH] Chạy tự động qua biến ghi đè EMERGENCY_UNATTENDED_SEARCH_OVERRIDE.")
+            else:
+                print("\n🛑 [CỔNG BẢO VỆ TRA CỨU WEB: ASK-BEFORE-SEARCH - TỪ CHỐI]")
+                print(f"👉 Thao tác: Gửi truy vấn ra ngoài ({args.subcommand})")
                 print(f"👉 Nội dung: \"{args.prompt}\"")
-                print(f"👉 Model: {args.model}")
-                print("\n⚠️  Cảnh báo: Tác vụ phi tương tác chưa có xác nhận từ con người (--confirm hoặc CONFIRM_WEB_SEARCH=1).")
-                print("Vui lòng hỏi ý kiến người dùng trước khi thực thi.\n")
+                print("\n❌ BỊ CHẶN: Phát hiện tác vụ chạy phi tương tác (Agent/Script tự động).")
+                print("Cờ --confirm tự khai báo không được chấp nhận nhằm ngăn Agent tự ý gửi dữ liệu ra ngoài.")
+                print("Để cho phép Agent tra cứu trong phiên làm việc, người dùng cần mở terminal chạy lệnh ủy quyền:")
+                print("👉 python scripts/gemini-research.py grant --minutes 30\n")
                 sys.exit(2)
 
     # Xây dựng lệnh chuyển tiếp đến cli.py

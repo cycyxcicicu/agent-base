@@ -7,8 +7,9 @@ bash: readonly
 bash_allow:
   - "*scripts/merge-gate*"
   - "*scripts/sync-adapters*"
-  - python*
-  - python3*
+  - "python scripts/cso.py*"
+  - "python agent_core/eval/code_reviewer.py*"
+  - "python -m unittest*"
 edit_allow:
   - docs/notes/inbox/**
   - tasks/**

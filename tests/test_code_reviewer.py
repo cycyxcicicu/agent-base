@@ -163,6 +163,16 @@ class TestCodeReviewerAnalysis(unittest.TestCase):
         comments = self.reviewer.analyze_source("src/math.py", clean_code)
         self.assertEqual(len(comments), 0)
 
+    def test_python_subprocess_shell_true(self):
+        code = "import subprocess\ndef run_cmd(u):\n    subprocess.run(f'echo {u}', shell=True)\n"
+        comments = self.reviewer.analyze_source("src/cmd.py", code)
+        self.assertTrue(any(c.severity == "critical" and "shell=True" in c.content for c in comments))
+
+    def test_python_sqli_formatting(self):
+        code = "def query(uid):\n    cursor.execute(f'SELECT * FROM users WHERE id = {uid}')\n"
+        comments = self.reviewer.analyze_source("src/db.py", code)
+        self.assertTrue(any(c.severity == "critical" and "SQL" in c.content for c in comments))
+
     def test_report_generation_blocked_gate(self):
         bad_code = "def bad(x=[]): eval(x)\n"
         comments = self.reviewer.analyze_source("src/leak.py", bad_code)

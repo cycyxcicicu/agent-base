@@ -96,12 +96,18 @@ class DependencyGraph:
                     missing_errors.append(f"Ticket '{t_id}' phụ thuộc vào ticket không tồn tại '{dep}'")
         return missing_errors
 
-    def get_frontier(self) -> List[Ticket]:
+    def get_frontier(self, strict: bool = True) -> List[Ticket]:
         """
         Tìm các ticket ở đường biên (Frontier):
         Là các ticket chưa xong (TODO / IN_PROGRESS) mà TẤT CẢ các ticket trong blocked_by đều đã DONE!
         Cho phép nhiều Agent nhận việc song song mà tuyệt đối không dẫm chân hoặc chờ nhau.
+        Nếu strict=True, tự động gọi validate_dependencies() và báo lỗi nếu có ticket phụ thuộc ID không tồn tại.
         """
+        if strict:
+            missing = self.validate_dependencies()
+            if missing:
+                raise ValueError("Đồ thị phụ thuộc chứa ticket ID không tồn tại:\n" + "\n".join(missing))
+
         frontier: List[Ticket] = []
 
         done_ids = {t_id for t_id, t in self.tickets.items() if t.status == "DONE"}

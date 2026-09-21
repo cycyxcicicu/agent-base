@@ -36,6 +36,13 @@ class TestWorkflowModules(unittest.TestCase):
         self.assertEqual(len(frontier), 1)
         self.assertEqual(frontier[0].ticket_id, "T-02")
 
+    def test_dependency_graph_missing_dependency_raises(self):
+        t1 = Ticket(ticket_id="T-01", title="Ticket 1", status="TODO", blocked_by=["T-NONEXISTENT"])
+        graph = DependencyGraph([t1])
+        with self.assertRaises(ValueError) as ctx:
+            graph.get_frontier(strict=True)
+        self.assertIn("T-NONEXISTENT", str(ctx.exception))
+
     def test_expand_contract_migration(self):
         tracker = MigrationTracker()
         task = tracker.register_migration("user_email_split", old_target="users.name", new_target="users.first_name", initial_callers=5)

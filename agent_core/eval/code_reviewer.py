@@ -4,6 +4,13 @@ Học hỏi và chuẩn hóa từ: alibaba/open-code-review (Go & Markdown Rules
 Triết lý: 'Favor precision over recall' - Chỉ cảnh báo khi chắc chắn là lỗi thật.
 Phân loại: Blocking (Critical/High) vs Non-Blocking (Medium/Low).
 Line-level Structured Review Comments & Deterministic Pre-review Delegation.
+
+Lưu ý phạm vi kỹ thuật:
+Đây là bộ quy tắc Heuristic & Phân tích Cú pháp AST Tĩnh có độ chính xác cao (Deterministic Heuristics),
+thiết kế nhằm bắt các lỗi phổ biến (bare except, mutable default, float equality, eval/exec, shell=True, SQL formatting, hardcoded secrets)
+mà không gây nhiễu/báo động giả trên PR.
+Để phát hiện biến chưa định nghĩa (undefined variables) hay phân tích kiểu tĩnh, hãy sử dụng các công cụ linter/static analyzer
+chuyên dụng như Ruff, Flake8 hoặc Pyright trong CI.
 """
 
 import ast
@@ -450,8 +457,58 @@ class CodeReviewer:
                         content=f"Sử dụng hàm nguy hiểm '{node.func.id}()'. Hàm này thực thi mã động trực tiếp và tiềm ẩn nguy cơ Remote Code Execution (RCE) nghiêm trọng.",
                         suggestion_code="ast.literal_eval(...) nếu chỉ phân tích cú pháp dữ liệu an toàn",
                         existing_code=snippet.strip(),
-                        thinking="eval/exec on untrusted input allows arbitrary arbitrary code execution.",
+                        thinking="eval/exec on untrusted input allows arbitrary code execution.",
                     ))
+
+                # Quy tắc Python: Cấm gọi subprocess với shell=True (Critical - Security)
+                if isinstance(node.func, ast.Attribute) and node.func.attr in ("Popen", "run", "call", "check_call", "check_output"):
+                    for kw in node.keywords:
+                        if kw.arg == "shell":
+                            is_true = False
+                            if isinstance(kw.value, ast.Constant) and bool(kw.value.value):
+                                is_true = True
+                            elif hasattr(ast, "NameConstant") and isinstance(kw.value, getattr(ast, "NameConstant")) and kw.value.value is True:
+                                is_true = True
+                            if is_true:
+                                line_no = getattr(node, "lineno", 1)
+                                snippet = lines[line_no - 1] if line_no <= len(lines) else ""
+                                self.issues.append(ReviewComment(
+                                    path=self.filepath,
+                                    start_line=line_no,
+                                    end_line=line_no,
+                                    category="security",
+                                    severity="critical",
+                                    content="subprocess được gọi với 'shell=True'. Điều này kích hoạt command shell và tiềm ẩn nguy cơ Command Injection nghiêm trọng khi nhận đầu vào từ bên ngoài.",
+                                    suggestion_code="subprocess.run(['command', 'arg1', 'arg2'], shell=False)",
+                                    existing_code=snippet.strip(),
+                                    thinking="shell=True passes commands through system shell, leading to command injection vulnerabilities.",
+                                ))
+
+                # Quy tắc Python: Cấm ghép chuỗi / f-string trong .execute() / .executemany() (Critical - Security)
+                if isinstance(node.func, ast.Attribute) and node.func.attr in ("execute", "executemany"):
+                    if node.args:
+                        first_arg = node.args[0]
+                        is_sqli_risk = False
+                        if isinstance(first_arg, ast.JoinedStr):
+                            is_sqli_risk = True
+                        elif isinstance(first_arg, ast.BinOp) and isinstance(first_arg.op, (ast.Mod, ast.Add)):
+                            is_sqli_risk = True
+
+                        if is_sqli_risk:
+                            line_no = getattr(node, "lineno", 1)
+                            snippet = lines[line_no - 1] if line_no <= len(lines) else ""
+                            self.issues.append(ReviewComment(
+                                path=self.filepath,
+                                start_line=line_no,
+                                end_line=line_no,
+                                category="security",
+                                severity="critical",
+                                content="Phát hiện truy vấn SQL được tạo bằng cách ghép chuỗi hoặc dùng f-string/% format trong .execute(). Cần sử dụng tham số hóa (Parameterized Queries) để ngăn chặn SQL Injection.",
+                                suggestion_code='cursor.execute("SELECT * FROM tbl WHERE id = %s", (user_id,))',
+                                existing_code=snippet.strip(),
+                                thinking="Direct string formatting in SQL statements leads to SQL Injection vulnerabilities.",
+                            ))
+
                 self.generic_visit(node)
 
         visitor = PythonRuleVisitor(file_path, lines)

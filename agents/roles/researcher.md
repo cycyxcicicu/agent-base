@@ -4,6 +4,9 @@ description: Trả lời một câu hỏi công nghệ cụ thể bằng brief c
 mode: all
 model_tier: standard
 bash: readonly
+bash_allow:
+  - "python scripts/gemini-research.py*"
+  - "python tools/gemini-api/cli.py*"
 web: allow
 edit_allow:
   - docs/notes/inbox/**

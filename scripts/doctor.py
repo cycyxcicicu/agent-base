@@ -64,12 +64,34 @@ def run_diagnostics():
     # --------------------------------------------------------------------------
     print("\n3️⃣ KIỂM TRA CÁC TỆP CẤU HÌNH CỤC BỘ (LOCAL SECRETS & COOKIES):")
     real_env = ROOT_DIR / ".env"
+    user_home_env = Path.home() / ".gemini" / ".env"
+    agent_home_env = Path.home() / ".agent-base" / ".env"
     real_cookies = ROOT_DIR / "cookies" / "all_accounts.json"
-    has_env = real_env.exists()
-    has_cookies = real_cookies.exists()
+    user_home_cookies = Path.home() / ".gemini" / "cookies" / "all_accounts.json"
 
-    print(f"  {info_mark(has_env)} Tệp môi trường (.env): {'ĐÃ CÓ CỤC BỘ' if has_env else 'CHƯA CÓ (Bình thường trên máy mới)'}")
-    print(f"  {info_mark(has_cookies)} Tệp tài khoản (cookies/all_accounts.json): {'ĐÃ CÓ CỤC BỘ' if has_cookies else 'CHƯA CÓ (Bình thường trên máy mới)'}")
+    has_env = real_env.exists() or user_home_env.exists() or agent_home_env.exists()
+    has_cookies = real_cookies.exists() or user_home_cookies.exists()
+
+    is_onedrive = any(cloud in str(ROOT_DIR).lower() for cloud in ["onedrive", "dropbox", "google drive", "box sync"])
+
+    if user_home_env.exists():
+        print(f"  {info_mark(True)} Tệp môi trường: ĐÃ CÓ AN TOÀN NGOÀI ONEDRIVE ({user_home_env})")
+    elif agent_home_env.exists():
+        print(f"  {info_mark(True)} Tệp môi trường: ĐÃ CÓ AN TOÀN NGOÀI ONEDRIVE ({agent_home_env})")
+    elif real_env.exists():
+        if is_onedrive:
+            print(f"  ⚠️ Tệp môi trường: ĐANG NẰM TRONG ONEDRIVE ({real_env}) - NGUY CƠ RÒ RỈ TOKEN ĐỒNG BỘ!")
+        else:
+            print(f"  {info_mark(True)} Tệp môi trường (.env): ĐÃ CÓ CỤC BỘ")
+    else:
+        print(f"  {info_mark(False)} Tệp môi trường (.env): CHƯA CÓ (Bình thường trên máy mới)")
+
+    if user_home_cookies.exists():
+        print(f"  {info_mark(True)} Tệp tài khoản cookies: ĐÃ CÓ AN TOÀN NGOÀI ONEDRIVE ({user_home_cookies})")
+    elif real_cookies.exists():
+        print(f"  {info_mark(True)} Tệp tài khoản (cookies/all_accounts.json): ĐÃ CÓ CỤC BỘ")
+    else:
+        print(f"  {info_mark(False)} Tệp tài khoản (cookies/all_accounts.json): CHƯA CÓ (Bình thường trên máy mới)")
 
     # --------------------------------------------------------------------------
     # MỤC 4: HƯỚNG DẪN ĐIỀN HOẶC KHÔNG ĐIỀN (TÙY CHỌN NGƯỜI DÙNG)
@@ -77,10 +99,12 @@ def run_diagnostics():
     print("\n4️⃣ HƯỚNG DẪN CẤU HÌNH DÀNH CHO NGƯỜI DÙNG MỚI:")
     if not has_env and not has_cookies:
         print("  📌 TRƯỜNG HỢP A: BẠN MUỐN DÙNG TÍNH NĂNG LIVE GEMINI DEEP RESEARCH / MULTI-ACCOUNT")
-        print("     1. Sao chép mẫu: copy .env.example .env")
-        print("     2. Điền token của bạn vào .env: GEMINI_SECURE_1PSID=... và GEMINI_SECURE_1PSIDTS=...")
-        print("     3. (Hoặc) Sao chép: copy cookies\\all_accounts.example.json cookies\\all_accounts.json")
-        print("     4. Kiểm tra tài khoản bằng lệnh: python tools/cookie_rotation/account_manager.py --status\n")
+        print("     [KHUYẾN NGHỊ BẢO MẬT: LƯU TRỮ NGOÀI ONEDRIVE ĐỂ CHỐNG LỘ BÍ MẬT]")
+        print(f"     1. Tạo thư mục an toàn: mkdir \"{Path.home() / '.gemini'}\"")
+        print(f"     2. Sao chép mẫu cấu hình: copy .env.example \"{user_home_env}\"")
+        print("     3. Điền token của bạn vào file trên: GEMINI_SECURE_1PSID=... và GEMINI_SECURE_1PSIDTS=...")
+        print(f"     4. (Hoặc sao chép cookies): copy cookies\\all_accounts.example.json \"{user_home_cookies}\"")
+        print("     5. Kiểm tra tài khoản bằng lệnh: python tools/cookie_rotation/account_manager.py --status\n")
         
         print("  💡 TRƯỜNG HỢP B: BẠN KHÔNG MUỐN ĐIỀN BẤT KỲ THÔNG TIN NÀO (CHẾ ĐỘ TỰ DO / OFFLINE)")
         print("     - BẠN KHÔNG CẦN LÀM GÌ CẢ! Hệ thống được thiết kế hoàn toàn tự chủ.")
