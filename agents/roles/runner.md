@@ -4,25 +4,26 @@ description: Terminal Runner. Chỉ chạy lệnh build, test, lint, kiểm tra 
 mode: all
 bash: readonly
 bash_allow:
-  - "*scripts/merge-gate*"
-  - "*scripts/sync-adapters*"
-  - "*scripts/show-permissions*"
-  - "*scripts/check-skills*"
-  - "*scripts/detect-project*"
-  - python*
-  - python3*
-  - npm test*
-  - npm run test*
-  - npm run lint*
-  - npm run build*
-  - npx tsc --noEmit*
-  - pytest*
-  - python -m pytest*
-  - ruff check*
-  - dotnet test*
-  - dotnet build*
-  - dotnet format --verify-no-changes*
-  - powershell*
+  - "python scripts/merge-gate.py*"
+  - "python scripts/sync-adapters.py*"
+  - "python scripts/show-permissions.py*"
+  - "python scripts/check-skills.py*"
+  - "python scripts/detect-project.py*"
+  - "python scripts/doctor.py*"
+  - "python -m unittest*"
+  - "python -m pytest*"
+  - "python3 -m unittest*"
+  - "python3 -m pytest*"
+  - "pytest*"
+  - "npm test*"
+  - "npm run test*"
+  - "npm run lint*"
+  - "npm run build*"
+  - "npx tsc --noEmit*"
+  - "ruff check*"
+  - "dotnet test*"
+  - "dotnet build*"
+  - "dotnet format --verify-no-changes*"
   - mvnw*
   - .\mvnw.cmd*
   - ./mvnw*

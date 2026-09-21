@@ -82,8 +82,16 @@ async def rotate_and_save_1psidts(
             if not new_1psidts:
                 return None
 
-        # 1. Cập nhật file .env (ở agent-base hoặc fteck)
-        env_paths = [AGENT_BASE_DIR / ".env", AGENT_BASE_DIR.parent / ".env"]
+        # 1. Cập nhật file .env (ưu tiên ngoài OneDrive: ~/.gemini/.env hoặc GEMINI_ENV_FILE)
+        user_home_env = Path.home() / ".gemini" / ".env"
+        env_paths = []
+        if os.environ.get("GEMINI_ENV_FILE"):
+            env_paths.append(Path(os.environ["GEMINI_ENV_FILE"]))
+        if user_home_env.exists():
+            env_paths.append(user_home_env)
+        for p in [AGENT_BASE_DIR / ".env", AGENT_BASE_DIR.parent / ".env"]:
+            if p.exists() and p not in env_paths:
+                env_paths.append(p)
         for env_path in env_paths:
             if env_path.exists():
                 env_content = env_path.read_text(encoding="utf-8")

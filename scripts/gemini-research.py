@@ -10,8 +10,9 @@ import json
 import time
 import subprocess
 import argparse
+import secrets
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Optional
 
 # Đảm bảo UTF-8 cho Windows terminal
 if hasattr(sys.stdout, 'reconfigure'):
@@ -22,16 +23,21 @@ if hasattr(sys.stderr, 'reconfigure'):
 ROOT_DIR = Path(__file__).resolve().parent.parent
 GRANT_FILE = Path.home() / ".gemini" / "search_grant.json"
 
-def check_search_grant() -> Tuple[bool, str]:
+def check_search_grant(provided_token: Optional[str] = None) -> Tuple[bool, str]:
     if not GRANT_FILE.exists():
-        return False, "Chưa có file ủy quyền."
+        return False, "Chưa có phiên ủy quyền nào từ con người."
     try:
         data = json.loads(GRANT_FILE.read_text(encoding="utf-8"))
         expires_at = data.get("expires_at", 0)
-        if time.time() < expires_at:
-            rem_mins = max(0, int((expires_at - time.time()) / 60))
-            return True, f"Ủy quyền con người hợp lệ (còn ~{rem_mins} phút)."
-        return False, "Ủy quyền con người đã hết hạn."
+        expected_token = data.get("token")
+        if time.time() >= expires_at:
+            return False, "Phiên ủy quyền con người đã hết hạn."
+        if not expected_token:
+            return False, "Dữ liệu ủy quyền không hợp lệ."
+        if not provided_token or provided_token.strip() != expected_token.strip():
+            return False, "Mã ủy quyền (--grant-token) không khớp hoặc bị thiếu."
+        rem_mins = max(0, int((expires_at - time.time()) / 60))
+        return True, f"Ủy quyền con người hợp lệ (còn ~{rem_mins} phút)."
     except Exception as e:
         return False, f"Lỗi đọc ủy quyền: {e}"
 # 1. Ưu tiên đường dẫn nội bộ bên trong chính agent-base (Đảm bảo tính độc lập khi copy sang dự án khác)
@@ -58,14 +64,14 @@ def get_cookies_path(custom_path=None):
         target = Path(os.environ["GEMINI_COOKIES_FILE"])
     elif USER_HOME_COOKIES.exists():
         target = USER_HOME_COOKIES
-    elif INTERNAL_COOKIES.exists():
-        target = INTERNAL_COOKIES
     elif EXTERNAL_COOKIES.exists():
         target = EXTERNAL_COOKIES
+    elif INTERNAL_COOKIES.exists():
+        target = INTERNAL_COOKIES
     else:
         target = USER_HOME_COOKIES
-        print(f"⚠️ Cảnh báo: Chưa tìm thấy file cookies tại {USER_HOME_COOKIES} hoặc {INTERNAL_COOKIES}")
-        print(f"Khuyến nghị bảo mật: Lưu cookies tại ngoài OneDrive ({USER_HOME_COOKIES}) hoặc fteck/gemini_cookies.json.")
+        print(f"⚠️ Cảnh báo: Chưa tìm thấy file cookies tại {USER_HOME_COOKIES}")
+        print(f"Khuyến nghị bảo mật: Lưu cookies tại ngoài OneDrive ({USER_HOME_COOKIES}).")
     return str(target)
 
 def run_gemini_cli(cli_args):
@@ -79,8 +85,10 @@ def run_gemini_cli(cli_args):
 
 def main():
     parser = argparse.ArgumentParser(description="Điều phối Gemini-API & Deep Research với cổng an toàn Ask-Before-Search")
-    parser.add_argument("--cookies", help="Đường dẫn file cookies (Mặc định: fteck/gemini_cookies.json)")
+    parser.add_argument("--cookies", help="Đường dẫn file cookies (Mặc định: ~/.gemini/gemini_cookies.json ngoài OneDrive)")
     parser.add_argument("--confirm", "-y", action="store_true", help="Xác nhận người dùng đã phê duyệt gửi request ra ngoài")
+    
+    parser.add_argument("--grant-token", help="Mã xác thực ủy quyền con người nhận được khi chạy lệnh grant")
     
     subparsers = parser.add_subparsers(dest="subcommand", required=True)
 
@@ -105,12 +113,14 @@ def main():
     ask_parser.add_argument("--model", default="gemini-flash", help="Mô hình sử dụng (mặc định: gemini-flash)")
     ask_parser.add_argument("--rotate", action="store_true", help="Tự động xoay vòng tài khoản nếu gặp lỗi/hết hạn")
     ask_parser.add_argument("--confirm", "-y", action="store_true", help="Xác nhận người dùng đã phê duyệt")
+    ask_parser.add_argument("--grant-token", help="Mã xác thực ủy quyền con người nhận được khi chạy lệnh grant")
 
     # Subcommand: research-send
     r_send = subparsers.add_parser("research-send", help="Khởi tạo tiến trình Gemini Deep Research")
     r_send.add_argument("prompt", help="Chủ đề cần nghiên cứu sâu")
     r_send.add_argument("--model", default="gemini-pro", help="Mô hình nghiên cứu (mặc định: gemini-pro)")
     r_send.add_argument("--confirm", "-y", action="store_true", help="Xác nhận người dùng đã phê duyệt")
+    r_send.add_argument("--grant-token", help="Mã xác thực ủy quyền con người nhận được khi chạy lệnh grant")
 
     # Subcommand: research-check
     r_check = subparsers.add_parser("research-check", help="Kiểm tra trạng thái tiến trình Deep Research")
@@ -142,13 +152,21 @@ def main():
         ans = input("❓ Bạn có đồng ý cho phép Agent tự động gửi truy vấn ra Internet trong thời gian này? [y/N]: ").strip().lower()
         if ans in ["y", "yes"]:
             GRANT_FILE.parent.mkdir(parents=True, exist_ok=True)
+            token = secrets.token_hex(16)
             grant_data = {
+                "token": token,
                 "granted_at": time.time(),
                 "expires_at": time.time() + mins * 60,
                 "duration_minutes": mins
             }
             GRANT_FILE.write_text(json.dumps(grant_data, indent=2), encoding="utf-8")
-            print(f"✅ Đã cấp quyền tra cứu thành công (có hiệu lực trong {mins} phút tại {GRANT_FILE}).\n")
+            try:
+                os.chmod(str(GRANT_FILE), 0o600)
+            except Exception:
+                pass
+            print(f"✅ Đã cấp quyền tra cứu thành công (có hiệu lực trong {mins} phút).")
+            print(f"🔑 Mã ủy quyền phiên (Grant Token): {token}")
+            print(f"👉 Khi gọi lệnh phi tương tác, Agent BẮT BUỘC phải truyền kèm: --grant-token {token}\n")
             sys.exit(0)
         else:
             print("❌ Đã hủy thao tác cấp quyền.\n")
@@ -196,22 +214,21 @@ def main():
                 sys.exit(2)
         else:
             # 2. Chạy phi tương tác (Agent chạy subshell, background runner)
-            # Chống Agent tự gán --confirm để lách: Bắt buộc phải có ủy quyền con người còn hạn hoặc biến override môi trường
-            is_granted, grant_msg = check_search_grant()
-            emergency_override = os.environ.get("EMERGENCY_UNATTENDED_SEARCH_OVERRIDE") == "1"
+            # Chống Agent tự gán --confirm hoặc tự chế file: Bắt buộc phải có token hợp lệ
+            grant_token = getattr(args, "grant_token", None)
+            is_granted, grant_msg = check_search_grant(grant_token)
 
             if is_granted:
                 print(f"🟢 [ASK-BEFORE-SEARCH] Tác vụ tự động được chấp thuận: {grant_msg}")
-            elif emergency_override:
-                print("⚠️ [ASK-BEFORE-SEARCH] Chạy tự động qua biến ghi đè EMERGENCY_UNATTENDED_SEARCH_OVERRIDE.")
             else:
                 print("\n🛑 [CỔNG BẢO VỆ TRA CỨU WEB: ASK-BEFORE-SEARCH - TỪ CHỐI]")
                 print(f"👉 Thao tác: Gửi truy vấn ra ngoài ({args.subcommand})")
                 print(f"👉 Nội dung: \"{args.prompt}\"")
-                print("\n❌ BỊ CHẶN: Phát hiện tác vụ chạy phi tương tác (Agent/Script tự động).")
+                print(f"\n❌ BỊ CHẶN: {grant_msg}")
                 print("Cờ --confirm tự khai báo không được chấp nhận nhằm ngăn Agent tự ý gửi dữ liệu ra ngoài.")
-                print("Để cho phép Agent tra cứu trong phiên làm việc, người dùng cần mở terminal chạy lệnh ủy quyền:")
-                print("👉 python scripts/gemini-research.py grant --minutes 30\n")
+                print("Để cho phép Agent tra cứu trong phiên làm việc, người dùng cần mở terminal tương tác chạy lệnh:")
+                print("👉 python scripts/gemini-research.py grant --minutes 30")
+                print("Sau đó cung cấp mã token nhận được cho Agent qua cờ --grant-token <token>.\n")
                 sys.exit(2)
 
     # Xây dựng lệnh chuyển tiếp đến cli.py

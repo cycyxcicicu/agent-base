@@ -3,7 +3,9 @@ name: ba
 description: Business Analyst (BA). Phân tích chuyên sâu tài liệu nghiệp vụ, bóc tách yêu cầu chức năng (R-xxx) & quy tắc nghiệp vụ (BR-xxx), mô hình hóa luồng Use Cases, xây dựng từ điển thuật ngữ (Domain Glossary) và làm rõ các điểm mâu thuẫn. Không sửa code.
 mode: all
 model_tier: standard
-bash: full
+bash: readonly
+bash_allow:
+  - "python scripts/convert-docs.py*"
 edit_allow:
   - docs/notes/inbox/**
   - docs/converted/**

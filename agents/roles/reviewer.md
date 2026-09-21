@@ -5,8 +5,8 @@ mode: all
 model_tier: strong
 bash: readonly
 bash_allow:
-  - "*scripts/merge-gate*"
-  - "*scripts/sync-adapters*"
+  - "python scripts/merge-gate.py*"
+  - "python scripts/sync-adapters.py*"
   - "python scripts/cso.py*"
   - "python agent_core/eval/code_reviewer.py*"
   - "python -m unittest*"

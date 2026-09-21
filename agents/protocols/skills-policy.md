@@ -48,9 +48,9 @@ Lưu ý:
 Nguyên tắc: **ít vai nhất có thể**, và phân quyền thực thi script theo nguyên tắc đặc quyền tối thiểu (Least Privilege):
 - **Skill KHÔNG có script** (Markdown thuần, tài liệu, sơ đồ HTML/SVG): Gán cho các vai phù hợp theo bảng phân công bên dưới.
 - **Skill CÓ script** (chứa mã thực thi Python, Node.js, Shell):
-  1. Vai có `bash: full` (`dev`, `sre`, `security`, `devops`): Được phép chạy sau khi đã đọc và duyệt mã nguồn script.
-  2. Vai có `bash: readonly` (`reviewer`, `designer`, `researcher`): **BẮT BUỘC** phải được cấp quyền chạy đúng script đó qua danh sách trắng tường minh `bash_allow` trong front-matter của vai trò (ví dụ `python scripts/cso.py*`, `python scripts/gemini-research.py*`). Tuyệt đối không cấp `bash: full` hay `python*` mở rộng chỉ để chạy một script.
-  3. Vai có `bash: none` (`ba`, `analyst`, `writer`): **TUYỆT ĐỐI KHÔNG** được gán skill có script. Nếu các vai này cần kết quả từ script, phải yêu cầu vai kỹ thuật (`dev`, `researcher`) chạy và bàn giao kết quả qua tài liệu.
+  1. Vai có `bash: full` (`dev`, `sre`, `security`, `devops`, `qa`, `dba`): Được phép chạy sau khi đã đọc và duyệt mã nguồn script.
+  2. Vai có `bash: readonly` và có script whitelist (`ba`, `reviewer`, `designer`, `researcher`, `runner`): **BẮT BUỘC** phải được cấp quyền chạy đúng script đó qua danh sách trắng tường minh `bash_allow` trong front-matter của vai trò (ví dụ `python scripts/convert-docs.py*`, `python scripts/merge-gate.py*`, `python scripts/gemini-research.py*`). Tuyệt đối không cấp `bash: full` hay `python*` mở rộng chỉ để chạy một script.
+  3. Vai có `bash: readonly` không có script whitelist (`analyst`, `writer`): **TUYỆT ĐỐI KHÔNG** được gán skill có script. Nếu các vai này cần kết quả từ script, phải yêu cầu vai kỹ thuật (`dev`, `researcher`, `runner`) chạy và bàn giao kết quả qua tài liệu.
 
 | Loại skill | Vai nên dùng |
 |---|---|

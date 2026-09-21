@@ -10,19 +10,26 @@ permission:
     "docs/requirements/**": allow
     "tasks/**": allow
   bash:
-    "*": allow
-    "npm publish*": ask
-    "docker push*": ask
-    "twine upload*": ask
-    "terraform apply*": ask
-    "kubectl apply*": ask
-    "kubectl delete*": ask
-    "docker system prune*": ask
-    "git checkout .": ask
-    "git restore .": ask
-    "*drop table*": ask
-    "*drop database*": ask
-    "*truncate*": ask
+    "*": deny
+    "git status*": allow
+    "git diff*": allow
+    "git log*": allow
+    "git show*": allow
+    "git blame*": allow
+    "git ls-files*": allow
+    "git rev-parse*": allow
+    "git branch --list*": allow
+    "git branch -a*": allow
+    "git branch -v*": allow
+    "git merge-base*": allow
+    "git rev-list*": allow
+    "git shortlog*": allow
+    "git grep*": allow
+    "python scripts/convert-docs.py*": allow
+    "*;*": deny
+    "*&&*": deny
+    "*||*": deny
+    "*|*": deny
     "git add*": deny
     "git commit*": deny
     "git push*": deny
@@ -98,6 +105,52 @@ permission:
     "git -c * merge*": deny
     "git -c * rebase*": deny
     "git -c * reset*": deny
+    "git --* commit*": deny
+    "git --* push*": deny
+    "git --* merge*": deny
+    "git --* rebase*": deny
+    "git --* reset*": deny
+    "git --* checkout*": deny
+    "git --* switch*": deny
+    "git --* branch*": deny
+    "git --* tag*": deny
+    "git --* restore*": deny
+    "git --* rm*": deny
+    "git --* mv*": deny
+    "git --* clean*": deny
+    "git --* config*": deny
+    "git -* commit*": deny
+    "git -* push*": deny
+    "git -* merge*": deny
+    "git -* rebase*": deny
+    "git -* reset*": deny
+    "git -* checkout*": deny
+    "git -* switch*": deny
+    "git -* branch*": deny
+    "git -* tag*": deny
+    "*&&*git commit*": deny
+    "*;*git commit*": deny
+    "*|*git commit*": deny
+    "*||*git commit*": deny
+    "*&&*git push*": deny
+    "*;*git push*": deny
+    "*|*git push*": deny
+    "*||*git push*": deny
+    "*&&*git reset*": deny
+    "*;*git reset*": deny
+    "*|*git reset*": deny
+    "*&&*git rebase*": deny
+    "*;*git rebase*": deny
+    "*|*git rebase*": deny
+    "*&&*git merge*": deny
+    "*;*git merge*": deny
+    "*|*git merge*": deny
+    "*&&*git checkout*": deny
+    "*;*git checkout*": deny
+    "*&&*git switch*": deny
+    "*;*git switch*": deny
+    "*&&*git branch*": deny
+    "*;*git branch*": deny
     "git push --force*": deny
     "git push -f*": deny
     "git reset --hard*": deny
@@ -143,16 +196,13 @@ permission:
     "perl* -e*": deny
     "cmd /c git *": deny
     "cmd.exe /c git *": deny
-    "git branch --list*": allow
-    "git branch -a*": allow
-    "git branch -v*": allow
-    "git branch --show-current*": allow
-    "git worktree list*": allow
-    "git tag -l*": allow
-    "git tag --list*": allow
-    "git stash list*": allow
-    "git config --get*": allow
-    "git config --list*": allow
+    "*&&*rm *": deny
+    "*;*rm *": deny
+    "*|*rm *": deny
+    "*&&*Remove-Item*": deny
+    "*;*Remove-Item*": deny
+    "*&&*del *": deny
+    "*;*del *": deny
   webfetch: deny
   websearch: deny
   codesearch: deny

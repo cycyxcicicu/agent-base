@@ -138,10 +138,15 @@ class AccountPool:
         return user_home_cookies
 
     def _detect_env_path(self) -> Path:
+        if os.environ.get("GEMINI_ENV_FILE"):
+            return Path(os.environ["GEMINI_ENV_FILE"])
+        user_home_env = Path.home() / ".gemini" / ".env"
+        if user_home_env.exists():
+            return user_home_env
         for p in [AGENT_BASE_DIR / ".env", AGENT_BASE_DIR.parent / ".env"]:
             if p.exists():
                 return p
-        return AGENT_BASE_DIR / ".env"
+        return user_home_env
 
     def _load_all_accounts(self):
         # 1. Nạp từ all_accounts.json nếu có
@@ -371,8 +376,8 @@ if __name__ == "__main__":
             print("📋 Bể tài khoản phát hiện: 0 tài khoản.")
             print("⚠️ CHƯA PHÁT HIỆN TÀI KHOẢN NÀO TRONG BỂ (POOL).")
             print("  👉 Nếu bạn muốn kích hoạt tính năng Live Gemini Deep Research / Multi-Account:")
-            print("     1. Sao chép '.env.example' thành '.env' và điền token GEMINI_SECURE_1PSID")
-            print("     2. Hoặc sao chép 'cookies/all_accounts.example.json' thành 'cookies/all_accounts.json' và dán cookies")
+            print("     1. Khuyến nghị an toàn: Lưu cấu hình tại '~/.gemini/.env' hoặc điền token GEMINI_SECURE_1PSID vào '.env'")
+            print("     2. Hoặc lưu cookies tại '~/.gemini/cookies/all_accounts.json' (ngoài thư mục đồng bộ OneDrive)")
             print("  💡 Nếu bạn KHÔNG điền tài khoản (Chế độ Offline / Tự do):")
             print("     - Toàn bộ hệ thống kỹ nghệ Agent-Base (DAG Frontier, Red-team Scanner, Design Tokens,")
             print("       WCAG Linter, Sổ cái nợ DebtLedger, Ingest XLSX/Web, Simulator Đa Agent) vẫn chạy 100% hoàn hảo!")

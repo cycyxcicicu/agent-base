@@ -5,8 +5,9 @@ mode: all
 model_tier: standard
 bash: readonly
 bash_allow:
-  - "node *ui-ux-pro-max*"
-  - "python *ui-ux-pro-max*"
+  - "python .agents/skills/ui-ux-pro-max/scripts/search.py*"
+  - "python3 .agents/skills/ui-ux-pro-max/scripts/search.py*"
+  - "node .agents/skills/ui-ux-pro-max/scripts/*.cjs*"
 edit_allow:
   - docs/notes/inbox/**
   - docs/design/**

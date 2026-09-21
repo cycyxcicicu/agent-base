@@ -23,11 +23,15 @@ permission:
     "git rev-list*": allow
     "git shortlog*": allow
     "git grep*": allow
-    "*scripts/merge-gate*": allow
-    "*scripts/sync-adapters*": allow
+    "python scripts/merge-gate.py*": allow
+    "python scripts/sync-adapters.py*": allow
     "python scripts/cso.py*": allow
     "python agent_core/eval/code_reviewer.py*": allow
     "python -m unittest*": allow
+    "*;*": deny
+    "*&&*": deny
+    "*||*": deny
+    "*|*": deny
     "git add*": deny
     "git commit*": deny
     "git push*": deny
@@ -103,6 +107,52 @@ permission:
     "git -c * merge*": deny
     "git -c * rebase*": deny
     "git -c * reset*": deny
+    "git --* commit*": deny
+    "git --* push*": deny
+    "git --* merge*": deny
+    "git --* rebase*": deny
+    "git --* reset*": deny
+    "git --* checkout*": deny
+    "git --* switch*": deny
+    "git --* branch*": deny
+    "git --* tag*": deny
+    "git --* restore*": deny
+    "git --* rm*": deny
+    "git --* mv*": deny
+    "git --* clean*": deny
+    "git --* config*": deny
+    "git -* commit*": deny
+    "git -* push*": deny
+    "git -* merge*": deny
+    "git -* rebase*": deny
+    "git -* reset*": deny
+    "git -* checkout*": deny
+    "git -* switch*": deny
+    "git -* branch*": deny
+    "git -* tag*": deny
+    "*&&*git commit*": deny
+    "*;*git commit*": deny
+    "*|*git commit*": deny
+    "*||*git commit*": deny
+    "*&&*git push*": deny
+    "*;*git push*": deny
+    "*|*git push*": deny
+    "*||*git push*": deny
+    "*&&*git reset*": deny
+    "*;*git reset*": deny
+    "*|*git reset*": deny
+    "*&&*git rebase*": deny
+    "*;*git rebase*": deny
+    "*|*git rebase*": deny
+    "*&&*git merge*": deny
+    "*;*git merge*": deny
+    "*|*git merge*": deny
+    "*&&*git checkout*": deny
+    "*;*git checkout*": deny
+    "*&&*git switch*": deny
+    "*;*git switch*": deny
+    "*&&*git branch*": deny
+    "*;*git branch*": deny
     "git push --force*": deny
     "git push -f*": deny
     "git reset --hard*": deny
@@ -148,6 +198,13 @@ permission:
     "perl* -e*": deny
     "cmd /c git *": deny
     "cmd.exe /c git *": deny
+    "*&&*rm *": deny
+    "*;*rm *": deny
+    "*|*rm *": deny
+    "*&&*Remove-Item*": deny
+    "*;*Remove-Item*": deny
+    "*&&*del *": deny
+    "*;*del *": deny
   webfetch: deny
   websearch: deny
   codesearch: deny

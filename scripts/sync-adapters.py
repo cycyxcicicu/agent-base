@@ -65,7 +65,10 @@ danger_deny = [
     'bash* -c*', 'sh* -c*', 'zsh* -c*',
     'node* -e*', 'node* --eval*',
     'ruby* -e*', 'perl* -e*',
-    'cmd /c git *', 'cmd.exe /c git *'
+    'cmd /c git *', 'cmd.exe /c git *',
+    '*&&*rm *', '*;*rm *', '*|*rm *',
+    '*&&*Remove-Item*', '*;*Remove-Item*',
+    '*&&*del *', '*;*del *'
 ]
 
 
@@ -85,6 +88,19 @@ git_write_deny = [
     'git -C * checkout*', 'git -C * switch*', 'git -C * branch*', 'git -C * tag*', 'git -C * restore*',
     'git -C * rm*', 'git -C * mv*', 'git -C * clean*', 'git -C * apply*', 'git -C * config*',
     'git -c * commit*', 'git -c * push*', 'git -c * merge*', 'git -c * rebase*', 'git -c * reset*',
+    'git --* commit*', 'git --* push*', 'git --* merge*', 'git --* rebase*', 'git --* reset*',
+    'git --* checkout*', 'git --* switch*', 'git --* branch*', 'git --* tag*', 'git --* restore*',
+    'git --* rm*', 'git --* mv*', 'git --* clean*', 'git --* config*',
+    'git -* commit*', 'git -* push*', 'git -* merge*', 'git -* rebase*', 'git -* reset*',
+    'git -* checkout*', 'git -* switch*', 'git -* branch*', 'git -* tag*',
+    '*&&*git commit*', '*;*git commit*', '*|*git commit*', '*||*git commit*',
+    '*&&*git push*', '*;*git push*', '*|*git push*', '*||*git push*',
+    '*&&*git reset*', '*;*git reset*', '*|*git reset*',
+    '*&&*git rebase*', '*;*git rebase*', '*|*git rebase*',
+    '*&&*git merge*', '*;*git merge*', '*|*git merge*',
+    '*&&*git checkout*', '*;*git checkout*',
+    '*&&*git switch*', '*;*git switch*',
+    '*&&*git branch*', '*;*git branch*',
     'git push --force*', 'git push -f*', 'git reset --hard*',
     'command git *', '/usr/bin/git *', '"git" *', "'git' *"
 ]
@@ -181,11 +197,14 @@ def build_kilo(meta: dict, body: str, src_rel: str) -> str:
             lines.append(f'    "{c}": allow')
         for c in get_list(meta, 'bash_allow'):
             lines.append(f'    "{c}": allow')
-        for c in (git_write_deny + danger_deny + get_list(meta, 'bash_deny')):
+        chain_deny = ['*;*', '*&&*', '*||*', '*|*']
+        for c in (chain_deny + git_write_deny + danger_deny + get_list(meta, 'bash_deny')):
             lines.append(f'    "{c}": deny')
     elif bash == 'full':
         extra_ask = get_list(meta, 'bash_ask')
-        extra_deny = get_list(meta, 'bash_deny')
+        extra_deny = list(get_list(meta, 'bash_deny'))
+        if role_name != 'researcher':
+            extra_deny.insert(0, '*scripts/gemini-research*')
         lines.append('  bash:')
         lines.append('    "*": allow')
         for c in (danger_ask + extra_ask):
@@ -237,7 +256,7 @@ def main():
 
     # Generate .claude/settings.json to enforce deny rules on Claude Code
     # Use tool specifiers Bash(...) and PowerShell(...) strictly; no bare strings
-    claude_deny = [f"Bash({c})" for c in (git_write_deny + danger_deny)] + [f"PowerShell({c})" for c in danger_deny]
+    claude_deny = [f"Bash({c})" for c in (git_write_deny + danger_deny)] + [f"PowerShell({c})" for c in (git_write_deny + danger_deny)]
     claude_settings = {
         "$schema": "https://json.schemastore.org/claude-code-settings.json",
         "permissions": {
