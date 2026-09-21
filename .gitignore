@@ -1,9 +1,14 @@
-# Bí mật
+# Bí mật & Tokens xác thực (Tuyệt đối không commit lên Git)
 .env
 .env.*
 !.env.example
 *.pem
 *.key
+cookies/*.json
+!cookies/*.example.json
+!cookies/all_accounts.example.json
+gemini_cookies.json
+!gemini_cookies.example.json
 
 # Phụ thuộc và build
 node_modules/
@@ -25,3 +30,18 @@ Thumbs.db
 
 # Thư mục worktree nằm cạnh repo (ngoài repo), phòng khi ai đó tạo trong repo
 *-worktrees/
+
+# AI tools, IDE and local config (per the GitFlow lecture)
+.claude/
+.codex/
+.cursor/
+.vscode/
+.idea/
+.env.local
+target/
+*.class
+
+# Third-party cloned repositories in tools/ (managed via scripts/fetch-skills.py)
+tools/gemini-api/
+
+

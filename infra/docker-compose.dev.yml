@@ -1,0 +1,71 @@
+services:
+  # Cơ sở dữ liệu quan hệ PostgreSQL 16
+  postgres:
+    image: postgres:16-alpine
+    container_name: local-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev_secret_change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-app_db}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-app} -d ${POSTGRES_DB:-app_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Caching & Khóa phân tán Redis 7
+  redis:
+    image: redis:7-alpine
+    container_name: local-redis
+    restart: unless-stopped
+    command: >
+      redis-server 
+      --requirepass "${REDIS_PASSWORD:-dev_secret_change_me}"
+      --appendonly no 
+      --maxmemory 256mb 
+      --maxmemory-policy allkeys-lru
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"${REDIS_PASSWORD:-dev_secret_change_me}\" ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Hàng đợi tin nhắn RabbitMQ 3 (Kèm giao diện quản trị Management Web UI)
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: local-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-app}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-dev_secret_change_me}
+    ports:
+      - "127.0.0.1:5672:5672"    # AMQP protocol
+      - "127.0.0.1:15672:15672"  # Web Management UI: http://localhost:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+networks:
+  default:
+    name: local-dev-network

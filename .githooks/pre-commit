@@ -2,14 +2,25 @@
 # pre-commit: enforce the repo's git rules (see agents/protocols/git-rules.md).
 . "$(dirname "$0")/_common.sh"
 
+git_dir=$(git rev-parse --git-dir)
 branch=$(git symbolic-ref --short -q HEAD)
 
-# Rule 1: agents never commit on protected branches.
-if is_agent && is_protected "$branch"; then
-  fail "agents may not commit on '$branch'. Use a task branch (feat/T-xxx) in its own worktree."
+# Rule 1: AI agents never commit. They only read git and write a commit plan for the user.
+if is_agent; then
+  fail "agents may not commit. Write a commit plan in the task card (agents/protocols/commit-plan.md) and let the user run it."
 fi
 
-# Rule 2: never commit secret-like files (applies to everyone).
+# Rule 2: nobody commits straight onto main/master/develop/release/*, except finishing a merge.
+if [ -n "$branch" ] && is_protected "$branch" && [ ! -f "$git_dir/MERGE_HEAD" ] && [ "${ALLOW_PROTECTED_COMMIT:-}" != "1" ]; then
+  fail "direct commits on '$branch' are not allowed. Create <type>/<ticket>-<short-description> and open a Merge Request. One-off override: ALLOW_PROTECTED_COMMIT=1."
+fi
+
+# Rule 3: branch name (skipped while rebasing or on a detached HEAD).
+if [ -n "$branch" ] && ! is_protected "$branch" && [ ! -d "$git_dir/rebase-merge" ] && [ ! -d "$git_dir/rebase-apply" ]; then
+  valid_branch_name "$branch" || fail "branch '$branch' is not named <type>/<ticket>-<short-description> (type: feature bugfix hotfix fix chore refactor docs test devops, or release/<version>)."
+fi
+
+# Rule 4: never commit secret-like files.
 bad=$(git diff --cached --name-only --diff-filter=ACM | grep -E '(^|/)\.env($|\.)|\.pem$|\.key$|(^|/)id_rsa' | grep -v '\.env\.example$')
 if [ -n "$bad" ]; then
   echo "git-rules: refusing to commit secret-like files:" >&2
@@ -17,7 +28,7 @@ if [ -n "$bad" ]; then
   exit 1
 fi
 
-# Rule 3: no files over 5 MB (applies to everyone).
+# Rule 5: no files over 5 MB.
 git diff --cached --name-only --diff-filter=ACM | while IFS= read -r f; do
   size=$(git cat-file -s ":$f" 2>/dev/null || echo 0)
   if [ "$size" -gt 5242880 ]; then
@@ -26,13 +37,13 @@ git diff --cached --name-only --diff-filter=ACM | while IFS= read -r f; do
   fi
 done || exit 1
 
-# Rule 4: no secret-looking values in added lines (applies to everyone).
+# Rule 6: no secret-looking values in added lines.
 if git diff --cached -U0 | grep '^+' | grep -v '^+++' | grep -Eiq '(BEGIN [A-Z ]*PRIVATE KEY|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{20,}|(^|[^A-Za-z0-9])sk-[A-Za-z0-9]{20,}|(api[_-]?key|secret|token|passw(or)?d)[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9/+_-]{12,})'; then
-  fail "a staged line looks like a secret (key, token or password). Remove it, or if it is a false positive commit with --no-verify yourself (agents must not)."
+  fail "a staged line looks like a secret (key, token or password). Remove it. If it is a false positive, review it yourself and commit with --no-verify."
 fi
 
-# Rule 5: generated adapter files must match their sources.
-if git diff --cached --name-only | grep -Eq '^(agents/roles/|AGENTS\.md$|GEMINI\.md$|\.kilo/agents/|\.agents/rules/)'; then
+# Rule 7: generated adapter files must match their sources.
+if git diff --cached --name-only | grep -Eq '^(agents/roles/|agents/models\.txt$|AGENTS\.md$|GEMINI\.md$|\.kilo/agents/|\.agents/rules/|scripts/sync-adapters\.ps1$)'; then
   ps=$(command -v powershell.exe || command -v pwsh)
   if [ -n "$ps" ]; then
     "$ps" -NoProfile -ExecutionPolicy Bypass -File scripts/sync-adapters.ps1 -Check >/dev/null 2>&1 \

@@ -3,7 +3,7 @@ name: check
 on:
   pull_request:
   push:
-    branches: [main, integration]
+    branches: [main, develop, 'release/**']
 
 permissions:
   contents: read
@@ -20,20 +20,71 @@ jobs:
         shell: powershell
         run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/sync-adapters.ps1 -Check
 
-      - name: Merge gate (task branches only)
+      - name: Branch name and commit messages (pull requests only)
         if: github.event_name == 'pull_request'
         shell: powershell
         env:
           HEAD_REF: ${{ github.head_ref }}
           BASE_REF: ${{ github.base_ref }}
         run: |
-          if ($env:HEAD_REF -match '^(feat|fix|chore|docs)/(T-[A-Za-z0-9._-]+)$') {
-            $card = "tasks/$($Matches[2]).md"
+          $ok = $true
+          $branchRe = '^(feature|bugfix|hotfix|fix|chore|refactor|docs|test|devops)/[0-9]+-[a-z0-9][a-z0-9-]*$'
+          $releaseRe = '^release/[0-9]+\.[0-9]+\.[0-9]+'
+          if (($env:HEAD_REF -notmatch $branchRe) -and ($env:HEAD_REF -notmatch $releaseRe)) {
+            Write-Host "Bad branch name: $($env:HEAD_REF). Use <type>/<ticket>-<short-description> or release/<version>."
+            $ok = $false
+          }
+          $commitRe = '^(feat|fix|chore|refactor|docs|test|ci|build|perf)\([a-z0-9._/-]+\)!?: .+'
+          $subjects = @(git log --no-merges --format=%s "origin/$($env:BASE_REF)..origin/$($env:HEAD_REF)")
+          foreach ($s in $subjects) {
+            if ($s -match '^Revert ') { continue }
+            if (($s -notmatch $commitRe) -or ($s.Length -gt 72)) { Write-Host "Bad commit subject: $s"; $ok = $false }
+          }
+          if (-not $ok) { exit 1 }
+          Write-Host "Branch name and $($subjects.Count) commit subject(s) are valid."
+
+      - name: Risk approval for reverts and mass deletions (pull requests only)
+        if: github.event_name == 'pull_request'
+        shell: powershell
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          $range = "origin/$($env:BASE_REF)..origin/$($env:HEAD_REF)"
+          $deleted = @(git diff --diff-filter=D --name-only "origin/$($env:BASE_REF)...origin/$($env:HEAD_REF)").Count
+          $subjects = @(git log --no-merges --format=%s $range)
+          $isRevert = @($subjects | Where-Object { $_ -match '(?i)revert|hoan tac' }).Count -gt 0
+          if (($deleted -ge 10) -or $isRevert) {
+            $trailers = @(git log --no-merges --format=%B $range | Where-Object { $_ -match '^Risk-Approved: RK-[0-9]+$' })
+            if ($trailers.Count -eq 0) {
+              Write-Host "Risky change ($deleted deleted files, revert=$isRevert) but no 'Risk-Approved: RK-<n>' line in any commit. See agents/protocols/risk-gate.md."
+              exit 1
+            }
+            foreach ($t in $trailers) {
+              $n = $t -replace '^Risk-Approved: RK-', ''
+              $f = "docs/risk/RK-$n.md"
+              if (-not (Test-Path $f)) { Write-Host "$f not found."; exit 1 }
+              if (-not (Select-String -Path $f -Pattern '^Status: APPROVED$' -Quiet)) { Write-Host "$f is not 'Status: APPROVED'."; exit 1 }
+            }
+            Write-Host "Risk approval found for this risky change."
+          } else {
+            Write-Host "No revert and $deleted deleted file(s): nothing to approve."
+          }
+
+      - name: Merge gate (branches named after a ticket)
+        if: github.event_name == 'pull_request'
+        shell: powershell
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if ($env:HEAD_REF -match '^[a-z]+/([0-9]+)-') {
+            $card = "tasks/T-$($Matches[1]).md"
             if (Test-Path $card) {
               powershell -NoProfile -ExecutionPolicy Bypass -File scripts/merge-gate.ps1 -Branch "origin/$($env:HEAD_REF)" -Card $card -Base "origin/$($env:BASE_REF)"
               exit $LASTEXITCODE
             }
             Write-Host "No task card $card, skipping merge gate."
           } else {
-            Write-Host "Not a task branch, skipping merge gate."
+            Write-Host "Branch is not named after a ticket, skipping merge gate."
           }

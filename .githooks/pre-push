@@ -1,5 +1,5 @@
 #!/bin/sh
-# pre-push: protect main/master/integration (see agents/protocols/git-rules.md).
+# pre-push: protect main/master/develop/release/* (see agents/protocols/git-rules.md).
 . "$(dirname "$0")/_common.sh"
 
 zero=0000000000000000000000000000000000000000
@@ -7,19 +7,28 @@ zero=0000000000000000000000000000000000000000
 while read -r local_ref local_sha remote_ref remote_sha; do
   case "$remote_ref" in
     refs/heads/*) ;;
-    *) continue ;;
+    *) continue ;;   # tags and other refs are not checked here
   esac
   branch=${remote_ref#refs/heads/}
-  is_protected "$branch" || continue
 
-  if is_agent; then
-    fail "agents may not push to '$branch'. Push your task branch and let the user merge."
+  if is_protected "$branch"; then
+    if [ "${ALLOW_PROTECTED_PUSH:-}" != "1" ]; then
+      fail "direct push to '$branch' is not allowed. Push a personal branch and open a Merge Request. One-off override: ALLOW_PROTECTED_PUSH=1."
+    fi
+    [ "$local_sha" != "$zero" ] || fail "refusing to delete protected branch '$branch'."
+    if [ "$remote_sha" != "$zero" ] && ! git merge-base --is-ancestor "$remote_sha" "$local_sha" 2>/dev/null; then
+      [ "${ALLOW_FORCE_PUSH:-}" = "1" ] || fail "non-fast-forward push to '$branch' blocked. Never rebase or overwrite shared branches. One-off override: ALLOW_FORCE_PUSH=1."
+    fi
+    continue
   fi
-  if [ "$local_sha" = "$zero" ]; then
-    fail "refusing to delete protected branch '$branch'."
-  fi
-  if [ "$remote_sha" != "$zero" ] && ! git merge-base --is-ancestor "$remote_sha" "$local_sha" 2>/dev/null; then
-    [ "${ALLOW_FORCE_PUSH:-}" = "1" ] || fail "non-fast-forward (force) push to '$branch' blocked. Fetch and integrate first. If you really mean it: ALLOW_FORCE_PUSH=1 git push ..."
+
+  # Personal branches: warn (do not block) when not rebased onto origin/develop, so history stays semi-linear.
+  case "$branch" in
+    hotfix/*|fix/*|release/*) continue ;;   # these branch from main or a release, not develop
+  esac
+  if [ "$local_sha" != "$zero" ] && valid_branch_name "$branch" && git rev-parse --verify -q refs/remotes/origin/develop >/dev/null 2>&1; then
+    git merge-base --is-ancestor refs/remotes/origin/develop "$local_sha" 2>/dev/null \
+      || echo "git-rules warning: '$branch' is not rebased onto origin/develop. Before opening a Merge Request: git fetch origin, then git rebase origin/develop, then git push --force-with-lease." >&2
   fi
 done
 

@@ -8,7 +8,7 @@
 | Mô tả một câu | (điền) |
 | Stack | (chọn file trong `agents/stacks/`: python / node / dotnet / ...) |
 | Nhánh chính | main |
-| Nhánh tích hợp | integration |
+| Nhánh tích hợp | develop |
 
 ## Lệnh
 

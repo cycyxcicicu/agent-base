@@ -1,30 +1,33 @@
 #!/bin/sh
-# commit-msg: commit message format (see agents/protocols/git-rules.md).
-# Agents are held to the strict format. Humans only get a warning.
+# commit-msg: <type>(scope): <short summary>, max 72 chars, plus the risk-approval trailer for risky commits.
+# See agents/protocols/git-rules.md and agents/protocols/risk-gate.md.
 . "$(dirname "$0")/_common.sh"
 
 msg_file="$1"
 subject=$(sed -n '1p' "$msg_file")
 
-# Automatic messages pass.
+# Risky commits (a revert, or 10 or more deleted files) must name an APPROVED risk ticket.
+deleted=$(git diff --cached --name-status 2>/dev/null | grep -c '^D')
+risky=0
+printf '%s' "$subject" | grep -Eiq 'revert|hoan tac' && risky=1
+[ "$deleted" -ge 10 ] && risky=1
+if [ "$risky" = 1 ]; then
+  n=$(grep -E '^Risk-Approved: RK-[0-9]+$' "$msg_file" | head -n 1 | sed 's/^Risk-Approved: RK-//')
+  [ -n "$n" ] || fail "risky commit (a revert, or $deleted deleted files). Add the line 'Risk-Approved: RK-<n>' and make sure docs/risk/RK-<n>.md says 'Status: APPROVED' (agents/protocols/risk-gate.md)."
+  [ -f "docs/risk/RK-$n.md" ] || fail "docs/risk/RK-$n.md not found."
+  grep -q '^Status: APPROVED$' "docs/risk/RK-$n.md" || fail "docs/risk/RK-$n.md is not 'Status: APPROVED'."
+fi
+
+# Automatic messages pass the format check.
 case "$subject" in
   Merge\ *|Revert\ *|fixup!*|squash!*) exit 0 ;;
 esac
 
-types='feat|fix|docs|test|refactor|chore|ci|perf|build|style'
-if ! printf '%s' "$subject" | grep -Eq "^($types)(\([a-z0-9._/-]+\))?!?: .+"; then
-  if is_agent; then
-    fail "subject must look like 'type(scope): message' (types: feat fix docs test refactor chore ci perf build style). Got: $subject"
-  else
-    echo "git-rules warning: subject is not 'type(scope): message'." >&2
-  fi
-fi
+types='feat|fix|chore|refactor|docs|test|ci|build|perf'
+printf '%s' "$subject" | grep -Eq "^($types)\([a-z0-9._/-]+\)!?: .+" \
+  || fail "subject must be '<type>(scope): <short summary>' with type $types. Got: $subject"
 
-if is_agent; then
-  len=${#subject}
-  [ "$len" -le 72 ] || fail "subject is $len chars, the maximum is 72."
-  grep -Eq '^Task: T-[A-Za-z0-9._-]+$' "$msg_file" || fail "missing trailer 'Task: T-xxx' (own line)."
-  grep -Eq '^Agent: [a-z0-9-]+$' "$msg_file" || fail "missing trailer 'Agent: <name>' (own line, e.g. Agent: dev-a)."
-fi
+len=${#subject}
+[ "$len" -le 72 ] || fail "subject is $len chars, the maximum is 72."
 
 exit 0

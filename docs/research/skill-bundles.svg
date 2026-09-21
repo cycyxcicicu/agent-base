@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="750" viewBox="0 0 680 750" font-family="Segoe UI, Arial, sans-serif">
+<title>Nhóm skill và vai được dùng (bản 2, sau khi đọc nội dung thật)</title>
+<rect width="680" height="750" fill="#ffffff"/>
+<g font-size="14" dominant-baseline="central">
+<rect x="30" y="20" width="620" height="84" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="46" y="42" fill="#085041" font-weight="500">1. Tài liệu, tiếp nhận</text><text x="46" y="62" fill="#0F6E56" font-size="12">thử</text>
+<text x="236" y="34" fill="#0F6E56" font-size="12">markitdown (công cụ dòng lệnh)</text><text x="236" y="52" fill="#0F6E56" font-size="12">diagram-design (có script Python)</text><text x="236" y="70" fill="#0F6E56" font-size="12">writing-for-agents</text>
+<text x="510" y="34" fill="#085041" font-size="12">ba · analyst</text><text x="510" y="52" fill="#085041" font-size="12">writer</text>
+
+<rect x="30" y="116" width="620" height="84" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="46" y="138" fill="#085041" font-weight="500">2. Thiết kế, kiến trúc</text><text x="46" y="158" fill="#0F6E56" font-size="12">thử</text>
+<text x="236" y="130" fill="#0F6E56" font-size="12">archify (CLI Node, quyền hẹp)</text><text x="236" y="147" fill="#0F6E56" font-size="12">grill-with-docs · grilling · domain-modeling</text><text x="236" y="164" fill="#0F6E56" font-size="12">improve-codebase-architecture</text><text x="236" y="181" fill="#0F6E56" font-size="12">codebase-design</text>
+<text x="510" y="130" fill="#085041" font-size="12">architect</text><text x="510" y="148" fill="#085041" font-size="12">designer · analyst</text>
+
+<rect x="30" y="212" width="620" height="84" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="46" y="234" fill="#085041" font-weight="500">3. Code và chất lượng</text><text x="46" y="254" fill="#0F6E56" font-size="12">thử (chỉ 3 skill superpowers)</text>
+<text x="236" y="234" fill="#0F6E56" font-size="12">test-driven-development</text><text x="236" y="254" fill="#0F6E56" font-size="12">systematic-debugging</text><text x="236" y="274" fill="#0F6E56" font-size="12">verification-before-completion</text>
+<text x="510" y="234" fill="#085041" font-size="12">dev · qa</text><text x="510" y="252" fill="#085041" font-size="12">reviewer</text>
+
+<rect x="30" y="308" width="620" height="84" rx="4" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+<text x="46" y="330" fill="#444441" font-weight="500">4. Bảo mật, kiểm tra</text><text x="46" y="350" fill="#5F5E5A" font-size="12">theo dõi; ocr thử có điều kiện</text>
+<text x="236" y="338" fill="#5F5E5A" font-size="12">promptfoo (giai đoạn sau, tắt telemetry)</text><text x="236" y="356" fill="#5F5E5A" font-size="12">open-code-review (thử: chế độ delegate)</text>
+<text x="510" y="338" fill="#444441" font-size="12">security</text><text x="510" y="356" fill="#444441" font-size="12">reviewer</text>
+
+<rect x="30" y="404" width="620" height="84" rx="4" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+<text x="46" y="426" fill="#444441" font-weight="500">5. Google Cloud</text><text x="46" y="446" fill="#5F5E5A" font-size="12">chỉ khi dự án dùng GCP</text>
+<text x="236" y="434" fill="#5F5E5A" font-size="12">chọn từng skill trong google/skills</text><text x="236" y="452" fill="#5F5E5A" font-size="12">gcloud ở mức hỏi, cần tài khoản GCP</text>
+<text x="510" y="434" fill="#444441" font-size="12">devops · dba</text><text x="510" y="452" fill="#444441" font-size="12">security</text>
+
+<rect x="30" y="500" width="620" height="84" rx="4" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+<text x="46" y="522" fill="#444441" font-weight="500">6. Phong cách trả lời</text><text x="46" y="542" fill="#5F5E5A" font-size="12">tùy chọn</text>
+<text x="236" y="530" fill="#5F5E5A" font-size="12">i-have-adhd (chỉ SKILL.md, không hook)</text><text x="236" y="548" fill="#5F5E5A" font-size="12">người dùng tự gọi, kéo dài cả phiên</text>
+<text x="510" y="530" fill="#444441" font-size="12">orchestrator</text>
+
+<rect x="30" y="596" width="620" height="84" rx="4" fill="#FAECE7" stroke="#993C1D" stroke-width="0.5"/>
+<text x="46" y="618" fill="#712B13" font-weight="500">Không cài</text><text x="46" y="638" fill="#993C1D" font-size="12">tham khảo, tránh hoặc theo dõi</text>
+<text x="236" y="614" fill="#993C1D" font-size="12">gstack · ECC · ruflo · webcmd</text><text x="236" y="632" fill="#993C1D" font-size="12">onlook · E2B · gods-eye-view · ponytail</text><text x="236" y="650" fill="#993C1D" font-size="12">cùng các skill superpowers, Pocock còn lại</text>
+<text x="510" y="614" fill="#712B13" font-size="12">không vai nào</text>
+</g>
+<g font-size="12" fill="#5F5E5A" dominant-baseline="central">
+<rect x="46" y="712" width="12" height="12" rx="2" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/><text x="64" y="718">thử, cài chọn lọc</text>
+<rect x="216" y="712" width="12" height="12" rx="2" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/><text x="234" y="718">theo dõi, khi cần</text>
+<rect x="386" y="712" width="12" height="12" rx="2" fill="#FAECE7" stroke="#993C1D" stroke-width="0.5"/><text x="404" y="718">không cài</text>
+</g>
+</svg>
