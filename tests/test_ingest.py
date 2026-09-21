@@ -1,0 +1,114 @@
+import unittest
+from agent_core.ingest.doc_converter import DocumentConverter
+from agent_core.ingest.web_cleaner import WebCleaner
+
+
+class TestIngestModules(unittest.TestCase):
+    def test_csv_to_markdown(self):
+        csv_data = "name,role,status\nAlice,Architect,Active\nBob,Dev,Active"
+        md = DocumentConverter.csv_to_markdown(csv_data)
+        self.assertIn("| name | role | status |", md)
+        self.assertIn("| Alice | Architect | Active |", md)
+
+    def test_json_to_markdown_table(self):
+        json_list = [
+            {"id": "T-01", "name": "Auth Cookie"},
+            {"id": "T-02", "name": "Dashboard"}
+        ]
+        md = DocumentConverter.json_to_markdown(json_list)
+        self.assertIn("| id | name |", md)
+        self.assertIn("| T-01 | Auth Cookie |", md)
+
+    def test_web_cleaner(self):
+        raw_html = (
+            "<html>"
+            "<head><script>alert('spam')</script><style>.bad {color:red}</style></head>"
+            "<body>"
+            "<h1>Tiêu Đề Trang</h1>"
+            "<p>Nội dung quan trọng của bài viết.</p>"
+            "<iframe src='tracker.com'></iframe>"
+            "</body>"
+            "</html>"
+        )
+        cleaned = WebCleaner.clean_html(raw_html)
+        self.assertNotIn("alert('spam')", cleaned)
+        self.assertNotIn("tracker.com", cleaned)
+        self.assertIn("# Tiêu Đề Trang", cleaned)
+        self.assertIn("Nội dung quan trọng của bài viết.", cleaned)
+
+    def test_web_cleaner_table(self):
+        table_html = (
+            "<table>"
+            "<tr><th>Endpoint</th><th>Method</th></tr>"
+            "<tr><td>/auth/login</td><td>POST</td></tr>"
+            "</table>"
+        )
+        cleaned = WebCleaner.clean_html(table_html)
+        self.assertIn("| Endpoint | Method |", cleaned)
+        self.assertIn("| /auth/login | POST |", cleaned)
+
+    def test_xlsx_to_markdown(self):
+        import zipfile
+        import io
+
+        # Tạo file Excel (.xlsx) tối thiểu trong bộ nhớ để test bóc tách First Principles
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w") as zf:
+            # Shared strings
+            shared_strings_xml = (
+                '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+                '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="2" uniqueCount="2">'
+                '<si><t>Project</t></si>'
+                '<si><t>AgentBase</t></si>'
+                '</sst>'
+            )
+            zf.writestr("xl/sharedStrings.xml", shared_strings_xml)
+
+            # Sheet1
+            sheet_xml = (
+                '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+                '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+                '<sheetData>'
+                '<row r="1"><c r="A1" t="s"><v>0</v></c></row>'
+                '<row r="2"><c r="A2" t="s"><v>1</v></c></row>'
+                '</sheetData>'
+                '</worksheet>'
+            )
+            zf.writestr("xl/worksheets/sheet1.xml", sheet_xml)
+
+        zip_buffer.seek(0)
+        md = DocumentConverter.xlsx_to_markdown(zip_buffer)
+        self.assertIn("| Project |", md)
+        self.assertIn("| AgentBase |", md)
+
+    def test_csv_to_markdown_pipe_and_newline_escape(self):
+        csv_data = 'name,notes\nAlice,"A | B | C"\nBob,"Line 1\nLine 2"'
+        md = DocumentConverter.csv_to_markdown(csv_data)
+        # Check pipes are escaped
+        self.assertIn(r"A \| B \| C", md)
+        # Check newlines are converted to <br>
+        self.assertIn("Line 1<br>Line 2", md)
+
+    def test_xlsx_xxe_protection(self):
+        import zipfile
+        import io
+
+        xxe_xml = (
+            '<?xml version="1.0"?>'
+            '<!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]>'
+            '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+            '<si><t>&xxe;</t></si>'
+            '</sst>'
+        )
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w") as zf:
+            zf.writestr("xl/sharedStrings.xml", xxe_xml)
+            zf.writestr("xl/worksheets/sheet1.xml", "<worksheet/>")
+
+        zip_buffer.seek(0)
+        with self.assertRaises(ValueError):
+            DocumentConverter.xlsx_to_markdown(zip_buffer)
+
+
+if __name__ == "__main__":
+    unittest.main()
