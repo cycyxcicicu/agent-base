@@ -178,7 +178,10 @@ permission:
     "*git*mv *": deny
     "*git*clean*": deny
     "*git*apply*": deny
-    "*git*am*": deny
+    "*git am *": deny
+    "*git am": deny
+    "*git.exe am *": deny
+    "*git.exe am": deny
     "*git*init*": deny
     "*git*clone*": deny
     "*git*branch -d*": deny
@@ -246,22 +249,31 @@ git merge*": deny
     "del /s /q*": deny
     "find . -delete*": deny
     "find * -delete*": deny
-    "python -c*": deny
-    "python.exe -c*": deny
-    "python3 -c*": deny
-    "py -c*": deny
-    "py.exe -c*": deny
-    "powershell* -c*": deny
-    "powershell* -Command*": deny
-    "pwsh* -c*": deny
-    "pwsh* -Command*": deny
-    "bash* -c*": deny
-    "sh* -c*": deny
-    "zsh* -c*": deny
-    "node* -e*": deny
-    "node* --eval*": deny
-    "ruby* -e*": deny
-    "perl* -e*": deny
+    "python -c *": deny
+    "python.exe -c *": deny
+    "python3 -c *": deny
+    "py -c *": deny
+    "py.exe -c *": deny
+    "powershell* -c *": deny
+    "powershell* -Command *": deny
+    "powershell* -command *": deny
+    "pwsh* -c *": deny
+    "pwsh* -Command *": deny
+    "pwsh* -command *": deny
+    "bash -c *": deny
+    "bash.exe -c *": deny
+    "sh -c *": deny
+    "sh.exe -c *": deny
+    "zsh -c *": deny
+    "zsh.exe -c *": deny
+    "node -e *": deny
+    "node.exe -e *": deny
+    "node --eval *": deny
+    "node.exe --eval *": deny
+    "ruby -e *": deny
+    "ruby.exe -e *": deny
+    "perl -e *": deny
+    "perl.exe -e *": deny
     "cmd /c git *": deny
     "cmd.exe /c git *": deny
     "*&&*rm *": deny

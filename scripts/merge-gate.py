@@ -73,9 +73,12 @@ def parse_card_frontmatter(text: str):
     cur = None
 
     for line in m.group(1).splitlines():
-        m_item = re.match(r'^\s+-\s+(.+)$', line)
+        line_clean = re.sub(r'#.*$', '', line)
+        m_item = re.match(r'^\s+-\s+(.+)$', line_clean)
         if m_item:
             v = m_item.group(1).strip().strip('"').strip("'")
+            if not v:
+                continue
             if cur == 'scope_edit':
                 allow.append(v)
             elif cur == 'scope_deny':
@@ -88,6 +91,17 @@ def parse_card_frontmatter(text: str):
                 task_id = m_key.group(2).strip()
 
     return task_id, allow, deny
+
+
+def check_files_in_scope(files: list, allow: list, deny: list) -> list:
+    """Return a list of violations for changed files against allow/deny patterns."""
+    violations = []
+    for f in files:
+        if test_match(f, deny):
+            violations.append(f"DENIED       {f}")
+        elif not test_match(f, allow):
+            violations.append(f"OUT OF SCOPE {f}")
+    return violations
 
 
 def main():

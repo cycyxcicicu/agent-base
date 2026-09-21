@@ -193,6 +193,63 @@ class TestCodeReviewerAnalysis(unittest.TestCase):
         )
         comments = self.reviewer.analyze_source("src/billing.py", code)
         self.assertTrue(any(c.category == "bug" and "tax_rate" in c.content for c in comments))
+        # Verify severity is medium (non-blocking)
+        bug_comment = next(c for c in comments if "tax_rate" in c.content)
+        self.assertEqual(bug_comment.severity, "medium")
+        self.assertFalse(bug_comment.blocking)
+
+    def test_valid_patterns_no_undefined_variable_false_positives(self):
+        """Kiểm chứng 20 mẫu mã nguồn Python hợp lệ không bị CodeReviewer báo lỗi sai."""
+        cases = [
+            # 1. Biến gán trong try/except
+            ("try:\n    HAS_ORJSON = True\nexcept ImportError:\n    HAS_ORJSON = False\n\ndef check():\n    return HAS_ORJSON\n", "try_assign"),
+            # 2. Import module trong try/except
+            ("try:\n    import orjson\nexcept ImportError:\n    orjson = None\n\ndef parse(d):\n    return orjson.loads(d) if orjson else {}\n", "try_import"),
+            # 3. Import from trong try/except
+            ("try:\n    from openai import OpenAI\nexcept ImportError:\n    OpenAI = None\n\ndef client():\n    return OpenAI()\n", "try_from_import"),
+            # 4. Tham số closure của hàm bao ngoài (func, max_attempts, base_delay)
+            ("def retry(func, max_attempts=3, base_delay=1.0):\n    def wrapper(*args, **kwargs):\n        return func(max_attempts, base_delay)\n    return wrapper\n", "closure_params"),
+            # 5. Hằng số class dùng làm giá trị mặc định cho method
+            ("class SandboxRunner:\n    DEFAULT_TIMEOUT_SEC = 30\n    def run(self, timeout=DEFAULT_TIMEOUT_SEC):\n        return timeout\n", "class_constant_default"),
+            # 6. async with context as s
+            ("async def fetch(client):\n    async with client.get('/data') as resp:\n        return await resp.text()\n", "async_with"),
+            # 7. with open(...) as f
+            ("def read_file(path):\n    with open(path, 'r') as f:\n        return f.read()\n", "sync_with"),
+            # 8. Multi-target assignment a = b = 10
+            ("def setup():\n    a = b = 10\n    return a + b\n", "multi_assign"),
+            # 9. Tuple / List unpacking (x, y) = val
+            ("def coords(pt):\n    x, y = pt\n    return x + y\n", "tuple_unpack"),
+            # 10. Walrus operator (:=)
+            ("def check_len(data):\n    if (n := len(data)) > 0:\n        return n\n    return 0\n", "walrus_operator"),
+            # 11. Vòng lặp for item in items
+            ("def process(items):\n    res = []\n    for item in items:\n        res.append(item.strip())\n    return res\n", "for_loop"),
+            # 12. List comprehension
+            ("def double_all(data):\n    return [x * 2 for x in data]\n", "list_comprehension"),
+            # 13. Dict / Set comprehension
+            ("def dict_comp(pairs):\n    return {k: v for k, v in pairs}\n", "dict_comprehension"),
+            # 14. Nested comprehension
+            ("def flatten(matrix):\n    return [col for row in matrix for col in row]\n", "nested_comprehension"),
+            # 15. Except handler variable
+            ("def safe_int(s):\n    try:\n        return int(s)\n    except ValueError as err:\n        return str(err)\n", "except_handler_var"),
+            # 16. Lambda parameter
+            ("def sort_keys(data):\n    return sorted(data, key=lambda x: x.name)\n", "lambda_param"),
+            # 17. Global variable declaration
+            ("counter = 0\ndef increment():\n    global counter\n    counter += 1\n    return counter\n", "global_var"),
+            # 18. Builtin functions và typing
+            ("def builtins_use(seq):\n    return sum(range(len(seq))) + int(isinstance(seq, list))\n", "builtins"),
+            # 19. Builtin exceptions
+            ("def raise_errors(condition):\n    if condition:\n        raise KeyError('missing')\n    raise ValueError('invalid')\n", "builtin_exceptions"),
+            # 20. Module-level conditional definition
+            ("import sys\nif sys.platform == 'win32':\n    PLATFORM_NAME = 'windows'\nelse:\n    PLATFORM_NAME = 'posix'\n\ndef get_plat():\n    return PLATFORM_NAME\n", "module_conditional")
+        ]
+
+        for code, label in cases:
+            comments = self.reviewer.analyze_source(f"src/{label}.py", code)
+            undefined_comments = [c for c in comments if "chưa được định nghĩa" in c.content]
+            self.assertEqual(
+                len(undefined_comments), 0,
+                f"Pattern '{label}' falsely flagged undefined variable: {[c.content for c in undefined_comments]}"
+            )
 
 
 if __name__ == "__main__":

@@ -115,6 +115,60 @@ class TestIngestModules(unittest.TestCase):
         with self.assertRaises(ValueError):
             DocumentConverter.xlsx_to_markdown(zip_buffer)
 
+    def test_web_cleaner_font_size_and_opacity_decimals(self):
+        """Kiểm chứng WebCleaner không xoá nhầm các thẻ có font-size:0.9em hoặc opacity:0.85."""
+        html = (
+            "<div>"
+            "<span style='font-size:0.9em'>Văn bản 0.9em hợp lệ</span>"
+            "<span style='font-size:0.875rem'>Văn bản 0.875rem hợp lệ</span>"
+            "<span style='opacity:0.85'>Văn bản opacity 0.85 hợp lệ</span>"
+            "<span style='opacity:.5'>Văn bản opacity .5 hợp lệ</span>"
+            "<span style='font-size:0px'>Văn bản ẩn 0px</span>"
+            "<span style='font-size: 0'>Văn bản ẩn 0</span>"
+            "<span style='opacity:0'>Văn bản ẩn opacity 0</span>"
+            "<span style='opacity:0.0'>Văn bản ẩn opacity 0.0</span>"
+            "</div>"
+        )
+        cleaned = WebCleaner.clean_html(html)
+        self.assertIn("Văn bản 0.9em hợp lệ", cleaned)
+        self.assertIn("Văn bản 0.875rem hợp lệ", cleaned)
+        self.assertIn("Văn bản opacity 0.85 hợp lệ", cleaned)
+        self.assertIn("Văn bản opacity .5 hợp lệ", cleaned)
+        self.assertNotIn("Văn bản ẩn 0px", cleaned)
+        self.assertNotIn("Văn bản ẩn 0", cleaned)
+        self.assertNotIn("Văn bản ẩn opacity 0", cleaned)
+        self.assertNotIn("Văn bản ẩn opacity 0.0", cleaned)
+
+    def test_web_cleaner_table_markdown_newlines(self):
+        """Kiểm chứng các hàng trong bảng Markdown được nối bằng \\n đơn, không bị tách bởi \\n\\n."""
+        table_html = (
+            "<table>"
+            "<tr><th>Cột 1</th><th>Cột 2</th></tr>"
+            "<tr><td>Giá trị A</td><td>Giá trị B</td></tr>"
+            "<tr><td>Giá trị C</td><td>Giá trị D</td></tr>"
+            "</table>"
+        )
+        cleaned = WebCleaner.clean_html(table_html)
+        expected_table = (
+            "| Cột 1 | Cột 2 |\n"
+            "| --- | --- |\n"
+            "| Giá trị A | Giá trị B |\n"
+            "| Giá trị C | Giá trị D |"
+        )
+        self.assertIn(expected_table, cleaned)
+
+    def test_web_cleaner_pre_tag_code_block(self):
+        """Kiểm chứng thẻ <pre> được bao bọc trong code block Markdown và không bị dính liền với nội dung sau."""
+        html = (
+            "<div>"
+            "<pre>code x=1</pre><a href='/docs'>link text</a>"
+            "</div>"
+        )
+        cleaned = WebCleaner.clean_html(html)
+        self.assertIn("```\ncode x=1\n```", cleaned)
+        self.assertIn("link text", cleaned)
+        self.assertNotIn("code x=1link text", cleaned)
+
 
 if __name__ == "__main__":
     unittest.main()

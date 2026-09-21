@@ -95,6 +95,15 @@ h = hashlib.md5(b'test').hexdigest()
         self.assertIn("INSEC-01", rules)
         self.assertIn("CRYPTO-01", rules)
 
+    def test_md5_usedforsecurity_false_not_flagged(self):
+        code = """
+import hashlib
+h = hashlib.md5(b'test_data', usedforsecurity=False).hexdigest()
+"""
+        findings = self.scanner.scan_file_content(code, "safe_crypto.py")
+        rules = {f.rule_id for f in findings}
+        self.assertNotIn("CRYPTO-01", rules)
+
     def test_github_and_githooks_not_skipped(self):
         gh_workflow = Path("/repo/.github/workflows/check.yml")
         githook = Path("/repo/.githooks/pre-commit")

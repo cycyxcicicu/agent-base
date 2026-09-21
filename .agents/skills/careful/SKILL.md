@@ -28,12 +28,17 @@ Every command proposing any of the following patterns MUST trigger an explicit h
 | `git checkout .` / `git restore .` | `git checkout .` | Discarding uncommitted edits |
 | `docker system prune` / `rm -f` | `docker system prune -a` | Bulk container/image purge |
 
-## 2. Safe Exceptions (Allowed without prompting)
-The following temporary cache cleanups are considered safe exceptions:
-- `rm -rf node_modules`, `.next`, `dist`, `__pycache__`, `.cache`, `build`, `.turbo`, `coverage`
+## 2. Cache Cleanup Policy & Gate Alignment
+> [!IMPORTANT]
+> To prevent catastrophic file loss, **all recursive deletion commands** (`rm -rf *`, `rmdir /s`, `del /q /s`) are strictly blocked by repository deny gates (`danger_deny` in `.claude/settings.json` and Kilo agent roles).
+> 
+> When temporary build/cache artifacts (`node_modules`, `.next`, `dist`, `__pycache__`, `.cache`, `build`, `.turbo`, `coverage`) need cleanup:
+> 1. Prefer targeted clean commands: `git clean -fdX <path>`, `npm run clean`, or language-specific cleanup tools.
+> 2. For directory removal, ask the human operator or use explicit confirmation before running any cleanup script.
+> 3. Never attempt raw shell wildcards `rm -rf *` or unconstrained recursive deletions.
 
 ## 3. Human Confirmation Gate
-When a non-excepted destructive pattern is detected:
-1. STOP immediately before executing the command.
+When a destructive pattern is required:
+1. STOP immediately before proposing the command.
 2. Clearly state the exact destructive command and the irreversible consequence.
 3. Require explicit typed user confirmation before proceeding. Never auto-approve.

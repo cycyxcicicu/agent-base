@@ -27,7 +27,7 @@ class WebCleaner:
             clean = re.sub(pattern, "", clean, flags=re.IGNORECASE)
 
         # Loại bỏ các thẻ ẩn và nội dung bên trong (display:none, visibility:hidden, font-size:0, opacity:0, hidden)
-        hidden_style_pat = r"display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*0(?:px|pt|em|rem)?\b|opacity\s*:\s*0\b"
+        hidden_style_pat = r"display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*0(?![.\d])(?:px|pt|em|rem)?\b|opacity\s*:\s*0(?:\.0+)?\s*(?:;|'|\"|$)"
         clean = re.sub(rf"<([a-zA-Z0-9_-]+)\b[^>]*\b(?:style=[\"'][^\"']*(?:{hidden_style_pat})[^\"']*[\"']|hidden\b)[^>]*>[\s\S]*?<\/\1>", "", clean, flags=re.IGNORECASE)
 
         # Loại bỏ chữ ngụy trang cùng màu nền (chữ trắng trên nền trắng: font camouflage)
@@ -40,6 +40,8 @@ class WebCleaner:
         clean = re.sub(r"<h2[^>]*>(.*?)<\/h2>", r"\n## \1\n", clean, flags=re.IGNORECASE)
         clean = re.sub(r"<h3[^>]*>(.*?)<\/h3>", r"\n### \1\n", clean, flags=re.IGNORECASE)
         clean = re.sub(r"<p[^>]*>(.*?)<\/p>", r"\n\1\n", clean, flags=re.IGNORECASE)
+        clean = re.sub(r"<div[^>]*>(.*?)<\/div>", r"\n\1\n", clean, flags=re.IGNORECASE)
+        clean = re.sub(r"<br\s*\/?>", r"\n", clean, flags=re.IGNORECASE)
         clean = re.sub(r"<li[^>]*>(.*?)<\/li>", r"\n- \1", clean, flags=re.IGNORECASE)
 
         # Chuyển đổi các thẻ bảng <table> thành Markdown table
@@ -61,6 +63,9 @@ class WebCleaner:
 
         clean = re.sub(r"<table\b[^>]*>.*?<\/table>", _table_replacer, clean, flags=re.IGNORECASE | re.DOTALL)
 
+        # Chuyển đổi khối <pre> thành code block Markdown trước khi bóc thẻ HTML còn lại
+        clean = re.sub(r"<pre\b[^>]*>(.*?)<\/pre>", r"\n\n```\n\1\n```\n\n", clean, flags=re.IGNORECASE | re.DOTALL)
+
         # Bóc toàn bộ các thẻ HTML còn lại
         clean = re.sub(r"<[^>]+>", "", clean)
 
@@ -69,5 +74,25 @@ class WebCleaner:
 
         # Chuẩn hóa khoảng trắng và dòng trống
         lines = [line.strip() for line in clean.splitlines() if line.strip()]
-        return "\n\n".join(lines)
+        in_code_block = False
+        result_lines = []
+        for i, line in enumerate(lines):
+            if line.startswith("```"):
+                in_code_block = not in_code_block
+                if i > 0 and not in_code_block:
+                    result_lines.append("\n" + line)
+                elif i > 0:
+                    result_lines.append("\n\n" + line)
+                else:
+                    result_lines.append(line)
+            elif in_code_block:
+                result_lines.append("\n" + line)
+            elif i > 0 and line.startswith("|") and lines[i - 1].startswith("|"):
+                result_lines.append("\n" + line)
+            else:
+                if i > 0:
+                    result_lines.append("\n\n" + line)
+                else:
+                    result_lines.append(line)
+        return "".join(result_lines)
 

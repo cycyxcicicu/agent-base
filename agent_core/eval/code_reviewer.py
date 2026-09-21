@@ -382,23 +382,28 @@ class CodeReviewer:
             return comments
 
         # Thu thập các tên đã được định nghĩa ở cấp độ module (functions, classes, variables, imports)
-        module_scope_names = set(dir(builtins))
-        for stmt in tree.body:
-            if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                module_scope_names.add(stmt.name)
-            elif isinstance(stmt, ast.Import):
-                for alias in stmt.names:
+        # Bao gồm cả các định nghĩa nằm trong try/except, if/else, with ở cấp module
+        module_scope_names = set(dir(builtins)) | {
+            "__file__", "__name__", "__doc__", "__package__", "__all__", "__version__", "__path__"
+        }
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                module_scope_names.add(node.name)
+            elif isinstance(node, ast.Import):
+                for alias in node.names:
+                    module_scope_names.add(alias.asname or alias.name.split('.')[0])
+            elif isinstance(node, ast.ImportFrom):
+                for alias in node.names:
                     module_scope_names.add(alias.asname or alias.name)
-            elif isinstance(stmt, ast.ImportFrom):
-                for alias in stmt.names:
-                    module_scope_names.add(alias.asname or alias.name)
-            elif isinstance(stmt, ast.Assign):
-                for tgt in stmt.targets:
+            elif isinstance(node, ast.Assign):
+                for tgt in node.targets:
                     for n in ast.walk(tgt):
                         if isinstance(n, ast.Name):
                             module_scope_names.add(n.id)
-            elif isinstance(stmt, (ast.AnnAssign, ast.AugAssign)) and isinstance(stmt.target, ast.Name):
-                module_scope_names.add(stmt.target.id)
+            elif isinstance(node, (ast.AnnAssign, ast.AugAssign)) and isinstance(node.target, ast.Name):
+                module_scope_names.add(node.target.id)
+            elif isinstance(node, ast.NamedExpr) and isinstance(node.target, ast.Name):
+                module_scope_names.add(node.target.id)
 
         class PythonRuleVisitor(ast.NodeVisitor):
             EXEMPT_NAMES = {
@@ -410,15 +415,31 @@ class CodeReviewer:
                 self.filepath = filepath
                 self.lines = lines
                 self.module_names = module_names
+                self.scope_stack: List[set] = []
+                self.class_stack: List[set] = []
                 self.issues: List[ReviewComment] = []
+
+            def visit_ClassDef(self, node: ast.ClassDef):
+                class_attrs = set()
+                for item in node.body:
+                    if isinstance(item, ast.Assign):
+                        for tgt in item.targets:
+                            for n in ast.walk(tgt):
+                                if isinstance(n, ast.Name):
+                                    class_attrs.add(n.id)
+                    elif isinstance(item, (ast.AnnAssign, ast.AugAssign)) and isinstance(item.target, ast.Name):
+                        class_attrs.add(item.target.id)
+                    elif isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                        class_attrs.add(item.name)
+                self.class_stack.append(class_attrs)
+                self.generic_visit(node)
+                self.class_stack.pop()
 
             def visit_FunctionDef(self, node: ast.FunctionDef):
                 self._check_function(node)
-                self.generic_visit(node)
 
             def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef):
                 self._check_function(node)
-                self.generic_visit(node)
 
             def _check_function(self, node):
                 # 1. Quy tắc Python: Mutable default argument (High - Bug)
@@ -438,7 +459,34 @@ class CodeReviewer:
                             thinking="In Python, default parameter values are evaluated once when function is defined, not per call.",
                         ))
 
+                # Kiểm tra giá trị mặc định của tham số hàm (được đánh giá trong phạm vi bao ngoài)
+                valid_default_names = self.module_names | self.EXEMPT_NAMES
+                for s in self.scope_stack:
+                    valid_default_names |= s
+                if self.class_stack:
+                    valid_default_names |= self.class_stack[-1]
+
+                for d in node.args.defaults + node.args.kw_defaults:
+                    if d is not None:
+                        for n in ast.walk(d):
+                            if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load):
+                                if n.id not in valid_default_names:
+                                    line_no = getattr(n, "lineno", node.lineno)
+                                    snippet = self.lines[line_no - 1] if line_no <= len(self.lines) else ""
+                                    self.issues.append(ReviewComment(
+                                        path=self.filepath,
+                                        start_line=line_no,
+                                        end_line=line_no,
+                                        category="bug",
+                                        severity="medium",
+                                        content=f"Biến '{n.id}' được sử dụng làm giá trị mặc định nhưng chưa được định nghĩa (Undefined variable).",
+                                        suggestion_code=f"# Khai báo hoặc import '{n.id}' trước khi sử dụng",
+                                        existing_code=snippet.strip(),
+                                        thinking=f"Referencing '{n.id}' in parameter defaults without definition leads to NameError at module load.",
+                                    ))
+
                 # 2. Quy tắc Python: Bắt biến chưa định nghĩa trong phạm vi hàm (Undefined Variable / NameError)
+                # Thu thập toàn bộ tên cục bộ thuộc phạm vi hàm hiện tại
                 local_names = set()
                 for a in node.args.args + getattr(node.args, "posonlyargs", []) + node.args.kwonlyargs:
                     local_names.add(a.arg)
@@ -447,65 +495,72 @@ class CodeReviewer:
                 if node.args.kwarg:
                     local_names.add(node.args.kwarg.arg)
 
-                for child in ast.walk(node):
-                    if isinstance(child, ast.Assign):
-                        for tgt in child.targets:
-                            for n in ast.walk(tgt):
-                                if isinstance(n, ast.Name):
-                                    local_names.add(n.id)
-                    elif isinstance(child, (ast.AnnAssign, ast.AugAssign)) and isinstance(child.target, ast.Name):
-                        local_names.add(child.target.id)
-                    elif isinstance(child, ast.NamedExpr) and isinstance(child.target, ast.Name):
-                        local_names.add(child.target.id)
-                    elif isinstance(child, ast.For):
-                        for n in ast.walk(child.target):
-                            if isinstance(n, ast.Name):
-                                local_names.add(n.id)
-                    elif isinstance(child, ast.ExceptHandler) and child.name:
-                        local_names.add(child.name)
-                    elif isinstance(child, ast.comprehension):
-                        for n in ast.walk(child.target):
-                            if isinstance(n, ast.Name):
-                                local_names.add(n.id)
-                    elif isinstance(child, ast.Lambda):
-                        for a in child.args.args:
-                            local_names.add(a.arg)
-                    elif isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                        local_names.add(child.name)
-                    elif isinstance(child, (ast.Global, ast.Nonlocal)):
-                        local_names.update(child.names)
-                    elif isinstance(child, (ast.Import, ast.ImportFrom)):
-                        for alias in child.names:
-                            local_names.add(alias.asname or alias.name)
-                    elif isinstance(child, ast.With):
-                        for item in child.items:
-                            if item.optional_vars:
-                                for n in ast.walk(item.optional_vars):
+                for item in node.body:
+                    for child in ast.walk(item):
+                        if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and child is not item:
+                            continue
+                        if isinstance(child, ast.Assign):
+                            for tgt in child.targets:
+                                for n in ast.walk(tgt):
                                     if isinstance(n, ast.Name):
                                         local_names.add(n.id)
+                        elif isinstance(child, (ast.AnnAssign, ast.AugAssign)) and isinstance(child.target, ast.Name):
+                            local_names.add(child.target.id)
+                        elif isinstance(child, ast.NamedExpr) and isinstance(child.target, ast.Name):
+                            local_names.add(child.target.id)
+                        elif isinstance(child, ast.For):
+                            for n in ast.walk(child.target):
+                                if isinstance(n, ast.Name):
+                                    local_names.add(n.id)
+                        elif isinstance(child, ast.ExceptHandler) and child.name:
+                            local_names.add(child.name)
+                        elif isinstance(child, ast.comprehension):
+                            for n in ast.walk(child.target):
+                                if isinstance(n, ast.Name):
+                                    local_names.add(n.id)
+                        elif isinstance(child, ast.Lambda):
+                            for a in child.args.args:
+                                local_names.add(a.arg)
+                        elif isinstance(child, (ast.With, ast.AsyncWith)):
+                            for it in child.items:
+                                if it.optional_vars:
+                                    for n in ast.walk(it.optional_vars):
+                                        if isinstance(n, ast.Name):
+                                            local_names.add(n.id)
+
+                self.scope_stack.append(local_names)
+
+                all_known = self.module_names | self.EXEMPT_NAMES
+                for s in self.scope_stack:
+                    all_known |= s
 
                 seen_undefined = set()
-                for child in ast.walk(node):
-                    if isinstance(child, ast.Name) and isinstance(child.ctx, ast.Load):
-                        var_name = child.id
-                        if (var_name not in local_names and
-                            var_name not in self.module_names and
-                            var_name not in self.EXEMPT_NAMES and
-                            var_name not in seen_undefined):
-                            seen_undefined.add(var_name)
-                            line_no = getattr(child, "lineno", node.lineno)
-                            snippet = self.lines[line_no - 1] if line_no <= len(self.lines) else ""
-                            self.issues.append(ReviewComment(
-                                path=self.filepath,
-                                start_line=line_no,
-                                end_line=line_no,
-                                category="bug",
-                                severity="high",
-                                content=f"Biến '{var_name}' được sử dụng nhưng chưa được định nghĩa trong phạm vi hàm hoặc module (Undefined variable / NameError).",
-                                suggestion_code=f"# Khai báo hoặc import '{var_name}' trước khi sử dụng",
-                                existing_code=snippet.strip(),
-                                thinking=f"Referencing '{var_name}' without definition leads to NameError at runtime.",
-                            ))
+                for item in node.body:
+                    if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                        continue
+                    for child in ast.walk(item):
+                        if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                            continue
+                        if isinstance(child, ast.Name) and isinstance(child.ctx, ast.Load):
+                            var_name = child.id
+                            if var_name not in all_known and var_name not in seen_undefined:
+                                seen_undefined.add(var_name)
+                                line_no = getattr(child, "lineno", node.lineno)
+                                snippet = self.lines[line_no - 1] if line_no <= len(self.lines) else ""
+                                self.issues.append(ReviewComment(
+                                    path=self.filepath,
+                                    start_line=line_no,
+                                    end_line=line_no,
+                                    category="bug",
+                                    severity="medium",
+                                    content=f"Biến '{var_name}' được sử dụng nhưng chưa được định nghĩa trong phạm vi hàm hoặc module (Undefined variable / NameError).",
+                                    suggestion_code=f"# Khai báo hoặc import '{var_name}' trước khi sử dụng",
+                                    existing_code=snippet.strip(),
+                                    thinking=f"Referencing '{var_name}' without definition leads to NameError at runtime.",
+                                ))
+
+                self.generic_visit(node)
+                self.scope_stack.pop()
 
             def visit_ExceptHandler(self, node: ast.ExceptHandler):
                 # Quy tắc Python: Bare except: bắt tất cả ngoại lệ kể cả KeyboardInterrupt/SystemExit

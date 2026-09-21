@@ -157,16 +157,22 @@ class CsoScanner:
                             recommendation=self._get_recommendation("INJ-05")
                         ))
                     elif mod_name == "hashlib" and func_name == "md5":
-                        findings.append(CsoFinding(
-                            severity="MEDIUM",
-                            category="WEAK_CRYPTO",
-                            file_path=file_path,
-                            line_number=node.lineno,
-                            rule_id="CRYPTO-01",
-                            message="MD5 is cryptographically weak and prone to hash collisions.",
-                            snippet=get_snippet(node.lineno),
-                            recommendation=self._get_recommendation("CRYPTO-01")
-                        ))
+                        is_for_security = True
+                        for kw in node.keywords:
+                            if kw.arg == "usedforsecurity":
+                                if (isinstance(kw.value, ast.Constant) and kw.value.value is False) or getattr(kw.value, "id", None) == "False":
+                                    is_for_security = False
+                        if is_for_security:
+                            findings.append(CsoFinding(
+                                severity="MEDIUM",
+                                category="WEAK_CRYPTO",
+                                file_path=file_path,
+                                line_number=node.lineno,
+                                rule_id="CRYPTO-01",
+                                message="MD5 is cryptographically weak and prone to hash collisions. Use sha256 or set usedforsecurity=False for non-cryptographic checksums.",
+                                snippet=get_snippet(node.lineno),
+                                recommendation=self._get_recommendation("CRYPTO-01")
+                            ))
 
                     # verify=False check
                     for kw in node.keywords:
