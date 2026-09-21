@@ -54,6 +54,9 @@ class TestWorkflowModules(unittest.TestCase):
     def test_handoff_router(self):
         self.assertTrue(HandoffRouter.can_transition("dev", "qa"))
         self.assertTrue(HandoffRouter.can_transition("qa", "dev"))
+        self.assertTrue(HandoffRouter.can_transition("security", "dev"))
+        self.assertTrue(HandoffRouter.can_transition("reviewer", "writer"))
+        self.assertTrue(HandoffRouter.can_transition("architect", "designer"))
         note = HandoffRouter.create_note(
             from_role="dev",
             to_role="qa",

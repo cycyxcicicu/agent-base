@@ -4,6 +4,7 @@ Wrapper điều phối Gemini-API từ agent-base
 Tích hợp cổng kiểm tra Ask-Before-Search và tự động định vị cookies.
 """
 
+import os
 import sys
 import subprocess
 import argparse
@@ -22,6 +23,7 @@ EXTERNAL_CLI = ROOT_DIR.parent / "Gemini-API" / "cli.py"
 
 INTERNAL_COOKIES = ROOT_DIR / "gemini_cookies.json"
 EXTERNAL_COOKIES = ROOT_DIR.parent / "gemini_cookies.json"
+USER_HOME_COOKIES = Path.home() / ".gemini" / "gemini_cookies.json"
 
 def get_cli_path():
     if INTERNAL_CLI.exists():
@@ -35,14 +37,18 @@ def get_cli_path():
 def get_cookies_path(custom_path=None):
     if custom_path:
         target = Path(custom_path)
+    elif os.environ.get("GEMINI_COOKIES_FILE") and Path(os.environ["GEMINI_COOKIES_FILE"]).exists():
+        target = Path(os.environ["GEMINI_COOKIES_FILE"])
+    elif USER_HOME_COOKIES.exists():
+        target = USER_HOME_COOKIES
     elif INTERNAL_COOKIES.exists():
         target = INTERNAL_COOKIES
     elif EXTERNAL_COOKIES.exists():
         target = EXTERNAL_COOKIES
     else:
-        target = INTERNAL_COOKIES
-        print(f"⚠️ Cảnh báo: Chưa tìm thấy file cookies tại {INTERNAL_COOKIES} hoặc {EXTERNAL_COOKIES}")
-        print("Bạn có thể sao chép từ gemini_cookies.example.json sang gemini_cookies.json.")
+        target = USER_HOME_COOKIES
+        print(f"⚠️ Cảnh báo: Chưa tìm thấy file cookies tại {USER_HOME_COOKIES} hoặc {INTERNAL_COOKIES}")
+        print(f"Khuyến nghị bảo mật: Lưu cookies tại ngoài OneDrive ({USER_HOME_COOKIES}) hoặc fteck/gemini_cookies.json.")
     return str(target)
 
 def run_gemini_cli(cli_args):
@@ -81,11 +87,13 @@ def main():
     ask_parser.add_argument("prompt", help="Nội dung câu hỏi cần tra cứu")
     ask_parser.add_argument("--model", default="gemini-flash", help="Mô hình sử dụng (mặc định: gemini-flash)")
     ask_parser.add_argument("--rotate", action="store_true", help="Tự động xoay vòng tài khoản nếu gặp lỗi/hết hạn")
+    ask_parser.add_argument("--confirm", "-y", action="store_true", help="Xác nhận người dùng đã phê duyệt")
 
     # Subcommand: research-send
     r_send = subparsers.add_parser("research-send", help="Khởi tạo tiến trình Gemini Deep Research")
     r_send.add_argument("prompt", help="Chủ đề cần nghiên cứu sâu")
     r_send.add_argument("--model", default="gemini-pro", help="Mô hình nghiên cứu (mặc định: gemini-pro)")
+    r_send.add_argument("--confirm", "-y", action="store_true", help="Xác nhận người dùng đã phê duyệt")
 
     # Subcommand: research-check
     r_check = subparsers.add_parser("research-check", help="Kiểm tra trạng thái tiến trình Deep Research")
@@ -115,14 +123,33 @@ def main():
 
     # Kiểm tra cổng an toàn: Ask-Before-Search Gate
     requires_confirmation = args.subcommand in ["ask", "research-send"]
-    if requires_confirmation and not args.confirm:
-        print("\n🛑 [CỔNG BẢO VỆ TRA CỨU WEB: ASK-BEFORE-SEARCH]")
-        print(f"👉 Thao tác: Gửi truy vấn ra ngoài qua Gemini-API ({args.subcommand})")
-        print(f"👉 Nội dung: \"{args.prompt}\"")
-        print(f"👉 Model: {args.model}")
-        print("\n⚠️  Cảnh báo: Bạn chưa cấp cờ xác nhận (--confirm / -y).")
-        print("Vui lòng hỏi ý kiến người dùng trước, sau đó chạy lại lệnh kèm cờ --confirm để thực thi.\n")
-        sys.exit(2)
+    if requires_confirmation:
+        # Nếu đang chạy trong terminal tương tác (có con người ngồi trước máy)
+        if sys.stdin.isatty():
+            print("\n🛑 [CỔNG BẢO VỆ TRA CỨU WEB: ASK-BEFORE-SEARCH]")
+            print(f"👉 Thao tác: Gửi truy vấn ra ngoài qua Gemini-API ({args.subcommand})")
+            print(f"👉 Nội dung: \"{args.prompt}\"")
+            print(f"👉 Model: {args.model}")
+            try:
+                user_choice = input("\n❓ Bạn có đồng ý cho phép gửi yêu cầu tra cứu này ra Internet không? [y/N]: ").strip().lower()
+                if user_choice not in ["y", "yes"]:
+                    print("❌ Đã hủy truy vấn theo yêu cầu của người dùng.\n")
+                    sys.exit(2)
+            except (EOFError, KeyboardInterrupt):
+                print("\n❌ Đã hủy truy vấn.\n")
+                sys.exit(2)
+        else:
+            # Chạy phi tương tác (subagent, automated pipeline)
+            # Yêu cầu biến môi trường CONFIRM_WEB_SEARCH=1 hoặc cờ --confirm từ người điều hành
+            env_confirmed = os.environ.get("CONFIRM_WEB_SEARCH") == "1"
+            if not args.confirm and not env_confirmed:
+                print("\n🛑 [CỔNG BẢO VỆ TRA CỨU WEB: ASK-BEFORE-SEARCH]")
+                print(f"👉 Thao tác: Gửi truy vấn ra ngoài qua Gemini-API ({args.subcommand})")
+                print(f"👉 Nội dung: \"{args.prompt}\"")
+                print(f"👉 Model: {args.model}")
+                print("\n⚠️  Cảnh báo: Tác vụ phi tương tác chưa có xác nhận từ con người (--confirm hoặc CONFIRM_WEB_SEARCH=1).")
+                print("Vui lòng hỏi ý kiến người dùng trước khi thực thi.\n")
+                sys.exit(2)
 
     # Xây dựng lệnh chuyển tiếp đến cli.py
     cli_base = ["--cookies-json", cookies_path]

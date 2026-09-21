@@ -11,6 +11,11 @@ triggers:
 
 # /browse — Systematic Browser Automation & Visual Verification
 
+> [!NOTE]
+> **Hướng dẫn môi trường thực thi (Execution Mode)**:
+> - **Trong Antigravity IDE**: Dùng công cụ `browser_subagent` có sẵn để điều khiển trang và bắt lỗi DOM/Console.
+> - **Trong Claude Code / Kilo / Terminal**: Sử dụng script headless Playwright CLI hoặc bàn giao cho vai `qa`/`tester` chạy kiểm thử. Không giả định mọi agent harness đều có sẵn browser subagent.
+
 Use this skill when asked to open a web page, test an interactive UI flow, capture screenshots, or verify web application behavior with real browser evidence.
 
 ## 1. Golden Rules of Browser Driving

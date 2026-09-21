@@ -53,17 +53,48 @@ permission:
     "git config *": deny
     "*new-worktree*": deny
     "*install-hooks*": deny
+    "git -C *": deny
+    "git -c *": deny
+    "git *commit*": deny
+    "git *push*": deny
+    "git *merge*": deny
+    "git *rebase*": deny
+    "git *reset*": deny
+    "git *revert*": deny
+    "git *checkout*": deny
+    "git *switch*": deny
+    "git *stash*": deny
+    "git *branch*": deny
     "*--no-verify*": deny
     "rm -rf /": deny
     "rm -rf *": deny
     "rm -fr /": deny
     "rm -fr *": deny
+    "rm -r -f*": deny
+    "rm -f -r*": deny
+    "rm -r *": deny
+    "rm -R *": deny
+    "rm -f *": deny
     "Remove-Item*-Recurse*": deny
     "rmdir /s*": deny
     "del /s*": deny
     "git push --force*": deny
     "git push -f*": deny
     "git reset --hard*": deny
+    "python* -c*": deny
+    "py* -c*": deny
+    "python3* -c*": deny
+    "powershell* -c*": deny
+    "powershell* -Command*": deny
+    "pwsh* -c*": deny
+    "pwsh* -Command*": deny
+    "bash* -c*": deny
+    "sh* -c*": deny
+    "zsh* -c*": deny
+    "node* -e*": deny
+    "node* --eval*": deny
+    "ruby* -e*": deny
+    "perl* -e*": deny
     "git branch --list*": allow
     "git branch -a*": allow
     "git branch -v*": allow
@@ -125,10 +156,11 @@ Chứng minh bằng test rằng task đạt tiêu chí xong và không làm hỏ
 - Được chạy build, test, lint và công cụ kiểm thử.
 
 ## Điều cấm
-- Không sửa `src/`. Lỗi trong code thì báo Dev, không tự sửa.
+- Không sửa `src/` hoặc `agent_core/`. Lỗi trong code thì báo Dev, không tự sửa.
 - Không làm test yếu đi hay xóa test để cho qua.
 - Không đánh dấu "qua" nếu chưa thật sự chạy test.
 - Không dùng dữ liệu thật hay khóa bí mật trong test.
+- Không chạy lệnh git ghi (`commit`, `push`, `rebase`...) hoặc dùng subshell escapes (`python -c`, `powershell -c`, `bash -c`, `node -e`). Tuyệt đối không tự commit.
 
 ## Định nghĩa hoàn thành
 - Mỗi tiêu chí xong trong card có ít nhất một test hoặc bước kiểm tra cụ thể.

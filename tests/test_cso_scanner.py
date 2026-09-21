@@ -17,6 +17,12 @@ class TestCsoScanner(unittest.TestCase):
         self.assertTrue(any(f.rule_id == "SECRET-01" for f in findings))
         self.assertEqual(findings[0].severity, "CRITICAL")
 
+        # JSON / YAML format
+        json_code = '{"api_key": "sk-proj-1234567890abcdef1234567890", "password": "supersecretpassword"}'
+        findings_json = self.scanner.scan_file_content(json_code, "config.json")
+        self.assertTrue(any(f.rule_id == "SECRET-01" for f in findings_json))
+        self.assertTrue(any(f.rule_id == "SECRET-03" for f in findings_json))
+
     def test_detect_command_injection(self):
         code = "os.system(f'rm -rf {user_input}')"
         findings = self.scanner.scan_file_content(code, "test_file.py")

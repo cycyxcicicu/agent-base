@@ -127,10 +127,15 @@ class AccountPool:
         self._load_all_accounts()
 
     def _detect_cookies_dir(self) -> Path:
+        user_home_cookies = Path.home() / ".gemini" / "cookies"
+        if os.environ.get("GEMINI_COOKIES_DIR"):
+            return Path(os.environ["GEMINI_COOKIES_DIR"])
+        if user_home_cookies.exists():
+            return user_home_cookies
         for p in [AGENT_BASE_DIR / "cookies", AGENT_BASE_DIR.parent / "cookies"]:
             if p.exists():
                 return p
-        return AGENT_BASE_DIR / "cookies"
+        return user_home_cookies
 
     def _detect_env_path(self) -> Path:
         for p in [AGENT_BASE_DIR / ".env", AGENT_BASE_DIR.parent / ".env"]:

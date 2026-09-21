@@ -32,7 +32,8 @@ Thumbs.db
 *-worktrees/
 
 # AI tools, IDE and local config (per the GitFlow lecture)
-.claude/
+.claude/*
+!.claude/settings.json
 .codex/
 .cursor/
 .vscode/

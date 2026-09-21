@@ -32,11 +32,11 @@ class CsoScanner:
     """Static application security testing (SAST) scanner for agent workflows."""
 
     SECRET_PATTERNS = [
-        ("SECRET-01", "CRITICAL", r"(?i)(api[_-]?key|secret[_-]?key|auth[_-]?token)\s*=\s*['\"][A-Za-z0-9_\-]{16,}['\"]",
+        ("SECRET-01", "CRITICAL", r"(?i)[\"']?(api[_-]?key|secret[_-]?key|auth[_-]?token)[\"']?\s*[:=]\s*['\"][A-Za-z0-9_\-]{16,}['\"]",
          "Hardcoded API key or secret token found."),
         ("SECRET-02", "CRITICAL", r"-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----",
          "Hardcoded Private Key found."),
-        ("SECRET-03", "HIGH", r"(?i)(password|passwd|pwd)\s*=\s*['\"][^'\"]{4,}['\"]",
+        ("SECRET-03", "HIGH", r"(?i)[\"']?(password|passwd|pwd)[\"']?\s*[:=]\s*['\"][^'\"]{4,}['\"]",
          "Potential hardcoded password found."),
     ]
 

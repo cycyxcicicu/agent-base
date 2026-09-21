@@ -4,6 +4,9 @@ description: UI/UX Designer. Thiết kế luồng người dùng, wireframe, dan
 mode: all
 model_tier: standard
 bash: readonly
+bash_allow:
+  - "node *ui-ux-pro-max*"
+  - "python *ui-ux-pro-max*"
 edit_allow:
   - docs/notes/inbox/**
   - docs/design/**

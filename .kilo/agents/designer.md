@@ -24,6 +24,81 @@ permission:
     "git rev-list*": allow
     "git shortlog*": allow
     "git grep*": allow
+    "node *ui-ux-pro-max*": allow
+    "python *ui-ux-pro-max*": allow
+    "git add*": deny
+    "git commit*": deny
+    "git push*": deny
+    "git pull*": deny
+    "git fetch*": deny
+    "git merge *": deny
+    "git rebase*": deny
+    "git reset*": deny
+    "git checkout*": deny
+    "git switch*": deny
+    "git restore*": deny
+    "git stash*": deny
+    "git tag *": deny
+    "git cherry-pick*": deny
+    "git revert*": deny
+    "git rm*": deny
+    "git mv*": deny
+    "git clean*": deny
+    "git apply*": deny
+    "git am*": deny
+    "git init*": deny
+    "git clone*": deny
+    "git branch *": deny
+    "git worktree *": deny
+    "git remote add*": deny
+    "git remote remove*": deny
+    "git remote set-url*": deny
+    "git remote rename*": deny
+    "git config *": deny
+    "*new-worktree*": deny
+    "*install-hooks*": deny
+    "git -C *": deny
+    "git -c *": deny
+    "git *commit*": deny
+    "git *push*": deny
+    "git *merge*": deny
+    "git *rebase*": deny
+    "git *reset*": deny
+    "git *revert*": deny
+    "git *checkout*": deny
+    "git *switch*": deny
+    "git *stash*": deny
+    "git *branch*": deny
+    "*--no-verify*": deny
+    "rm -rf /": deny
+    "rm -rf *": deny
+    "rm -fr /": deny
+    "rm -fr *": deny
+    "rm -r -f*": deny
+    "rm -f -r*": deny
+    "rm -r *": deny
+    "rm -R *": deny
+    "rm -f *": deny
+    "Remove-Item*-Recurse*": deny
+    "rmdir /s*": deny
+    "del /s*": deny
+    "git push --force*": deny
+    "git push -f*": deny
+    "git reset --hard*": deny
+    "python* -c*": deny
+    "py* -c*": deny
+    "python3* -c*": deny
+    "powershell* -c*": deny
+    "powershell* -Command*": deny
+    "pwsh* -c*": deny
+    "pwsh* -Command*": deny
+    "bash* -c*": deny
+    "sh* -c*": deny
+    "zsh* -c*": deny
+    "node* -e*": deny
+    "node* --eval*": deny
+    "ruby* -e*": deny
+    "perl* -e*": deny
   webfetch: deny
   websearch: deny
   codesearch: deny

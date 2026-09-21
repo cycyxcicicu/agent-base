@@ -24,13 +24,28 @@ class HandoffRouter:
     """Bộ định tuyến bàn giao nhiệm vụ giữa các vai trò trong Swarm."""
 
     VALID_TRANSITIONS = {
-        "analyst": ["architect", "product"],
-        "product": ["architect", "ba"],
-        "architect": ["dev", "dba", "security"],
-        "dev": ["qa", "reviewer"],
-        "qa": ["dev", "devops", "sre"],
-        "reviewer": ["dev", "devops", "orchestrator"],
-        "orchestrator": ["analyst", "product", "architect", "dev", "qa", "reviewer", "devops", "sre"]
+        "analyst": ["architect", "product", "ba", "researcher"],
+        "product": ["architect", "ba", "designer", "writer"],
+        "ba": ["architect", "dev", "product", "designer"],
+        "architect": ["dev", "mobile", "dba", "security", "designer", "devops", "reviewer"],
+        "designer": ["dev", "mobile", "qa", "product"],
+        "dev": ["qa", "reviewer", "devops", "security", "writer"],
+        "mobile": ["qa", "reviewer", "devops", "security", "writer"],
+        "qa": ["dev", "mobile", "devops", "sre", "reviewer"],
+        "reviewer": ["dev", "mobile", "devops", "writer", "orchestrator"],
+        "security": ["dev", "mobile", "devops", "sre", "architect", "reviewer"],
+        "devops": ["sre", "dev", "mobile", "security"],
+        "sre": ["devops", "dev", "security"],
+        "dba": ["dev", "architect", "devops"],
+        "researcher": ["analyst", "architect", "ai-eng", "product"],
+        "ai-eng": ["dev", "architect", "researcher", "qa"],
+        "debt-hunter": ["dev", "architect", "reviewer"],
+        "writer": ["reviewer", "product", "orchestrator"],
+        "orchestrator": [
+            "analyst", "product", "ba", "architect", "designer", "dev", "mobile",
+            "qa", "reviewer", "security", "devops", "sre", "dba", "researcher",
+            "ai-eng", "debt-hunter", "writer"
+        ]
     }
 
     @classmethod

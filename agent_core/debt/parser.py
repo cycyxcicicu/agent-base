@@ -28,6 +28,11 @@ class DebtParser:
         re.IGNORECASE
     )
 
+    GENERIC_DEBT_PATTERN = re.compile(
+        r"(?:#|//|/\*|<!--)\s*debt:\s*(?P<content>.*?)(?:\*/|-->|$)",
+        re.IGNORECASE
+    )
+
     @classmethod
     def parse_line(cls, line: str, file_path: str, line_number: int) -> Optional[DebtItem]:
         """Phân tích một dòng mã nguồn xem có chứa thẻ nợ kỹ thuật không."""
@@ -39,6 +44,19 @@ class DebtParser:
                 shortcut=match.group("shortcut").strip(),
                 ceiling=match.group("ceiling").strip(),
                 upgrade_path=match.group("upgrade").strip(),
+                raw_comment=line.strip()
+            )
+
+        # Phát hiện thẻ nợ dị dạng thiếu trường (malformed debt tags)
+        gen_match = cls.GENERIC_DEBT_PATTERN.search(line)
+        if gen_match:
+            raw_text = gen_match.group("content").strip()
+            return DebtItem(
+                file_path=file_path,
+                line_number=line_number,
+                shortcut=raw_text or "[EMPTY SHORTCUT]",
+                ceiling="[MALFORMED: THIẾU CEILING]",
+                upgrade_path="[MALFORMED: THIẾU UPGRADE]",
                 raw_comment=line.strip()
             )
         return None

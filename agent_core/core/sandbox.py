@@ -1,8 +1,8 @@
 """
-src/core/sandbox.py
-Isolated Execution Sandbox & Runner.
-Inspired by E2B MicroVM pattern: isolated execution environment, timeout boundaries,
-and structured result streaming.
+agent_core/core/sandbox.py
+Process Execution Environment & Sanitized Runner.
+Enforces timeout boundaries, sanitized environment variables (stripping sensitive API keys/tokens),
+and structured execution result streaming (note: runs locally as a sanitized sub-process, not a hardware MicroVM).
 """
 
 import os

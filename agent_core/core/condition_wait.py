@@ -17,15 +17,21 @@ def wait_until(
     """
     Chờ đồng bộ cho tới khi điều kiện predicate() trả về True hoặc chạm ngưỡng timeout.
     Loại bỏ hoàn toàn sleep(5) tĩnh gây chậm trễ hoặc thất bại ngẫu nhiên.
+    Lưu trữ nguyên nhân lỗi (exception / assertion error) để hỗ trợ debug khi timeout.
     """
     start_time = time.time()
+    last_exception: Optional[Exception] = None
     while time.time() - start_time < timeout:
         try:
             if predicate():
                 return True
-        except Exception:
-            pass
+        except Exception as e:
+            last_exception = e
         time.sleep(interval)
+    
+    err_suffix = f" - Lỗi kiểm tra cuối: {type(last_exception).__name__}: {last_exception}" if last_exception else ""
+    if last_exception:
+        raise TimeoutError(f"{error_message} (sau {timeout}s){err_suffix}") from last_exception
     raise TimeoutError(f"{error_message} (sau {timeout}s)")
 
 
@@ -39,6 +45,7 @@ async def wait_until_async(
     Chờ bất đồng bộ cho tới khi predicate() trả về True hoặc chạm ngưỡng timeout.
     """
     start_time = time.time()
+    last_exception: Optional[Exception] = None
     while time.time() - start_time < timeout:
         try:
             res = predicate()
@@ -46,7 +53,11 @@ async def wait_until_async(
                 res = await res
             if res:
                 return True
-        except Exception:
-            pass
+        except Exception as e:
+            last_exception = e
         await asyncio.sleep(interval)
+
+    err_suffix = f" - Lỗi kiểm tra cuối: {type(last_exception).__name__}: {last_exception}" if last_exception else ""
+    if last_exception:
+        raise TimeoutError(f"{error_message} (sau {timeout}s){err_suffix}") from last_exception
     raise TimeoutError(f"{error_message} (sau {timeout}s)")

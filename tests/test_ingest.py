@@ -26,6 +26,8 @@ class TestIngestModules(unittest.TestCase):
             "<body>"
             "<h1>Tiêu Đề Trang</h1>"
             "<p>Nội dung quan trọng của bài viết.</p>"
+            "<div style='display:none'>văn bản ẩn không được xuất hiện</div>"
+            "<span hidden>văn bản ẩn khác</span>"
             "<iframe src='tracker.com'></iframe>"
             "</body>"
             "</html>"
@@ -33,6 +35,7 @@ class TestIngestModules(unittest.TestCase):
         cleaned = WebCleaner.clean_html(raw_html)
         self.assertNotIn("alert('spam')", cleaned)
         self.assertNotIn("tracker.com", cleaned)
+        self.assertNotIn("văn bản ẩn", cleaned)
         self.assertIn("# Tiêu Đề Trang", cleaned)
         self.assertIn("Nội dung quan trọng của bài viết.", cleaned)
 
@@ -57,9 +60,10 @@ class TestIngestModules(unittest.TestCase):
             # Shared strings
             shared_strings_xml = (
                 '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-                '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="2" uniqueCount="2">'
+                '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="3" uniqueCount="3">'
                 '<si><t>Project</t></si>'
                 '<si><t>AgentBase</t></si>'
+                '<si><t>A "q"</t></si>'
                 '</sst>'
             )
             zf.writestr("xl/sharedStrings.xml", shared_strings_xml)
@@ -71,6 +75,7 @@ class TestIngestModules(unittest.TestCase):
                 '<sheetData>'
                 '<row r="1"><c r="A1" t="s"><v>0</v></c></row>'
                 '<row r="2"><c r="A2" t="s"><v>1</v></c></row>'
+                '<row r="3"><c r="A3" t="s"><v>2</v></c></row>'
                 '</sheetData>'
                 '</worksheet>'
             )
@@ -80,6 +85,7 @@ class TestIngestModules(unittest.TestCase):
         md = DocumentConverter.xlsx_to_markdown(zip_buffer)
         self.assertIn("| Project |", md)
         self.assertIn("| AgentBase |", md)
+        self.assertIn('| A "q" |', md)
 
     def test_csv_to_markdown_pipe_and_newline_escape(self):
         csv_data = 'name,notes\nAlice,"A | B | C"\nBob,"Line 1\nLine 2"'

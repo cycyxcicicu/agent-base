@@ -88,9 +88,10 @@ class RedTeamScanner:
         (r"(?i)\bbypass\s+(all\s+)?(safety|security)?\s*(guidelines|checks|rules|filters)\b", "Jailbreak: Yêu cầu phá vỡ hàng rào an toàn/kiểm tra"),
         (r"(?i)\byou\s+are\s+now\s+(in\s+)?(developer\s+mode|unrestricted|dan\s+mode)\b", "Jailbreak: Ép chuyển sang Developer/DAN mode"),
         (r"(?i)\bsystem\s+override\s*:\s*admin\b", "Jailbreak: Giả mạo quyền quản trị viên"),
-        (r"(?i)\bbỏ\s+qua\s+(toàn\s+bộ\s+|tất\s+cả\s+)?(hướng\s+dẫn|chỉ\s+thị|quy\s+tắc|câu\s+lệnh)\s*(trước|cũ|hệ\s+thống)?\b", "Prompt Injection: Yêu cầu bỏ qua chỉ thị (Tiếng Việt)"),
+        (r"(?i)\b(bỏ\s+qua|quên|hủy)\s+(toàn\s+bộ\s+|tất\s+cả\s+|mọi\s+)?(hướng\s+dẫn|chỉ\s+dẫn|chỉ\s+thị|quy\s+tắc|câu\s+lệnh|lệnh|prompt|yêu\s+cầu)\s*(trước|cũ|hệ\s+thống|trước\s+đó)?\b", "Prompt Injection: Yêu cầu bỏ qua chỉ thị (Tiếng Việt)"),
         (r"(?i)\btừ\s+bây\s+giờ\s+bạn\s+là\b", "Jailbreak: Ép đổi nhân cách (Tiếng Việt)"),
-        (r"(?i)\bquên\s+(hết|toàn\s+bộ|tất\s+cả)\s+(lệnh|quy\s+tắc|chỉ\s+thị)\b", "Prompt Injection: Quên hết quy tắc (Tiếng Việt)"),
+        (r"(?i)\bquên\s+(hết|toàn\s+bộ|tất\s+cả|mọi)\s+(lệnh|quy\s+tắc|chỉ\s+thị|chỉ\s+dẫn|hướng\s+dẫn)\b", "Prompt Injection: Quên hết quy tắc (Tiếng Việt)"),
+        (r"(?i)\bkhông\s+tuân\s+theo\s+(bất\s+kỳ\s+|mọi\s+|các\s+)?(chỉ\s+dẫn|quy\s+tắc|chỉ\s+thị)\b", "Prompt Injection: Không tuân theo quy tắc (Tiếng Việt)"),
     ]
 
     # 2. SQL Injection
@@ -113,10 +114,9 @@ class RedTeamScanner:
         (r"(?i)/etc/(passwd|shadow|hosts)", "File Disclosure: Cố gắng đọc file hệ thống linux"),
     ]
 
-    # 5. SSRF (Server-Side Request Forgery)
+    # 5. SSRF (Server-Side Request Forgery - Cloud Metadata)
     SSRF_PATTERNS = [
-        (r"(?i)https?://(?:169\.254\.169\.254|metadata\.google\.internal)", "SSRF: Nỗ lực tấn công Cloud Metadata Endpoint"),
-        (r"(?i)https?://(?:127\.0\.0\.1|localhost)(?::\d+)?", "SSRF: Nỗ lực gọi dịch vụ nội bộ cục bộ"),
+        (r"(?i)https?://(?:169\.254\.169\.254|metadata\.google\.internal|100\.100\.100\.200)", "SSRF: Nỗ lực tấn công Cloud Metadata Endpoint"),
     ]
 
     # 6. PII & Secrets Leaks

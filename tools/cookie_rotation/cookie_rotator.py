@@ -34,15 +34,20 @@ async def rotate_and_save_1psidts(
     if not secure_1psid:
         return None
 
-    # Tìm thư mục cookies (ưu tiên thư mục cookies trong agent-base, nếu không có thì tìm ở thư mục cha)
+    # Tìm thư mục cookies (ưu tiên thư mục ngoài OneDrive: ~/.gemini/cookies hoặc GEMINI_COOKIES_DIR)
+    user_home_cookies = Path.home() / ".gemini" / "cookies"
     if cookies_dir:
         c_dir = Path(cookies_dir)
+    elif os.environ.get("GEMINI_COOKIES_DIR"):
+        c_dir = Path(os.environ["GEMINI_COOKIES_DIR"])
+    elif user_home_cookies.exists():
+        c_dir = user_home_cookies
     elif (AGENT_BASE_DIR / "cookies").exists():
         c_dir = AGENT_BASE_DIR / "cookies"
     elif (AGENT_BASE_DIR.parent / "cookies").exists():
         c_dir = AGENT_BASE_DIR.parent / "cookies"
     else:
-        c_dir = AGENT_BASE_DIR / "cookies"
+        c_dir = user_home_cookies
     
     c_dir.mkdir(parents=True, exist_ok=True)
     acc_file = c_dir / f"account_{account_id}.json"

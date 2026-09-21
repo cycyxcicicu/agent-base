@@ -10,6 +10,9 @@ triggers:
 
 # /careful — Destructive Command Guardrails
 
+> [!NOTE]
+> **Bản chất thực thi**: Kỹ năng này đóng vai trò là cẩm nang checklist an toàn kết hợp với danh sách chặn lệnh cứng (`danger_deny`) trong `.kilo` và `.claude/settings.json`. Hệ thống không cài đặt hook can thiệp ngầm vào terminal của người dùng.
+
 Use this skill when performing sensitive refactoring, touching live data, or running batch system commands to prevent irreversible data loss.
 
 ## 1. Protected Destructive Patterns

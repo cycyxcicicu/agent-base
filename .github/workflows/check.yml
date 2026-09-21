@@ -88,3 +88,25 @@ jobs:
           } else {
             Write-Host "Branch is not named after a ticket, skipping merge gate."
           }
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Unit Tests
+        shell: powershell
+        run: python -m unittest discover -s tests -v
+
+      - name: Check Skills Registry Integrity
+        shell: powershell
+        run: python scripts/check-skills.py
+
+      - name: Static Security Audit (CSO Scanner)
+        shell: powershell
+        run: python scripts/cso.py --strict
+
+      - name: Repository Health Diagnostic (Doctor)
+        shell: powershell
+        run: python scripts/doctor.py
+

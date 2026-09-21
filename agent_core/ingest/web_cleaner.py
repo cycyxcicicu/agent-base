@@ -26,6 +26,9 @@ class WebCleaner:
         for pattern in cls.NOISY_TAGS:
             clean = re.sub(pattern, "", clean, flags=re.IGNORECASE)
 
+        # Loại bỏ các thẻ ẩn và nội dung bên trong (display:none, visibility:hidden, hidden)
+        clean = re.sub(r"<([a-zA-Z0-9_-]+)\b[^>]*\b(?:style=[\"'][^\"']*display\s*:\s*none[^\"']*[\"']|style=[\"'][^\"']*visibility\s*:\s*hidden[^\"']*[\"']|hidden\b)[^>]*>[\s\S]*?<\/\1>", "", clean, flags=re.IGNORECASE)
+
         # Chuyển đổi các thẻ tiêu đề thành Markdown
         clean = re.sub(r"<h1[^>]*>(.*?)<\/h1>", r"\n# \1\n", clean, flags=re.IGNORECASE)
         clean = re.sub(r"<h2[^>]*>(.*?)<\/h2>", r"\n## \1\n", clean, flags=re.IGNORECASE)

@@ -7,7 +7,7 @@ Chỉ **người dùng** duyệt và ghi vào sổ này. Chưa có dòng nào ng
 | Skill | Nguồn (URL) | Phiên bản hoặc mã commit | Ngày duyệt | Người duyệt | Vai được dùng | Có script không | Ghi chú |
 |---|---|---|---|---|---|---|---|
 | diagram-design | https://github.com/cathrynlavery/diagram-design | v2.6 | 2026-09-20 | User | ba, analyst, architect, writer | Không | 41 loại sơ đồ HTML/SVG trực quan không script |
-| grilling | https://github.com/mattpocock/skills | main | 2026-09-20 | User | architect, analyst, ba | Không | Phỏng vấn Cây Quyết Định đào sâu ranh giới (chỉnh sửa nhẹ 3 dòng) |
+| grilling | Tự viết (lấy ý từ https://github.com/mattpocock/skills) | local | 2026-09-20 | User | architect, analyst, ba | Không | Phỏng vấn Cây Quyết Định đào sâu ranh giới |
 | writing-for-agents | https://github.com/mattpocock/skills | main | 2026-09-20 | User | architect, analyst, writer | Không | Chuẩn viết chỉ dẫn và prompt cho Agent |
 | domain-modeling | https://github.com/mattpocock/skills | main | 2026-09-20 | User | ba, analyst, architect, product | Không | Rèn luyện mô hình miền và từ điển CONTEXT.md |
 | codebase-design | https://github.com/mattpocock/skills | main | 2026-09-20 | User | dev, architect, mobile | Không | Thiết kế mô-đun sâu (Deep Modules) và Seams |
@@ -15,11 +15,11 @@ Chỉ **người dùng** duyệt và ghi vào sổ này. Chưa có dòng nào ng
 | architecture-decision-records | https://github.com/affaan-m/ECC | main | 2026-09-20 | User | architect, dba, devops | Không | Quản lý vòng đời ADR chuẩn Nygard cho docs/adr/ |
 | subagent-driven-development | https://github.com/obra/superpowers | main | 2026-09-20 | User | dev, architect | Không | Điều phối subagent ngữ cảnh sạch và review từng task |
 | systematic-debugging | https://github.com/obra/superpowers | main | 2026-09-20 | User | dev, sre, qa | Không | 4 pha gỡ lỗi gốc rễ và condition-based waiting |
-| to-spec | https://github.com/mattpocock/skills | main | 2026-09-20 | User | product, ba, architect | Không | Chuyển ý tưởng hội thoại thành tài liệu đặc tả docs/spec/ (chỉnh sửa nhẹ) |
-| to-tickets | https://github.com/mattpocock/skills | main | 2026-09-20 | User | product, ba | Không | Bẻ bài toán thành các phiếu việc nguyên tử tasks/T-xxx.md (chỉnh sửa nhẹ) |
-| ui-ux-pro-max | https://github.com/nextlevelbuilder/ui-ux-pro-max-skill | v2.0 | 2026-09-20 | User | designer, dev, mobile, architect | Có (Python 3 search.py) | 192 reasoning rules, 79 UI styles, 74 font pairings, 119 UX guidelines, 22 stacks |
+| to-spec | Tự viết (lấy ý từ https://github.com/mattpocock/skills) | local | 2026-09-20 | User | product, ba, architect | Không | Chuyển ý tưởng hội thoại thành tài liệu đặc tả docs/spec/ |
+| to-tickets | Tự viết (lấy ý từ https://github.com/mattpocock/skills) | local | 2026-09-20 | User | product, ba | Không | Bẻ bài toán thành các phiếu việc nguyên tử tasks/T-xxx.md |
+| ui-ux-pro-max | https://github.com/nextlevelbuilder/ui-ux-pro-max-skill | v2.0 | 2026-09-20 | User | designer, dev, mobile | Có (Python 3 search.py) | 192 reasoning rules, 79 UI styles, 74 font pairings, 119 UX guidelines, 22 stacks |
 | gemini-deep-research | https://github.com/HanaokaYuzu/Gemini-API | local | 2026-09-20 | User | researcher, analyst, ai-eng | Có (Python gemini-research.py) | Tích hợp Gemini-API & Deep Research có cổng Ask-Before-Search |
-| open-code-review | Tự viết (lấy ý từ https://github.com/alibaba/open-code-review) | local | 2026-09-21 | User | reviewer, dev, qa, architect | Có (Python code_reviewer.py) | Chuẩn AI review code Alibaba: precision over recall, line-level schema, blocking gates |
+| open-code-review | Tự viết (lấy ý từ https://github.com/alibaba/open-code-review) | local | 2026-09-21 | User | reviewer, dev, qa | Có (Python code_reviewer.py) | Chuẩn AI review code Alibaba: precision over recall, line-level schema, blocking gates |
 | i-have-adhd | https://github.com/ayghri/i-have-adhd | main | 2026-09-21 | User | writer, dev, product | Không | Định hình giao tiếp: hành động lên đầu, số hóa nhiệm vụ, triệt tiêu văn hoa rườm rà |
 | plan-ceo-review | Tự viết (lấy ý từ https://github.com/garrytan/gstack) | local | 2026-09-21 | User | product, architect | Không | Tự viết (ý từ gstack). Thẩm định kế hoạch bằng tư duy Founder/CEO: 10-star product, đảo ngược giả định, scope gating |
 | plan-eng-review | Tự viết (lấy ý từ https://github.com/garrytan/gstack) | local | 2026-09-21 | User | architect, dev, reviewer | Không | Tự viết (ý từ gstack). Thẩm định kỹ thuật: thử tải 10x, race condition, DB table lock, ranh giới module |

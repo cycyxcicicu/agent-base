@@ -13,6 +13,7 @@ Usage:
 
 import sys
 import re
+import json
 from pathlib import Path
 
 # Force UTF-8 on Windows console if needed
@@ -55,8 +56,14 @@ danger_ask = [
 ]
 danger_deny = [
     '*--no-verify*', 'rm -rf /', 'rm -rf *', 'rm -fr /', 'rm -fr *',
+    'rm -r -f*', 'rm -f -r*', 'rm -r *', 'rm -R *', 'rm -f *',
     'Remove-Item*-Recurse*', 'rmdir /s*', 'del /s*',
-    'git push --force*', 'git push -f*', 'git reset --hard*'
+    'git push --force*', 'git push -f*', 'git reset --hard*',
+    'python* -c*', 'py* -c*', 'python3* -c*',
+    'powershell* -c*', 'powershell* -Command*', 'pwsh* -c*', 'pwsh* -Command*',
+    'bash* -c*', 'sh* -c*', 'zsh* -c*',
+    'node* -e*', 'node* --eval*',
+    'ruby* -e*', 'perl* -e*'
 ]
 
 
@@ -66,7 +73,10 @@ git_write_deny = [
     'git tag *', 'git cherry-pick*', 'git revert*', 'git rm*', 'git mv*', 'git clean*',
     'git apply*', 'git am*', 'git init*', 'git clone*', 'git branch *', 'git worktree *',
     'git remote add*', 'git remote remove*', 'git remote set-url*', 'git remote rename*',
-    'git config *', '*new-worktree*', '*install-hooks*'
+    'git config *', '*new-worktree*', '*install-hooks*',
+    'git -C *', 'git -c *',
+    'git *commit*', 'git *push*', 'git *merge*', 'git *rebase*', 'git *reset*',
+    'git *revert*', 'git *checkout*', 'git *switch*', 'git *stash*', 'git *branch*'
 ]
 
 git_read_allow = [
@@ -161,7 +171,7 @@ def build_kilo(meta: dict, body: str, src_rel: str) -> str:
             lines.append(f'    "{c}": allow')
         for c in get_list(meta, 'bash_allow'):
             lines.append(f'    "{c}": allow')
-        for c in get_list(meta, 'bash_deny'):
+        for c in (git_write_deny + danger_deny + get_list(meta, 'bash_deny')):
             lines.append(f'    "{c}": deny')
     elif bash == 'full':
         extra_ask = get_list(meta, 'bash_ask')
@@ -214,6 +224,16 @@ def main():
     outputs['CODEX.md'] = f"<!-- {MARKER} from AGENTS.md. Do not edit. -->\n" + agents_md
     outputs['.github/copilot-instructions.md'] = f"<!-- {MARKER} from AGENTS.md. Do not edit. -->\n" + agents_md
     outputs['.agents/rules/agents-core.md'] = f"<!-- {MARKER} from AGENTS.md. Do not edit. -->\n" + agents_md
+
+    # Generate .claude/settings.json to enforce deny rules on Claude Code
+    claude_deny = [f"Bash({c})" for c in (git_write_deny + danger_deny)] + (git_write_deny + danger_deny)
+    claude_settings = {
+        "$schema": "https://json.schemastore.org/claude-code-settings.json",
+        "permissions": {
+            "deny": claude_deny
+        }
+    }
+    outputs['.claude/settings.json'] = json.dumps(claude_settings, indent=2, ensure_ascii=False) + '\n'
 
     problems = 0
     for rel, content in outputs.items():

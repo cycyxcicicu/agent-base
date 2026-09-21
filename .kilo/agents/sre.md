@@ -56,17 +56,48 @@ permission:
     "git config *": deny
     "*new-worktree*": deny
     "*install-hooks*": deny
+    "git -C *": deny
+    "git -c *": deny
+    "git *commit*": deny
+    "git *push*": deny
+    "git *merge*": deny
+    "git *rebase*": deny
+    "git *reset*": deny
+    "git *revert*": deny
+    "git *checkout*": deny
+    "git *switch*": deny
+    "git *stash*": deny
+    "git *branch*": deny
     "*--no-verify*": deny
     "rm -rf /": deny
     "rm -rf *": deny
     "rm -fr /": deny
     "rm -fr *": deny
+    "rm -r -f*": deny
+    "rm -f -r*": deny
+    "rm -r *": deny
+    "rm -R *": deny
+    "rm -f *": deny
     "Remove-Item*-Recurse*": deny
     "rmdir /s*": deny
     "del /s*": deny
     "git push --force*": deny
     "git push -f*": deny
     "git reset --hard*": deny
+    "python* -c*": deny
+    "py* -c*": deny
+    "python3* -c*": deny
+    "powershell* -c*": deny
+    "powershell* -Command*": deny
+    "pwsh* -c*": deny
+    "pwsh* -Command*": deny
+    "bash* -c*": deny
+    "sh* -c*": deny
+    "zsh* -c*": deny
+    "node* -e*": deny
+    "node* --eval*": deny
+    "ruby* -e*": deny
+    "perl* -e*": deny
     "*rm -rf*": deny
     "*drop table*": deny
     "*truncate*": deny

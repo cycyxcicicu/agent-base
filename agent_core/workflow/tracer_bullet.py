@@ -84,6 +84,18 @@ class DependencyGraph:
     def __init__(self, tickets: List[Ticket]):
         self.tickets: Dict[str, Ticket] = {t.ticket_id: t for t in tickets}
 
+    def validate_dependencies(self) -> List[str]:
+        """
+        Kiểm tra tính toàn vẹn của đồ thị:
+        Phát hiện các ticket phụ thuộc vào ticket ID không tồn tại trong danh mục.
+        """
+        missing_errors = []
+        for t_id, ticket in self.tickets.items():
+            for dep in ticket.blocked_by:
+                if dep not in self.tickets:
+                    missing_errors.append(f"Ticket '{t_id}' phụ thuộc vào ticket không tồn tại '{dep}'")
+        return missing_errors
+
     def get_frontier(self) -> List[Ticket]:
         """
         Tìm các ticket ở đường biên (Frontier):

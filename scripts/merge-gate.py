@@ -130,26 +130,25 @@ def main():
         except Exception:
             pass
 
-    if not base_card_text and not worktree_card_text:
-        print(f"ERROR: card not found on base '{args.base}' or branch '{args.branch}': {args.card}")
-        sys.exit(2)
+    # -------------------------------------------------------------------------
+    # C1 / N1 Fix: Enforce that task cards MUST exist on base branch
+    # -------------------------------------------------------------------------
+    if not base_card_text:
+        print(f"FAIL: Task card '{card_rel}' does not exist on base branch '{args.base}'!")
+        print(f"  Task cards define authorization boundaries (scope_edit) and MUST be committed/merged to '{args.base}' first.")
+        print(f"  Agents on feature branches may NOT invent new task cards to authorize their own changes.")
+        sys.exit(1)
 
-    # If card exists on base, it is the authority
-    if base_card_text:
-        task_id, allow, deny = parse_card_frontmatter(base_card_text)
-        # Check if the branch attempted to tamper with scope_edit or scope_deny
-        if worktree_card_text:
-            wt_id, wt_allow, wt_deny = parse_card_frontmatter(worktree_card_text)
-            if sorted(wt_allow) != sorted(allow) or sorted(wt_deny) != sorted(deny):
-                print(f"FAIL: Task card {card_rel} scope was tampered with on branch {args.branch}!")
-                print(f"  Base {args.base} scope_edit: {allow}")
-                print(f"  Branch modified scope_edit: {wt_allow}")
-                print("  Agents may NOT widen their own scope. Scope changes must originate from base branch.")
-                sys.exit(1)
-    else:
-        # Card is newly introduced on this branch
-        print(f"WARN: task card {card_rel} does not exist on base branch '{args.base}'. Reading from branch.")
-        task_id, allow, deny = parse_card_frontmatter(worktree_card_text)
+    task_id, allow, deny = parse_card_frontmatter(base_card_text)
+    # Check if the branch attempted to tamper with scope_edit or scope_deny
+    if worktree_card_text:
+        wt_id, wt_allow, wt_deny = parse_card_frontmatter(worktree_card_text)
+        if sorted(wt_allow) != sorted(allow) or sorted(wt_deny) != sorted(deny):
+            print(f"FAIL: Task card {card_rel} scope was tampered with on branch {args.branch}!")
+            print(f"  Base {args.base} scope_edit: {allow}")
+            print(f"  Branch modified scope_edit: {wt_allow}")
+            print("  Agents may NOT widen their own scope. Scope changes must originate from base branch.")
+            sys.exit(1)
 
     if not task_id:
         print("ERROR: card has no id")
@@ -184,9 +183,18 @@ def main():
             continue
 
         # ---------------------------------------------------------------------
-        # C3 Fix: Verify risk tickets instead of unconditionally ignoring them
+        # C3 Fix: Risk tickets must be approved with verified human signer
         # ---------------------------------------------------------------------
         if re.match(r"^docs/risk/RK-.*\.md$", f):
+            base_risk_text = ""
+            try:
+                base_risk_text = subprocess.check_output(
+                    ['git', '-C', repo, 'show', f"{args.base}:{f}"],
+                    text=True, encoding='utf-8', stderr=subprocess.DEVNULL
+                )
+            except Exception:
+                base_risk_text = ""
+
             risk_file = Path(repo) / f
             risk_text = ""
             if risk_file.exists():
@@ -208,24 +216,46 @@ def main():
             status = status_match.group(1) if status_match else "UNKNOWN"
             app_match = re.search(r'(?s)## Chấp thuận\s*\n+(.+?)(?:\n##|\Z)', risk_text)
             approval_body = app_match.group(1).strip() if app_match else ""
+            has_human_signer = bool(re.search(r"(?i)(người\s+phê\s+duyệt|người\s+chấp\s+thuận|approved\s+by)\s*:\s*[^\n]+", risk_text))
 
-            if status != "APPROVED" or not approval_body or approval_body.startswith("(") or "để trống" in approval_body.lower():
-                violations.append(f"UNAPPROVED RISK TICKET {f}: Status is '{status}', lacks valid human approval statement")
+            # -----------------------------------------------------------------
+            # C3 Fix: An APPROVED risk ticket CANNOT be created on feature branch.
+            # Approved exemptions must already exist on base branch (develop/main).
+            # Feature branches may only introduce PENDING tickets for human review.
+            # -----------------------------------------------------------------
+            if status == "APPROVED":
+                if not base_risk_text:
+                    violations.append(
+                        f"UNAUTHORIZED RISK APPROVAL {f}: Status is 'APPROVED' but ticket does not exist on base '{args.base}'. "
+                        f"Feature branches cannot self-approve risk tickets. Approvals must originate on base branch by human."
+                    )
+                    continue
+
+                base_status_match = re.search(r'(?m)^Status:\s*(APPROVED|PENDING|REJECTED|EXPIRED)\b', base_risk_text)
+                base_status = base_status_match.group(1) if base_status_match else "UNKNOWN"
+                if base_status != "APPROVED":
+                    violations.append(
+                        f"UNAUTHORIZED RISK STATUS ELEVATION {f}: Status was elevated to 'APPROVED' on feature branch. "
+                        f"Approvals must be committed to base branch '{args.base}' by human."
+                    )
+                    continue
+
+                if not approval_body or approval_body.startswith("(") or "để trống" in approval_body.lower():
+                    violations.append(f"INVALID RISK TICKET {f}: Status is 'APPROVED' but lacks valid approval statement")
+                    continue
+
+                if not has_human_signer:
+                    violations.append(f"UNVERIFIED RISK TICKET {f}: Lacks human signer field ('Người phê duyệt: <họ tên / email>').")
+                    continue
+
+            elif status == "PENDING":
+                # Newly proposed risk tickets in PENDING state are allowed to be tracked on branch
+                pass
+            else:
+                violations.append(f"INVALID RISK TICKET STATUS {f}: Status is '{status}', expected APPROVED or PENDING.")
                 continue
 
-            # Verify commit author who modified the risk ticket is not an agent
-            try:
-                commit_author = subprocess.check_output(
-                    ['git', '-C', repo, 'log', '-1', '--format=%an', f"{args.base}..{args.branch}", '--', f],
-                    text=True, encoding='utf-8'
-                ).strip()
-                if commit_author.endswith("(agent)") or "(agent)" in commit_author.lower():
-                    violations.append(f"UNAUTHORIZED RISK APPROVAL {f}: modified by an agent ('{commit_author}'). Risk approvals must come from human.")
-                    continue
-            except Exception:
-                pass
-
-            # Risk ticket is validly approved
+            # Risk ticket file itself is validly processed
             continue
 
         if test_match(f, deny):

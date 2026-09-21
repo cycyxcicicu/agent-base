@@ -79,7 +79,7 @@ Ba lớp quyền, đều khai báo trong phần đầu của file vai trò rồi
 
 Vai `readonly` còn có thêm `bash_allow` (lệnh được thêm, ví dụ `runner` được chạy test và lint, `reviewer` được chạy merge-gate) và `bash_deny` (mẫu cấm, ví dụ `--fix`, `--write`). Vai `runner` không có quyền sửa file nào: chỉ chạy lệnh trong danh sách cho phép.
 
-**Model**: mỗi vai có tầng `model_tier` (`strong` / `standard` / `fast`), ánh xạ sang model cụ thể ở `agents/models.txt` (mặc định để trống, chưa ghim model nào). Khi nào dùng tầng nào: `agents/protocols/model-policy.md`.
+**Model**: mỗi vai có tầng `model_tier` (`strong` / `standard` / `fast`), ánh xạ sang model cụ thể ở `agents/models.txt` (đã cấu hình sẵn tiền tố phân tầng chuẩn Kilo/Anthropic/Gemini và có thể tùy biến). Khi nào dùng tầng nào: `agents/protocols/model-policy.md`.
 
 Chưa giới hạn: vai nào được gọi vai nào (quyền `task`), và MCP (mặc định không cài).
 
@@ -102,7 +102,7 @@ Theo bài giảng GitFlow (chi tiết `agents/protocols/git-rules.md`):
 
 ## Kỹ năng (29 Skills Tích Hợp)
 
-Hệ thống đã tích hợp sẵn 29 kỹ năng chuẩn hóa (100% Markdown thuần, không chứa mã thực thi độc hại, đặt tại `.agents/skills/<tên>/SKILL.md` và đăng ký tại `agents/knowledge/skills.md`):
+Hệ thống đã tích hợp sẵn 29 kỹ năng chuẩn hóa (đặc tả Markdown quy chuẩn đặt tại `.agents/skills/<tên>/SKILL.md` kèm các script tiện ích an toàn đã kiểm duyệt được đăng ký tại `agents/knowledge/skills.md`):
 
 ### 1. Phương pháp luận & Quy trình Cốt lõi
 - `subagent-driven-development`: Điều phối subagents độc lập, dọn sạch context window, cơ chế Rulings.

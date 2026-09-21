@@ -11,6 +11,9 @@ triggers:
 
 # Archify (Interactive System Architecture Compiler)
 
+> [!NOTE]
+> **Bản chất thực thi**: Kỹ năng này cung cấp định dạng đặc tả typed JSON IR và hướng dẫn tạo biểu đồ kiến trúc HTML/SVG tự chứa trực tiếp (hoặc kết xuất qua `agent_core/design/svg_renderer.py`). Không đòi hỏi binary compiler bên ngoài.
+
 Create self-contained, interactive HTML diagrams with inline SVG, zoom/pan controls, dark/light themes, and trace motion from compact typed JSON specifications.
 
 ## 1. Supported Diagram Types

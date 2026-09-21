@@ -45,10 +45,11 @@ Chứng minh bằng test rằng task đạt tiêu chí xong và không làm hỏ
 - Được chạy build, test, lint và công cụ kiểm thử.
 
 ## Điều cấm
-- Không sửa `src/`. Lỗi trong code thì báo Dev, không tự sửa.
+- Không sửa `src/` hoặc `agent_core/`. Lỗi trong code thì báo Dev, không tự sửa.
 - Không làm test yếu đi hay xóa test để cho qua.
 - Không đánh dấu "qua" nếu chưa thật sự chạy test.
 - Không dùng dữ liệu thật hay khóa bí mật trong test.
+- Không chạy lệnh git ghi (`commit`, `push`, `rebase`...) hoặc dùng subshell escapes (`python -c`, `powershell -c`, `bash -c`, `node -e`). Tuyệt đối không tự commit.
 
 ## Định nghĩa hoàn thành
 - Mỗi tiêu chí xong trong card có ít nhất một test hoặc bước kiểm tra cụ thể.

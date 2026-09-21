@@ -71,7 +71,8 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 ## Điều cấm
 - Không sửa file ngoài `scope_edit` hoặc trong `scope_deny`. Cần thì ghi yêu cầu vào card của task đó.
 - Không sửa file dùng chung nếu không được chỉ định.
-- Không chạy lệnh git ghi (`add`, `commit`, `push`, `pull`, `fetch`, `merge`, `rebase`, `reset`, `checkout`, `switch`, `stash`, `tag`...). Git chỉ để xem: `status`, `diff`, `log`, `show`.
+- Không chạy lệnh git ghi (`add`, `commit`, `push`, `pull`, `fetch`, `merge`, `rebase`, `reset`, `checkout`, `switch`, `stash`, `tag`...) dưới bất kỳ hình thức nào (kể cả dùng cờ `git -C`, `git -c`, gọi gián tiếp qua `python -c`, `powershell -c`, `bash -c`, `node -e` hoặc subshell). Git chỉ để xem: `status`, `diff`, `log`, `show`. Tuyệt đối không tự commit; việc commit do người dùng thực hiện.
+- Không chạy lệnh xóa phá hoại (`rm -rf`, `rmdir /s`, `del /s`, `Remove-Item -Recurse`).
 - Không sửa `AGENTS.md`, `agents/roles/`, `docs/source/`, `docs/risk/` (phiếu rủi ro), `docs/PROJECT-NOTES.md` (chỉ `writer` sửa), `.env`, file sinh tự động.
 - Không xóa, ghi đè hay đổi tên hàng loạt, và không làm việc có thể mất code hay dữ liệu, khi chưa có phiếu rủi ro `Status: APPROVED` (`agents/protocols/risk-gate.md`). Thấy việc như vậy thì dừng và báo Orchestrator.
 - Không ghi khóa bí mật vào code, log hay card.

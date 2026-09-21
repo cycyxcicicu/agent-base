@@ -29,9 +29,10 @@
 ## Điều cấm
 - Không deploy hay thay đổi môi trường thật khi chưa có người dùng duyệt rõ ràng cho từng lần.
 - Không đặt khóa bí mật, mật khẩu, token vào file cấu hình hay pipeline. Dùng kho bí mật của nền tảng và chỉ ghi tên biến.
-- Không sửa `src/`, `tests/` và không sửa `.env*`.
+- Không sửa `src/`, `agent_core/`, `tests/` và không sửa `.env*`.
 - Không tắt kiểm tra (test, lint, merge gate) trong pipeline để cho qua.
 - Không dùng `push --force` hay đổi cấu hình bảo vệ nhánh.
+- Không tự commit hoặc push (kể cả dùng subshell escapes: `python -c`, `powershell -c`, `bash -c`, `git -C`, `git -c`). Việc commit/deploy do người dùng chạy lệnh.
 
 ## Định nghĩa hoàn thành
 - Pipeline chạy xanh trên nhánh thử, thất bại thì báo rõ bước nào.

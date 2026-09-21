@@ -112,8 +112,16 @@ class DocumentConverter:
 
                 if grid:
                     sheet_name = Path(sheet_file).stem.capitalize()
-                    csv_mock = "\n".join([",".join([f'"{cell}"' for cell in r]) for r in grid])
-                    md_table = cls.csv_to_markdown(csv_mock)
+                    header = [cls._escape_md_cell(c) for c in grid[0]]
+                    md_lines = [
+                        "| " + " | ".join(header) + " |",
+                        "| " + " | ".join(["---"] * len(header)) + " |"
+                    ]
+                    for row in grid[1:]:
+                        row_escaped = [cls._escape_md_cell(c) for c in row]
+                        row_padded = row_escaped + [""] * (len(header) - len(row_escaped))
+                        md_lines.append("| " + " | ".join(row_padded[:len(header)]) + " |")
+                    md_table = "\n".join(md_lines)
                     output_sheets.append(f"### {sheet_name}\n\n{md_table}")
 
             return "\n\n".join(output_sheets)
