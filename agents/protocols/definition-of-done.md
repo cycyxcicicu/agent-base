@@ -1,6 +1,6 @@
 # Định nghĩa hoàn thành (theo cỡ việc)
 
-Ghi chú: AI không commit và không push. Các mục về commit, nhánh, Merge Request là việc của **người dùng**, AI chỉ chuẩn bị kế hoạch.
+Ghi chú: AI chỉ commit hoặc push khi người dùng yêu cầu rõ và duyệt từng lệnh. Các mục về commit, nhánh, Merge Request là việc của **người dùng** (AI chuẩn bị kế hoạch và có thể chạy giúp theo yêu cầu).
 
 ## Nhỏ
 - [ ] Sửa trong nhánh riêng do người dùng tạo (`<type>/<ticket>-<mô-tả>`).

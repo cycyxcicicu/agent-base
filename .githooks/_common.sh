@@ -3,7 +3,8 @@
 # Rules: agents/protocols/git-rules.md (GitFlow + Conventional Commits, from the user's lecture).
 
 # An "agent" is any git identity whose user.name ends with "(agent)".
-# AI agents never commit (they only read git and write a commit plan), so any such commit is refused.
+# Such an identity may not commit. When the user asks an AI to commit, the tool asks the user to approve each command and the
+# commit uses the user's own identity plus a Co-Authored-By trailer, so it is not blocked here.
 is_agent() {
   name=$(git config user.name 2>/dev/null)
   case "$name" in

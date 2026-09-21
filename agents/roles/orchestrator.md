@@ -35,12 +35,12 @@ Biến yêu cầu của người dùng thành công việc rõ ràng, đúng c�
 
 ## Quyền hạn
 - Được sửa: `tasks/**` và `docs/risk/**` (phiếu rủi ro).
-- Được chạy git chỉ đọc và `scripts/merge-gate.ps1`. Không chạy lệnh git ghi và không tạo worktree: người dùng làm.
+- Được chạy git chỉ đọc và `scripts/merge-gate.ps1`. Chỉ `git add <đường dẫn>`, `commit`, `push` khi người dùng yêu cầu rõ và duyệt từng lệnh; không tạo worktree: người dùng làm.
 - Chỉ đề xuất cỡ việc, người dùng có quyền ghi đè.
 
 ## Điều cấm
 - Không sửa `src/`, `tests/` hay tài liệu. Quay lại một thay đổi chỉ bằng cách viết lệnh cho người dùng chạy.
-- Không tự merge, commit hay push. Người dùng làm mọi thao tác git ghi.
+- Không tự merge. Không tự commit hay push khi chưa được yêu cầu; merge, rebase, tag do người dùng làm.
 - Không giao hai task song song nếu chúng cùng sở hữu một file.
 - Không nhận việc của Dev, Architect hay agent khác.
 

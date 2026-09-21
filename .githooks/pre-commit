@@ -5,9 +5,10 @@
 git_dir=$(git rev-parse --git-dir)
 branch=$(git symbolic-ref --short -q HEAD)
 
-# Rule 1: AI agents never commit. They only read git and write a commit plan for the user.
+# Rule 1: an identity marked "(agent)" may not commit. When the USER asks an AI to commit, the tool asks the user to approve
+# every git write command and the commit uses the user's own identity plus a Co-Authored-By trailer (agents/protocols/commit-plan.md).
 if is_agent; then
-  fail "agents may not commit. Write a commit plan in the task card (agents/protocols/commit-plan.md) and let the user run it."
+  fail "an identity ending in '(agent)' may not commit. Ask the AI to commit through the tool (you approve each command): it uses your identity and adds Co-Authored-By. Or write a commit plan in the task card (agents/protocols/commit-plan.md) and run it yourself."
 fi
 
 # Rule 2: nobody commits straight onto main/master/develop/release/*, except finishing a merge.
@@ -20,8 +21,9 @@ if [ -n "$branch" ] && ! is_protected "$branch" && [ ! -d "$git_dir/rebase-merge
   valid_branch_name "$branch" || fail "branch '$branch' is not named <type>/<ticket>-<short-description> (type: feature bugfix hotfix fix chore refactor docs test devops, or release/<version>)."
 fi
 
-# Rule 4: never commit secret-like files.
-bad=$(git diff --cached --name-only --diff-filter=ACM | grep -E '(^|/)\.env($|\.)|\.pem$|\.key$|(^|/)id_rsa' | grep -v '\.env\.example$')
+# Rule 4: never commit secret-like files (keys, cookies, credentials, state files). Examples and templates are allowed.
+secret_files='(^|/)\.env($|\.)|(^|/)\.envrc$|\.pem$|\.key$|\.p12$|\.pfx$|\.jks$|\.keystore$|\.kdbx$|\.ppk$|(^|/)id_(rsa|dsa|ecdsa|ed25519)($|[._-])|(^|/)\.netrc$|(^|/)\.pypirc$|(^|/)\.git-credentials$|(^|/)\.htpasswd$|\.tfstate(\.|$)|\.tfvars$|(^|/)(credentials?|secrets?)\.(json|ya?ml|toml|ini)$|(^|/)service[-_]account[^/]*\.json$|(^|/)gemini_cookies\.json$|(^|/)search_grant\.json$|(^|/)cookies/[^/]+\.json$'
+bad=$(git diff --cached --name-only --diff-filter=ACM | grep -E "$secret_files" | grep -Ev '(\.example|\.sample|\.template)(\.[^/]*)?$|\.pub$')
 if [ -n "$bad" ]; then
   echo "git-rules: refusing to commit secret-like files:" >&2
   echo "$bad" >&2
@@ -38,7 +40,7 @@ git diff --cached --name-only --diff-filter=ACM | while IFS= read -r f; do
 done || exit 1
 
 # Rule 6: no secret-looking values in added lines.
-if git diff --cached -U0 | grep '^+' | grep -v '^+++' | grep -Eiq '(BEGIN [A-Z ]*PRIVATE KEY|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{20,}|(^|[^A-Za-z0-9])sk-[A-Za-z0-9]{20,}|(api[_-]?key|secret|token|passw(or)?d)[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9/+_-]{12,})'; then
+if git diff --cached -U0 | grep '^+' | grep -v '^+++' | grep -Eiq '(BEGIN [A-Z ]*PRIVATE KEY|(AKIA|ASIA)[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{22,}|glpat-[A-Za-z0-9_-]{20,}|npm_[A-Za-z0-9]{36}|AIza[0-9A-Za-z_-]{35}|xox[baprs]-[A-Za-z0-9-]{10,}|hooks\.slack\.com/services/T[A-Za-z0-9/]+|eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|__Secure-1PSID(TS)?[^A-Za-z0-9]{0,3}[A-Za-z0-9_.-]{30,}|(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}|(api[_-]?key|secret|token|passw(or)?d)[[:space:]]*[:=][[:space:]]*["'"'"']?[A-Za-z0-9/+_-]{12,})'; then
   fail "a staged line looks like a secret (key, token or password). Remove it. If it is a false positive, review it yourself and commit with --no-verify."
 fi
 

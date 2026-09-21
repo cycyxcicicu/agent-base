@@ -49,7 +49,7 @@ Chứng minh bằng test rằng task đạt tiêu chí xong và không làm hỏ
 - Không làm test yếu đi hay xóa test để cho qua.
 - Không đánh dấu "qua" nếu chưa thật sự chạy test.
 - Không dùng dữ liệu thật hay khóa bí mật trong test.
-- Không chạy lệnh git ghi (`commit`, `push`, `rebase`...) hoặc dùng subshell escapes (`python -c`, `powershell -c`, `bash -c`, `node -e`). Tuyệt đối không tự commit.
+- Không chạy lệnh git ghi nguy hiểm (`rebase`, `reset`, `merge`...) hoặc dùng subshell escapes (`python -c`, `powershell -c`, `bash -c`, `node -e`). Không tự commit khi chưa được người dùng yêu cầu và duyệt từng lệnh.
 
 ## Định nghĩa hoàn thành
 - Mỗi tiêu chí xong trong card có ít nhất một test hoặc bước kiểm tra cụ thể.

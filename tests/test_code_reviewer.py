@@ -254,5 +254,47 @@ class TestCodeReviewerAnalysis(unittest.TestCase):
             )
 
 
+class TestUndefinedVariableScopeRules(unittest.TestCase):
+    """match/case (Python 3.10+), `from x import *` và các dạng ràng buộc tên khác không được báo 'chưa định nghĩa'."""
+
+    def setUp(self):
+        self.reviewer = CodeReviewer()
+
+    def _undefined(self, source: str):
+        comments = self.reviewer.analyze_source("a.py", source)
+        return [c for c in comments if "chưa được định nghĩa" in c.content]
+
+    def test_match_case_capture_patterns_are_bound(self):
+        valid = {
+            "mapping value": "def f(x):\n    match x:\n        case {'k': v}:\n            return v\n",
+            "class pattern kwargs": "from a import Point\ndef f(p):\n    match p:\n        case Point(x=a, y=b):\n            return a + b\n",
+            "sequence star": "def f(t):\n    match t:\n        case [a, *rest]:\n            return rest\n",
+            "as pattern": "def f(t):\n    match t:\n        case int() as n:\n            return n\n",
+            "or + guard": "def f(t):\n    match t:\n        case (1 | 2) as n if n > 1:\n            return n\n",
+            "mapping rest": "def f(t):\n    match t:\n        case {'a': 1, **rest}:\n            return rest\n",
+        }
+        for name, src in valid.items():
+            self.assertEqual(self._undefined(src), [], name)
+
+    def test_star_import_suppresses_undefined_reports(self):
+        src = "from os.path import *\ndef f():\n    return join('a', 'b')\n"
+        self.assertEqual(self._undefined(src), [])
+
+    def test_real_undefined_names_are_still_reported(self):
+        bad = {
+            "plain": "def f(a):\n    return a / b\n",
+            "typo": "def f(value):\n    return valeu + 1\n",
+            "nested function": "def f():\n    def g():\n        return zzz\n    return g\n",
+            "outside match": "def f(t):\n    match t:\n        case [a, b]:\n            pass\n    return zzz\n",
+            "after async for": "async def f(c):\n    async for x in c:\n        pass\n    return undefined_name\n",
+        }
+        for name, src in bad.items():
+            self.assertTrue(self._undefined(src), name)
+
+    def test_other_rules_still_fire_next_to_star_import(self):
+        comments = self.reviewer.analyze_source("a.py", "from os import *\ndef f(x):\n    return eval(x)\n")
+        self.assertTrue(any(c.category == "security" for c in comments))
+
+
 if __name__ == "__main__":
     unittest.main()

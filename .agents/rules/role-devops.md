@@ -32,7 +32,7 @@
 - Không sửa `src/`, `agent_core/`, `tests/` và không sửa `.env*`.
 - Không tắt kiểm tra (test, lint, merge gate) trong pipeline để cho qua.
 - Không dùng `push --force` hay đổi cấu hình bảo vệ nhánh.
-- Không tự commit hoặc push (kể cả dùng subshell escapes: `python -c`, `powershell -c`, `bash -c`, `git -C`, `git -c`). Việc commit/deploy do người dùng chạy lệnh.
+- Không tự commit hoặc push khi chưa được người dùng yêu cầu và duyệt từng lệnh (`AGENTS.md` quy tắc 4); vẫn cấm mọi cách né (subshell escapes: `python -c`, `powershell -c`, `bash -c`, `git -c alias.*`). Việc deploy do người dùng chạy lệnh.
 
 ## Định nghĩa hoàn thành
 - Pipeline chạy xanh trên nhánh thử, thất bại thì báo rõ bước nào.

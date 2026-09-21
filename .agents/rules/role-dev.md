@@ -37,7 +37,7 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
   3. **Phase 3 - Xác định nguyên nhân gốc rễ (Root Cause Analysis - 5 Whys)**: Tìm ra lý do cốt lõi tại sao bug phát sinh (sai lệch hợp đồng, null/undefined, race condition, ép kiểu sai). Tuyệt đối không vá bề mặt (symptom patching) để lấp liếm ngoại lệ.
   4. **Phase 4 - Sửa dứt điểm & Chống hồi quy (Fix & Regression Prevention)**: Sửa đúng nguyên nhân gốc, chạy test case ở Phase 1 để xác nhận chuyển sang XANH (PASS), đồng thời chạy lại toàn bộ test suite để đảm bảo không hồi quy tính năng cũ.
   5. **Condition-Based Waiting (Chống Flakey Test)**: Cấm tuyệt đối dùng `sleep()` tĩnh khi test async hoặc event-driven. Bắt buộc dùng polling trạng thái kèm timeout rõ ràng (tham chiếu `condition-based-waiting.md`).
-- **Kế hoạch commit** trong task card (mục "Kế hoạch commit") theo `agents/protocols/commit-plan.md`: các lệnh để **người dùng** chạy. Bạn không tự commit.
+- **Kế hoạch commit** trong task card (mục "Kế hoạch commit") theo `agents/protocols/commit-plan.md`: các lệnh để **người dùng** chạy, hoặc nhờ bạn chạy khi họ yêu cầu (duyệt từng lệnh). Bạn không tự commit khi chưa được yêu cầu.
 - Card được cập nhật: file đã đổi, kết quả test, nhật ký phiên, việc chưa xong, trạng thái `review`.
 
 
@@ -49,7 +49,7 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 ## Điều cấm
 - Không sửa file ngoài `scope_edit` hoặc trong `scope_deny`. Cần thì ghi yêu cầu vào card của task đó.
 - Không sửa file dùng chung nếu không được chỉ định.
-- Không chạy lệnh git ghi (`add`, `commit`, `push`, `pull`, `fetch`, `merge`, `rebase`, `reset`, `checkout`, `switch`, `stash`, `tag`...) dưới bất kỳ hình thức nào (kể cả dùng cờ `git -C`, `git -c`, gọi gián tiếp qua `python -c`, `powershell -c`, `bash -c`, `node -e` hoặc subshell). Git chỉ để xem: `status`, `diff`, `log`, `show`. Tuyệt đối không tự commit; việc commit do người dùng thực hiện.
+- Không chạy lệnh git ghi nguy hiểm (`pull`, `fetch`, `merge`, `rebase`, `reset`, `checkout`, `switch`, `stash`, `tag`, `add -A`, `commit --amend`, push ép...) dưới bất kỳ hình thức nào (kể cả dùng cờ `git -C`, `git -c`, gọi gián tiếp qua `python -c`, `powershell -c`, `bash -c`, `node -e` hoặc subshell). Git chủ yếu để xem: `status`, `diff`, `log`, `show`. `git add <đường dẫn>`, `commit`, `push` (nhánh cá nhân) chỉ khi người dùng yêu cầu rõ trong phiên này và duyệt từng lệnh (`AGENTS.md` quy tắc 4). Tuyệt đối không tự commit khi chưa được yêu cầu.
 - Không chạy lệnh xóa phá hoại (`rm -rf`, `rmdir /s`, `del /s`, `Remove-Item -Recurse`).
 - Không sửa `AGENTS.md`, `agents/roles/`, `docs/source/`, `docs/risk/` (phiếu rủi ro), `docs/PROJECT-NOTES.md` (chỉ `writer` sửa), `.env`, file sinh tự động.
 - Không xóa, ghi đè hay đổi tên hàng loạt, và không làm việc có thể mất code hay dữ liệu, khi chưa có phiếu rủi ro `Status: APPROVED` (`agents/protocols/risk-gate.md`). Thấy việc như vậy thì dừng và báo Orchestrator.

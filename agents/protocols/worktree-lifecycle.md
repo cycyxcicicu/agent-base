@@ -20,7 +20,7 @@ powershell -File scripts/new-worktree.ps1 -Ticket 12 -Slug token-check
 ## 2. AI làm việc
 
 - Mở **thư mục worktree** làm workspace của AI (không mở thư mục chính).
-- AI chỉ **sửa file** trong phạm vi task card, chạy test, rồi viết **kế hoạch commit** vào card. AI không commit, không tạo hay xóa worktree.
+- AI chỉ **sửa file** trong phạm vi task card, chạy test, rồi viết **kế hoạch commit** vào card. AI chỉ commit khi người dùng yêu cầu rõ và duyệt từng lệnh (`AGENTS.md` quy tắc 4); AI không tạo hay xóa worktree.
 - Task card và ghi chú `docs/notes/inbox/` của task nằm trong nhánh của worktree và đi cùng nhánh.
 
 ## 3. Commit (người dùng)

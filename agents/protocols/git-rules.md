@@ -2,16 +2,18 @@
 
 Nguồn: bài giảng "GitFlow CI/CD" của người dùng (33 slide), cộng quy tắc riêng của `agent-base`. Chỗ nào là suy luận của tôi hoặc bài giảng chưa rõ đều ghi ở mục 13.
 
-## 0. Quy tắc số 1: AI chỉ xem git, người dùng làm mọi thao tác ghi
+## 0. Quy tắc số 1: người dùng làm việc ghi git, hoặc nhờ AI làm và duyệt từng lệnh
 
-| Ai | Được | Không được |
-|---|---|---|
-| **AI (mọi agent, kể cả Claude)** | `git status`, `diff`, `log`, `show`, `blame`, `branch --list`, `ls-files`, `rev-parse`, `merge-base`, `rev-list`. Sửa file trong thư mục làm việc. **Viết kế hoạch commit** | `add`, `commit`, `push`, `pull`, `fetch`, `merge`, `rebase`, `reset`, `checkout`, `switch`, `restore`, `stash`, `tag`, `cherry-pick`, `revert`, `rm`, `mv`, `clean`, `worktree add`, `config`, `init`, `clone` |
-| **Người dùng** | Tất cả: tạo nhánh, commit, rebase, push, tạo Merge Request, merge, tag | Vi phạm quy tắc ở các mục dưới (hook và CI sẽ chặn) |
+| Ai | Tự làm được | Làm khi người dùng yêu cầu rõ và duyệt từng lệnh | Không bao giờ |
+|---|---|---|---|
+| **AI (mọi agent, kể cả Claude)** | `git status`, `diff`, `log`, `show`, `blame`, `branch --list`, `ls-files`, `rev-parse`, `merge-base`, `rev-list`. Sửa file trong thư mục làm việc. **Viết kế hoạch commit** | `git add <đường dẫn cụ thể>`, `git commit`, `git push` (nhánh cá nhân, không ép) | `add -A`/`.`/`-f`, `commit --amend`, `--no-verify`, push ép (`--force`, `--force-with-lease`), push vào `main`/`develop`/`release/*`, xóa ref, `pull`, `fetch`, `merge`, `rebase`, `reset`, `checkout`, `switch`, `restore`, `stash`, `tag`, `cherry-pick`, `revert`, `rm`, `mv`, `clean`, `worktree add`, `config`, `init`, `clone`, `git -c alias.*` |
+| **Người dùng** | Tất cả: tạo nhánh, commit, rebase, push, tạo Merge Request, merge, tag | | Vi phạm quy tắc ở các mục dưới (hook và CI sẽ chặn) |
 
-- Quyền của AI được **ép ở công cụ** (Kilo chặn các lệnh trên qua `scripts/sync-adapters.ps1`), không chỉ ghi trên giấy.
-- Khi làm xong, AI ghi **kế hoạch commit** vào task card (mẫu `agents/protocols/commit-plan.md`): danh sách lệnh `git add` và `git commit` chia theo chức năng, cộng lệnh rebase và push. Người dùng đọc, sửa nếu cần, rồi tự chạy.
-- Việc AI làm mà cần git ghi (tạo worktree, hoàn tác) cũng viết thành lệnh cho người dùng chạy. Việc có thể làm mất code hay dữ liệu còn phải qua **cổng rủi ro** (`agents/protocols/risk-gate.md`). Vòng đời worktree từ tạo đến dọn: `agents/protocols/worktree-lifecycle.md`.
+- Quyền của AI được **ép ở công cụ**: Kilo (`.kilo/agents/*.md`) và Claude Code (`.claude/settings.json`) đều sinh từ `scripts/sync-adapters.py`. Cột giữa là danh sách **hỏi** (`ask`): công cụ dừng lại chờ người dùng bấm duyệt từng lệnh. Cột phải là danh sách **cấm cứng** (`deny`), thắng danh sách hỏi.
+- Khi người dùng nói "commit hộ tôi", AI dùng **danh tính git của người dùng**, thêm dòng `Co-Authored-By: Claude <noreply@anthropic.com>` vào cuối message, và chỉ `git add` từng đường dẫn cụ thể (mẫu `agents/protocols/commit-plan.md`). Người dùng đọc lệnh trong hộp thoại duyệt trước khi cho chạy. Hook `pre-commit`/`commit-msg` vẫn chạy như với người: chặn commit trên nhánh chung, sai tên nhánh, sai định dạng message, file và dòng giống bí mật.
+- Danh tính có đuôi `(agent)` (ví dụ `Bot (agent)`) bị hook từ chối: AI không tự đặt danh tính riêng để commit.
+- Khi không được yêu cầu commit, AI ghi **kế hoạch commit** vào task card (mẫu `agents/protocols/commit-plan.md`): danh sách lệnh `git add` và `git commit` chia theo chức năng, cộng lệnh rebase và push. Người dùng đọc, sửa nếu cần, rồi tự chạy hoặc nhờ AI chạy.
+- Việc AI làm mà cần git ghi ngoài cột giữa (tạo worktree, hoàn tác, rebase) vẫn viết thành lệnh cho người dùng chạy. Việc có thể làm mất code hay dữ liệu còn phải qua **cổng rủi ro** (`agents/protocols/risk-gate.md`). Vòng đời worktree từ tạo đến dọn: `agents/protocols/worktree-lifecycle.md`.
 
 ## 1. Nhánh (GitFlow)
 
@@ -137,6 +139,17 @@ Với repo riêng tư, tính năng này có thể cần gói GitHub trả phí (
 ## 12. Hoàn tác
 
 Người dùng gộp một task bằng Merge Request nên có một merge commit. Quay lại một task = `git revert -m 1 <mã merge commit>` trên nhánh mới (bỏ `-m 1` nếu merge kiểu squash), chạy test, rồi Merge Request. Ghi mã merge commit vào task card sau khi merge. AI chỉ **viết lệnh** cho người dùng chạy, và **chỉ sau khi qua cổng rủi ro** (`agents/protocols/risk-gate.md`): đánh giá bằng lệnh chỉ đọc, phiếu rủi ro, người dùng chấp thuận rõ ràng. Commit hoàn tác mang dòng `Risk-Approved: RK-<số>`. Git không hoàn tác được thay đổi cơ sở dữ liệu, dữ liệu đã ghi và deploy: task nào đụng các thứ đó phải có "Kịch bản hoàn tác" trong card.
+
+## 12b. Phạm vi chặn lệnh bổ sung (công cụ, không chỉ quy tắc)
+
+Ngoài các lệnh ghi git ở mục 0, công cụ (Kilo qua `.kilo/agents/*.md`, Claude Code qua `.claude/settings.json`, cả `Bash` lẫn `PowerShell`) còn chặn:
+
+- Lệnh git phá hoặc viết lại lịch sử: `filter-branch`, `filter-repo`, `update-ref`, `reflog expire/delete`, `gc`, `prune`, `replace`, `bisect`, `sparse-checkout`, `maintenance`.
+- Cách viết khiến mẫu chặn không khớp: tab hoặc hai dấu cách sau `git`, `git.exe`, `& git`, `Start-Process ... git`, `cmd /c "git ..."`, `command git`, `env git`, lệnh ghép (`&&`, `;`, `|`, `||`, xuống dòng).
+- GitHub CLI có tác dụng ghi hoặc công khai: `gh pr merge/close/create/review`, `gh repo delete/edit/archive`, `gh release create/delete`, `gh secret`, `gh api` kèm `-X`, `--method`, `-f`, `--input`.
+- Tải rồi chạy: `curl ... | sh`, `iwr ... | iex`, `Invoke-Expression`, `iex (...)`.
+
+Lệnh chỉ đọc mà mục 0 cho phép (`git diff --name-only`, `git blame`, `git log --grep=...`, `git grep -n ...`, `gh pr view`, `gh pr list`...) không được bị chặn nhầm; `tests/test_security_rules.py` giữ điều này. File `.kilo/agents/*.md` phải luôn là YAML hợp lệ, không khoá lặp (`tests/test_kilo_frontmatter.py`, và `sync-adapters --check` cũng kiểm).
 
 ## 13. Điều tôi chưa chắc, bạn xác nhận
 

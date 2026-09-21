@@ -89,11 +89,11 @@ Sau khi xử lý xong, mỗi agent viết một file `docs/notes/inbox/<Task>-<a
 
 Vì mỗi agent ghi vào một file riêng, các nhánh chạy song song **không xung đột** ở bước này.
 
-## Git: AI chỉ xem, người dùng làm mọi thao tác ghi
+## Git: người dùng làm việc ghi, hoặc nhờ AI làm và duyệt từng lệnh
 
 Theo bài giảng GitFlow (chi tiết `agents/protocols/git-rules.md`):
 
-- AI chỉ được `status`, `diff`, `log`, `show`... Mọi `add`, `commit`, `push`, `rebase`, `merge`, `tag` do **người dùng** chạy. AI viết **kế hoạch commit** (`agents/protocols/commit-plan.md`) vào task card: các lệnh chia commit theo chức năng, kèm rebase và đẩy.
+- AI tự chạy được `status`, `diff`, `log`, `show`... Khi bạn nói "commit hộ tôi", AI chạy `git add <đường dẫn>`, `git commit`, `git push` (nhánh cá nhân, không ép) và **công cụ hỏi bạn duyệt từng lệnh**; commit dùng danh tính của bạn kèm `Co-Authored-By: Claude`. `rebase`, `merge`, `tag`, push ép, push vào `main`/`develop`/`release/*`, `add -A`, `commit --amend`, `--no-verify` luôn do **người dùng** chạy. AI viết **kế hoạch commit** (`agents/protocols/commit-plan.md`) vào task card: các lệnh chia commit theo chức năng, kèm rebase và đẩy.
 - Nhánh `main`, `develop`, `release/*`, `feature/*`, `fix/*`, `hotfix/*`. Tên nhánh `<type>/<ticket>-<mô-tả>` (ví dụ `feature/12-token-check`). Commit `<type>(scope): <tóm tắt>`, một commit một thay đổi logic.
 - Nhánh cá nhân **rebase** trước khi tạo Merge Request, không rebase `develop`/`release`, đẩy lại bằng `--force-with-lease`. Tag `v<MAJOR>.<MINOR>.<PATCH>`.
 - Mọi thay đổi vào `main`/`develop`/`release/*` qua Merge Request (CI qua, tiêu đề và mô tả đúng mẫu `.github/pull_request_template.md`).
@@ -176,7 +176,7 @@ powershell -File scripts/merge-gate.ps1 -Branch feature/12-token-check -Card tas
 - Kilo đọc đủ các vai trò từ `.kilo/agents/*.md` khi workspace là thư mục chứa `.kilo/`, và hiểu đúng phần `permission` (mẫu đường dẫn cho `edit`, mẫu lệnh cho `bash`, quy tắc khớp cuối cùng thắng).
 - Ba script chạy đúng trên Windows PowerShell 5.1.
 - Hook Git (`.githooks/`) đã thử 23 tình huống trong một repo tạm riêng: chặn commit trên `main`/`develop`/`release/*`, tên nhánh sai, tiêu đề commit sai dạng hoặc quá 72 ký tự, danh tính `(agent)`, `.env` và dòng giống mật khẩu; chặn push thẳng, push ghi đè và xóa nhánh dùng chung; cảnh báo nhánh chưa rebase lên `develop`; cho qua commit đúng và push tag.
-- Quyền git của AI: mọi lệnh git ghi bị chặn ở cả các vai `full` lẫn `readonly`, lệnh đọc vẫn dùng được. Đã kiểm bằng cách mô phỏng quy tắc "khớp cuối cùng thắng" trên các file sinh ra (Kilo CLI trên máy đang lỗi tạo thư mục tạm nên không dùng được lần cuối).
+- Quyền git của AI: vai `full` được hỏi duyệt cho `add <đường dẫn>`, `commit`, `push` không ép, các lệnh git ghi khác bị cấm cứng; vai `readonly` không ghi được gì; lệnh đọc luôn dùng được. Đã kiểm bằng cách mô phỏng quy tắc "khớp cuối cùng thắng" trên các file sinh ra (Kilo CLI trên máy đang lỗi tạo thư mục tạm nên không dùng được lần cuối).
 - Kilo 7.7.5 có công cụ Swarm Board (`board_post`, `board_read`) trong danh sách quyền của agent.
 
 **Chưa cài và chưa thử**: CI (`.github/workflows/check.yml`) và bảo vệ nhánh phía GitHub. MCP: mặc định không cài, xem `agents/protocols/mcp-policy.md`.

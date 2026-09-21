@@ -52,7 +52,10 @@ danger_ask = [
     'npm publish*', 'docker push*', 'twine upload*', 'terraform apply*',
     'kubectl apply*', 'kubectl delete*', 'docker system prune*',
     'git checkout .', 'git restore .',
-    '*drop table*', '*drop database*', '*truncate*'
+    '*drop table*', '*drop database*', '*truncate*',
+    'terraform destroy*', 'helm install*', 'helm upgrade*', 'helm uninstall*',
+    'npm unpublish*', 'yarn publish*', 'pnpm publish*', 'cargo publish*', 'dotnet nuget push*',
+    'aws s3 rm*', 'aws s3 sync*', 'gcloud * delete*', 'az * delete*'
 ]
 danger_deny = [
     '*--no-verify*', 'rm -rf /', 'rm -rf *', 'rm -fr /', 'rm -fr *',
@@ -74,7 +77,7 @@ danger_deny = [
 
 
 git_write_deny = [
-    'git add*', 'git commit*', 'git push*', 'git pull*', 'git fetch*', 'git merge *',
+    'git pull*', 'git fetch*', 'git merge *',
     'git rebase*', 'git reset*', 'git checkout*', 'git switch*', 'git restore*',
     'git stash push*', 'git stash pop*', 'git stash drop*', 'git stash clear*', 'git stash apply*', 'git stash branch*',
     'git tag -a*', 'git tag -d*', 'git tag -f*', 'git tag -m*', 'git tag --delete*', 'git tag [a-zA-Z0-9]*',
@@ -85,17 +88,14 @@ git_write_deny = [
     'git worktree add*', 'git worktree remove*', 'git worktree prune*', 'git worktree move*', 'git worktree lock*', 'git worktree unlock*',
     'git remote add*', 'git remote remove*', 'git remote set-url*', 'git remote rename*',
     'git config *', '*new-worktree*', '*install-hooks*',
-    'git -C * commit*', 'git -C * push*', 'git -C * merge*', 'git -C * rebase*', 'git -C * reset*',
+    'git -C * merge*', 'git -C * rebase*', 'git -C * reset*',
     'git -C * checkout*', 'git -C * switch*', 'git -C * branch*', 'git -C * tag*', 'git -C * restore*',
     'git -C * rm*', 'git -C * mv*', 'git -C * clean*', 'git -C * apply*', 'git -C * config*',
-    'git -c * commit*', 'git -c * push*', 'git -c * merge*', 'git -c * rebase*', 'git -c * reset*',
-    'git --* commit*', 'git --* push*', 'git --* merge*', 'git --* rebase*', 'git --* reset*',
+    'git --* merge*', 'git --* rebase*', 'git --* reset*',
     'git --* checkout*', 'git --* switch*', 'git --* branch*', 'git --* tag*', 'git --* restore*',
     'git --* rm*', 'git --* mv*', 'git --* clean*', 'git --* config*',
-    'git -* commit*', 'git -* push*', 'git -* merge*', 'git -* rebase*', 'git -* reset*',
+    'git -* merge*', 'git -* rebase*', 'git -* reset*',
     'git -* checkout*', 'git -* switch*', 'git -* branch*', 'git -* tag*',
-    '*&&*git commit*', '*;*git commit*', '*|*git commit*', '*||*git commit*',
-    '*&&*git push*', '*;*git push*', '*|*git push*', '*||*git push*',
     '*&&*git reset*', '*;*git reset*', '*|*git reset*',
     '*&&*git rebase*', '*;*git rebase*', '*|*git rebase*',
     '*&&*git merge*', '*;*git merge*', '*|*git merge*',
@@ -104,7 +104,6 @@ git_write_deny = [
     '*&&*git branch*', '*;*git branch*',
     'git push --force*', 'git push -f*', 'git reset --hard*',
     'command git *', '/usr/bin/git *', '"git" *', "'git' *",
-    '*git commit*', '*git.exe commit*', '*git push*', '*git.exe push*',
     '*git reset*', '*git.exe reset*', '*git rebase*', '*git.exe rebase*',
     '*git merge *', '*git.exe merge *',
     '*git checkout*', '*git.exe checkout*', '*git switch*', '*git.exe switch*', '*git restore*', '*git.exe restore*',
@@ -121,20 +120,199 @@ git_write_deny = [
     '*git*worktree lock*', '*git*worktree unlock*',
     '*git*remote add*', '*git*remote remove*', '*git*remote set-url*', '*git*remote rename*',
     '*git config *', '*git.exe config *',
-    '*& git*', '*& "git"*', "*& 'git'*", '*& *git.exe*',
     '*$(*git*)*', '*`*git*`*',
     '*git*--no-verify*',
-    '*\ngit commit*', '*\ngit push*', '*\ngit reset*', '*\ngit rebase*', '*\ngit checkout*',
-    '*\ngit merge*', '*\n*git commit*', '*\n*git push*'
+    '*\ngit reset*', '*\ngit rebase*', '*\ngit checkout*',
+    '*\ngit merge*'
 ]
 
+# ---------------------------------------------------------------------------
+# Ghi git theo YÊU CẦU của người dùng: `git add <đường dẫn>`, `git commit`, `git push` (không ép) chỉ chạy sau khi
+# người dùng duyệt từng lệnh (ask). Các dạng nguy hiểm vẫn bị CẤM CỨNG (deny thắng ask ở cả Kilo lẫn Claude Code).
+# ---------------------------------------------------------------------------
+git_commit_ask = []
+for _v in ('add', 'commit', 'push'):
+    git_commit_ask += [
+        f'git {_v}*', f'git.exe {_v}*', f'*git {_v}*', f'*git.exe {_v}*',
+        f'git -C * {_v}*', f'git --* {_v}*', f'git -* {_v}*',
+    ]
+
+git_commit_hard_deny = [
+    # add: chỉ thêm đường dẫn cụ thể
+    'git add -A*', 'git add --all*', 'git add .', 'git add . *', 'git add -f*', 'git add --force*',
+    'git add*--force*', 'git add* -f *',
+    # commit: không sửa lịch sử, không bỏ hook, không giả tác giả
+    'git commit*--amend*', 'git commit*--no-verify*', 'git commit -n*', 'git commit*--author*',
+    'git commit*--reset-author*', 'git commit*--no-gpg-sign*',
+    # push: không ép, không xóa ref, không đẩy hàng loạt, không đẩy vào nhánh chung
+    'git push*--force*', 'git push* -f', 'git push* -f *', 'git push*--delete*', 'git push* -d *', 'git push* -d',
+    'git push*--mirror*', 'git push*--all*', 'git push*--tags*', 'git push*--prune*', 'git push*--no-verify*',
+    'git push* :*', 'git push*:main*', 'git push*:master*', 'git push*:develop*', 'git push*:release/*',
+    'git push*refs/heads/main*', 'git push*refs/heads/master*', 'git push*refs/heads/develop*',
+    'git push* main', 'git push* main *', 'git push* master', 'git push* master *',
+    'git push* develop', 'git push* develop *', 'git push* release/*',
+    'git checkout -B*', 'git switch -C*',
+]
+git_write_deny += git_commit_hard_deny
+# Cùng các dạng cấm cứng nhưng nằm giữa lệnh ghép: `git add x && git commit -m y && git push origin main`.
+git_write_deny += ['*' + _p for _p in git_commit_hard_deny if _p.startswith('git ')]
+
+# `git -c <khoa>=<gia tri>` đặt cấu hình chỉ cho một lệnh: alias (che lệnh ghi), hook, ssh, editor, danh tính, gpg...
+# Chỉ cấm các khóa nguy hiểm để không chặn nhầm `git -C <thư mục> ...` (Windows không phân biệt -c và -C).
+_git_c_keys = [
+    'alias.', 'core.hooksPath', 'core.hookspath', 'core.sshCommand', 'core.sshcommand', 'core.editor', 'core.pager',
+    'core.fsmonitor', 'core.askPass', 'core.askpass', 'credential.', 'include.', 'includeIf.', 'includeif.', 'url.',
+    'protocol.', 'http.', 'user.', 'author.', 'committer.', 'commit.gpgSign', 'commit.gpgsign', 'gpg.', 'diff.external',
+    'sequence.editor', 'pager.',
+]
+for _k in _git_c_keys:
+    git_write_deny += [f'git -c {_k}*', f'*git -c {_k}*', f'git.exe -c {_k}*', f'*git.exe -c {_k}*']
+git_write_deny += ['git --config-env*', '*git --config-env*']
+
+# Toán tử gọi `&` của PowerShell (`& git commit`, `& "git" push`, `& C:\\...\\git.exe`) dùng để né mẫu theo tên lệnh.
+# Không dùng `*& git*` vì nó khớp cả `&& git` và sẽ chặn nhầm `git status && git log`.
+for _pre in ('', '*; ', '*| ', '*|| ', '*&& ', '*( ', '*{ ', '*\n'):
+    for _t in ('git', '"git"', "'git'", '*git.exe'):
+        git_write_deny.append(f'{_pre}& {_t}*')
 danger_deny.append('*search_grant*')
+
+# ---------------------------------------------------------------------------
+# Extra hardening (history-destroying git commands, whitespace tricks, launchers,
+# GitHub CLI, download-and-execute). Kept narrow on purpose: read-only commands that
+# AGENTS.md allows (diff --name-only, blame, log --grep=..., grep -n ...) must not match.
+# ---------------------------------------------------------------------------
+_git_extra_verbs = [
+    'filter-branch', 'filter-repo', 'update-ref', 'reflog expire', 'reflog delete',
+    'gc', 'prune', 'replace', 'notes add', 'notes remove', 'submodule update', 'submodule add',
+    'sparse-checkout', 'bisect', 'maintenance',
+]
+for _v in _git_extra_verbs:
+    git_write_deny += [f'git {_v}*', f'git.exe {_v}*', f'*git {_v}*', f'*git.exe {_v}*']
+
+# Tab or repeated spaces between "git" and the verb defeat the space-based patterns above.
+git_write_deny += [
+    'git\t*', '*git\t*', 'git.exe\t*', '*git.exe\t*',
+    'git  *', '*git  *', 'git.exe  *', '*git.exe  *',
+]
+
+# Launchers that hide the command name from the prefix patterns.
+danger_deny += [
+    '*Start-Process*git*', '*saps *git*', '*Invoke-Command*git*',
+    'start git*', 'start /b git*', 'start /min git*',
+    'cmd /c "git*', 'cmd.exe /c "git*', 'cmd /c *git*', 'cmd.exe /c *git*', 'cmd /k *git*',
+    # PowerShell bỏ qua dấu backtick trước ký tự thường, nên g`it push vẫn chạy `git push`.
+    'g`it*', 'gi`t*', 'g`i`t*', '*g`it *', '*gi`t *', '*g`i`t *',
+]
+
+# GitHub CLI: anything that merges, closes, publishes, deletes or changes settings/secrets.
+_gh_bases = [
+    'pr merge', 'pr close', 'pr reopen', 'pr review', 'pr edit', 'pr ready', 'pr comment', 'pr create',
+    'issue create', 'issue close', 'issue reopen', 'issue delete', 'issue edit', 'issue comment', 'issue transfer', 'issue lock',
+    'repo create', 'repo delete', 'repo edit', 'repo archive', 'repo rename', 'repo transfer', 'repo fork', 'repo sync',
+    'release create', 'release delete', 'release edit', 'release upload',
+    'secret', 'variable set', 'variable delete', 'workflow run', 'workflow enable', 'workflow disable',
+    'run rerun', 'run cancel', 'run delete', 'label create', 'label delete', 'label edit',
+    'auth', 'ssh-key', 'gpg-key', 'api*-X ', 'api*--method', 'api*-f ', 'api*-F ', 'api*--field', 'api*--raw-field', 'api*--input',
+]
+for _b in _gh_bases:
+    for _exe in ('gh', 'gh.exe'):
+        danger_deny += [f'{_exe} {_b}*', f'*{_exe} {_b}*']
+
+# Download-and-execute.
+danger_deny += [
+    '*| sh', '*| sh *', '*|sh', '*|sh *', '*| bash', '*| bash *', '*|bash', '*|bash *',
+    '*| zsh', '*| zsh *', '*|zsh', '*|zsh *',
+    '*| iex*', '*|iex*', '*| Invoke-Expression*', '*|Invoke-Expression*',
+    'iex *', 'iex(*', '*; iex *', '*(iex *', '*Invoke-Expression*', '*DownloadString(*',
+    '*<(curl*', '*<(wget*', '*<(iwr*',
+]
 
 git_read_allow = [
     'git branch --list*', 'git branch -a*', 'git branch -v*', 'git branch --show-current*',
     'git worktree list*', 'git tag -l*', 'git tag --list*', 'git stash list*',
     'git config --get*', 'git config --list*'
 ]
+
+
+def yq(text) -> str:
+    """Quote a string as a YAML/JSON-compatible double-quoted scalar.
+
+    Escapes backslash, double quote, newline, carriage return, tab and other control
+    characters, so patterns such as a real newline before "git push" or a Windows path
+    like .\mvnw.cmd never break the YAML front matter of the generated files.
+    """
+    out = []
+    for ch in str(text):
+        if ch == '\\':
+            out.append('\\\\')
+        elif ch == '"':
+            out.append('\\"')
+        elif ch == '\n':
+            out.append('\\n')
+        elif ch == '\r':
+            out.append('\\r')
+        elif ch == '\t':
+            out.append('\\t')
+        elif ord(ch) < 0x20:
+            out.append('\\x%02x' % ord(ch))
+        else:
+            out.append(ch)
+    return '"' + ''.join(out) + '"'
+
+
+_KILO_RULE_LINE = re.compile(r'^\s{4}"(?:[^"\\\x00-\x1f]|\\["\\ntr]|\\x[0-9a-f]{2})*": (?:allow|deny|ask)$')
+
+
+def validate_kilo_frontmatter(text: str, rel: str) -> list:
+    """Strict structural check of the front matter we emit: no raw control characters, every rule line well formed."""
+    problems = []
+    m = re.match(r'^---\n(.*?)\n---\n', text, re.S)
+    if not m:
+        return [f"{rel}: missing front matter"]
+    seen = set()
+    for i, line in enumerate(m.group(1).split('\n'), 2):
+        if not line.startswith('    "'):
+            seen = set()
+        if re.search(r'[\x00-\x08\x0b-\x1f]', line):
+            problems.append(f"{rel}:{i}: control character in front matter")
+        if line.startswith('    "'):
+            if not _KILO_RULE_LINE.match(line):
+                problems.append(f"{rel}:{i}: malformed rule line: {line[:70]}")
+            else:
+                key = line.rsplit(': ', 1)[0]
+                if key in seen:
+                    problems.append(f"{rel}:{i}: duplicate mapping key {key.strip()[:60]}")
+                seen.add(key)
+    return problems
+
+
+def dedupe_rule_lines(lines: list) -> list:
+    """Drop repeated pattern keys inside each permission mapping, keeping the LAST occurrence.
+
+    Kilo evaluates rules with "last match wins", and strict YAML readers reject duplicate mapping
+    keys, so a key that appears twice must appear once, at the position and with the action of its last use.
+    """
+    out = []
+    block = []
+
+    def flush():
+        seen = {}
+        for ln in block:
+            key = ln.rsplit(': ', 1)[0]
+            if key in seen:
+                seen.pop(key)
+            seen[key] = ln
+        out.extend(seen.values())
+        block.clear()
+
+    for ln in lines:
+        if ln.startswith('    "'):
+            block.append(ln)
+        else:
+            flush()
+            out.append(ln)
+    flush()
+    return out
 
 
 def norm(text: str) -> str:
@@ -178,9 +356,9 @@ def get_list(meta: dict, key: str) -> list:
 def build_kilo(meta: dict, body: str, src_rel: str) -> str:
     allow = get_list(meta, 'edit_allow')
     deny = get_list(meta, 'edit_deny')
-    desc = str(meta.get('description', '')).replace('"', '\\"')
+    desc = str(meta.get('description', ''))
 
-    lines = ['---', f'description: "{desc}"', f"mode: {meta.get('mode', '')}"]
+    lines = ['---', f'description: {yq(desc)}', f"mode: {meta.get('mode', '')}"]
 
     role_name = meta.get('name', '')
     model_to_use = role_models.get(role_name)
@@ -202,9 +380,9 @@ def build_kilo(meta: dict, body: str, src_rel: str) -> str:
         if '*' not in allow:
             lines.append('    "*": deny')
         for a in allow:
-            lines.append(f'    "{a}": allow')
+            lines.append(f'    {yq(a)}: allow')
         for d in deny:
-            lines.append(f'    "{d}": deny')
+            lines.append(f'    {yq(d)}: deny')
 
     bash = meta.get('bash')
     if bash == 'none':
@@ -219,12 +397,12 @@ def build_kilo(meta: dict, body: str, src_rel: str) -> str:
             'git grep*'
         ]
         for c in ro_cmds:
-            lines.append(f'    "{c}": allow')
+            lines.append(f'    {yq(c)}: allow')
         for c in get_list(meta, 'bash_allow'):
-            lines.append(f'    "{c}": allow')
+            lines.append(f'    {yq(c)}: allow')
         chain_deny = ['*;*', '*&&*', '*||*', '*|*', '*\n*', '*\\n*']
         for c in (chain_deny + git_write_deny + danger_deny + get_list(meta, 'bash_deny')):
-            lines.append(f'    "{c}": deny')
+            lines.append(f'    {yq(c)}: deny')
     elif bash == 'full':
         extra_ask = get_list(meta, 'bash_ask')
         extra_deny = list(get_list(meta, 'bash_deny'))
@@ -232,12 +410,12 @@ def build_kilo(meta: dict, body: str, src_rel: str) -> str:
             extra_deny.insert(0, '*scripts/gemini-research*')
         lines.append('  bash:')
         lines.append('    "*": allow')
-        for c in (danger_ask + extra_ask):
-            lines.append(f'    "{c}": ask')
+        for c in (danger_ask + extra_ask + git_commit_ask):
+            lines.append(f'    {yq(c)}: ask')
         for c in (git_write_deny + danger_deny + extra_deny):
-            lines.append(f'    "{c}": deny')
+            lines.append(f'    {yq(c)}: deny')
         for c in git_read_allow:
-            lines.append(f'    "{c}": allow')
+            lines.append(f'    {yq(c)}: allow')
     else:
         raise ValueError(f"role {src_rel} has invalid bash value: {bash} (use none, readonly or full)")
 
@@ -247,6 +425,7 @@ def build_kilo(meta: dict, body: str, src_rel: str) -> str:
     for k in ('webfetch', 'websearch', 'codesearch'):
         lines.append(f'  {k}: {web}')
 
+    lines = dedupe_rule_lines(lines)
     lines.append('---')
     lines.append(f'<!-- {MARKER} from {src_rel}. Do not edit. -->')
     lines.append(body.rstrip('\n') + '\n')
@@ -282,10 +461,12 @@ def main():
     # Generate .claude/settings.json to enforce deny rules on Claude Code
     # Use tool specifiers Bash(...) and PowerShell(...) strictly; no bare strings
     claude_deny = [f"Bash({c})" for c in (git_write_deny + danger_deny)] + [f"PowerShell({c})" for c in (git_write_deny + danger_deny)]
+    claude_ask = [f"Bash({c})" for c in (danger_ask + git_commit_ask)] + [f"PowerShell({c})" for c in (danger_ask + git_commit_ask)]
     claude_settings = {
         "$schema": "https://json.schemastore.org/claude-code-settings.json",
         "permissions": {
-            "deny": claude_deny
+            "deny": claude_deny,
+            "ask": claude_ask
         }
     }
     outputs['.claude/settings.json'] = json.dumps(claude_settings, indent=2, ensure_ascii=False) + '\n'
@@ -294,6 +475,11 @@ def main():
     for rel, content in outputs.items():
         full = ROOT / rel
         new_text = norm(content)
+
+        if rel.startswith('.kilo/agents/'):
+            for msg in validate_kilo_frontmatter(new_text, rel):
+                print(f"INVALID  {msg}")
+                problems += 1
 
         if rel.startswith('.agents/rules/') and len(new_text) > ANTIGRAVITY_LIMIT:
             print(f"WARNING: {rel} is {len(new_text)} chars, over Antigravity rule limit of {ANTIGRAVITY_LIMIT}")

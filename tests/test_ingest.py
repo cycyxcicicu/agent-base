@@ -178,5 +178,102 @@ class TestIngestModules(unittest.TestCase):
         self.assertNotIn("code x=1link text", cleaned)
 
 
+class TestWebCleanerHiddenContent(unittest.TestCase):
+    """Loại đúng chữ bị giấu mà không xoá nhầm nội dung hiển thị; xử lý HTML xấu trong thời gian tuyến tính."""
+
+    @staticmethod
+    def _clean(fragment: str) -> str:
+        return WebCleaner.clean_html("<body>" + fragment + "</body>")
+
+    def test_hidden_variants_are_removed(self):
+        hidden = {
+            "opacity:0 only property": '<p style="opacity:0">SECRET</p>',
+            "opacity:0 !important": '<p style="opacity:0 !important">SECRET</p>',
+            "opacity:0.0": '<p style="opacity:0.0">SECRET</p>',
+            "opacity uppercase": '<p STYLE="OPACITY:0">SECRET</p>',
+            "font-size:0": '<p style="font-size:0">SECRET</p>',
+            "font-size:0.0": '<p style="font-size:0.0">SECRET</p>',
+            "display:none !important": '<div style="display: none !important">SECRET</div>',
+            "visibility:hidden": '<p style="visibility:hidden">SECRET</p>',
+            "hidden attribute": "<div hidden>SECRET</div>",
+            "hidden empty value": '<div hidden="">SECRET</div>',
+            "aria-hidden true": '<div aria-hidden="true">SECRET</div>',
+            "single quoted style": "<p style='opacity:0'>SECRET</p>",
+            "offscreen left": '<p style="position:absolute;left:-9999px">SECRET</p>',
+            "text-indent": '<p style="text-indent:-9999px">SECRET</p>',
+            "white on white": '<p style="color:#fff;background:#fff">SECRET</p>',
+            "nested same tag": '<div style="display:none"><div>a</div>SECRET</div>',
+            "three levels": '<div style="display:none"><div><div>x</div>y</div>SECRET</div>',
+            "nested span": "<span hidden><span>b</span>SECRET</span>",
+        }
+        for name, html in hidden.items():
+            self.assertNotIn("SECRET", self._clean(html), name)
+
+    def test_visible_content_is_kept(self):
+        visible = {
+            "font-size:0.9em": '<p style="font-size:0.9em">KEEP</p>',
+            "font-size:.9em": '<p style="font-size:.9em">KEEP</p>',
+            "font-size:0.05em": '<p style="font-size:0.05em">KEEP</p>',
+            "font-size:10px": '<p style="font-size:10px">KEEP</p>',
+            "font-size empty": '<p style="font-size:;color:red">KEEP</p>',
+            "opacity:0.85": '<p style="opacity:0.85">KEEP</p>',
+            "opacity:.5": '<p style="opacity:.5">KEEP</p>',
+            "opacity:0.99": '<p style="opacity:0.99">KEEP</p>',
+            "aria-hidden false": '<div aria-hidden="false">KEEP</div>',
+            "class hidden-xs": '<div class="hidden-xs"><p>KEEP</p></div>',
+            "id hidden-panel": '<div id="hidden-panel"><p>KEEP</p></div>',
+            "title with word hidden": '<p title="hidden gem">KEEP</p>',
+            "class overflow-hidden": '<div class="overflow-hidden"><h2>KEEP</h2></div>',
+            "data-hidden": '<p data-hidden="x">KEEP</p>',
+            "small negative left": '<p style="position:relative;left:-10px">KEEP</p>',
+            "white text on dark": '<p style="color:#fff;background:#000">KEEP</p>',
+            "gt sign inside attribute": '<p title="a > b" style="opacity:0.9">KEEP</p>',
+            "hidden input then text": '<form><input type="hidden" name="a" value="1"><p>KEEP</p></form>',
+        }
+        for name, html in visible.items():
+            self.assertIn("KEEP", self._clean(html), name)
+
+    def test_text_after_a_hidden_block_is_kept(self):
+        out = self._clean('<div style="display:none"><div><div>x</div>y</div>SECRET</div>AFTER')
+        self.assertIn("AFTER", out)
+        self.assertNotIn("SECRET", out)
+
+    def test_implicit_end_tags_do_not_swallow_following_content(self):
+        out = self._clean("<p hidden>SECRET<p>KEEP</p>")
+        self.assertNotIn("SECRET", out)
+        self.assertIn("KEEP", out)
+
+    def test_linear_time_on_hostile_html(self):
+        import time
+        hostile = {
+            "unclosed hidden p": "<p hidden>" * 10000 + "x",
+            "unclosed table": "<table>" * 5000 + "x",
+            "unclosed pre": "<pre>" * 5000 + "x",
+            "unclosed td": "<table><tr>" + "<td>" * 20000 + "</tr></table>",
+            "unclosed h1": "<h1>" * 20000,
+            "unclosed div": "<div>" * 20000 + "x",
+            "unclosed li": "<li>a" * 20000,
+            "endless attributes": "<div " + "a " * 40000 + "<p>x",
+        }
+        for name, html in hostile.items():
+            start = time.time()
+            WebCleaner.clean_html(html)
+            self.assertLess(time.time() - start, 3.0, f"{name} chạy quá chậm (nghi ngờ O(n^2))")
+
+    def test_structure_is_preserved(self):
+        out = self._clean(
+            "<h1>T</h1><table><tr><th>A</th><th>B</th></tr><tr><td>1</td><td>2</td></tr></table>"
+            "<ul><li>one</li></ul><pre>x=1</pre><a href='/x'>lk</a> tail"
+        )
+        self.assertIn("| A | B |\n| --- | --- |\n| 1 | 2 |", out)
+        self.assertIn("```\nx=1\n```", out)
+        self.assertNotIn("x=1lk", out)
+
+    def test_preformatted_tag_is_not_mistaken_for_paragraph(self):
+        out = self._clean("<pre>code</pre><p>para</p>")
+        self.assertIn("```\ncode\n```", out)
+        self.assertIn("para", out)
+
+
 if __name__ == "__main__":
     unittest.main()

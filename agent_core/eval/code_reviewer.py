@@ -273,6 +273,20 @@ class FileExclusionFilter:
         return False, ""
 
 
+def _match_binding_names(pattern) -> set:
+    """Names bound by a structural-pattern-matching pattern (Python 3.10+): `case [a, *rest]`, `case {'k': v}`,
+    `case Point(x=a)`, `case int() as n`, `case {**rest}`."""
+    names = set()
+    for n in ast.walk(pattern):
+        if hasattr(ast, "MatchAs") and isinstance(n, ast.MatchAs) and n.name:
+            names.add(n.name)
+        elif hasattr(ast, "MatchStar") and isinstance(n, ast.MatchStar) and n.name:
+            names.add(n.name)
+        elif hasattr(ast, "MatchMapping") and isinstance(n, ast.MatchMapping) and n.rest:
+            names.add(n.rest)
+    return names
+
+
 class CodeReviewer:
     """
     Động cơ Review Mã Nguồn Alibaba Open-Code-Review.
@@ -394,7 +408,7 @@ class CodeReviewer:
                     module_scope_names.add(alias.asname or alias.name.split('.')[0])
             elif isinstance(node, ast.ImportFrom):
                 for alias in node.names:
-                    module_scope_names.add(alias.asname or alias.name)
+                    module_scope_names.add(alias.asname or alias.name)  # 'from x import *' adds the marker '*'
             elif isinstance(node, ast.Assign):
                 for tgt in node.targets:
                     for n in ast.walk(tgt):
@@ -404,6 +418,8 @@ class CodeReviewer:
                 module_scope_names.add(node.target.id)
             elif isinstance(node, ast.NamedExpr) and isinstance(node.target, ast.Name):
                 module_scope_names.add(node.target.id)
+            elif hasattr(ast, "match_case") and isinstance(node, ast.match_case):
+                module_scope_names |= _match_binding_names(node.pattern)
             elif isinstance(node, (ast.For, ast.AsyncFor)):
                 for n in ast.walk(node.target):
                     if isinstance(n, ast.Name):
@@ -480,7 +496,7 @@ class CodeReviewer:
                     if d is not None:
                         for n in ast.walk(d):
                             if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load):
-                                if n.id not in valid_default_names:
+                                if n.id not in valid_default_names and '*' not in self.module_names:
                                     line_no = getattr(n, "lineno", node.lineno)
                                     snippet = self.lines[line_no - 1] if line_no <= len(self.lines) else ""
                                     self.issues.append(ReviewComment(
@@ -518,6 +534,8 @@ class CodeReviewer:
                             local_names.add(child.target.id)
                         elif isinstance(child, ast.NamedExpr) and isinstance(child.target, ast.Name):
                             local_names.add(child.target.id)
+                        elif hasattr(ast, "match_case") and isinstance(child, ast.match_case):
+                            local_names |= _match_binding_names(child.pattern)
                         elif isinstance(child, (ast.For, ast.AsyncFor)):
                             for n in ast.walk(child.target):
                                 if isinstance(n, ast.Name):
@@ -553,7 +571,7 @@ class CodeReviewer:
                             continue
                         if isinstance(child, ast.Name) and isinstance(child.ctx, ast.Load):
                             var_name = child.id
-                            if var_name not in all_known and var_name not in seen_undefined:
+                            if var_name not in all_known and var_name not in seen_undefined and '*' not in self.module_names:
                                 seen_undefined.add(var_name)
                                 line_no = getattr(child, "lineno", node.lineno)
                                 snippet = self.lines[line_no - 1] if line_no <= len(self.lines) else ""

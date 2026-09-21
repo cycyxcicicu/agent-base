@@ -58,13 +58,13 @@ Luồng việc lớn: Người dùng → Orchestrator ↔ Product → BA / Analy
 2. Cần sửa ngoài phạm vi: ghi yêu cầu vào card của task đó hoặc Board. Không tự sửa.
 
 **Khi sửa**
-3. Làm việc trong nhánh và worktree do **người dùng** tạo. Bạn chỉ **sửa file**.
-4. **Git chỉ để xem.** Được: `status`, `diff`, `log`, `show`, `blame`, `branch --list`, `ls-files`, `rev-parse`, `merge-base`, `rev-list`. **Không được** (công cụ chặn): `add`, `commit`, `push`, `pull`, `fetch`, `merge`, `rebase`, `reset`, `checkout`, `switch`, `restore`, `stash`, `tag`, `cherry-pick`, `revert`, `rm`, `mv`, `clean`, `worktree add`, `config`, `init`, `clone`. Không dùng `--no-verify`.
+3. Làm việc trong nhánh và worktree do **người dùng** tạo. Bạn sửa file; ghi git theo quy tắc 4.
+4. **Git chủ yếu để xem.** Được: `status`, `diff`, `log`, `show`, `blame`, `branch --list`, `ls-files`, `rev-parse`, `merge-base`, `rev-list`. `add <đường dẫn>`, `commit`, `push` (nhánh cá nhân, không ép) **chỉ khi người dùng yêu cầu rõ**: công cụ hỏi duyệt từng lệnh, commit dùng danh tính người dùng kèm `Co-Authored-By`. **Luôn cấm**: `add -A`/`.`/`-f`, `commit --amend`, push ép hoặc vào `main`/`develop`/`release/*`, `pull`, `fetch`, `merge`, `rebase`, `reset`, `checkout`, `switch`, `restore`, `stash`, `tag`, `cherry-pick`, `revert`, `rm`, `mv`, `clean`, `worktree add`, `config`, `init`, `clone`, `--no-verify`.
 
 **Sau khi sửa**
 5. Chạy test và lint theo `PROJECT.md` (hoặc nhờ `runner`), ghi kết quả vào card.
 6. Điền vào card: file đã đổi, lý do, việc chưa xong.
-7. **Viết kế hoạch commit** vào card theo `agents/protocols/commit-plan.md`: các lệnh `git add` và `git commit` chia theo chức năng, cộng lệnh rebase và đẩy. Người dùng đọc rồi **tự chạy**. Bạn không chạy.
+7. **Viết kế hoạch commit** vào card theo `agents/protocols/commit-plan.md`. Người dùng tự chạy, hoặc nhờ bạn chạy theo quy tắc 4.
 8. Viết ghi chú cho agent sau (mục 8).
 
 **Cấm tuyệt đối**
@@ -125,7 +125,7 @@ Hoàn tác một task: `git revert -m 1 <mã merge commit>` trên nhánh mới (
 ## 12. Quy tắc Git (theo GitFlow)
 
 Chi tiết: `agents/protocols/git-rules.md`. Tóm tắt:
-- **AI chỉ xem git.** Mọi commit, push, rebase, merge, tag do người dùng thực hiện. AI viết kế hoạch commit.
+- **Ghi git: người dùng làm, hoặc nhờ AI làm theo quy tắc 4** (duyệt từng lệnh). Rebase, merge, tag, push ép do người dùng.
 - Nhánh: `main` (prod), `develop` (tích hợp), `release/*`, `feature/*`, `fix/*`, `hotfix/*`. Không commit/push thẳng vào `main`, `develop`, `release/*`.
 - Tên nhánh `<type>/<ticket>-<mô-tả>`, commit `<type>(scope): <tóm tắt>` (tối đa 72 ký tự). Một commit là một thay đổi logic, tách riêng refactor, tính năng, test.
 - Nhánh cá nhân **rebase** lên nhánh gốc trước khi tạo Merge Request. Đẩy lại bằng `--force-with-lease`.

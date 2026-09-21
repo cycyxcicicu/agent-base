@@ -59,6 +59,21 @@ def run_diagnostics():
     print(f"  {check_mark(env_example.exists())} Mẫu cấu hình môi trường (.env.example): {'Có sẵn' if env_example.exists() else 'Thiếu'}")
     print(f"  {check_mark(cookie_example.exists())} Mẫu cấu hình cookies (cookies/all_accounts.example.json): {'Có sẵn' if cookie_example.exists() else 'Thiếu'}")
 
+    # Hook git chỉ có tác dụng khi core.hooksPath trỏ vào .githooks. Đây là cấu hình cục bộ, không đi kèm khi clone,
+    # nên bản clone mới không có hook mà không ai biết. Chỉ cảnh báo (không tính là lỗi); bỏ qua trên CI.
+    if (ROOT_DIR / ".git").exists() and not os.environ.get("CI"):
+        try:
+            hooks_path = subprocess.run(
+                ["git", "-C", str(ROOT_DIR), "config", "--get", "core.hooksPath"], capture_output=True, text=True
+            ).stdout.strip()
+        except Exception:
+            hooks_path = ""
+        hooks_on = hooks_path.replace("\\", "/").rstrip("/").endswith(".githooks")
+        if hooks_on:
+            print("  ✅ Hook git (core.hooksPath): đã bật")
+        else:
+            print("  ⚠️ Hook git (core.hooksPath): CHƯA BẬT trên bản clone này. Chạy: python scripts/install-hooks.py")
+
     # --------------------------------------------------------------------------
     # MỤC 3: KIỂM TRA NHỮNG GÌ SẼ THIẾU KHI TẢI VỀ MÁY MỚI (VÀ CÁCH XỬ LÝ)
     # --------------------------------------------------------------------------
