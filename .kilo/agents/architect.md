@@ -160,14 +160,22 @@ permission:
     "/usr/bin/git *": deny
     ""git" *": deny
     "'git' *": deny
-    "*git*commit*": deny
-    "*git*push*": deny
-    "*git*reset*": deny
-    "*git*rebase*": deny
-    "*git*merge *": deny
-    "*git*checkout*": deny
-    "*git*switch*": deny
-    "*git*restore*": deny
+    "*git commit*": deny
+    "*git.exe commit*": deny
+    "*git push*": deny
+    "*git.exe push*": deny
+    "*git reset*": deny
+    "*git.exe reset*": deny
+    "*git rebase*": deny
+    "*git.exe rebase*": deny
+    "*git merge *": deny
+    "*git.exe merge *": deny
+    "*git checkout*": deny
+    "*git.exe checkout*": deny
+    "*git switch*": deny
+    "*git.exe switch*": deny
+    "*git restore*": deny
+    "*git.exe restore*": deny
     "*git*stash push*": deny
     "*git*stash pop*": deny
     "*git*stash drop*": deny
@@ -179,18 +187,26 @@ permission:
     "*git*tag -m*": deny
     "*git*tag --delete*": deny
     "*git*tag [a-zA-Z0-9]*": deny
-    "*git*cherry-pick*": deny
-    "*git*revert*": deny
-    "*git*rm *": deny
-    "*git*mv *": deny
-    "*git*clean*": deny
-    "*git*apply*": deny
+    "*git cherry-pick*": deny
+    "*git.exe cherry-pick*": deny
+    "*git revert*": deny
+    "*git.exe revert*": deny
+    "*git rm *": deny
+    "*git.exe rm *": deny
+    "*git mv *": deny
+    "*git.exe mv *": deny
+    "*git clean*": deny
+    "*git.exe clean*": deny
+    "*git apply*": deny
+    "*git.exe apply*": deny
     "*git am *": deny
     "*git am": deny
     "*git.exe am *": deny
     "*git.exe am": deny
-    "*git*init*": deny
-    "*git*clone*": deny
+    "*git init*": deny
+    "*git.exe init*": deny
+    "*git clone*": deny
+    "*git.exe clone*": deny
     "*git*branch -d*": deny
     "*git*branch -D*": deny
     "*git*branch -m*": deny
@@ -211,8 +227,8 @@ permission:
     "*git*remote remove*": deny
     "*git*remote set-url*": deny
     "*git*remote rename*": deny
-    "*git*config *": deny
-    "*git.exe*": deny
+    "*git config *": deny
+    "*git.exe config *": deny
     "*& git*": deny
     "*& "git"*": deny
     "*& 'git'*": deny

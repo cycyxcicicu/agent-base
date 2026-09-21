@@ -26,9 +26,10 @@ class WebCleaner:
         for pattern in cls.NOISY_TAGS:
             clean = re.sub(pattern, "", clean, flags=re.IGNORECASE)
 
-        # Loại bỏ các thẻ ẩn và nội dung bên trong (display:none, visibility:hidden, font-size:0, opacity:0, hidden)
-        hidden_style_pat = r"display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*0(?![.\d])(?:px|pt|em|rem)?\b|opacity\s*:\s*0(?:\.0+)?\s*(?:;|'|\"|$)"
-        clean = re.sub(rf"<([a-zA-Z0-9_-]+)\b[^>]*\b(?:style=[\"'][^\"']*(?:{hidden_style_pat})[^\"']*[\"']|hidden\b)[^>]*>[\s\S]*?<\/\1>", "", clean, flags=re.IGNORECASE)
+        # Loại bỏ các thẻ ẩn và nội dung bên trong (display:none, visibility:hidden, font-size:0, opacity:0, hidden, aria-hidden="true")
+        hidden_style_pat = r"display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*0(?:\.0+)?(?:px|pt|em|rem)?(?![.\d])|opacity\s*:\s*0(?:\.0+)?(?=\s*(?:;|'|\"|$))"
+        hidden_attr_pat = r"(?<!-)hidden\b(?!\s*=\s*['\"]false['\"])|aria-hidden\s*=\s*['\"]true['\"]"
+        clean = re.sub(rf"<([a-zA-Z0-9_-]+)\b[^>]*\b(?:style=[\"'][^\"']*(?:{hidden_style_pat})[^\"']*[\"']|{hidden_attr_pat})[^>]*>[\s\S]*?<\/\1>", "", clean, flags=re.IGNORECASE)
 
         # Loại bỏ chữ ngụy trang cùng màu nền (chữ trắng trên nền trắng: font camouflage)
         white_val = r"(?:white|#fff(?:fff)?|rgba?\(\s*255\s*,\s*255\s*,\s*255[^)]*\))"

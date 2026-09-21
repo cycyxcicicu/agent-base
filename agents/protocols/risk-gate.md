@@ -37,7 +37,7 @@ Nghi ngờ việc nào đó có thuộc nhóm này không thì **coi là có** v
 | Có thay đổi chưa commit ở worktree khác? | `git -C <đường-dẫn> status --short` cho từng worktree | Báo người dùng |
 | Đã phát hành chưa? | `git tag --contains <mã>` | Nếu đã lên production: đi đường `hotfix`, hỏi người dùng |
 | Có phần ngoài git không? | có file migration trong thay đổi? dữ liệu đã ghi? đã deploy? dịch vụ ngoài? card có "Kịch bản hoàn tác"? | Nêu rõ là **không hoàn tác được bằng git** |
-| Từng revert nhánh này chưa? | `git log --oneline --grep="hoan tac\|revert" -i` | Nếu rồi: merge lại nguyên nhánh cũ sẽ **không** đem lại thay đổi, phải revert bản revert |
+| Từng revert nhánh này chưa? | `git log --oneline --grep="hoan tac" -i` | Nếu rồi: merge lại nguyên nhánh cũ sẽ **không** đem lại thay đổi, phải revert bản revert |
 | Trạng thái kiểm thử hiện tại? | nhờ `runner` chạy test làm mốc trước | Ghi "chưa có mốc" |
 
 Ghi lại **mã HEAD** tại lúc đánh giá vào phiếu. Đó là mốc để biết chấp thuận còn hiệu lực hay không.

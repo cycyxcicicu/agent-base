@@ -213,6 +213,8 @@ class TestCodeReviewerAnalysis(unittest.TestCase):
             ("class SandboxRunner:\n    DEFAULT_TIMEOUT_SEC = 30\n    def run(self, timeout=DEFAULT_TIMEOUT_SEC):\n        return timeout\n", "class_constant_default"),
             # 6. async with context as s
             ("async def fetch(client):\n    async with client.get('/data') as resp:\n        return await resp.text()\n", "async_with"),
+            # 6b. async for x in stream: print(x)
+            ("async def stream_items(c):\n    async for x in c:\n        print(x)\n", "async_for"),
             # 7. with open(...) as f
             ("def read_file(path):\n    with open(path, 'r') as f:\n        return f.read()\n", "sync_with"),
             # 8. Multi-target assignment a = b = 10

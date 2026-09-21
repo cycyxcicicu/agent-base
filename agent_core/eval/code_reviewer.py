@@ -404,6 +404,16 @@ class CodeReviewer:
                 module_scope_names.add(node.target.id)
             elif isinstance(node, ast.NamedExpr) and isinstance(node.target, ast.Name):
                 module_scope_names.add(node.target.id)
+            elif isinstance(node, (ast.For, ast.AsyncFor)):
+                for n in ast.walk(node.target):
+                    if isinstance(n, ast.Name):
+                        module_scope_names.add(n.id)
+            elif isinstance(node, (ast.With, ast.AsyncWith)):
+                for it in node.items:
+                    if it.optional_vars:
+                        for n in ast.walk(it.optional_vars):
+                            if isinstance(n, ast.Name):
+                                module_scope_names.add(n.id)
 
         class PythonRuleVisitor(ast.NodeVisitor):
             EXEMPT_NAMES = {
@@ -508,7 +518,7 @@ class CodeReviewer:
                             local_names.add(child.target.id)
                         elif isinstance(child, ast.NamedExpr) and isinstance(child.target, ast.Name):
                             local_names.add(child.target.id)
-                        elif isinstance(child, ast.For):
+                        elif isinstance(child, (ast.For, ast.AsyncFor)):
                             for n in ast.walk(child.target):
                                 if isinstance(n, ast.Name):
                                     local_names.add(n.id)

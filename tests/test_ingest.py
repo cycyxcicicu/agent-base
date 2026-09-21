@@ -116,17 +116,21 @@ class TestIngestModules(unittest.TestCase):
             DocumentConverter.xlsx_to_markdown(zip_buffer)
 
     def test_web_cleaner_font_size_and_opacity_decimals(self):
-        """Kiểm chứng WebCleaner không xoá nhầm các thẻ có font-size:0.9em hoặc opacity:0.85."""
+        """Kiểm chứng WebCleaner không xoá nhầm các thẻ có font-size:0.9em, opacity:0.85, aria-hidden='false'."""
         html = (
             "<div>"
             "<span style='font-size:0.9em'>Văn bản 0.9em hợp lệ</span>"
             "<span style='font-size:0.875rem'>Văn bản 0.875rem hợp lệ</span>"
             "<span style='opacity:0.85'>Văn bản opacity 0.85 hợp lệ</span>"
             "<span style='opacity:.5'>Văn bản opacity .5 hợp lệ</span>"
+            "<span aria-hidden='false'>Văn bản aria-hidden false hợp lệ</span>"
             "<span style='font-size:0px'>Văn bản ẩn 0px</span>"
             "<span style='font-size: 0'>Văn bản ẩn 0</span>"
+            "<span style='font-size:0.0'>Văn bản ẩn 0.0</span>"
+            "<span style='font-size:0.0px'>Văn bản ẩn 0.0px</span>"
             "<span style='opacity:0'>Văn bản ẩn opacity 0</span>"
             "<span style='opacity:0.0'>Văn bản ẩn opacity 0.0</span>"
+            "<span aria-hidden='true'>Văn bản ẩn aria-hidden true</span>"
             "</div>"
         )
         cleaned = WebCleaner.clean_html(html)
@@ -134,10 +138,14 @@ class TestIngestModules(unittest.TestCase):
         self.assertIn("Văn bản 0.875rem hợp lệ", cleaned)
         self.assertIn("Văn bản opacity 0.85 hợp lệ", cleaned)
         self.assertIn("Văn bản opacity .5 hợp lệ", cleaned)
+        self.assertIn("Văn bản aria-hidden false hợp lệ", cleaned)
         self.assertNotIn("Văn bản ẩn 0px", cleaned)
         self.assertNotIn("Văn bản ẩn 0", cleaned)
+        self.assertNotIn("Văn bản ẩn 0.0", cleaned)
+        self.assertNotIn("Văn bản ẩn 0.0px", cleaned)
         self.assertNotIn("Văn bản ẩn opacity 0", cleaned)
         self.assertNotIn("Văn bản ẩn opacity 0.0", cleaned)
+        self.assertNotIn("Văn bản ẩn aria-hidden true", cleaned)
 
     def test_web_cleaner_table_markdown_newlines(self):
         """Kiểm chứng các hàng trong bảng Markdown được nối bằng \\n đơn, không bị tách bởi \\n\\n."""

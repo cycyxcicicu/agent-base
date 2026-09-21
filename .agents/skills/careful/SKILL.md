@@ -33,8 +33,8 @@ Every command proposing any of the following patterns MUST trigger an explicit h
 > To prevent catastrophic file loss, **all recursive deletion commands** (`rm -rf *`, `rmdir /s`, `del /q /s`) are strictly blocked by repository deny gates (`danger_deny` in `.claude/settings.json` and Kilo agent roles).
 > 
 > When temporary build/cache artifacts (`node_modules`, `.next`, `dist`, `__pycache__`, `.cache`, `build`, `.turbo`, `coverage`) need cleanup:
-> 1. Prefer targeted clean commands: `git clean -fdX <path>`, `npm run clean`, or language-specific cleanup tools.
-> 2. For directory removal, ask the human operator or use explicit confirmation before running any cleanup script.
+> 1. Use dedicated project clean scripts (e.g. `npm run clean`, language-specific build tools).
+> 2. Always ask the human operator to confirm before removing build or cache directories.
 > 3. Never attempt raw shell wildcards `rm -rf *` or unconstrained recursive deletions.
 
 ## 3. Human Confirmation Gate

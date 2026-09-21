@@ -64,7 +64,11 @@ class TestSecurityDenyRules(unittest.TestCase):
             "git status",
             "git status -s",
             "git diff HEAD~1",
-            "git log -n 5"
+            "git log -n 5",
+            "git grep -n commit",
+            'git log --grep="revert"',
+            'git log --oneline -i --grep="hoan tac"',
+            "git.exe status"
         ]
         for cmd in allowed_cmds:
             blocked = self._is_blocked(cmd, self.bash_patterns)
@@ -74,9 +78,12 @@ class TestSecurityDenyRules(unittest.TestCase):
         """Các lệnh Git làm biến đổi trạng thái BẮT BUỘC bị chặn cả ở Bash và PowerShell."""
         dangerous_cmds = [
             "git commit -m 'feat: something'",
+            "git.exe commit -m 'feat: something'",
             "git push origin main",
             "git push --force origin main",
             "git reset --hard HEAD~1",
+            "git revert HEAD",
+            "git.exe revert HEAD",
             "git am patch.mbox",
             "git.exe am patch.mbox",
             "git rebase main",
