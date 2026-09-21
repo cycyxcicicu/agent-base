@@ -25,6 +25,12 @@ Nếu dự án dùng `pnpm` hoặc `yarn`, thay lệnh tương ứng theo `PROJE
 - Với TypeScript: tránh `any`, bật `strict` nếu dự án đã bật.
 - Theo ESLint và Prettier của dự án, không đổi cấu hình khi không được giao.
 
+## Quy chuẩn kiểm thử (Testing & TDD)
+
+- **Framework**: `vitest` hoặc `jest` (`npm test`).
+- **Dữ liệu mẫu (Mock Data)**: Đặt trong `tests/mock_data/` hoặc thư mục `__mocks__/`.
+- **Quy trình**: Định nghĩa Happy Path và viết test trước, sau đó code logic để test pass 100%.
+
 ## File dùng chung (chỉ task được chỉ định mới sửa)
 
 `package.json`, `package-lock.json` / `pnpm-lock.yaml` / `yarn.lock`, `tsconfig.json`, cấu hình ESLint và Prettier.

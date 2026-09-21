@@ -1,0 +1,22 @@
+# Ánh xạ tầng model (model_tier trong agents/roles/*.md) sang model cụ thể của Kilo.
+#
+# Cách dùng:
+#   - Để trống một tầng = các vai của tầng đó KHÔNG bị ghim model, dùng model bạn chọn trong giao diện.
+#   - Điền id model đúng như lệnh `kilo models` in ra, rồi chạy scripts/sync-adapters.ps1.
+#   - Chỉ điền model bạn thật sự có quyền dùng. Ghim model chưa cấu hình sẽ làm vai đó lỗi.
+#   - Đổi model cho cả dự án chỉ cần sửa file này. Mang sang dự án khác thì copy cùng bộ khung.
+#
+# Khi nào dùng tầng nào: xem agents/protocols/model-policy.md
+#
+# Ví dụ (id lấy từ `kilo models` ngày 2026-09-19, CHƯA kiểm tra quyền dùng hay chi phí trên máy bạn):
+#   strong=kilo/anthropic/claude-opus-5
+#   standard=kilo/anthropic/claude-sonnet-5
+#   fast=kilo/anthropic/claude-haiku-4.5
+# hoặc để Kilo tự chọn theo tầng:
+#   strong=kilo/kilo-auto/frontier
+#   standard=kilo/kilo-auto/balanced
+#   fast=kilo/kilo-auto/efficient
+
+strong=kilo/anthropic/claude-sonnet-5 | ag/gpt-oss-120b-medium | ag/gemini-3.8-flash-high
+standard=ag/gemini-3.8-flash-medium | ag/gpt-oss-120b-medium
+fast=ag/gemini-3.8-flash-low | ag/gemini-3.8-flash-medium

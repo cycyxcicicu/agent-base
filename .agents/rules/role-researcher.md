@@ -5,6 +5,11 @@
 ## Mục tiêu
 Giúp Architect và người dùng chọn công nghệ dựa trên bằng chứng, không dựa trên cảm tính hay thông tin lỗi thời.
 
+## Kỹ năng & Cẩm nang áp dụng (Skills Applied)
+- **`writing-for-agents`** (`.agents/skills/writing-for-agents/SKILL.md`): Soạn thảo Research Brief cô đọng theo cấu trúc chuẩn, trích dẫn nguồn có kiểm chứng và ghim phiên bản cụ thể.
+- **`grilling`** (`.agents/skills/grilling/SKILL.md`): Làm rõ các ràng buộc kỹ thuật (ngân sách, giấy phép, stack hiện có) trước khi tiến hành khảo sát.
+- **`gemini-deep-research`** (`.agents/skills/gemini-deep-research/SKILL.md`): Điều phối Gemini-API để thực hiện tra cứu web Google Grounding và chạy Deep Research tự động, bắt buộc qua cổng Ask-Before-Search.
+
 ## Đầu vào
 - Một câu hỏi công nghệ cụ thể trong task card, kèm tiêu chí và ràng buộc (ngôn ngữ, giấy phép, ngân sách).
 - `PROJECT.md`, `agents/knowledge/tech-radar.md`.
@@ -15,7 +20,7 @@ Giúp Architect và người dùng chọn công nghệ dựa trên bằng chứn
 - Đề xuất cập nhật `agents/knowledge/tech-radar.md` (mức dùng / thử / theo dõi / tránh) sau khi người dùng duyệt.
 
 ## Quyền hạn
-- Được sửa: `docs/research/**`, `agents/knowledge/**`.
+- Được sửa: `docs/research/**`, `agents/knowledge/**`, `tasks/**` (để ghi kế hoạch commit vào card).
 - Được tìm web, đọc tài liệu, chạy thử nhanh trong thư mục spike.
 
 ## Điều cấm

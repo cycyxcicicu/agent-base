@@ -6,8 +6,8 @@ Sau khi xử lý xong việc của mình, **mỗi agent ghi lại những gì ag
 
 Nếu mọi agent sửa chung một file, các nhánh chạy song song sẽ xung đột. Vì vậy:
 
-1. **Agent ghi vào hộp thư đến**: một file riêng cho mỗi lần làm, `docs/notes/inbox/<Task>-<agent>.md` (ví dụ `T-012-dev-a.md`). File tên riêng nên không bao giờ xung đột, và merge gate cho phép sẵn file này.
-2. **Tech Writer gộp** vào `docs/PROJECT-NOTES.md` sau mỗi lần merge: đưa đúng mục, gộp trùng, giữ nguồn T-xxx, rồi xóa file hộp thư đã gộp (git vẫn giữ lịch sử).
+1. **Agent ghi vào hộp thư đến**: một file riêng cho mỗi lần làm, `docs/notes/inbox/<Task>-<agent>.md` (ví dụ `T-12-dev-a.md`). File tên riêng nên không bao giờ xung đột, và merge gate cho phép sẵn file này.
+2. **Tech Writer gộp** vào `docs/PROJECT-NOTES.md` sau mỗi lần merge: đưa đúng mục, gộp trùng, giữ nguồn T-xxx, rồi ghi danh sách file đã gộp vào kế hoạch commit để **người dùng** xóa (lịch sử vẫn nằm trong git).
 3. **Agent bắt đầu việc** đọc cả `docs/PROJECT-NOTES.md` **và** các file chưa gộp trong `docs/notes/inbox/`.
 
 Chỉ Tech Writer được sửa `docs/PROJECT-NOTES.md`. Agent khác chỉ ghi vào hộp thư đến.
@@ -15,7 +15,7 @@ Chỉ Tech Writer được sửa `docs/PROJECT-NOTES.md`. Agent khác chỉ ghi 
 ## Mẫu
 
 ```markdown
-Task: T-012        Agent: dev-a        Ngày: YYYY-MM-DD
+Task: T-12        Agent: dev-a        Ngày: YYYY-MM-DD
 
 ## Đã làm
 (1–3 dòng)

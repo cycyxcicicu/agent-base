@@ -24,6 +24,12 @@ Lệnh dưới đây là mặc định phổ biến. Nếu `PROJECT.md` ghi lệ
 - Bắt lỗi cụ thể, không dùng `except:` trần.
 - Theo formatter và linter mà dự án đã cấu hình, không đổi cấu hình khi không được giao.
 
+## Quy chuẩn kiểm thử (Testing & TDD)
+
+- **Framework**: `pytest` (kết hợp `pytest-mock`, `pytest-asyncio` cho pipeline async).
+- **Dữ liệu mẫu (Mock Data)**: Lưu các payload mẫu vào `tests/mock_data/*.json` để chạy kiểm thử offline siêu tốc, không phụ thuộc mạng hay API ngoài.
+- **Quy trình**: Viết test Happy Path trước trong `tests/`, sau đó hoàn thiện logic hàm trong `src/` để `pytest` chuyển từ FAIL sang PASS.
+
 ## File dùng chung (chỉ task được chỉ định mới sửa)
 
 `pyproject.toml`, `requirements*.txt`, lockfile (`poetry.lock`, `uv.lock`...), `setup.cfg`.

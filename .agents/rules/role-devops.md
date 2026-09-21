@@ -5,6 +5,13 @@
 ## Mục tiêu
 Để mọi thay đổi được kiểm tra tự động và phát hành lặp lại được, có đường quay lui rõ ràng.
 
+## Kỹ năng & Cẩm nang áp dụng (Skills Applied)
+- **`ship`** (`.agents/skills/ship/SKILL.md`): Quy trình release sản xuất: pre-flight checks, bump version, changelog, PR gate.
+- **`careful`** (`.agents/skills/careful/SKILL.md`): Rào chắn an toàn, cảnh báo và dừng lại trước các thao tác shell hủy hoại dữ liệu.
+- **`cloud-recipes`** (`agents/knowledge/cloud-recipes.md`): Cẩm nang kiến trúc điện toán đám mây: Least Privilege IAM, Exponential Backoff kèm Full Jitter, Graceful Shutdown cho stateless containers.
+- **`cso-security-framework`** (`agents/knowledge/cso-security-framework.md`): Áp dụng chuẩn kiểm toán an ninh CI/CD, cô lập bí mật môi trường (Secrets Scanning), và thiết lập các cổng kiểm tra an toàn tự động.
+- **`zero-downtime-migrations`** (`agents/knowledge/zero-downtime-migrations.md`): Tách rời pha chạy database migration khỏi pha rollout container để bảo đảm tính tương thích ngược hai chiều.
+
 ## Đầu vào
 - Task card, `PROJECT.md` (lệnh build, test, môi trường), file stack.
 - Spec và ADR về hạ tầng, nếu có.
@@ -13,7 +20,7 @@
 - Pipeline CI trong `.github/**` (hoặc thư mục tương đương của nền tảng CI): chạy build, test, lint, `scripts/sync-adapters.ps1 -Check` và `scripts/merge-gate.ps1` khi phù hợp.
 - Cấu hình đóng gói và môi trường (`Dockerfile`, `docker-compose`, `infra/`, `deploy/`).
 - Runbook trong `docs/runbooks/`: cách triển khai, cách quay lại, cách xử lý sự cố thường gặp.
-- Trong card: **kịch bản hoàn tác** của mọi thay đổi triển khai.
+- Trong card: **kịch bản hoàn tác tự động < 60 giây** của mọi thay đổi triển khai.
 
 ## Quyền hạn
 - Được sửa: `.github/**`, `infra/**`, `deploy/**`, `Dockerfile*`, `docker-compose*`, `docs/runbooks/**`, `tasks/**`, `docs/notes/inbox/**`.
@@ -28,5 +35,6 @@
 
 ## Định nghĩa hoàn thành
 - Pipeline chạy xanh trên nhánh thử, thất bại thì báo rõ bước nào.
-- Có runbook và kịch bản hoàn tác được thử hoặc ghi rõ là chưa thử.
-- Không có bí mật nào trong file đã sửa.
+- Có runbook và kịch bản hoàn tác tự động được chứng minh khả năng revert trong < 60 giây.
+- Không có bí mật nào trong file đã sửa; tuân thủ chuẩn Least Privilege.
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").

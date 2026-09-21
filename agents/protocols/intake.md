@@ -5,16 +5,28 @@ Chuyển sang md **không chuẩn hóa được 100%**. Quy trình này có mụ
 ## Các bước
 
 1. **Lưu bản gốc**: đặt nguyên vẹn vào `docs/source/`. Không sửa, không đổi tên, không xóa.
-2. **Chuyển đổi**: sang md vào `docs/converted/<tên>.md`.
-   - DOCX, XLSX, PPTX: MarkItDown thường đủ.
-   - PDF nhiều bảng, công thức, nhiều cột, hoặc PDF dạng scan: Docling (có OCR).
-   - Ảnh: mô tả lại bằng chữ, giữ ảnh gốc.
-3. **Báo cáo chuyển đổi** (`docs/converted/<tên>.report.md`): trang rỗng, bảng vỡ, công thức mất, ô gộp, biểu đồ, ảnh không đọc được.
+2. **Chuyển đổi tự động**: Chạy kịch bản chuẩn của hệ thống (hỗ trợ cả Windows, macOS, Linux):
+   - **Trên Windows (PowerShell)**:
+     - Chuyển toàn bộ: `powershell -File scripts/convert-docs.ps1 -All`
+     - Chuyển kèm đọc ảnh (LLM Vision OCR): `powershell -File scripts/convert-docs.ps1 -All -EnableOcr`
+   - **Trên Linux / macOS / WSL (Bash)**:
+     - Chuyển toàn bộ: `./scripts/convert-docs.sh --all`
+     - Chuyển kèm đọc ảnh (LLM Vision OCR): `./scripts/convert-docs.sh --all --enable-ocr`
+   - **Hoặc chạy trực tiếp qua Python**:
+     - `python scripts/convert-docs.py --all [--enable-ocr]`
+   - DOCX, XLSX, PPTX, PDF, HTML, CSV: MarkItDown tự động bóc tách heading, list, table.
+   - Ảnh, biểu đồ, PDF scan: LLM Vision OCR trích xuất nội dung văn bản, bảng và luồng nghiệp vụ thành khối `*[Image OCR] ... [End OCR]*`.
+3. **Báo cáo đối chiếu** (`docs/converted/<tên>.report.md`): Sinh tự động, ghi nhận dung lượng, phương thức xử lý, cảnh báo bảng biểu hoặc ảnh không đọc được.
 4. **Đối chiếu**: BA mở bản gốc, so với bản md ở các chỗ dễ lỗi (bảng, số liệu, công thức).
-5. **Rút yêu cầu**: `docs/requirements/requirements.md`, mỗi dòng một yêu cầu R-001, R-002... kèm nguồn.
-6. **Không chắc / mâu thuẫn**: liệt kê riêng, mỗi mục một câu hỏi cụ thể cho người dùng.
-7. **Người dùng duyệt** danh sách R-xxx và trả lời các mục không chắc. Chưa duyệt thì chưa ai bắt tay làm.
-8. **Truy vết**: mỗi task card ghi `requirements: [R-xxx]`.
+5. **Phản biện đề bài (Challenger Gate - theo `agents/protocols/challenger.md`)**:
+   - Bóc tách bản chất bài toán vs giải pháp đề xuất (XY Problem).
+   - Đánh giá bán kính tác động (Blast Radius): hiệu năng, rủi ro bảo mật, nợ kỹ thuật và chi phí token.
+   - Cắt tỉa phạm vi (Scope-Cut): loại bỏ chi tiết rườm rà, tập trung đòn bẩy 80/20.
+   - Trình bày **Ma trận 3 Phương án** (Lean MVP vs Cân bằng vs Toàn diện) kèm đề xuất cụ thể (`➡️ Đề xuất của AI: ...`).
+6. **Rút yêu cầu**: `docs/requirements/requirements.md`, mỗi dòng một yêu cầu R-001, R-002... kèm nguồn.
+7. **Không chắc / mâu thuẫn**: liệt kê riêng, mỗi mục một câu hỏi cụ thể theo skill `grilling`.
+8. **Người dùng duyệt**: Người dùng lựa chọn phương án đối trọng, duyệt danh sách R-xxx và trả lời các mục không chắc. Chưa duyệt thì chưa ai bắt tay làm.
+9. **Truy vết**: mỗi task card ghi `requirements: [R-xxx]`.
 
 ## Lưu ý theo loại tệp
 

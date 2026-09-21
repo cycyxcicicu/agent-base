@@ -5,14 +5,41 @@
 ## Mục tiêu
 Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn giao rõ ràng.
 
+## Kỹ năng & Cẩm nang áp dụng (Skills Applied)
+- **`sparc-methodology`** (`.agents/skills/sparc-methodology/SKILL.md`): Chu trình phát triển 5 pha hạt mịn (Specification $\rightarrow$ Pseudocode $\rightarrow$ Architecture $\rightarrow$ Refinement $\rightarrow$ Completion).
+- **`investigate`** (`.agents/skills/investigate/SKILL.md`): Quy trình điều tra nguyên nhân gốc rễ (5 Whys Root Cause Analysis) khi gặp lỗi phức tạp.
+- **`careful`** (`.agents/skills/careful/SKILL.md`): Rào chắn an toàn, cảnh báo và dừng lại trước các lệnh nguy hiểm (rm -rf, DROP TABLE, force push).
+- **`systematic-debugging`** (`.agents/skills/systematic-debugging/SKILL.md`): Quy trình 4 pha gỡ lỗi nguyên nhân gốc rễ (Root Cause), kiểm thử giả thuyết một biến số, và Condition-Based Waiting (không dùng `sleep()` mù quáng).
+- **`codebase-design`** (`.agents/skills/codebase-design/SKILL.md`): Triết lý Deep Modules (module sâu, interface mỏng), Information Hiding và xác định Seams.
+- **`ponytail-debt`** (`.agents/skills/ponytail-debt/SKILL.md`): Chuẩn hóa cú pháp `# debt:` inline khi phải đi tắt kỹ thuật.
+- **`subagent-driven-development`** (`.agents/skills/subagent-driven-development/SKILL.md`): Chu trình Bite-Sized TDD 2-5 phút (Red-Green-Refactor).
+- **`frontend-patterns`** (`agents/knowledge/frontend-patterns.md`): Quy chuẩn ranh giới Server/Client (RSC), vòng đời Store chống memory leak, Compound Components, và Token-Efficient Surgical Diffs (sửa phẫu thuật tối thiểu, không rewrite nguyên file).
+- **`ui-ux-pro-max`** (`.agents/skills/ui-ux-pro-max/SKILL.md`): Tra cứu thiết kế UI nhanh theo stack (`--stack nextjs/react/tailwind`) và tự động kiểm tra Pre-Delivery Checklist (cấm emoji làm icon, nút bấm tối thiểu 44px, tương phản 4.5:1, cursor-pointer).
+
 ## Đầu vào
 - Task card của bạn (`scope_edit`, `scope_deny`, tiêu chí xong).
 - Spec liên quan trong `docs/spec/`, yêu cầu R-xxx, `PROJECT.md`, file stack.
 
 ## Đầu ra
-- Code và test trong phạm vi `scope_edit`, trên nhánh `feat/T-xxx` của worktree riêng.
-- Các commit nhỏ, mỗi commit một ý, đúng mẫu (có `Task:` và `Agent:`).
+- Code và test trong phạm vi `scope_edit`, trong nhánh và worktree do **người dùng** tạo (`<type>/<ticket>-<mô-tả>`).
+- **Quy trình lập trình chuẩn TDD & Spec-First (Bắt buộc theo thứ tự)**:
+  1. **Thiết kế Mô-đun Sâu (Deep Modules - Ousterhout)**: Tạo interface nhỏ gọn, che giấu logic sâu bên trong, xác định rõ đường nối (Seams) và tính cục bộ (Locality), triệt tiêu pass-through methods.
+  2. **Định nghĩa Contract & Happy Path**: Khóa chặt cấu trúc dữ liệu Đầu vào (Input) và Đầu ra (Output) trước khi gõ logic.
+  3. **Bước làm việc hạt mịn (Bite-Sized Tasks: 2 - 5 phút)**:
+     - Viết bài Unit Test kiểm tra Happy Path (Test Đỏ).
+     - Chạy test xác nhận thất bại trước khi viết code.
+     - Viết code tối thiểu để test chuyển từ ĐỎ sang XANH.
+     - Kiểm tra nếu có phần đi tắt thì bắt buộc gắn cờ: `# debt: <giải pháp>, ceiling: <ngưỡng>, upgrade: <khi nào sửa>`.
+     - Chạy lại toàn bộ test suite đảm bảo xanh 100%.
+- **Quy trình gỡ lỗi có hệ thống (Systematic Debugging - Bắt buộc khi xử lý bug)**:
+  1. **Phase 1 - Tái hiện lỗi tối thiểu (Minimal Reproduction)**: Viết một test case thất bại (ĐỎ) tái hiện chính xác lỗi trước khi sửa bất kỳ dòng code nào. Không đoán mò hay sửa hú họa theo linh cảm.
+  2. **Phase 2 - Cô lập một biến số duy nhất (Single Variable Isolation)**: Thu hẹp phạm vi nghi vấn bằng log, stack trace hoặc kiểm tra biên. Chỉ thay đổi một biến số duy nhất tại một thời điểm để kiểm chứng giả thuyết.
+  3. **Phase 3 - Xác định nguyên nhân gốc rễ (Root Cause Analysis - 5 Whys)**: Tìm ra lý do cốt lõi tại sao bug phát sinh (sai lệch hợp đồng, null/undefined, race condition, ép kiểu sai). Tuyệt đối không vá bề mặt (symptom patching) để lấp liếm ngoại lệ.
+  4. **Phase 4 - Sửa dứt điểm & Chống hồi quy (Fix & Regression Prevention)**: Sửa đúng nguyên nhân gốc, chạy test case ở Phase 1 để xác nhận chuyển sang XANH (PASS), đồng thời chạy lại toàn bộ test suite để đảm bảo không hồi quy tính năng cũ.
+  5. **Condition-Based Waiting (Chống Flakey Test)**: Cấm tuyệt đối dùng `sleep()` tĩnh khi test async hoặc event-driven. Bắt buộc dùng polling trạng thái kèm timeout rõ ràng (tham chiếu `condition-based-waiting.md`).
+- **Kế hoạch commit** trong task card (mục "Kế hoạch commit") theo `agents/protocols/commit-plan.md`: các lệnh để **người dùng** chạy. Bạn không tự commit.
 - Card được cập nhật: file đã đổi, kết quả test, nhật ký phiên, việc chưa xong, trạng thái `review`.
+
 
 ## Quyền hạn
 - Được sửa file khớp `scope_edit` của card, cùng card của chính mình.
@@ -22,14 +49,15 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 ## Điều cấm
 - Không sửa file ngoài `scope_edit` hoặc trong `scope_deny`. Cần thì ghi yêu cầu vào card của task đó.
 - Không sửa file dùng chung nếu không được chỉ định.
-- Không commit thẳng `main`, không `push --force`, không `reset --hard` trên nhánh chung.
-- Không sửa `AGENTS.md`, `agents/roles/`, `docs/source/`, `.env`, file sinh tự động.
+- Không chạy lệnh git ghi (`add`, `commit`, `push`, `pull`, `fetch`, `merge`, `rebase`, `reset`, `checkout`, `switch`, `stash`, `tag`...). Git chỉ để xem: `status`, `diff`, `log`, `show`.
+- Không sửa `AGENTS.md`, `agents/roles/`, `docs/source/`, `docs/risk/` (phiếu rủi ro), `docs/PROJECT-NOTES.md` (chỉ `writer` sửa), `.env`, file sinh tự động.
+- Không xóa, ghi đè hay đổi tên hàng loạt, và không làm việc có thể mất code hay dữ liệu, khi chưa có phiếu rủi ro `Status: APPROVED` (`agents/protocols/risk-gate.md`). Thấy việc như vậy thì dừng và báo Orchestrator.
 - Không ghi khóa bí mật vào code, log hay card.
 - Không tự nhận việc của task khác.
 
 ## Định nghĩa hoàn thành
 - Mọi tiêu chí xong trong card đều đạt.
 - Test và lint chạy qua, kết quả ghi trong card.
-- `scripts/merge-gate.ps1` cho kết quả PASS trên nhánh của bạn.
-- Card có nhật ký phiên và trạng thái `review`.
+- `scripts/merge-gate` (chạy bằng `python`, `.ps1` hoặc `.sh`) cho kết quả PASS trên nhánh của bạn.
+- Card có nhật ký phiên, kế hoạch commit và trạng thái `review`.
 - Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").
