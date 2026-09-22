@@ -15,6 +15,8 @@ if hasattr(sys.stderr, 'reconfigure'):
 
 # Định vị thư mục gốc agent-base và nạp thư viện gemini_webapi nội bộ
 AGENT_BASE_DIR = Path(__file__).resolve().parent.parent.parent
+if str(AGENT_BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(AGENT_BASE_DIR))
 _gemini_src = str(AGENT_BASE_DIR / "tools" / "gemini-api" / "src")
 if _gemini_src not in sys.path:
     sys.path.insert(0, _gemini_src)
