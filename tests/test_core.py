@@ -44,6 +44,18 @@ class TestCoreModules(unittest.TestCase):
         self.assertTrue(verify_iron_law(proof))
         self.assertEqual(proof["stdout"], "OK")
 
+    def test_patch_orjson_globally(self):
+        from agent_core.core.json_safe import patch_orjson_globally, HAS_ORJSON
+        if not HAS_ORJSON:
+            return
+        import orjson
+        self.assertTrue(patch_orjson_globally())
+        # Test giải mã byte chuỗi dị thường không bị văng lỗi
+        bad_bytes = b'{"status": "ok", "bad": "hello \xff world"}'
+        res = orjson.loads(bad_bytes)
+        self.assertEqual(res["status"], "ok")
+        self.assertIn("hello", res["bad"])
+
 
 if __name__ == "__main__":
     unittest.main()

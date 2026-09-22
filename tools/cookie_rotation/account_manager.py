@@ -19,6 +19,10 @@ _gemini_src = str(AGENT_BASE_DIR / "tools" / "gemini-api" / "src")
 if _gemini_src not in sys.path:
     sys.path.insert(0, _gemini_src)
 
+# Kích hoạt lớp bảo vệ orjson trong RAM để gemini_webapi không bị crash bởi byte lỗi
+from agent_core.core.json_safe import patch_orjson_globally
+patch_orjson_globally()
+
 from gemini_webapi import GeminiClient
 try:
     from .cookie_rotator import rotate_and_save_1psidts

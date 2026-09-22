@@ -2,7 +2,7 @@
 
 from .resilience import retry_with_backoff, CircuitBreaker
 from .condition_wait import wait_until, wait_until_async
-from .json_safe import SafeJsonWrapper, safe_json
+from .json_safe import SafeJsonWrapper, safe_json, patch_orjson_globally
 from .telemetry import ProofValidator, verify_iron_law
 
 __all__ = [
@@ -12,6 +12,7 @@ __all__ = [
     "wait_until_async",
     "SafeJsonWrapper",
     "safe_json",
+    "patch_orjson_globally",
     "ProofValidator",
     "verify_iron_law",
 ]
