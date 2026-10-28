@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Agent Skills Configuration",
+  "description": "Cấu hình trung tâm duy nhất cho thư mục kỹ năng và kho kiểm dịch (quarantine) của dự án.",
+  "type": "object",
+  "properties": {
+    "quarantine_dir": {
+      "type": "string",
+      "description": "Đường dẫn tuyệt đối hoặc tương đối tới thư mục chứa các repository kiểm dịch (skills-quarantine) trên máy tính này."
+    },
+    "skills_dir": {
+      "type": "string",
+      "description": "Đường dẫn thư mục chứa các kỹ năng đã cài đặt cho dự án.",
+      "default": ".agents/skills"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": ["quarantine_dir"]
+}

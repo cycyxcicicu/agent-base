@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KnowledgeCatalog",
+  "description": "Schema cho danh mục tri thức dạng đồ thị node và cạnh có kiểu (T-11 spec §2)",
+  "type": "object",
+  "required": ["schema_version", "nodes"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/KnowledgeNode"
+      }
+    }
+  },
+  "$defs": {
+    "KnowledgeNode": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "title",
+        "state",
+        "version",
+        "content_ref",
+        "content_sha256",
+        "provenance",
+        "owner_role",
+        "relations"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+:[A-Za-z0-9_.-]+$"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "Requirement",
+            "Rule",
+            "Design",
+            "Task",
+            "Feature",
+            "Scenario",
+            "Skill",
+            "EvalSuite",
+            "Proof",
+            "Approval",
+            "Role",
+            "Source"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "enum": ["draft", "review", "approved", "stale", "deprecated"]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "content_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "provenance": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "owner_role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "review_due_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KnowledgeRelation"
+          }
+        }
+      }
+    },
+    "KnowledgeRelation": {
+      "type": "object",
+      "required": ["type", "target"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "derived_from",
+            "refines",
+            "constrains",
+            "implements",
+            "realizes",
+            "verified_by",
+            "executed_by",
+            "evaluated_by",
+            "evidenced_by",
+            "approved_by",
+            "owned_by",
+            "supersedes",
+            "depends_on"
+          ]
+        },
+        "target": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+:[A-Za-z0-9_.-]+$"
+        }
+      }
+    }
+  }
+}

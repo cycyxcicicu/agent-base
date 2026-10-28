@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ProofBundle",
+  "description": "Bằng chứng chạy thật trên fixture cô lập (T-11 spec §5)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "scenario_id",
+    "phase",
+    "started_at",
+    "ended_at",
+    "result",
+    "repo_revision",
+    "dirty_input_manifest",
+    "input_digest",
+    "tool_versions",
+    "commands",
+    "assertions",
+    "artifacts",
+    "trace",
+    "cleanup",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "run_id": { "type": "string", "minLength": 1 },
+    "scenario_id": { "type": "string", "minLength": 1 },
+    "phase": { "type": "string", "enum": ["baseline", "final"] },
+    "started_at": { "type": "string", "format": "date-time" },
+    "ended_at": { "type": "string", "format": "date-time" },
+    "result": { "type": "string", "enum": ["pass", "fail", "inconclusive", "skipped"] },
+    "repo_revision": { "type": "string" },
+    "dirty_input_manifest": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "input_digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "tool_versions": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "commands": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/CommandRecord" }
+    },
+    "assertions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/AssertionRecord" }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ArtifactRecord" }
+    },
+    "trace": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/TraceRecord" }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["performed", "clean", "errors"],
+      "properties": {
+        "performed": { "type": "boolean" },
+        "clean": { "type": "boolean" },
+        "errors": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "CommandRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "argv", "cwd_rel", "timeout_sec", "exit_code", "duration_ms", "stdout_sha256", "stderr_sha256"],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 1 },
+        "argv": { "type": "array", "items": { "type": "string" } },
+        "cwd_rel": { "type": "string" },
+        "timeout_sec": { "type": "integer" },
+        "exit_code": { "type": "integer" },
+        "duration_ms": { "type": "integer" },
+        "stdout_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "stderr_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "AssertionRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "expected", "observed", "passed"],
+      "properties": {
+        "id": { "type": "string" },
+        "expected": { "type": "string" },
+        "observed": { "type": "string" },
+        "passed": { "type": "boolean" }
+      }
+    },
+    "ArtifactRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path_rel", "sha256", "byte_count", "media_type"],
+      "properties": {
+        "path_rel": { "type": "string" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "byte_count": { "type": "integer", "minimum": 0 },
+        "media_type": { "type": "string" }
+      }
+    },
+    "TraceRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "actor", "action", "target", "result", "timestamp", "capture"],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 1 },
+        "actor": { "type": "string" },
+        "action": { "type": "string" },
+        "target": { "type": "string" },
+        "result": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "capture": { "type": "string", "enum": ["observed", "reported"] }
+      }
+    }
+  }
+}

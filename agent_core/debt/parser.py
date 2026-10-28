@@ -22,16 +22,40 @@ class DebtItem:
 class DebtParser:
     """Máy quét phân tích cú pháp nợ kỹ thuật có cấu trúc."""
 
-    # Nhận diện cả # debt:, // debt:, /* debt:, <!-- debt:
+    # Chỉ quét file mã nguồn/cấu hình có cú pháp comment được parser hỗ trợ.
+    SOURCE_SUFFIXES = {
+        ".py", ".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs",
+        ".sh", ".ps1", ".html", ".go", ".rs", ".java", ".kt",
+        ".cs", ".rb", ".php", ".sql", ".yml", ".yaml", ".toml",
+        ".ini", ".cfg",
+    }
+    SOURCE_FILENAMES = {"makefile", "dockerfile", "containerfile", "jenkinsfile"}
+
+    GENERATED_DIRS = {
+        ".git", ".kilo", ".agents", ".claude", ".codex", ".gemini",
+        ".idea", ".vscode", ".venv", "node_modules", "dist", "build",
+        "__pycache__", "docs", "tasks", "tests", "scripts",
+    }
+
+    # Nhận diện cả # debt:, // debt:, /* debt:, <!-- debt:, -- debt:, ; debt:
     DEBT_PATTERN = re.compile(
-        r"(?:#|//|/\*|<!--)\s*debt:\s*(?P<shortcut>.*?)\s*,\s*ceiling:\s*(?P<ceiling>.*?)\s*,\s*upgrade:\s*(?P<upgrade>.*?)(?:\*/|-->|$)",
+        r"(?:#|//|/\*|<!--|--|;)\s*debt:\s*(?P<shortcut>.*?)\s*,\s*ceiling:\s*(?P<ceiling>.*?)\s*,\s*upgrade:\s*(?P<upgrade>.*?)(?:\*/|-->|$)",
         re.IGNORECASE
     )
 
+    # Thẻ dị dạng chỉ nhận khi bắt đầu dòng comment, tránh khớp câu văn mô tả cú pháp.
     GENERIC_DEBT_PATTERN = re.compile(
-        r"(?:#|//|/\*|<!--)\s*debt:\s*(?P<content>.*?)(?:\*/|-->|$)",
+        r"^\s*(?:#|//|/\*|<!--|--|;)\s*debt:\s*(?P<content>.*?)(?:\*/|-->|$)",
         re.IGNORECASE
     )
+
+    @classmethod
+    def is_source_file(cls, file_path: Path) -> bool:
+        name = file_path.name.lower()
+        return (
+            file_path.suffix.lower() in cls.SOURCE_SUFFIXES
+            or any(name == base or name.startswith(f"{base}.") for base in cls.SOURCE_FILENAMES)
+        )
 
     @classmethod
     def parse_line(cls, line: str, file_path: str, line_number: int) -> Optional[DebtItem]:
@@ -77,18 +101,25 @@ class DebtParser:
 
     @classmethod
     def scan_directory(cls, dir_path: Path, exclude_dirs: Optional[List[str]] = None) -> List[DebtItem]:
-        """Quét đệ quy toàn bộ thư mục mã nguồn."""
-        excludes = set(exclude_dirs or [".git", "node_modules", ".venv", "__pycache__", "dist", "build", "tests", "scripts"])
+        """Quét đệ quy mã nguồn; bỏ qua tài liệu, adapter sinh tự động và build output.
+
+        GENERATED_DIRS luôn được áp dụng; exclude_dirs chỉ bổ sung thêm, không thay thế.
+        Chỉ xét các thành phần bên trong dir_path để tên thư mục cha không làm rỗng kết quả.
+        """
+        excludes = cls.GENERATED_DIRS | set(exclude_dirs or [])
         items: List[DebtItem] = []
 
         for p in dir_path.rglob("*"):
-            if p.is_file():
-                # Bỏ qua thư mục loại trừ
-                if any(part in excludes for part in p.parts):
-                    continue
-                # Bỏ qua file nhị phân lớn
-                if p.suffix.lower() in [".png", ".jpg", ".jpeg", ".zip", ".tar", ".gz", ".exe", ".dll", ".so", ".bin"]:
-                    continue
-                items.extend(cls.scan_file(p))
+            if not p.is_file():
+                continue
+            try:
+                rel_parents = p.relative_to(dir_path).parts[:-1]
+            except ValueError:
+                rel_parents = p.parts[:-1]
+            if any(part in excludes for part in rel_parents):
+                continue
+            if not cls.is_source_file(p):
+                continue
+            items.extend(cls.scan_file(p))
 
         return items

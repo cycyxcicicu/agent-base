@@ -282,7 +282,7 @@ class TestExtraHardeningRules(unittest.TestCase):
 
     @unittest.skipIf(yaml is None, "PyYAML không có")
     def test_kilo_full_bash_roles_block_and_allow_the_same_commands(self):
-        for role in ("dev", "qa", "devops", "orchestrator", "security", "sre", "mobile", "data-eng", "dba"):
+        for role in ("dev", "qa", "devops", "lead", "security", "sre", "mobile", "data-eng", "dba"):
             rules = load_kilo_bash_rules(role)
             for cmd in HARDENED_MUST_BLOCK:
                 self.assertEqual(kilo_decision(rules, cmd), "deny", f"{role} lọt: {cmd!r}")
@@ -405,7 +405,7 @@ class TestUserRequestedGitWrites(unittest.TestCase):
 
     @unittest.skipIf(yaml is None, "PyYAML không có")
     def test_kilo_full_bash_roles_ask_or_deny_the_same_way(self):
-        for role in ("dev", "qa", "devops", "orchestrator", "security", "sre", "mobile", "data-eng", "dba"):
+        for role in ("dev", "qa", "devops", "lead", "security", "sre", "mobile", "data-eng", "dba"):
             rules = load_kilo_bash_rules(role)
             for cmd in GIT_WRITE_NEEDS_APPROVAL:
                 self.assertEqual(kilo_decision(rules, cmd), "ask", f"{role}: {cmd!r}")

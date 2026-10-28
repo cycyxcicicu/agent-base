@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "nodes": [
+    {
+      "id": "Source:sample-spec",
+      "kind": "Source",
+      "title": "Sample Knowledge Source",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "examples/knowledge/sample.md",
+      "content_sha256": "7943464592cef9c39ef47e5199cb1d4526d59300a7acd63984d9e3d9d5e795d4",
+      "provenance": [],
+      "owner_role": "analyst",
+      "relations": []
+    },
+    {
+      "id": "Requirement:sample-req",
+      "kind": "Requirement",
+      "title": "Sample Requirement",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "examples/knowledge/sample.md",
+      "content_sha256": "7943464592cef9c39ef47e5199cb1d4526d59300a7acd63984d9e3d9d5e795d4",
+      "provenance": [
+        "Source:sample-spec"
+      ],
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:sample-spec"
+        }
+      ]
+    }
+  ]
+}

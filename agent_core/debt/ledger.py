@@ -25,7 +25,7 @@ class DebtLedger:
         lines = [
             "# Sổ Cái Nợ Kỹ Thuật (Technical Debt Ledger)",
             "",
-            "> Tự động thu hoạch bởi `src/debt/ledger.py` theo triết lý Ponytail.",
+            "> Tự động thu hoạch bởi `agent_core/debt/ledger.py` theo triết lý Ponytail.",
             f"> Tổng số khoản nợ được ghi nhận: **{len(self.items)}**",
             "",
             "| Vị trí (File:Dòng) | Đi Tắt (Shortcut) | Trần Chịu Đựng (Ceiling) | Lộ Trình Nâng Cấp (Upgrade) |",

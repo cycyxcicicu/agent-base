@@ -59,13 +59,16 @@ def main():
             print(f"⚠️ Thư mục không tồn tại: {task_dir}")
             sys.exit(1)
 
-        tickets = []
-        for p in task_dir.glob("*.md"):
-            if p.name.startswith("_"):
-                continue
-            ticket = TicketParser.parse_markdown(p.read_text(encoding="utf-8", errors="replace"), str(p))
-            if ticket:
-                tickets.append(ticket)
+
+        from agent_core.workflow.task_discovery import discover_task_tickets
+        tickets = discover_task_tickets(task_dir)
+
+
+
+
+
+
+
 
         graph = DependencyGraph(tickets)
         frontier = graph.get_frontier()

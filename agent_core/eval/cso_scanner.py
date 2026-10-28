@@ -11,11 +11,13 @@ Scans codebase for:
 - Insecure Deserialization (unsafe pickle/yaml)
 """
 
+import io
 import re
 import ast
+import tokenize
 from pathlib import Path
 from dataclasses import dataclass
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 
 @dataclass
 class CsoFinding:
@@ -96,8 +98,16 @@ class CsoScanner:
         r"\.sample\."
     ]
 
+    # Directive must sit in a comment and carry a non-empty justification.
+    ALLOW_RE = re.compile(
+        r"#\s*cso:\s*allow\s+([A-Za-z]+-\d+(?:\s*,\s*[A-Za-z]+-\d+)*)\s+(.*)$",
+        re.I,
+    )
+
     def __init__(self, root_dir: Optional[Path] = None):
         self.root_dir = root_dir or Path.cwd()
+        self.suppressed_count = 0
+        self.suppressed: List[Tuple[CsoFinding, str]] = []
 
     def should_skip(self, file_path: Path) -> bool:
         path_str = str(file_path.resolve())
@@ -297,7 +307,48 @@ class CsoScanner:
                         recommendation=rec
                     ))
 
-        return findings
+        comments = self._comment_map(content, file_path)
+        kept, suppressed = self._split_allowed(findings, comments)
+        self.suppressed.extend(suppressed)
+        self.suppressed_count += len(suppressed)
+        return kept
+
+    def _comment_map(self, content: str, file_path: str) -> Dict[int, str]:
+        """Map line number to real comment text. Python only: tokenize rejects strings and parse errors."""
+        comments: Dict[int, str] = {}
+        if not file_path.endswith(".py"):
+            return comments
+        try:
+            for tok in tokenize.generate_tokens(io.StringIO(content).readline):
+                if tok.type == tokenize.COMMENT:
+                    comments[tok.start[0]] = tok.string
+        except (tokenize.TokenError, IndentationError, SyntaxError):
+            return {}
+        return comments
+
+    def _split_allowed(
+        self, findings: List[CsoFinding], comments: Dict[int, str]
+    ) -> Tuple[List[CsoFinding], List[Tuple[CsoFinding, str]]]:
+        kept: List[CsoFinding] = []
+        suppressed: List[Tuple[CsoFinding, str]] = []
+        for finding in findings:
+            reason = self._allow_reason(finding, comments)
+            if reason is None:
+                kept.append(finding)
+            else:
+                suppressed.append((finding, reason))
+        return kept, suppressed
+
+    def _allow_reason(self, finding: CsoFinding, comments: Dict[int, str]) -> Optional[str]:
+        for line_no in (finding.line_number, finding.line_number - 1):
+            match = self.ALLOW_RE.search(comments.get(line_no, ""))
+            if not match:
+                continue
+            rules = {r.strip().upper() for r in match.group(1).split(",")}
+            reason = match.group(2).strip()
+            if finding.rule_id.upper() in rules and reason:
+                return reason
+        return None
 
     def scan_file(self, file_path: Path) -> List[CsoFinding]:
         if self.should_skip(file_path):

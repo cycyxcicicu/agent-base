@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KILO SWARM MONITOR • CÂY ĐIỀU PHỐI THỜI GIAN THỰC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-page: #050913;
+      --bg-container: #080e1b;
+      --bg-card: #0d1424;
+      --bg-card-inner: #0a101d;
+      --border-card: #17233a;
+      --border-cyan: #38bdf8;
+      --cyan: #38bdf8;
+      --cyan-glow: rgba(56, 189, 248, 0.5);
+      --green: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.5);
+      --purple: #c084fc;
+      --text-white: #ffffff;
+      --text-muted: #8899b0;
+      --text-dim: #4f637f;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Inter', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(56, 189, 248, 0.25) transparent;
+    }
+
+    /* Ultra-Thin Minimalist Terminal Scrollbars */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(5, 9, 19, 0.6);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.25);
+      border-radius: 2px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--cyan);
+      box-shadow: 0 0 6px var(--cyan);
+    }
+
+    html, body {
+      background-color: var(--bg-page);
+      color: var(--text-white);
+      font-family: var(--font-mono);
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .main-window {
+      width: 100%;
+      max-width: 100%;
+      height: 100vh;
+      background: var(--bg-container);
+      border: none;
+      border-radius: 0;
+      overflow: hidden;
+      box-shadow: none;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Mac Bar */
+    .chrome-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+      background: #09101f;
+      border-bottom: 1px dashed rgba(56, 189, 248, 0.2);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .mac-buttons {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .mac-btn { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .btn-red { background: #ef4444; }
+    .btn-yellow { background: #f59e0b; }
+    .btn-green { background: #10b981; }
+
+    .chrome-title {
+      color: var(--text-dim);
+      font-size: 11px;
+      margin-left: 12px;
+    }
+
+    .chrome-tag {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: #34d399;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .terminal-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px dashed rgba(56, 189, 248, 0.45);
+      color: #38bdf8;
+      padding: 3px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .terminal-back-btn:hover {
+      background: rgba(56, 189, 248, 0.22);
+      border-color: #38bdf8;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* PROMINENT SESSION SELECTOR BAR */
+    .sessions-bar {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 8px 18px;
+      background: #070d19;
+      border-bottom: 1px dashed rgba(56, 189, 248, 0.25);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .sessions-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .session-tabs-list {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    .session-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      color: var(--text-muted);
+      padding: 5px 12px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .session-chip:hover {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: var(--cyan);
+      color: #fff;
+    }
+
+    .session-chip.active {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px dashed var(--cyan);
+      color: #fff;
+      font-weight: 700;
+      border-radius: 3px;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+    }
+
+    /* Application Body */
+    .app-body {
+      padding: 6px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      min-height: 0;
+    }
+
+    /* 4 Metric Cards */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px dashed rgba(56, 189, 248, 0.25);
+      border-radius: 4px;
+      padding: 5px 10px;
+      position: relative;
+    }
+
+    .metric-label {
+      font-size: 8px;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1px;
+    }
+
+    .metric-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    /* Two-Column Layout (Image 1 style) */
+    .content-columns {
+      display: grid;
+      grid-template-columns: 195px 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    /* Left Sidebar: Steps */
+    .sidebar-col {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .sidebar-header {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-white);
+      margin-bottom: 1px;
+    }
+
+    .sidebar-sub {
+      font-size: 9px;
+      color: var(--text-dim);
+      margin-bottom: 2px;
+    }
+
+    .steps-container {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .step-item {
+      border: 1px dashed rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      padding: 3.5px 7px;
+      background: rgba(13, 20, 36, 0.4);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .step-item.active {
+      border: 1px dashed var(--cyan);
+      background: rgba(56, 189, 248, 0.09);
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
+    }
+
+    .step-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .step-item.active .step-name {
+      color: var(--cyan);
+    }
+
+    .step-desc {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .step-item.active .step-desc {
+      color: #93c5fd;
+    }
+
+    .least-privilege-box {
+      margin-top: 4px;
+      padding: 6px 8px;
+      border: 1px dashed rgba(56, 189, 248, 0.2);
+      border-radius: 3px;
+      font-size: 9.5px;
+      line-height: 1.45;
+      color: var(--text-dim);
+    }
+
+    .least-privilege-box strong {
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* Right Canvas (Workflow Tree) */
+    .canvas-col {
+      background: #080d19;
+      border: 1px dashed rgba(56, 189, 248, 0.25);
+      border-radius: 4px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .canvas-top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9.5px;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      padding-bottom: 3px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+
+    /* Node Cards */
+    .flow-node {
+      background: var(--bg-card);
+      border: 1px dashed rgba(56, 189, 248, 0.3);
+      border-radius: 4px;
+      padding: 5px 10px;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .flow-node.active-stage {
+      border: 1px dashed var(--cyan);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+    }
+
+    .flow-node-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .node-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-white);
+      letter-spacing: 0.05em;
+    }
+
+    .node-tag {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+      font-family: var(--font-mono);
+    }
+
+    .tag-done {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px dashed rgba(16, 185, 129, 0.6);
+    }
+
+    .tag-wait {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-dim);
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+    }
+
+    .tag-run {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--cyan);
+      border: 1px dashed var(--cyan);
+      animation: archifyPulseGlow 1.4s infinite ease-in-out;
+    }
+
+    @keyframes archifyPulseGlow {
+      0%, 100% { opacity: 0.65; }
+      50% { opacity: 1; filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.5)); }
+    }
+
+    .node-body {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .node-line {
+      height: 2px;
+      width: 100%;
+      margin-top: 6px;
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .line-cyan {
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+    .line-green {
+      background: linear-gradient(90deg, #10b981, #38bdf8);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    }
+
+    /* ARCHIFY SPEC FLOW CONNECTORS & DELICATE PARTICLES */
+    .connector-svg-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      margin: 1px 0;
+    }
+
+    svg.flow-svg {
+      width: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    .flow-wire {
+      stroke: rgba(56, 189, 248, 0.2);
+      stroke-width: 1px;
+      stroke-dasharray: 4 3;
+      fill: none;
+      transition: stroke 0.3s, opacity 0.3s;
+    }
+
+    .flow-wire.flow-wire-active {
+      stroke: var(--cyan);
+      stroke-width: 1.2px;
+      stroke-dasharray: 5 3;
+      animation: archifyEdgeFlow 1.2s linear infinite;
+      filter: drop-shadow(0 0 2.5px rgba(56, 189, 248, 0.6));
+    }
+
+    @keyframes archifyEdgeFlow {
+      to { stroke-dashoffset: -16; }
+    }
+
+    .junction-dot {
+      fill: #38bdf8;
+      filter: drop-shadow(0 0 2.5px rgba(56, 189, 248, 0.8));
+    }
+
+    /* DYNAMIC PARALLEL CARDS ROW (1, 2, 3 or N cards auto!) */
+    .parallel-row {
+      display: grid;
+      gap: 10px;
+      width: 100%;
+    }
+    .parallel-row.cols-1 { grid-template-columns: 1fr; }
+    .parallel-row.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .parallel-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .parallel-row.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+    .parallel-card {
+      background: var(--bg-card);
+      border: 1px dashed rgba(56, 189, 248, 0.3);
+      border-radius: 4px;
+      padding: 6px 10px;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .parallel-card.active-run {
+      border: 1px dashed var(--cyan);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+    }
+
+    .parallel-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-white);
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .parallel-desc {
+      font-size: 9.5px;
+      color: var(--text-muted);
+      line-height: 1.35;
+      margin: 3px 0 3px;
+    }
+
+    /* Expandable history drawer for all subagents */
+    .sub-history-toggle {
+      font-size: 9.5px;
+      color: var(--text-dim);
+      cursor: pointer;
+      text-align: center;
+      padding: 2px 0;
+      margin-top: 2px;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+    .sub-history-toggle:hover {
+      color: var(--cyan);
+    }
+
+    .sub-history-drawer {
+      display: none;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px dashed rgba(56, 189, 248, 0.3);
+      border-radius: 4px;
+      padding: 6px 10px;
+      margin-top: 4px;
+      max-height: 120px;
+      overflow-y: auto;
+      font-size: 9.5px;
+    }
+
+    /* Session Log */
+    .log-section {
+      background: var(--bg-card);
+      border: 1px dashed rgba(56, 189, 248, 0.25);
+      border-radius: 4px;
+      padding: 5px 10px;
+    }
+
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      margin-bottom: 3px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+      padding-bottom: 2px;
+    }
+
+    .log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 9.5px;
+      line-height: 1.35;
+      max-height: 48px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .log-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .log-col-time {
+      color: var(--text-dim);
+      min-width: 60px;
+      font-size: 9.5px;
+    }
+
+    .log-col-actor {
+      color: var(--cyan);
+      font-weight: 700;
+      min-width: 65px;
+      font-size: 9.5px;
+    }
+
+    .log-col-text {
+      color: var(--text-muted);
+      font-size: 10px;
+      word-break: break-all;
+    }
+
+    /* Bottom Pill Banner */
+    .bottom-status-box {
+      border: 1px dashed rgba(56, 189, 248, 0.35);
+      background: rgba(13, 20, 36, 0.9);
+      border-radius: 4px;
+      padding: 6px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10.5px;
+    }
+
+    .bottom-title {
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: 0.05em;
+    }
+
+    .bottom-desc {
+      color: var(--text-dim);
+      font-size: 9.5px;
+    }
+
+    /* Live Status Scrubber Bar */
+    .video-controls-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 14px;
+      background: rgba(8, 14, 27, 0.95);
+      border-top: 1px dashed rgba(56, 189, 248, 0.25);
+      font-size: 10px;
+    }
+
+    .video-progress-track {
+      flex: 1;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 1px;
+      position: relative;
+    }
+
+    .video-progress-fill {
+      height: 100%;
+      background: var(--cyan);
+      box-shadow: 0 0 4px var(--cyan);
+      border-radius: 1px;
+      width: 40%;
+      position: relative;
+      transition: width 0.3s ease;
+    }
+
+    .video-progress-thumb {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #fff;
+      position: absolute;
+      right: -2.5px;
+      top: -1.5px;
+      box-shadow: 0 0 4px #38bdf8;
+    }
+
+    .video-time-text {
+      color: var(--text-dim);
+      font-size: 10px;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .codex-node {
+      background: #080d19;
+      border: 1px dashed rgba(56, 189, 248, 0.5);
+      border-radius: 4px;
+      padding: 5px 10px;
+      text-align: center;
+    }
+
+    .codex-fork-box {
+      background: #06101e;
+      border: 1px dashed #10b981;
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 10px;
+    }
+
+    .codex-cli-bar {
+      background: #050912;
+      border: 1px dashed #233554;
+      border-radius: 3px;
+      padding: 3px 8px;
+      font-size: 9px;
+      color: #38bdf8;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-window">
+
+    <!-- Top Window Chrome (Mac Terminal Style) -->
+    <div class="chrome-bar">
+      <div class="mac-buttons">
+        <span class="mac-btn btn-red"></span>
+        <span class="mac-btn btn-yellow"></span>
+        <span class="mac-btn btn-green"></span>
+        <span class="chrome-title">kilo-swarm / live-monitor</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="index.html" class="terminal-back-btn" title="Quay lại Bảng điều khiển (Dashboard)">
+          <span style="font-size: 12px;">⌂</span> QUAY LẠI TRANG CHỦ DASHBOARD
+        </a>
+        <div class="chrome-tag" id="modeTag">
+          <span class="live-dot"></span> 100% REAL-TIME KILO SWARM
+        </div>
+      </div>
+    </div>
+
+    <!-- PROMINENT SESSION SELECTOR BAR -->
+    <div class="sessions-bar">
+      <div class="sessions-label">
+        <span class="live-dot"></span> PHIÊN CHAT:
+      </div>
+      <div class="session-tabs-list" id="sessionChipsList">
+        <!-- Rendered dynamically from Kilo Code DB -->
+      </div>
+      <div style="color: var(--text-dim); font-size: 10px; margin-left: auto; font-family: var(--font-mono); white-space: nowrap;" id="currentViewingLabel">
+        Dữ liệu thời gian thực từ SQLite Kilo Code
+      </div>
+    </div>
+
+    <!-- Application Body -->
+    <div class="app-body">
+
+      <!-- 4 Metric Cards -->
+      <div class="metric-grid">
+        <div class="metric-card" id="mCardTime">
+          <div class="metric-label">SESSION TIME</div>
+          <div class="metric-value" id="valSessionTime">00:00</div>
+        </div>
+        <div class="metric-card" id="mCardActive">
+          <div class="metric-label">ACTIVE SUBAGENTS</div>
+          <div class="metric-value" id="valActiveNodes">0</div>
+        </div>
+        <div class="metric-card" id="mCardShown">
+          <div class="metric-label">TỔNG TO-DOS</div>
+          <div class="metric-value" id="valShownNodes">0</div>
+        </div>
+        <div class="metric-card" id="mCardAnim">
+          <div class="metric-label">TIẾN ĐỘ THỰC TẾ</div>
+          <div class="metric-value" id="valAnimationPct" style="color: #38bdf8;">0%</div>
+        </div>
+      </div>
+
+      <!-- TWO-COLUMN WORKSPACE: 6 STEPS SIDEBAR + TREE FLOW CANVAS -->
+      <div class="content-columns">
+
+        <!-- Left Column: 6 Steps -->
+        <div class="sidebar-col">
+          <div>
+            <div class="sidebar-header">QUY TRÌNH 6 BƯỚC</div>
+            <div class="sidebar-sub">tiến độ thi công tuần tự</div>
+          </div>
+
+          <div class="steps-container">
+            <div class="step-item" id="step01">
+              <div class="step-name">[01] GIAO VIỆC</div>
+              <div class="step-desc">Mục tiêu & Task Card</div>
+            </div>
+
+            <div class="step-item" id="step02">
+              <div class="step-name">[02] ĐIỀU PHỐI</div>
+              <div class="step-desc">Lead lập To-Dos</div>
+            </div>
+
+            <div class="step-item active" id="step03">
+              <div class="step-name">[03] THỰC HIỆN</div>
+              <div class="step-desc">Subagents song song</div>
+            </div>
+
+            <div class="step-item" id="step04">
+              <div class="step-name">[04] CÔNG CỤ</div>
+              <div class="step-desc">Bash / File I/O</div>
+            </div>
+
+            <div class="step-item" id="step05">
+              <div class="step-name">[05] KIỂM TRA</div>
+              <div class="step-desc">QA & Reviewer Diff</div>
+            </div>
+
+            <div class="step-item" id="step06">
+              <div class="step-name">[06] BẠN DUYỆT</div>
+              <div class="step-desc">Merge Gate & Nghiệm thu</div>
+            </div>
+          </div>
+
+          <div class="least-privilege-box">
+            <strong>Ranh giới an toàn:</strong>
+            Chỉ sửa file trong <code>scope_edit</code>.<br>
+            Không push ép vào main/develop.<br>
+            QA và Reviewer độc lập.
+          </div>
+        </div>
+
+        <!-- Right Column: Kilo Swarm Tree Flow Canvas -->
+        <div class="canvas-col">
+          <div class="canvas-top-header">
+            <span>KILO AGENT SWARM • CÂY ĐIỀU PHỐI THỜI GIAN THỰC</span>
+            <span id="canvasModeLabel" style="color:#34d399; font-weight:700;">LIVE KILO PIPELINE</span>
+          </div>
+
+          <!-- Node 1: Lead Agent (Kilo Main Controller) -->
+          <div class="codex-node" id="node1Card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
+              <span style="font-weight: 700; color: #38bdf8; font-size: 12px;" id="codexMainModel">
+                👑 LEAD AGENT • KILO MAIN CONTROLLER
+              </span>
+              <span class="node-tag tag-done" id="tagNode1">DONE</span>
+            </div>
+            <div style="font-size: 12px; color: #fff; font-weight: 600; text-align: left; margin: 4px 0;" id="codexMainTask">
+              Đang tải nhiệm vụ mục tiêu...
+            </div>
+            <div style="font-size: 10px; color: var(--text-dim); text-align: left; display: flex; gap: 14px; margin-top: 4px; flex-wrap: wrap;" id="node1Meta">
+              <span>Model: <code style="color: #38bdf8;" id="node1Model">-</code></span>
+              <span>Nhánh Git: <code style="color: #a5b4fc;" id="node1Branch">-</code></span>
+              <span>Worktree: <code style="color: #cbd5e1;" id="node1Worktree">-</code></span>
+              <span>Chi phí: <span style="color: #34d399;" id="node1Cost">$0.00</span></span>
+            </div>
+            <div class="node-line line-cyan" id="lineNode1" style="margin-top: 5px;"></div>
+          </div>
+
+          <!-- Connector 1: Node 1 -> To-Dos Plan (HIỆU ỨNG ARCHIFY FLOW) -->
+          <div class="connector-svg-wrap">
+            <svg width="24" height="12" viewBox="0 0 24 12" style="overflow: visible; display: block;">
+              <defs>
+                <marker id="arr-c1" viewBox="0 0 6 6" refX="4" refY="3" markerWidth="4" markerHeight="4" orient="auto">
+                  <path d="M 1 1 L 4 3 L 1 5" fill="none" stroke="#38bdf8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                </marker>
+              </defs>
+              <path id="path1" d="M 12 0 L 12 12" class="flow-wire flow-wire-active" marker-end="url(#arr-c1)" />
+              <circle r="1.8" class="junction-dot" id="circ1">
+                <animateMotion dur="1.2s" repeatCount="indefinite" path="M 12 0 L 12 12" />
+              </circle>
+            </svg>
+          </div>
+
+          <!-- Node 2: Kế hoạch & Tiến độ To-Dos -->
+          <div class="codex-fork-box" id="node2Card">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 700; margin-bottom: 4px;">
+              <span style="color: #34d399; font-size: 11px;">📋 KẾ HOẠCH & TIẾN ĐỘ TO-DOS (KILO TASK PLAN)</span>
+              <span style="color: #a5b4fc; font-size: 10px;" id="forksCountLabel">Tiến độ: 0/0 to-dos</span>
+            </div>
+            <!-- Progress bar -->
+            <div style="margin-bottom: 4px;">
+              <div style="display:flex; justify-content:space-between; font-size:9.5px; color: var(--text-dim); margin-bottom:2px;">
+                <span>Tiến độ hoàn thành:</span>
+                <span id="todosPercentLabel" style="color: #34d399; font-weight: 700;">0%</span>
+              </div>
+              <div style="background: rgba(16,185,129,0.2); height: 5px; border-radius: 2px; overflow: hidden;">
+                <div id="todosProgressBar" style="width: 0%; height: 100%; background: #10b981; transition: width 0.4s ease; border-radius: 2px;"></div>
+              </div>
+            </div>
+            <!-- To-do đang chạy -->
+            <div style="background: rgba(0,0,0,0.3); border-radius: 3px; padding: 4px 8px; font-size: 10px; color: #cbd5e1; border-left: 2px solid #10b981; margin-bottom: 4px;" id="node2Body">
+              Đang lập kế hoạch · chia nhiệm vụ cho các nhánh
+            </div>
+            <!-- Danh sách các mục To-do thật từ Kilo DB -->
+            <div id="realTodosListContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2px 10px; font-size: 9.5px;">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Connector 2: To-Dos -> Dynamic Subagents Row (HIỆU ỨNG CHẠY CHẠY RẼ NHÁNH ĐỘNG) -->
+          <div class="connector-svg-wrap" id="connector2Wrap">
+            <!-- Dynamically generated based on active subagents count (1, 2, 3) -->
+          </div>
+
+          <!-- Node 3: Parallel Subagent Workers (1, 2, 3 auto!) -->
+          <div class="parallel-row cols-1" id="parallelCardsRow">
+            <!-- Dynamically populated auto: 1 -> 1 card, 2 -> 2 cards, 3 -> 3 cards! -->
+          </div>
+
+          <!-- Optional drawer to inspect full subagent history -->
+          <div class="sub-history-toggle" id="subHistoryToggle" onclick="toggleSubagentHistoryDrawer()">
+            📂 Xem danh sách toàn bộ subagents trong phiên (0) ▼
+          </div>
+          <div class="sub-history-drawer" id="subHistoryDrawer">
+            <!-- Populated with all subagents -->
+          </div>
+
+          <!-- Connector 3: Subagent cards -> Authorized Tools (HIỆU ỨNG CHẠY CHẠY HỢP NHÁNH) -->
+          <div class="connector-svg-wrap" id="connector3Wrap">
+            <!-- Dynamically generated based on active subagents count -->
+          </div>
+
+          <!-- Node 4: Authorized Tools -->
+          <div class="flow-node" id="node4Card">
+            <div class="flow-node-header">
+              <span class="node-title">🛠️ CÔNG CỤ KILO THỰC THI (AUTHORIZED TOOLS)</span>
+              <span class="node-tag tag-wait" id="tagNode4">WAIT</span>
+            </div>
+            <div class="node-body" id="node4Body">
+              Chờ khởi chạy công cụ thực thi...
+            </div>
+          </div>
+
+          <!-- Connector 4: Node 4 -> Node 5 (HIỆU ỨNG ARCHIFY FLOW) -->
+          <div class="connector-svg-wrap">
+            <svg width="24" height="12" viewBox="0 0 24 12" style="overflow: visible; display: block;">
+              <defs>
+                <marker id="arr-c4" viewBox="0 0 6 6" refX="4" refY="3" markerWidth="4" markerHeight="4" orient="auto">
+                  <path d="M 1 1 L 4 3 L 1 5" fill="none" stroke="#38bdf8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                </marker>
+              </defs>
+              <path d="M 12 0 L 12 12" class="flow-wire" id="wire4_stem" marker-end="url(#arr-c4)" />
+              <circle r="1.8" class="junction-dot" id="pulse4" style="display:none;">
+                <animateMotion dur="1.2s" repeatCount="indefinite" path="M 12 0 L 12 12" />
+              </circle>
+            </svg>
+          </div>
+
+          <!-- Node 5: Kiểm định & Nghiệm thu theo AGENTS.md -->
+          <div class="codex-node" id="node5Card" style="border-color: rgba(255,255,255,0.15);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 11.5px; color: #fff; font-weight: 700;">🏁 KIỂM ĐỊNH & NGHIỆM THU (MERGE GATE & BẠN DUYỆT)</span>
+              <span class="node-tag tag-wait" id="tagNode6">WAIT</span>
+            </div>
+            <div style="font-size: 10.5px; color: var(--text-dim); text-align: left; margin-top: 4px;" id="node5Desc">
+              QA test tự động · Reviewer rà soát diff theo 5 lăng kính · Chạy scripts/merge-gate.py · Sẵn sàng để Bạn nghiệm thu.
+            </div>
+          </div>
+
+          <!-- Kilo CLI Bar -->
+          <div class="codex-cli-bar" id="codexCliBar">
+            ~/workspace $ kilo session active
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- SESSION LOG -->
+      <div class="log-section">
+        <div class="log-header">
+          <span>SESSION LOG</span>
+          <span id="logHeaderType">live kilo events</span>
+        </div>
+        <div class="log-list" id="logItemsList">
+          <div class="log-row">
+            <span class="log-col-time">00:00</span>
+            <span class="log-col-actor">LEAD</span>
+            <span class="log-col-text">Khởi tạo phiên giám sát thời gian thực.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Pill Box -->
+      <div class="bottom-status-box">
+        <div class="bottom-title" id="bottomStatusTitle">
+          03 / THỰC HIỆN SONG SONG
+        </div>
+        <div class="bottom-desc" id="bottomStatusDesc">
+          TRẠNG THÁI VÀ NHẬT KÝ ĐƯỢC KẾT NỐI TRỰC TIẾP TỪ KILO CODE ENGINE
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Live Status Scrubber Bar -->
+    <div class="video-controls-bar">
+      <div style="color: var(--text-muted); font-size: 11px; font-weight: 700;">
+        ⚡ BƯỚC THI CÔNG: <span id="currentStepIndicator" style="color: #38bdf8;">03 THỰC HIỆN</span>
+      </div>
+      <div class="video-progress-track">
+        <div class="video-progress-fill" id="videoTrackFill" style="width: 40%;">
+          <div class="video-progress-thumb"></div>
+        </div>
+      </div>
+      <div class="video-time-text" id="videoTrackTime">00:00</div>
+      <div style="font-size: 10px; font-weight: 700; color: #10b981; padding: 2px 6px; background: rgba(16,185,129,0.15); border-radius: 3px;">
+        100% REALTIME
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // State
+    let liveSessions = [];
+    let currentSessionId = null;
+    let sessionTickSeconds = 0;
+    let lastRenderedSessionId = null;
+    let isSubHistoryDrawerOpen = false;
+    let lastRenderedConnectorKey = '';
+    let lastRenderedCardsKey = '';
+    let lastRenderedTodosKey = '';
+    let lastRenderedLogsKey = '';
+    let userManualSelection = false;
+
+    // Role Icons
+    const ROLE_ICONS = {
+      'dev': '💻',
+      'qa': '🧪',
+      'reviewer': '👀',
+      'lead': '👑',
+      'product': '🎯',
+      'architect': '📐',
+      'security': '🛡️',
+      'mobile': '📱',
+      'dba': '🗄️',
+      'agent': '🤖'
+    };
+
+    // Format human readable elapsed time
+    function formatHumanTime(totalSec) {
+      if (!totalSec || totalSec < 0) return '00:00';
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      if (h > 0) {
+        return `${h}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
+      }
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    // Escape HTML helper
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Ticking session time (Real elapsed seconds)
+    setInterval(() => {
+      sessionTickSeconds++;
+      const formatted = formatHumanTime(sessionTickSeconds);
+      const elem = document.getElementById('valSessionTime');
+      if (elem) elem.innerText = formatted;
+      const vTime = document.getElementById('videoTrackTime');
+      if (vTime) vTime.innerText = formatted;
+    }, 1000);
+
+    // Switch session chip
+    function selectSession(sesId) {
+      userManualSelection = true;
+      currentSessionId = sesId;
+      try {
+        localStorage.setItem('kilo_monitor_current_id', sesId);
+      } catch(e) {}
+      lastRenderedConnectorKey = '';
+      lastRenderedCardsKey = '';
+      lastRenderedTodosKey = '';
+      lastRenderedLogsKey = '';
+      renderSessionChips();
+      const ses = liveSessions.find(s => s.sessionId === sesId);
+      if (ses) {
+        sessionTickSeconds = ses.elapsedSeconds || 0;
+        lastRenderedSessionId = ses.sessionId;
+        applySessionToUI(ses);
+      }
+    }
+
+    function toggleSubagentHistoryDrawer() {
+      isSubHistoryDrawerOpen = !isSubHistoryDrawerOpen;
+      const drawer = document.getElementById('subHistoryDrawer');
+      const toggle = document.getElementById('subHistoryToggle');
+      if (drawer) drawer.style.display = isSubHistoryDrawerOpen ? 'block' : 'none';
+      if (toggle) {
+        const ses = liveSessions.find(s => s.sessionId === currentSessionId) || liveSessions[0];
+        const count = ses?.subagents?.length || 0;
+        toggle.innerText = isSubHistoryDrawerOpen 
+          ? `📂 Thu gọn lịch sử (${count} subagents) ▲` 
+          : `📂 Xem danh sách toàn bộ subagents trong phiên (${count}) ▼`;
+      }
+    }
+
+    // Determine current pipeline step (1-6)
+    function determineRealSessionStep(session) {
+      if (!session) return 1;
+      const total = session.todos?.total || 0;
+      const done = session.todos?.done || 0;
+      const inProg = session.todos?.inProgress || '';
+      const runningSubs = session.runningSubagents ?? ((session.subagents || []).filter(s => s.status === 'running').length);
+      const lastAct = session.lastAction;
+      const isWorking = session.state === 'WORKING';
+
+      if (isWorking && lastAct && (lastAct.tool === 'apply_patch' || lastAct.tool === 'edit' || lastAct.tool === 'write' || lastAct.tool === 'bash' || lastAct.tool === 'read' || lastAct.tool === 'grep' || lastAct.tool === 'task')) {
+        return 4; // CÔNG CỤ
+      }
+      if (runningSubs > 0) {
+        return 3; // SUBAGENTS SONG SONG
+      }
+      if (inProg && !inProg.includes("Chưa có") && !inProg.includes("Tất cả to-do")) {
+        return 2; // ĐIỀU PHỐI
+      }
+      if (session.state === 'DONE' || (total > 0 && done === total)) {
+        return 6; // BẠN DUYỆT
+      }
+      if (done > 0 && done >= total - 1) {
+        return 5; // KIỂM TRA QA/DIFF
+      }
+      if (total > 0) return 2;
+      return 1;
+    }
+
+    let showPastSessions = false;
+    function togglePastSessions() {
+      showPastSessions = !showPastSessions;
+      renderSessionChips();
+    }
+
+    // Render session selector chips
+    function renderSessionChips() {
+      const container = document.getElementById('sessionChipsList');
+      if (!container) return;
+
+      if (!liveSessions || liveSessions.length === 0) {
+        container.innerHTML = `<div class="session-chip active">⏳ Đang chờ phiên chat từ Kilo Code...</div>`;
+        return;
+      }
+
+      const now = Date.now();
+      // Phân loại phiên: Luôn hiển thị top 3 phiên gần nhất hoặc phiên có running subagents làm chip trực tiếp
+      const topCount = Math.min(3, liveSessions.length);
+      const activeSessions = liveSessions.filter((s, idx) => {
+        if (idx < topCount) return true;
+        if ((s.runningSubagents || 0) > 0) return true;
+        const diffMins = (now - (s.timeUpdated || 0)) / 60000;
+        return diffMins <= 360;
+      });
+      const historySessions = liveSessions.filter(s => !activeSessions.some(a => a.sessionId === s.sessionId));
+
+      function createChipHtml(s, idx, isHistory) {
+        const isActive = s.sessionId === currentSessionId;
+        const totalSubs = s.totalSubagents ?? (s.subagents ? s.subagents.length : 0);
+        const runningSubs = s.runningSubagents ?? (s.subagents ? s.subagents.filter(x => x.status === 'running').length : 0);
+
+        let subStr = '';
+        if (runningSubs > 0) {
+          subStr = ` (${runningSubs} running • ${totalSubs} subs)`;
+        } else if (totalSubs > 0) {
+          subStr = ` (${totalSubs} subs)`;
+        } else {
+          subStr = ` (solo)`;
+        }
+
+        const isNew = s.title.includes('Phiên mới') || idx === 0;
+        const cleanTitle = s.title.replace(/^Phiên mới:\s*/, '');
+        const titleShort = cleanTitle.length > 25 ? cleanTitle.slice(0, 24) + '...' : cleanTitle;
+        const prefix = s.shortId ? `[${s.shortId}] ` : '';
+        const newBadge = isNew && !isHistory ? '✨ ' : '';
+        const label = `${newBadge}${prefix}${titleShort}${subStr}`;
+        const icon = isHistory ? '📁' : (isActive ? '🟢' : (runningSubs > 0 ? '🔥' : '⚡'));
+
+        return `
+          <button class="session-chip ${isActive ? 'active' : ''}" onclick="selectSession('${s.sessionId}')" ${isHistory ? 'style="opacity: 0.75; font-size: 10px;"' : ''} title="${escapeHtml(s.title)}">
+            ${icon} #${idx + 1}: ${escapeHtml(label)}
+          </button>
+        `;
+      }
+
+      let html = activeSessions.map((s, idx) => createChipHtml(s, idx, false)).join('');
+
+      // Nút mở rộng xem các phiên lịch sử cũ (nếu có)
+      if (historySessions.length > 0) {
+        html += `
+          <button class="session-chip" onclick="togglePastSessions()" style="opacity: 0.65; font-size: 10px; border-style: dashed;">
+            ${showPastSessions ? '▲ Thu gọn' : `📁 Lịch sử (${historySessions.length} phiên cũ hơn) ▼`}
+          </button>
+        `;
+        if (showPastSessions) {
+          html += historySessions.map((s, idx) => createChipHtml(s, activeSessions.length + idx, true)).join('');
+        }
+      }
+
+      container.innerHTML = html;
+    }
+
+    // DYNAMIC CONNECTOR SVGS GENERATOR (Archify high-precision signal lines)
+    function renderDynamicConnectors(subCount, realStep) {
+      const wrap2 = document.getElementById('connector2Wrap');
+      const wrap3 = document.getElementById('connector3Wrap');
+      const cardsContainer = document.getElementById('parallelCardsRow');
+      if (!wrap2 || !wrap3) return;
+
+      const isStepActive = realStep >= 3;
+      const wireClass = isStepActive ? 'flow-wire flow-wire-active' : 'flow-wire';
+      const key = `${subCount}_${isStepActive ? 1 : 0}_${realStep >= 4 ? 1 : 0}`;
+      if (key === lastRenderedConnectorKey) return;
+      lastRenderedConnectorKey = key;
+
+      if (subCount <= 1) {
+        wrap2.innerHTML = `
+          <svg width="24" height="14" viewBox="0 0 24 14" style="overflow: visible; display: block;">
+            <defs>
+              <marker id="arr-c2-single" viewBox="0 0 6 6" refX="4" refY="3" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M 1 1 L 4 3 L 1 5" fill="none" stroke="#38bdf8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+              </marker>
+            </defs>
+            <path d="M 12 0 L 12 14" class="${wireClass}" marker-end="url(#arr-c2-single)" />
+            ${isStepActive ? `<circle r="1.8" class="junction-dot"><animateMotion dur="1.2s" repeatCount="indefinite" path="M 12 0 L 12 14" /></circle>` : ''}
+          </svg>
+        `;
+        wrap3.innerHTML = `
+          <svg width="24" height="14" viewBox="0 0 24 14" style="overflow: visible; display: block;">
+            <defs>
+              <marker id="arr-c3-single" viewBox="0 0 6 6" refX="4" refY="3" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M 1 1 L 4 3 L 1 5" fill="none" stroke="#38bdf8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+              </marker>
+            </defs>
+            <path d="M 12 0 L 12 14" class="${realStep >= 4 ? 'flow-wire flow-wire-active' : 'flow-wire'}" marker-end="url(#arr-c3-single)" />
+            ${realStep >= 4 ? `<circle r="1.8" class="junction-dot"><animateMotion dur="1.2s" repeatCount="indefinite" path="M 12 0 L 12 14" /></circle>` : ''}
+          </svg>
+        `;
+      } else if (subCount === 2) {
+        const w = Math.round(wrap2.clientWidth || 600);
+        const cards = cardsContainer ? cardsContainer.querySelectorAll('.parallel-card') : [];
+        const cx = Math.round(w / 2);
+        let x1 = Math.round(w * 0.25);
+        let x2 = Math.round(w * 0.75);
+        if (cards && cards.length >= 2) {
+          x1 = Math.round(cards[0].offsetLeft + cards[0].offsetWidth / 2);
+          x2 = Math.round(cards[1].offsetLeft + cards[1].offsetWidth / 2);
+        }
+
+        wrap2.innerHTML = `
+          <svg class="flow-svg" width="100%" height="18" viewBox="0 0 ${w} 18" style="overflow: visible; display: block;">
+            <defs>
+              <marker id="arr-c2-2" viewBox="0 0 6 6" refX="4" refY="3" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M 1 1 L 4 3 L 1 5" fill="none" stroke="#38bdf8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+              </marker>
+            </defs>
+            <!-- Rẽ nhánh từ Node 2 chỉ vào từng Subagent Card bên dưới -->
+            <path d="M ${cx} 0 L ${cx} 9 L ${x1} 9 L ${x1} 18" class="${wireClass}" marker-end="url(#arr-c2-2)" />
+            <path d="M ${cx} 0 L ${cx} 9 L ${x2} 9 L ${x2} 18" class="${wireClass}" marker-end="url(#arr-c2-2)" />
+            ${isStepActive ? `
+              <circle r="1.8" class="junction-dot"><animateMotion dur="1.3s" repeatCount="indefinite" path="M ${cx} 0 L ${cx} 9 L ${x1} 9 L ${x1} 18" /></circle>
+              <circle r="1.8" class="junction-dot"><animateMotion dur="1.3s" repeatCount="indefinite" path="M ${cx} 0 L ${cx} 9 L ${x2} 9 L ${x2} 18" /></circle>
+            ` : ''}
+            <circle cx="${cx}" cy="9" r="1.8" fill="#38bdf8" />
+          </svg>
+        `;
+        wrap3.innerHTML = `
+          <svg class="flow-svg" width="100%" height="18" viewBox="0 0 ${w} 18" style="overflow: visible; display: block;">
+            <defs>
+              <marker id="arr-c3-2" viewBox="0 0 6 6" refX="4" refY="3" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M 1 1 L 4 3 L 1 5" fill="none" stroke="#38bdf8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+              </marker>
+            </defs>
+            <!-- Gộp nhánh từ các Subagent Card chỉ thẳng xuống Node 4 -->
+            <path d="M ${x1} 0 L ${x1} 9 L ${cx} 9 L ${cx} 18" class="${realStep >= 4 ? 'flow-wire flow-wire-active' : 'flow-wire'}" marker-end="url(#arr-c3-2)" />
+            <path d="M ${x2} 0 L ${x2} 9 L ${cx} 9 L ${cx} 18" class="${realStep >= 4 ? 'flow-wire flow-wire-active' : 'flow-wire'}" marker-end="url(#arr-c3-2)" />
+            ${realStep >= 4 ? `
+              <circle r="1.8" class="junction-dot"><animateMotion dur="1.3s" repeatCount="indefinite" path="M ${x1} 0 L ${x1} 9 L ${cx} 9 L ${cx} 18" /></circle>
+              <circle r="1.8" class="junction-dot"><animateMotion dur="1.3s" repeatCount="indefinite" path="M ${x2} 0 L ${x2} 9 L ${cx} 9 L ${cx} 18" /></circle>
+            ` : ''}
+            <circle cx="${cx}" cy="9" r="1.8" fill="#38bdf8" />
+          </svg>
+        `;
+      } else {
+        // 3 or more subagents: Rẽ 3 nhánh và Gộp 3 nhánh
+        const w = Math.round(wrap2.clientWidth || 600);
+        const cards = cardsContainer ? cardsContainer.querySelectorAll('.parallel-card') : [];
+        const cx = Math.round(w / 2);
+        let x1 = Math.round(w / 6);
+        let x2 = Math.round(w / 2);
+        let x3 = Math.round(5 * w / 6);
+        if (cards && cards.length >= 3) {
+          x1 = Math.round(cards[0].offsetLeft + cards[0].offsetWidth / 2);
+          x2 = Math.round(cards[1].offsetLeft + cards[1].offsetWidth / 2);
+          x3 = Math.round(cards[2].offsetLeft + cards[2].offsetWidth / 2);
+        }
+
+        wrap2.innerHTML = `
+          <svg class="flow-svg" width="100%" height="18" viewBox="0 0 ${w} 18" style="overflow: visible; display: block;">
+            <defs>
+              <marker id="arr-c2-3" viewBox="0 0 6 6" refX="4" refY="3" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M 1 1 L 4 3 L 1 5" fill="none" stroke="#38bdf8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+              </marker>
+            </defs>
+            <path d="M ${cx} 0 L ${cx} 9 L ${x1} 9 L ${x1} 18" class="${wireClass}" marker-end="url(#arr-c2-3)" />
+            <path d="M ${cx} 0 L ${cx} 18" class="${wireClass}" marker-end="url(#arr-c2-3)" />
+            <path d="M ${cx} 0 L ${cx} 9 L ${x3} 9 L ${x3} 18" class="${wireClass}" marker-end="url(#arr-c2-3)" />
+            ${isStepActive ? `
+              <circle r="1.8" class="junction-dot"><animateMotion dur="1.3s" repeatCount="indefinite" path="M ${cx} 0 L ${cx} 9 L ${x1} 9 L ${x1} 18" /></circle>
+              <circle r="1.8" class="junction-dot"><animateMotion dur="1.3s" repeatCount="indefinite" path="M ${cx} 0 L ${cx} 18" /></circle>
+              <circle r="1.8" class="junction-dot"><animateMotion dur="1.3s" repeatCount="indefinite" path="M ${cx} 0 L ${cx} 9 L ${x3} 9 L ${x3} 18" /></circle>
+            ` : ''}
+            <circle cx="${cx}" cy="9" r="1.8" fill="#38bdf8" />
+          </svg>
+        `;
+        wrap3.innerHTML = `
+          <svg class="flow-svg" width="100%" height="18" viewBox="0 0 ${w} 18" style="overflow: visible; display: block;">
+            <defs>
+              <marker id="arr-c3-3" viewBox="0 0 6 6" refX="4" refY="3" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M 1 1 L 4 3 L 1 5" fill="none" stroke="#38bdf8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+              </marker>
+            </defs>
+            <path d="M ${x1} 0 L ${x1} 9 L ${cx} 9 L ${cx} 18" class="${realStep >= 4 ? 'flow-wire flow-wire-active' : 'flow-wire'}" marker-end="url(#arr-c3-3)" />
+            <path d="M ${cx} 0 L ${cx} 18" class="${realStep >= 4 ? 'flow-wire flow-wire-active' : 'flow-wire'}" marker-end="url(#arr-c3-3)" />
+            <path d="M ${x3} 0 L ${x3} 9 L ${cx} 9 L ${cx} 18" class="${realStep >= 4 ? 'flow-wire flow-wire-active' : 'flow-wire'}" marker-end="url(#arr-c3-3)" />
+            ${realStep >= 4 ? `
+              <circle r="1.8" class="junction-dot"><animateMotion dur="1.3s" repeatCount="indefinite" path="M ${x1} 0 L ${x1} 9 L ${cx} 9 L ${cx} 18" /></circle>
+              <circle r="1.8" class="junction-dot"><animateMotion dur="1.3s" repeatCount="indefinite" path="M ${cx} 0 L ${cx} 18" /></circle>
+              <circle r="1.8" class="junction-dot"><animateMotion dur="1.3s" repeatCount="indefinite" path="M ${x3} 0 L ${x3} 9 L ${cx} 9 L ${cx} 18" /></circle>
+            ` : ''}
+            <circle cx="${cx}" cy="9" r="1.8" fill="#38bdf8" />
+          </svg>
+        `;
+      }
+    }
+
+    // Apply Telemetry Data to Full UI
+    function applySessionToUI(ses) {
+      if (!ses) return;
+
+      // 1. Sync session timer
+      if (ses.sessionId !== lastRenderedSessionId) {
+        sessionTickSeconds = ses.elapsedSeconds || 0;
+        lastRenderedSessionId = ses.sessionId;
+      } else if (ses.elapsedSeconds && Math.abs(ses.elapsedSeconds - sessionTickSeconds) > 5) {
+        sessionTickSeconds = ses.elapsedSeconds;
+      }
+      const formatted = formatHumanTime(sessionTickSeconds);
+      document.getElementById('valSessionTime').innerText = formatted;
+      document.getElementById('videoTrackTime').innerText = formatted;
+
+      // 2. Real Step
+      const realStep = determineRealSessionStep(ses);
+
+      // 3. Real progress %
+      const totalTodos = ses.todos?.total || 0;
+      const doneTodos = ses.todos?.done || 0;
+      let progressPct = 0;
+      if (totalTodos > 0) {
+        progressPct = Math.round((doneTodos / totalTodos) * 100);
+      } else if (realStep >= 3) {
+        progressPct = 50;
+      } else if (realStep === 6) {
+        progressPct = 100;
+      }
+      document.getElementById('valAnimationPct').innerText = `${progressPct}%`;
+      document.getElementById('videoTrackFill').style.width = `${Math.max(5, progressPct)}%`;
+
+      const stepNames = ['', '[01] GIAO VIỆC', '[02] ĐIỀU PHỐI', '[03] THỰC HIỆN', '[04] CÔNG CỤ', '[05] KIỂM TRA', '[06] BẠN DUYỆT'];
+      document.getElementById('currentStepIndicator').innerText = stepNames[realStep] || '[03] THỰC HIỆN';
+      document.getElementById('currentViewingLabel').innerText = `Đang theo dõi: [${ses.shortId || 'KILO'}] ${ses.title}`;
+
+      // 4. Update Sidebar Steps (Highlight exactly where it is!)
+      for (let i = 1; i <= 6; i++) {
+        const stepElem = document.getElementById(`step0${i}`);
+        if (stepElem) {
+          stepElem.className = (i === realStep) ? 'step-item active' : 'step-item';
+        }
+      }
+
+      // 5. Node 1: Lead Agent
+      const tag1 = document.getElementById('tagNode1');
+      if (tag1) {
+        tag1.className = 'node-tag ' + (realStep >= 2 ? 'tag-done' : 'tag-run');
+        tag1.innerText = realStep >= 2 ? 'DONE' : 'RUN';
+      }
+      document.getElementById('codexMainModel').innerText = `👑 ${(ses.agent || 'LEAD').toUpperCase()} AGENT • KILO MAIN CONTROLLER`;
+      document.getElementById('codexMainTask').innerText = ses.title;
+      document.getElementById('node1Model').innerText = ses.model || 'model';
+      document.getElementById('node1Branch').innerText = ses.branch || 'main';
+      document.getElementById('node1Worktree').innerText = ses.worktreeId || 'ROOT';
+      const costVal = ses.stats?.cost !== undefined ? '$' + Number(ses.stats.cost).toFixed(3) : '$0.00';
+      document.getElementById('node1Cost').innerText = costVal;
+
+      // 6. Node 2: Kế hoạch & Tiến độ To-Dos
+      document.getElementById('forksCountLabel').innerText = `Tiến độ: ${doneTodos}/${totalTodos} to-dos`;
+      document.getElementById('todosPercentLabel').innerText = progressPct + '%';
+      document.getElementById('todosProgressBar').style.width = progressPct + '%';
+
+      const n2b = document.getElementById('node2Body');
+      const inProg = ses.todos?.inProgress;
+      if (n2b) {
+        if (inProg && !inProg.includes("Chưa có") && !inProg.includes("Tất cả to-do")) {
+          n2b.innerHTML = `Đang thực hiện: <strong style="color: #facc15;">${escapeHtml(inProg)}</strong>`;
+        } else if (totalTodos > 0 && doneTodos === totalTodos) {
+          n2b.innerHTML = `<strong style="color: #34d399;">✓ Đã hoàn tất toàn bộ ${totalTodos} to-dos trong phiên</strong>`;
+        } else {
+          n2b.innerHTML = 'Đang phân tích nhiệm vụ & điều phối các to-dos theo quy tắc AGENTS.md';
+        }
+      }
+
+      // Render To-Do items
+      const todoListElem = document.getElementById('realTodosListContainer');
+      if (todoListElem && ses.todos?.items) {
+        const todosKey = JSON.stringify(ses.todos.items);
+        if (todosKey !== lastRenderedTodosKey) {
+          lastRenderedTodosKey = todosKey;
+          if (ses.todos.items.length === 0) {
+            todoListElem.innerHTML = `<div style="color: var(--text-dim); font-size: 10px; font-style: italic;">Chưa có mục to-do cụ thể nào được tạo trong phiên này.</div>`;
+          } else {
+            todoListElem.innerHTML = ses.todos.items.slice(0, 6).map(item => {
+              let icon = '<span style="color: #64748b;">○</span>';
+              let textColor = '#94a3b8';
+              if (item.status === 'completed') {
+                icon = '<span style="color: #10b981; font-weight: bold;">✓</span>';
+                textColor = '#6ee7b7';
+              } else if (item.status === 'in_progress') {
+                icon = '<span style="color: #facc15; font-weight: bold;">▶</span>';
+                textColor = '#fef08a; font-weight: 600;';
+              }
+              return `
+                <div style="display: flex; align-items: flex-start; gap: 6px; padding: 2px 0;">
+                  <span>${icon}</span>
+                  <span style="color: ${textColor}; line-height: 1.4;">${escapeHtml(item.content)}</span>
+                </div>
+              `;
+            }).join('') + (ses.todos.items.length > 6 ? `<div style="font-size: 9.5px; color: var(--text-dim); margin-top: 2px;">+ ${ses.todos.items.length - 6} to-do khác...</div>` : '');
+          }
+        }
+      }
+
+      // 7. Node 3: DYNAMIC PARALLEL CARDS (1 -> 1 card, 2 -> 2 cards, 3 -> 3 cards auto!)
+      const subs = ses.subagents || [];
+      const runningSubsList = subs.filter(s => s.status === 'running');
+      const cardsContainer = document.getElementById('parallelCardsRow');
+      let displaySubs = [];
+
+      if (runningSubsList.length > 0) {
+        // CHỈ HIỂN THỊ ĐÚNG CÁC AGENT ĐANG CHẠY: 1 thì 1, 2 thì 2, 3 thì 3!
+        displaySubs = runningSubsList.slice(0, 3);
+      } else if (subs.length > 0) {
+        // Nếu không có subagent đang chạy nhưng phiên có subagents: Hiển thị tối đa 3 subagent gần nhất (DONE)
+        displaySubs = subs.slice(0, 3);
+      } else {
+        // 0 subagent trong phiên: Lead trực tiếp làm việc solo
+        displaySubs = [];
+      }
+
+      const activeCount = runningSubsList.length;
+      document.getElementById('valActiveNodes').innerText = String(activeCount);
+      document.getElementById('valShownNodes').innerText = String(totalTodos);
+
+      // Cập nhật drawer lịch sử toàn bộ subagents
+      const toggleBtn = document.getElementById('subHistoryToggle');
+      if (toggleBtn) {
+        toggleBtn.innerText = isSubHistoryDrawerOpen 
+          ? `📂 Thu gọn lịch sử (${subs.length} subagents) ▲` 
+          : `📂 Xem danh sách toàn bộ subagents trong phiên (${subs.length}) ▼`;
+      }
+      const historyDrawer = document.getElementById('subHistoryDrawer');
+      if (historyDrawer && subs.length > 0) {
+        historyDrawer.innerHTML = subs.map(s => {
+          const icon = ROLE_ICONS[s.agent] || '🤖';
+          const isRun = s.status === 'running';
+          return `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+              <span>${icon} <strong style="color:#fff;">${escapeHtml(s.title)}</strong> <span style="color:var(--text-dim); font-size:9px;">(${s.agent} • ${s.model || 'model'})</span></span>
+              <span class="node-tag ${isRun ? 'tag-run' : 'tag-done'}">${isRun ? 'RUN' : 'DONE'}</span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      if (displaySubs.length === 0) {
+        // Case: 0 subagents đang chạy thực tế
+        const hasHistory = subs.length > 0;
+        const currentCardsKey = `empty_${hasHistory}_${realStep}_${ses.agent || 'lead'}_${ses.lastAction?.description || ''}`;
+        if (currentCardsKey !== lastRenderedCardsKey) {
+          lastRenderedCardsKey = currentCardsKey;
+          cardsContainer.className = 'parallel-row cols-1';
+          cardsContainer.innerHTML = `
+            <div class="parallel-card ${realStep === 3 ? 'active-run' : ''}">
+              <div class="flow-node-header">
+                <span class="parallel-title">👑 ${(ses.agent || 'LEAD').toUpperCase()} / ${hasHistory ? 'ĐÃ HOÀN TẤT ĐỢT SUBAGENTS' : 'TRỰC TIẾP THI CÔNG'}</span>
+                <span class="node-tag ${realStep === 3 ? 'tag-run' : (realStep > 3 ? 'tag-done' : 'tag-wait')}">
+                  ${realStep === 3 ? 'RUN' : (hasHistory ? 'DONE' : 'WAIT')}
+                </span>
+              </div>
+              <div style="font-size: 9.5px; color: var(--text-dim); margin-top: -2px;">${ses.model || 'model'} • 0 subagent active</div>
+              <div class="parallel-desc">
+                ${hasHistory 
+                  ? `Toàn bộ ${subs.length} lượt subagents đã hoàn thành nhiệm vụ • Hiện tại không có subagent nào đang chạy.<br><em style="color:#34d399;">✓ Lead đang điều hành công việc trực tiếp hoặc chờ lệnh mới</em>`
+                  : `Chưa phân nhánh Subagent • Lead đang phân tích & trực tiếp thực hiện lệnh<br><em style="color:#38bdf8;">⚡ ${ses.lastAction ? escapeHtml(ses.lastAction.description) : 'Đang xử lý yêu cầu...'}</em>`
+                }
+              </div>
+              <div class="node-line line-cyan">
+                <div style="height:100%; background:#10b981; width: ${hasHistory ? '100%' : '30%'};"></div>
+              </div>
+            </div>
+          `;
+        }
+        document.getElementById('bottomStatusTitle').innerText = `03 / ${(ses.agent || 'LEAD').toUpperCase()} (0 SUBAGENT HOẠT ĐỘNG)`;
+        renderDynamicConnectors(1, realStep);
+      } else {
+        // TỰ ĐỘNG HIỂN THỊ: 1 CARD THÌ COLS-1, 2 CARDS THÌ COLS-2, 3 CARDS THÌ COLS-3!
+        const subCount = Math.max(1, Math.min(3, displaySubs.length));
+        const colClass = subCount === 1 ? 'cols-1' : (subCount === 2 ? 'cols-2' : 'cols-3');
+        const currentCardsKey = `${subCount}_${realStep}_${displaySubs.map(s => `${s.id || ''}_${s.agent}_${s.status}_${s.lastAction?.description || s.title || ''}`).join('|')}`;
+        
+        if (currentCardsKey !== lastRenderedCardsKey) {
+          lastRenderedCardsKey = currentCardsKey;
+          cardsContainer.className = `parallel-row ${colClass}`;
+
+          cardsContainer.innerHTML = displaySubs.slice(0, 3).map((sub, i) => {
+            const icon = ROLE_ICONS[sub.agent] || '🤖';
+            const isRunning = sub.status === 'running';
+            const isDone = sub.status === 'completed' || (!isRunning && realStep > 3);
+            const statusTag = isRunning ? 'RUN' : (isDone ? 'DONE' : 'WAIT');
+            const tagClass = isRunning ? 'tag-run' : (isDone ? 'tag-done' : 'tag-wait');
+
+            let actionText = 'Đang thực thi...';
+            if (sub.lastAction) {
+              actionText = sub.lastAction.description || `${sub.lastAction.tool}: ${sub.lastAction.target || ''}`;
+            } else if (sub.title) {
+              actionText = sub.title;
+            }
+
+            return `
+              <div class="parallel-card ${isRunning ? 'active-run' : ''}">
+                <div class="flow-node-header">
+                  <span class="parallel-title">${icon} ${sub.agent.toUpperCase()} / SUBAGENT</span>
+                  <span class="node-tag ${tagClass}">${statusTag}</span>
+                </div>
+                <div style="font-size: 9.5px; color: var(--text-dim); margin-top: -2px;">${sub.model || 'model'} • #${sub.id ? sub.id.slice(-6) : ''}</div>
+                <div class="parallel-desc">
+                  <strong>${escapeHtml(sub.title)}</strong><br>
+                  <em style="color:#38bdf8;">⚡ ${escapeHtml(actionText)}</em>
+                </div>
+                <div class="node-line line-cyan">
+                  <div style="height:100%; background:${isRunning ? '#38bdf8' : '#10b981'}; width: ${isRunning ? '75%' : (isDone ? '100%' : '20%')};"></div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        const subNames = displaySubs.slice(0, 3).map(s => s.agent.toUpperCase()).join(' · ');
+        const activeLabel = runningSubsList.length > 0 ? `${runningSubsList.length} SUBAGENTS ĐANG CHẠY` : `ĐÃ HOÀN TẤT LƯỢT THI CÔNG`;
+        document.getElementById('bottomStatusTitle').innerText = `03 / ${subNames} (${activeLabel})`;
+        renderDynamicConnectors(subCount, realStep);
+      }
+
+      // 8. Node 4: Authorized Tools
+      const tag4 = document.getElementById('tagNode4');
+      const lastAct = ses.lastAction;
+      if (lastAct && lastAct.tool) {
+        let toolDetails = `Công cụ đang dùng: <code style="color: #38bdf8; font-weight: bold;">${escapeHtml(lastAct.tool)}</code>`;
+        if (lastAct.command) {
+          toolDetails += ` • Lệnh: <code style="color: #facc15;">${escapeHtml(lastAct.command)}</code>`;
+        } else if (lastAct.target) {
+          toolDetails += ` • Tệp tin: <code style="color: #cbd5e1;">${escapeHtml(lastAct.target)}</code>`;
+        }
+        if (ses.modifiedFiles && ses.modifiedFiles.length > 0) {
+          toolDetails += `<br><span style="font-size: 10px; color: var(--text-dim);">Đã sửa đổi ${ses.modifiedFiles.length} file: ${escapeHtml(ses.modifiedFiles.slice(0, 3).map(f => f.split(/[\\/]/).pop()).join(', '))}${ses.modifiedFiles.length > 3 ? '...' : ''}</span>`;
+        }
+        toolDetails += `<br><span style="font-size: 9.5px; color: var(--text-dim); margin-top: 2px; display: inline-block;">Giám sát bởi AGENTS.md • Ranh giới scope_edit an toàn</span>`;
+        document.getElementById('node4Body').innerHTML = toolDetails;
+      } else {
+        document.getElementById('node4Body').innerHTML = 'Chưa có công cụ nào được gọi trong phiên này.';
+      }
+
+      if (realStep === 4) {
+        tag4.className = 'node-tag tag-run';
+        tag4.innerText = 'RUN';
+      } else if (realStep > 4) {
+        tag4.className = 'node-tag tag-done';
+        tag4.innerText = 'DONE';
+      } else {
+        tag4.className = 'node-tag tag-wait';
+        tag4.innerText = 'WAIT';
+      }
+
+      // 9. Node 5: Kiểm định & Nghiệm thu
+      const tag6 = document.getElementById('tagNode6');
+      const node5Desc = document.getElementById('node5Desc');
+      if (totalTodos > 0 && doneTodos === totalTodos) {
+        if (tag6) {
+          tag6.className = 'node-tag tag-done';
+          tag6.innerText = 'SẴN SÀNG ĐỂ BẠN DUYỆT';
+        }
+        if (node5Desc) {
+          node5Desc.innerHTML = '<span style="color: #34d399; font-weight: 600;">✓ Toàn bộ to-dos đã hoàn tất</span> • QA test đã chạy · Reviewer diff đã kiểm tra · Merge gate sẵn sàng để Bạn nghiệm thu.';
+        }
+      } else if (realStep >= 4) {
+        if (tag6) {
+          tag6.className = 'node-tag tag-wait';
+          tag6.innerText = 'ĐANG THI CÔNG';
+        }
+        if (node5Desc) {
+          node5Desc.innerHTML = 'QA test tự động · Reviewer rà soát diff theo 5 lăng kính · Chạy scripts/merge-gate.py · Sẵn sàng để Bạn nghiệm thu.';
+        }
+      } else {
+        if (tag6) {
+          tag6.className = 'node-tag tag-wait';
+          tag6.innerText = 'WAIT';
+        }
+      }
+
+      // Wire past Step 4
+      const showWire4 = realStep >= 5;
+      const wire4Elem = document.getElementById('wire4_stem');
+      if (wire4Elem) wire4Elem.className = showWire4 ? 'flow-wire flow-wire-active' : 'flow-wire';
+      const pulse4Elem = document.getElementById('pulse4');
+      if (pulse4Elem) pulse4Elem.style.display = showWire4 ? 'inline' : 'none';
+
+      // 10. Stream Real Logs
+      if (ses.recentActions && ses.recentActions.length > 0) {
+        const logsKey = JSON.stringify(ses.recentActions.slice(0, 6));
+        if (logsKey !== lastRenderedLogsKey) {
+          lastRenderedLogsKey = logsKey;
+          const logBox = document.getElementById('logItemsList');
+          if (logBox) {
+            logBox.innerHTML = ses.recentActions.slice(0, 6).map(act => `
+              <div class="log-row">
+                <span class="log-col-time">${act.time || '00:00'}</span>
+                <span class="log-col-actor">${(act.agent || 'LEAD').toUpperCase()}</span>
+                <span class="log-text">${escapeHtml(act.description || act.tool)} ${act.target ? `<code>${escapeHtml(act.target)}</code>` : ''}</span>
+              </div>
+            `).join('');
+          }
+        }
+      }
+
+      // 11. Update Kilo CLI Bar
+      const cliElem = document.getElementById('codexCliBar');
+      if (cliElem) {
+        cliElem.innerHTML = `~/workspace $ kilo session --id <span style="color:#fff;">${escapeHtml(ses.sessionId ? ses.sessionId.substring(0,8) : 'kilo')}</span> --agent <span style="color:#38bdf8;">${escapeHtml(ses.agent || 'lead')}</span> --model <span style="color:#a5b4fc;">${escapeHtml(ses.model || 'model')}</span> --branch <span style="color:#34d399;">${escapeHtml(ses.branch || 'main')}</span> [workers: ${runningSubsList.length} active / ${subs.length || 1} total]`;
+      }
+    }
+
+    // Fetch live state from Python server
+    async function fetchState() {
+      try {
+        const res = await fetch('/api/state?t=' + Date.now());
+        if (!res.ok) return;
+        const data = await res.json();
+        const sessions = data.kilo?.sessions || [];
+
+        liveSessions = sessions;
+        if (!currentSessionId && liveSessions.length > 0) {
+          currentSessionId = liveSessions[0].sessionId;
+        } else if (!userManualSelection && liveSessions.length > 0) {
+          const curSes = liveSessions.find(s => s.sessionId === currentSessionId);
+          const topSes = liveSessions[0];
+          if (curSes && topSes && topSes.sessionId !== curSes.sessionId) {
+            if ((topSes.runningSubagents || 0) > 0 && (curSes.runningSubagents || 0) === 0) {
+              currentSessionId = topSes.sessionId;
+            }
+          }
+        }
+
+        try {
+          localStorage.setItem('kilo_monitor_sessions_cache', JSON.stringify(liveSessions));
+          if (currentSessionId) localStorage.setItem('kilo_monitor_current_id', currentSessionId);
+        } catch(e) {}
+
+        renderSessionChips();
+
+        const activeSes = liveSessions.find(s => s.sessionId === currentSessionId) || liveSessions[0];
+        if (activeSes) {
+          applySessionToUI(activeSes);
+        }
+      } catch (err) {
+        console.error("fetchState error:", err);
+      }
+    }
+
+    // SSE Stream for immediate push updates (< 50ms)
+    function initSSE() {
+      try {
+        const sse = new EventSource('/events');
+        sse.onmessage = (e) => {
+          try {
+            const data = JSON.parse(e.data);
+            liveSessions = data.kilo?.sessions || [];
+            if (!currentSessionId && liveSessions.length > 0) {
+              currentSessionId = liveSessions[0].sessionId;
+            } else if (!userManualSelection && liveSessions.length > 0) {
+              const curSes = liveSessions.find(s => s.sessionId === currentSessionId);
+              const topSes = liveSessions[0];
+              if (curSes && topSes && topSes.sessionId !== curSes.sessionId) {
+                if ((topSes.runningSubagents || 0) > 0 && (curSes.runningSubagents || 0) === 0) {
+                  currentSessionId = topSes.sessionId;
+                }
+              }
+            }
+
+            try {
+              localStorage.setItem('kilo_monitor_sessions_cache', JSON.stringify(liveSessions));
+              if (currentSessionId) localStorage.setItem('kilo_monitor_current_id', currentSessionId);
+            } catch(e) {}
+
+            renderSessionChips();
+            const activeSes = liveSessions.find(s => s.sessionId === currentSessionId) || liveSessions[0];
+            if (activeSes) {
+              applySessionToUI(activeSes);
+            }
+          } catch(err) {}
+        };
+        sse.onerror = () => {
+          sse.close();
+          setTimeout(initSSE, 3000);
+        };
+      } catch (e) {
+        setInterval(fetchState, 1500);
+      }
+    }
+
+    // Recalculate dynamic connectors on viewport resize
+    window.addEventListener('resize', () => {
+      lastRenderedConnectorKey = '';
+      const ses = liveSessions.find(s => s.sessionId === currentSessionId) || liveSessions[0];
+      if (ses) applySessionToUI(ses);
+    });
+
+    // Instant cache-restore on page load so reload shows UI immediately (0ms visual delay)
+    try {
+      const cachedData = localStorage.getItem('kilo_monitor_sessions_cache');
+      const cachedId = localStorage.getItem('kilo_monitor_current_id');
+      if (cachedData) {
+        const parsed = JSON.parse(cachedData);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          liveSessions = parsed;
+          if (cachedId && liveSessions.some(s => s.sessionId === cachedId)) {
+            const cachedSes = liveSessions.find(s => s.sessionId === cachedId);
+            const topSes = liveSessions[0];
+            if (topSes && cachedSes && topSes.sessionId !== cachedId && (topSes.runningSubagents || 0) > 0 && (cachedSes.runningSubagents || 0) === 0) {
+              currentSessionId = topSes.sessionId;
+            } else {
+              currentSessionId = cachedId;
+            }
+          } else {
+            currentSessionId = liveSessions[0].sessionId;
+          }
+          renderSessionChips();
+          const activeSes = liveSessions.find(s => s.sessionId === currentSessionId) || liveSessions[0];
+          if (activeSes) {
+            applySessionToUI(activeSes);
+          }
+        }
+      }
+    } catch(e) {
+      console.warn("Could not load local cache", e);
+    }
+
+    // Start background syncing
+    fetchState();
+    initSSE();
+    setInterval(fetchState, 2000);
+  </script>
+</body>
+</html>
