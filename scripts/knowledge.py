@@ -345,6 +345,9 @@ def main():
     default_name = "knowledge.manifest.json"
     alt_name = "agents/knowledge/knowledge-manifest.json"
     root = getattr(args, "root", None) or "."
+    if root == "." and not os.path.exists(os.path.join(root, default_name)) and not os.path.exists(os.path.join(root, alt_name)):
+        root = str(ROOT)
+        args.root = root
     if getattr(args, "manifest", None) == default_name and not os.path.exists(os.path.join(root, default_name)) \
             and os.path.exists(os.path.join(root, alt_name)):
         args.manifest = alt_name
