@@ -1,13 +1,17 @@
 ---
+# Lưu thành tasks/<thư mục epic trong tasks/EPICS.md>/T-<số>.md
 id: T-0
 size: medium
 status: todo
 owner: dev-a
+epic: E1
+phase: GĐ1
+outputs: []
 branch: feature/0-example
 requirements: []
-slice_type: tracer-bullet # tracer-bullet (lát cắt dọc E2E) | expand-contract (tái cấu trúc diện rộng) | spike (thử nghiệm)
-blast_radius: low # low (1-3 files) | medium (4-10 files) | high (>10 files)
-blocked_by: [] # Danh sách id task phải xong trước (ví dụ [T-1, T-2]), hoặc [] nếu làm được ngay
+slice_type: tracer-bullet
+blast_radius: low
+blocked_by: []
 scope_edit:
   - src/example/**
   - tests/example/**
@@ -38,9 +42,22 @@ scope_deny:
   `# debt: <giải pháp>, ceiling: <ngưỡng>, upgrade: <khi nào sửa>`
 - [ ] **Bước 4**: Chạy lại toàn bộ test suite để đảm bảo không có lỗi hồi quy.
 
+## 3b. Card giao diện: Mẫu tham chiếu và Kiểm tra bằng mắt (Lead điền, Dev KHÔNG sửa; xem `agents/protocols/ui-fidelity.md`)
+- **Mẫu tham chiếu (đường dẫn file cụ thể sẽ copy/đối chiếu)**: (không có thì ghi "không phải card giao diện")
+- **Kiểm tra bằng mắt**: (màn hình | 375/768/1440px | điều nhìn thấy thì đạt)
+
+## 3c. Card sửa lỗi: Phiếu lỗi (Lead điền; theo `agents/protocols/bug-repro.md`, bỏ trống nếu không phải sửa lỗi)
+- **Nguyên văn báo lỗi**: (dán đúng chữ người báo, đính ảnh nếu có; không diễn đạt lại)
+- **Môi trường / phiên bản người báo dùng**: (nhánh, tag, commit, thiết bị)
+- **Mục `F-xx` trong Feature Map**: (hoặc "chưa có trong Feature Map")
+- **Tái hiện trên `main`**: TÁI HIỆN ĐƯỢC | KHÔNG TÁI HIỆN ĐƯỢC | CHƯA ĐỦ THÔNG TIN (bằng chứng ở `docs/qa/bugs/<Mã>/`)
+- **Nguyên nhân gốc**: (`file:dòng` đã đọc; chưa tái hiện được thì chỉ ghi là giả thuyết)
+- **Đề xuất luật cứng** (nếu lỗi này đã gặp lần thứ hai; theo `agents/protocols/hard-rules.md`): (lint / test / `hard-check` / merge-gate / hook, hoặc "không")
+
 ## 4. Tiêu Chí Nghiệm Thu (Acceptance Criteria)
 - [ ] Tính năng End-to-End hoạt động chuẩn xác theo kịch bản Happy Path.
 - [ ] Toàn bộ bài test liên quan chạy PASS 100%.
+- [ ] Card giao diện: khớp bố cục với file mẫu đã ghi ở mục 3b; QA có ảnh chụp 375/768/1440px và bảng đối chiếu (`docs/qa/<Task>-visual.md`).
 - [ ] Không có cờ nợ kỹ thuật nào bị thiếu trigger sửa chữa.
 - [ ] Nếu có đụng giao diện Frontend/Mobile: Đạt chuẩn Pre-Delivery Checklist của `ui-ux-pro-max`:
   - [ ] Không dùng emoji làm icon hệ thống (đã dùng SVG Lucide/Phosphor).
