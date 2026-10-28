@@ -1,7 +1,7 @@
 ---
 description: "DBA / Data engineer. Thiết kế bảng, viết migration, tối ưu truy vấn, luôn kèm kịch bản hoàn tác cho dữ liệu. Không chạy lệnh phá dữ liệu trên dữ liệu thật."
 mode: all
-model: 9router/gpt-codex
+model: 9router/claude-sonet-5-9router
 permission:
   edit:
     "*": deny

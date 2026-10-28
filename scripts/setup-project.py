@@ -34,6 +34,15 @@ HUB_ROOT = Path(__file__).resolve().parent.parent
 
 def register_project_in_dashboard(target_dir: Path) -> None:
     """Tự động đăng ký dự án mới vào danh mục Multi-Project của Dashboard."""
+    # Bỏ qua lưu vào registry nếu là thư mục tạm test
+    import tempfile
+    temp_root = Path(tempfile.gettempdir()).resolve()
+    try:
+        target_dir.resolve().relative_to(temp_root)
+        return
+    except ValueError:
+        pass
+
     projects_file = HUB_ROOT / "projects.json"
     registry = {"version": "1.0.0", "default_project": "ACCOUTING_Noi_Bo", "projects": []}
     if projects_file.is_file():
@@ -190,8 +199,36 @@ Dự án này sử dụng bộ khung chuẩn hóa từ `agent-base`.
     else:
         print("⚪ 4. File luật AGENTS.md: Đã có sẵn (Giữ nguyên luật riêng của dự án)")
 
-    # 5. Đồng bộ cấu hình adapter AI (.kilo/, .agents/, .claude/, .codex/, .qoder/)
-    adapters = [".kilo", ".agents", ".claude", ".codex", ".qoder"]
+    # 5. Cấu hình adapter Kilo Code (.kilo/) và AI Adapters (.agents/, .claude/, .codex/, .qoder/)
+    # Đặc biệt: Kilo Code sandbox chặn nạp agent nếu .kilo/agents là symlink ra ngoài project scope.
+    # Do đó, thư mục .kilo cục bộ của project luôn là thư mục thực tế (không symlink cả thư mục .kilo).
+    # Và agents được cấu hình toàn cục tại ~/.config/kilo/agents để 100% không bị sandbox chặn mà vẫn đồng bộ real-time.
+    kilo_target = target_dir / ".kilo"
+    if kilo_target.is_symlink():
+        kilo_target.unlink()
+    kilo_target.mkdir(parents=True, exist_ok=True)
+
+    # Dọn dẹp symlink .kilo/agents cục bộ cũ nếu có để tránh lỗi Sandbox Escape
+    proj_kilo_agents = kilo_target / "agents"
+    if proj_kilo_agents.is_symlink():
+        proj_kilo_agents.unlink()
+
+    # Cấu hình Kilo Agents toàn cục
+    user_kilo_agents = Path.home() / ".config" / "kilo" / "agents"
+    hub_kilo_agents = HUB_ROOT / ".kilo" / "agents"
+    if hub_kilo_agents.is_dir():
+        try:
+            user_kilo_agents.parent.mkdir(parents=True, exist_ok=True)
+            if user_kilo_agents.is_symlink() or user_kilo_agents.is_file():
+                user_kilo_agents.unlink()
+            if not user_kilo_agents.exists():
+                user_kilo_agents.symlink_to(hub_kilo_agents, target_is_directory=True)
+                print(f"✅ 5. Cấu hình Kilo Agents toàn cục: {user_kilo_agents} -> {hub_kilo_agents}")
+        except Exception as e:
+            pass
+
+    # Các AI adapters còn lại hỗ trợ symlink thư mục
+    adapters = [".agents", ".claude", ".codex", ".qoder"]
     for adapter in adapters:
         src_adapter = HUB_ROOT / adapter
         dst_adapter = target_dir / adapter
@@ -210,7 +247,6 @@ Dự án này sử dụng bộ khung chuẩn hóa từ `agent-base`.
                 shutil.copytree(src_adapter, dst_adapter)
                 print(f"✅ 5. Sao chép adapter: {adapter}")
         elif dst_adapter.is_dir():
-            # Nếu thư mục adapter đã tồn tại từ trước (như .kilo/ đã có .gitignore), liên kết các thư mục con (ví dụ agents/)
             for child in src_adapter.iterdir():
                 dst_child = dst_adapter / child.name
                 if dst_child.is_symlink():

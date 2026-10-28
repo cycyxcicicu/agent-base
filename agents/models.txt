@@ -29,14 +29,14 @@ strong=9router/claude-sonet-5-9router
 standard=9router/gemini
 fast=9router/gemini
 
-# Vai viết code -> gpt-codex
-dev=9router/gpt-codex
-qa=9router/gpt-codex
-mobile=9router/gpt-codex
-devops=9router/gpt-codex
-dba=9router/gpt-codex
-data-eng=9router/gpt-codex
-debt-hunter=9router/gpt-codex
+# Vai viết code -> dùng Claude Sonnet qua 9router (ổn định, không bị treo)
+dev=9router/claude-sonet-5-9router
+qa=9router/claude-sonet-5-9router
+mobile=9router/claude-sonet-5-9router
+devops=9router/claude-sonet-5-9router
+dba=9router/claude-sonet-5-9router
+data-eng=9router/claude-sonet-5-9router
+debt-hunter=9router/claude-sonet-5-9router
 
 # Hội đồng 3 AI (combo Fusion trong 9router: Claude + GPT + Gemini, 1 AI tổng hợp).
 # CHƯA BẬT: tạo combo "hoi-dong" trên 9router, khai báo trong kilo.jsonc, thử một việc có đọc/ghi file

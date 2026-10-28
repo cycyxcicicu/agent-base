@@ -21,46 +21,6 @@
       "mantis_csv": null,
       "desc": "Đồng bộ đơn hàng TikTok Shop & Shopee với vận chuyển J&T Express",
       "is_active": true
-    },
-    {
-      "id": "tmprpecop0s",
-      "name": "tmprpecop0s",
-      "path": "/private/var/folders/j9/dmxsyxnx3yl5x1gmyfv50_hh0000gn/T/tmprpecop0s",
-      "doc_dir": "doc",
-      "diagrams_dir": "doc/hinh",
-      "mantis_csv": null,
-      "desc": "Dự án tmprpecop0s kết nối qua setup-project",
-      "is_active": true
-    },
-    {
-      "id": "tmpzhhhqv9d",
-      "name": "tmpzhhhqv9d",
-      "path": "/private/var/folders/j9/dmxsyxnx3yl5x1gmyfv50_hh0000gn/T/tmpzhhhqv9d",
-      "doc_dir": "doc",
-      "diagrams_dir": "doc/hinh",
-      "mantis_csv": null,
-      "desc": "Dự án tmpzhhhqv9d kết nối qua setup-project",
-      "is_active": true
-    },
-    {
-      "id": "tmpzeetp_qt",
-      "name": "tmpzeetp_qt",
-      "path": "/private/var/folders/j9/dmxsyxnx3yl5x1gmyfv50_hh0000gn/T/tmpzeetp_qt",
-      "doc_dir": "doc",
-      "diagrams_dir": "doc/hinh",
-      "mantis_csv": null,
-      "desc": "Dự án tmpzeetp_qt kết nối qua setup-project",
-      "is_active": true
-    },
-    {
-      "id": "tmpciccvfjp",
-      "name": "tmpciccvfjp",
-      "path": "/private/var/folders/j9/dmxsyxnx3yl5x1gmyfv50_hh0000gn/T/tmpciccvfjp",
-      "doc_dir": "doc",
-      "diagrams_dir": "doc/hinh",
-      "mantis_csv": null,
-      "desc": "Dự án tmpciccvfjp kết nối qua setup-project",
-      "is_active": true
     }
   ]
 }

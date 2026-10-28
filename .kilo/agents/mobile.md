@@ -1,7 +1,7 @@
 ---
 description: "Mobile Engineer. Phát triển ứng dụng di động đa nền tảng (Flutter, React Native, SwiftUI, Kotlin), tối ưu hiệu năng mượt mà 60/120 FPS, xử lý lưu trữ offline và đồng bộ dữ liệu."
 mode: all
-model: 9router/gpt-codex
+model: 9router/claude-sonet-5-9router
 permission:
   edit:
     "*": deny

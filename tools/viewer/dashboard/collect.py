@@ -117,19 +117,17 @@ def inline_format(text: str) -> str:
     text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
     # Render cú pháp ảnh Markdown: ![alt](src)
     def _img_sub(m):
-        cap = m.group(1)
+        cap = m.group(1).replace("'", "\\'")
         src = m.group(2)
-        return (f'<div class="md-img-wrap" style="text-align: center; margin: 18px 0; background: rgba(15,23,42,0.4); padding: 14px; border-radius: 8px; border: 1px solid var(--border-subtle);">'
-                f'<a href="{src}" target="_blank" title="Nhấp để xem ảnh kích thước gốc">'
-                f'<img src="{src}" alt="{cap}" style="max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 14px rgba(0,0,0,0.35);" loading="lazy" />'
-                f'</a>'
-                f'<div style="font-size: 12px; color: var(--text-muted); margin-top: 8px; font-style: italic;">📷 {cap or "Sơ đồ kiến trúc / quy trình"} (Nhấp ảnh để mở to)</div>'
+        return (f'<div class="md-img-wrap" style="text-align: center; margin: 18px 0; background: rgba(15,23,42,0.4); padding: 14px; border-radius: 8px; border: 1px solid var(--border-subtle); cursor: pointer;" onclick="openImageLightbox(\'{src}\', \'{cap}\')" title="Nhấp để xem ảnh phóng to tại chỗ">'
+                f'<img src="{src}" alt="{cap}" onerror="if(!this.dataset.retried){{this.dataset.retried=1;this.src=this.src.split(\'/\').pop();}}" style="max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 14px rgba(0,0,0,0.35);" />'
+                f'<div style="font-size: 12px; color: var(--text-muted); margin-top: 8px; font-style: italic;">📷 {cap or "Sơ đồ kiến trúc / quy trình"} (Nhấp để xem phóng to)</div>'
                 f'</div>')
     text = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)', _img_sub, text)
     text = re.sub(r'`([^`]+)`', r'<code class="inline-code">\1</code>', text)
     text = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', text)
     text = re.sub(r'\*([^*]+)\*', r'<em>\1</em>', text)
-    text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2" target="_blank" class="md-link">\1 ↗</a>', text)
+    text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2" class="md-link">\1 ➔</a>', text)
     return text
 
 
@@ -361,7 +359,7 @@ def discover_system_docs(link_prefix: str = '', root_path: Path = None):
                 'href': link_prefix + rel_diag,
                 'desc': f"Tổng hợp {diag_count} sơ đồ trực quan tương tác SVG: Luồng nghiệp vụ, Module, RBAC và Mô hình ERD." if diag_count else "Tổng hợp sơ đồ trực quan tương tác kiến trúc hệ thống.",
                 'badge': f"{diag_count} Diagrams" if diag_count else "Diagrams",
-                'html_body': f'<div style="margin-bottom: 14px;"><a href="{link_prefix + rel_diag}" target="_blank" class="btn btn-primary" style="display: inline-flex;">Mở bản đồ sơ đồ Archify toàn màn hình ↗</a></div><iframe src="{link_prefix + rel_diag}" style="width: 100%; height: 80vh; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: #0b0f19;"></iframe>',
+                'html_body': f'<div style="margin-bottom: 14px;"><a href="{link_prefix + rel_diag}?present=true" class="btn btn-primary" style="display: inline-flex;">Mở toàn màn hình ➔</a></div><iframe src="{link_prefix + rel_diag}" style="width: 100%; height: 80vh; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: #0b0f19;"></iframe>',
                 'is_diagram': True
             })
 
@@ -415,7 +413,7 @@ def discover_system_docs(link_prefix: str = '', root_path: Path = None):
 
                     doc_id = f"doc_{len(docs)}"
                     if f.suffix.lower() == '.html':
-                        html_body = f'<div style="margin-bottom: 14px;"><a href="{link_prefix + rel_path}" target="_blank" class="btn btn-primary" style="display: inline-flex;">Mở toàn màn hình tab mới ↗</a></div><iframe src="{link_prefix + rel_path}" style="width: 100%; height: 75vh; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: #0b0f19;"></iframe>'
+                        html_body = f'<div style="margin-bottom: 14px;"><a href="{link_prefix + rel_path}?present=true" class="btn btn-primary" style="display: inline-flex;">Mở toàn màn hình ➔</a></div><iframe src="{link_prefix + rel_path}" style="width: 100%; height: 75vh; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: #0b0f19;"></iframe>'
                         is_diagram = True
                     else:
                         html_body = markdown_to_html(content)
@@ -676,6 +674,137 @@ def discover_diagrams(proj_root: Path, diagrams_dir_name: str, link_prefix: str 
     return diagrams
 
 
+def load_cards_for_project(p_path: Path, epics: dict, phases: dict) -> list:
+    """Tự động thu thập toàn bộ Task Cards cho một dự án từ tasks/, doc/tien-do/, doc/srs/."""
+    cards = []
+
+    # 1. Quét tasks/ nếu có thẻ T-*.md
+    tasks_dir = p_path / 'tasks'
+    if tasks_dir.is_dir():
+        for path in tasks_dir.rglob('T-*.md'):
+            try:
+                raw = path.read_text(encoding='utf-8')
+                meta, body = parse_front_and_body(raw)
+                card_id = meta.get('id', path.stem)
+                title = meta.get('title', '')
+                if not title:
+                    t_match = re.search(r'^#\s+(?:T-[A-Za-z0-9_-]+:\s*)?(.+)$', body, re.M)
+                    title = t_match.group(1).strip() if t_match else path.stem
+                status = meta.get('status', 'todo').lower()
+                epic = meta.get('epic', 'E0').upper()
+                phase = meta.get('phase', 'DEV')
+                cards.append({
+                    'id': card_id,
+                    'title': title,
+                    'status': status,
+                    'owner': meta.get('owner', 'ducnvh'),
+                    'epic': epic,
+                    'phase': phase,
+                    'branch': meta.get('branch', ''),
+                    'scope_edit': meta.get('scope_edit', []),
+                    'outputs': meta.get('outputs', []),
+                    'requirements': meta.get('requirements', []),
+                    'blocked_by': meta.get('blocked_by', []),
+                    'is_code_task': True,
+                    'rel_path': str(path.relative_to(p_path)).replace('\\', '/'),
+                    'html_body': markdown_to_html(body),
+                    'raw_md': body
+                })
+            except Exception:
+                pass
+
+    # 2. Quét doc/tien-do/ để lấy các task tiến độ thực tế của dự án
+    tien_do_dir = p_path / 'doc' / 'tien-do'
+    if tien_do_dir.is_dir():
+        for path in sorted(tien_do_dir.glob('*.md')):
+            if path.name.lower() in ('readme.md',) or 'prompt-gemini-dot' in path.name.lower() or 'prompt-gemini-luot' in path.name.lower():
+                continue
+            try:
+                content = path.read_text(encoding='utf-8', errors='ignore')
+                title = path.stem
+                for line in content.splitlines():
+                    if line.startswith('# '):
+                        title = line[2:].strip()
+                        break
+
+                status = 'doing'
+                low = content.lower()
+                if 'đã merge' in low or 'hoàn thành' in low or 'exit 0' in low or 'merge commit' in low or 'hoàn công' in low:
+                    status = 'done'
+                elif 'kế hoạch' in low or 'chưa ghi' in low or 'chờ' in low or 'chưa làm' in low:
+                    status = 'todo'
+
+                prefix = path.stem.split('-')[0].upper()
+                epic = prefix or 'GENERAL'
+                epics[epic] = {'code': epic, 'name': f"Nhóm {epic}", 'desc': f"Các công việc và tiến độ thuộc {epic}"}
+                phases['DEV'] = {'code': 'DEV', 'name': 'Phát Triển & Kiểm Thử', 'milestone': ''}
+
+                cards.append({
+                    'id': path.stem,
+                    'title': title,
+                    'status': status,
+                    'owner': 'ducnvh',
+                    'epic': epic,
+                    'phase': 'DEV',
+                    'branch': 'develop',
+                    'scope_edit': [],
+                    'outputs': [],
+                    'requirements': [],
+                    'blocked_by': [],
+                    'is_code_task': True,
+                    'rel_path': str(path.relative_to(p_path)).replace('\\', '/'),
+                    'html_body': markdown_to_html(content),
+                    'raw_md': content
+                })
+            except Exception:
+                pass
+
+    # 3. Quét doc/srs/ để lấy thêm các chức năng và bug MAN nếu số cards còn ít
+    srs_dir = p_path / 'doc' / 'srs'
+    if srs_dir.is_dir():
+        for path in sorted(srs_dir.glob('*.md')):
+            if path.name.lower() in ('readme.md',) or '-doi-chieu' in path.name.lower() or '-thiet-ke-ky-thuat' in path.name.lower():
+                continue
+            if not (path.name.startswith('UC-') or path.name.startswith('MAN-')):
+                continue
+            # Tránh trùng nếu đã có từ tiến độ
+            if any(c['id'] == path.stem for c in cards):
+                continue
+            try:
+                content = path.read_text(encoding='utf-8', errors='ignore')
+                title = path.stem
+                for line in content.splitlines():
+                    if line.startswith('# '):
+                        title = line[2:].strip()
+                        break
+
+                prefix = path.stem.split('-')[0].upper()
+                epic = prefix
+                epics[epic] = {'code': epic, 'name': f"Chức năng {epic}", 'desc': f"Đặc tả và thiết kế {epic}"}
+
+                cards.append({
+                    'id': path.stem,
+                    'title': title,
+                    'status': 'done',
+                    'owner': 'ducnvh',
+                    'epic': epic,
+                    'phase': 'DEV',
+                    'branch': 'develop',
+                    'scope_edit': [],
+                    'outputs': [],
+                    'requirements': [],
+                    'blocked_by': [],
+                    'is_code_task': False,
+                    'rel_path': str(path.relative_to(p_path)).replace('\\', '/'),
+                    'html_body': markdown_to_html(content),
+                    'raw_md': content
+                })
+            except Exception:
+                pass
+
+    return cards
+
+
 def collect_multi_projects(hub_root: Path, link_prefix: str = '../../') -> dict:
     """Thu thập dữ liệu của toàn bộ các dự án đã đăng ký trong projects.json."""
     projects_file = hub_root / 'projects.json'
@@ -723,7 +852,6 @@ def collect_multi_projects(hub_root: Path, link_prefix: str = '../../') -> dict:
         # 4. Thu thập Tasks/Cards (nếu có tasks/)
         epics = {}
         phases = {}
-        cards = []
         epics_file = p_path / 'tasks' / 'EPICS.md'
         if epics_file.is_file():
             try:
@@ -738,6 +866,8 @@ def collect_multi_projects(hub_root: Path, link_prefix: str = '../../') -> dict:
                         epics[c_epic] = {'code': c_epic, 'name': m_ep.group(3).strip(), 'desc': m_ep.group(3).strip()}
             except Exception:
                 pass
+
+        cards = load_cards_for_project(p_path, epics, phases)
 
         projects_data[p_id] = {
             'id': p_id,

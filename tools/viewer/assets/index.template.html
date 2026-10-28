@@ -27,7 +27,11 @@
         <a href="monitor.html" class="btn btn-ghost" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
           ⚡ Giám Sát Agent Swarm
         </a>
-        <button class="btn btn-primary" onclick="window.location.reload()">
+        <div id="realtimeBadge" style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 20px; font-size: 12px; font-weight: 600; color: #10b981;" title="Hệ thống đang tự động đồng bộ tài liệu Realtime">
+          <span style="width: 7px; height: 7px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981;"></span>
+          Realtime Live
+        </div>
+        <button id="btnRefreshData" class="btn btn-primary" onclick="refreshDashboardData()">
           🔄 Làm mới dữ liệu
         </button>
       </div>
@@ -40,26 +44,26 @@
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-label">🎯 Tổng tiến độ dự án</div>
-        <div class="kpi-val" style="color: #38bdf8;">@@PCT_COMPLETE@@% <span class="kpi-sub">(@@DONE_TASKS@@/@@TOTAL_TASKS@@ task)</span></div>
+        <div class="kpi-val" id="kpi-pct-val" style="color: #38bdf8;">@@PCT_COMPLETE@@% <span class="kpi-sub">(@@DONE_TASKS@@/@@TOTAL_TASKS@@ task)</span></div>
         <div class="progress-bar-wrap">
-          <div class="progress-bar-fill" style="width: @@PCT_COMPLETE@@%;"></div>
+          <div class="progress-bar-fill" id="kpi-pct-bar" style="width: @@PCT_COMPLETE@@%;"></div>
         </div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">✅ Đã hoàn thành (Done)</div>
-        <div class="kpi-val" style="color: var(--success);">@@DONE_TASKS@@ <span class="kpi-sub">tasks</span></div>
+        <div class="kpi-val" id="kpi-done-val" style="color: var(--success);">@@DONE_TASKS@@ <span class="kpi-sub">tasks</span></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">🔄 Đang thực hiện (Doing)</div>
-        <div class="kpi-val" style="color: var(--info);">@@DOING_TASKS@@ <span class="kpi-sub">tasks</span></div>
+        <div class="kpi-val" id="kpi-doing-val" style="color: var(--info);">@@DOING_TASKS@@ <span class="kpi-sub">tasks</span></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">⬜ Chờ thực hiện (Todo)</div>
-        <div class="kpi-val" style="color: var(--text-muted);">@@TODO_TASKS@@ <span class="kpi-sub">tasks</span></div>
+        <div class="kpi-val" id="kpi-todo-val" style="color: var(--text-muted);">@@TODO_TASKS@@ <span class="kpi-sub">tasks</span></div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">💻 Task Code Ứng Dụng</div>
-        <div class="kpi-val" style="color: #a855f7;">@@CODE_TASKS_COUNT@@ <span class="kpi-sub">code tasks</span></div>
+        <div class="kpi-val" id="kpi-code-val" style="color: #a855f7;">@@CODE_TASKS_COUNT@@ <span class="kpi-sub">code tasks</span></div>
       </div>
     </div>
 
@@ -69,7 +73,7 @@
         🗺️ Lộ Trình
       </button>
       <button class="tab-btn" onclick="switchMainTab('tasks')">
-        📋 Task Việc <span class="tab-badge">@@TOTAL_TASKS@@</span>
+        📋 Task Việc <span class="tab-badge" id="badge-tasks-count">@@TOTAL_TASKS@@</span>
       </button>
       <button class="tab-btn" onclick="switchMainTab('docs')">
         📚 Tài Liệu <span class="tab-badge" id="badge-docs-count">@@LEN_DOCS@@</span>
@@ -81,17 +85,17 @@
         🐞 MantisBT <span class="tab-badge" id="badge-mantis-count">0</span>
       </button>
       <button class="tab-btn" onclick="switchMainTab('code')">
-        💻 Code Diff <span class="tab-badge">@@CODE_TASKS_COUNT@@</span>
+        💻 Code Diff <span class="tab-badge" id="badge-code-count">@@CODE_TASKS_COUNT@@</span>
       </button>
       <button class="tab-btn" onclick="switchMainTab('gates')">
-        🚦 Cổng QC <span class="tab-badge">@@LEN_GATES@@</span>
+        🚦 Cổng QC <span class="tab-badge" id="badge-gates-count">@@LEN_GATES@@</span>
       </button>
     </div>
 
     <!-- TAB 1: Sơ Đồ Lộ Trình Task (Roadmap) -->
     <div id="tab-roadmap" class="tab-content-pane">
       <div class="roadmap-hero">
-        <div class="radar-current">
+        <div class="radar-current" id="radar-progress-summary">
           📍 TRẠNG THÁI TIẾN ĐỘ: Đã xong @@DONE_TASKS@@/@@TOTAL_TASKS@@ task (@@PCT_COMPLETE@@%) • Đang thực hiện @@DOING_TASKS@@ task
         </div>
         <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 8px;">Bản Đồ Tuyến Đường & Tiến Trình Triển Khai</h2>
@@ -100,7 +104,7 @@
         </p>
       </div>
 
-      <div class="pipeline-container">
+      <div class="pipeline-container" id="pipeline-container">
         @@ROADMAP_STAGES_RENDERED_STR@@
       </div>
     </div>
@@ -118,12 +122,12 @@
             @@EPIC_OPTIONS_STR@@
           </select>
 
-          <div class="chip-group">
-            <button class="chip-btn active" data-status="ALL" onclick="setStatusFilter('ALL', this)">Tất cả</button>
-            <button class="chip-btn" data-status="done" onclick="setStatusFilter('done', this)">✅ Đã xong (@@DONE_TASKS@@)</button>
-            <button class="chip-btn" data-status="doing" onclick="setStatusFilter('doing', this)">🔄 Đang làm (@@DOING_TASKS@@)</button>
-            <button class="chip-btn" data-status="todo" onclick="setStatusFilter('todo', this)">⬜ Chờ làm (@@TODO_TASKS@@)</button>
-            <button class="chip-btn" data-status="code_only" onclick="setStatusFilter('code_only', this)">💻 Chỉ Task Code (@@CODE_TASKS_COUNT@@)</button>
+          <div class="chip-group" id="taskStatusChips">
+            <button class="chip-btn active" data-status="ALL" onclick="setStatusFilter('ALL', this)">Tất cả (<span id="chip-total-cnt">@@TOTAL_TASKS@@</span>)</button>
+            <button class="chip-btn" data-status="done" onclick="setStatusFilter('done', this)">✅ Đã xong (<span id="chip-done-cnt">@@DONE_TASKS@@</span>)</button>
+            <button class="chip-btn" data-status="doing" onclick="setStatusFilter('doing', this)">🔄 Đang làm (<span id="chip-doing-cnt">@@DOING_TASKS@@</span>)</button>
+            <button class="chip-btn" data-status="todo" onclick="setStatusFilter('todo', this)">⬜ Chờ làm (<span id="chip-todo-cnt">@@TODO_TASKS@@</span>)</button>
+            <button class="chip-btn" data-status="code_only" onclick="setStatusFilter('code_only', this)">💻 Chỉ Task Code (<span id="chip-code-cnt">@@CODE_TASKS_COUNT@@</span>)</button>
           </div>
         </div>
 
@@ -271,7 +275,7 @@
           <div><strong style="color: var(--primary-light);">Nhánh Git / Thư mục:</strong> <code id="drawerBranch" class="inline-code">feat/..</code></div>
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <div><strong style="color: var(--primary-light);">Đường dẫn File:</strong> <span id="drawerRelPath" style="font-family: var(--font-mono); font-size: 12px; color: #94a3b8;">tasks/..</span></div>
-            <a id="drawerRawLink" href="#" target="_blank" class="btn btn-ghost" style="padding: 3px 8px; font-size: 11px;">Mở file raw ↗</a>
+            <a id="drawerRawLink" href="#" class="btn btn-ghost" style="padding: 3px 8px; font-size: 11px;">Mở file raw ➔</a>
           </div>
           <div id="drawerScopeWrap"><strong style="color: var(--primary-light);">Phạm vi sửa code (scope_edit):</strong> <span id="drawerScope" style="font-family: var(--font-mono); font-size: 12px; color: #38bdf8;"></span></div>
           <div id="drawerBlockedWrap"><strong style="color: #ef4444;">Bị chặn bởi (blocked_by):</strong> <span id="drawerBlocked" style="font-family: var(--font-mono); font-size: 12px; color: #fca5a5;"></span></div>
@@ -282,6 +286,51 @@
         <div class="drawer-section-title" id="drawerBodyTitle">📄 Chi Tiết & Toàn Bộ Nội Dung Tài Liệu</div>
         <div id="drawerMdContent"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- Fullscreen Image Lightbox Modal với Zoom & Pan (Phóng to / Thu nhỏ / Kéo di chuyển) -->
+  <div id="imageLightboxModal" style="display: none; position: fixed; inset: 0; z-index: 999999; background: rgba(3, 7, 18, 0.95); backdrop-filter: blur(14px); flex-direction: column; overflow: hidden; user-select: none;">
+    <!-- Top Bar: Nút quay lại + Tiêu đề + Toolbar Zoom + Nút đóng -->
+    <div style="position: absolute; top: 14px; left: 20px; right: 20px; display: flex; align-items: center; justify-content: space-between; z-index: 50;">
+      <!-- Trái: Nút quay lại & Tiêu đề -->
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <button onclick="closeImageLightbox()" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; padding: 7px 16px; border-radius: 8px; box-shadow: 0 4px 16px rgba(56, 189, 248, 0.4);">
+          ← Quay lại tài liệu [Esc]
+        </button>
+        <span id="lightboxCaption" style="color: #e2e8f0; font-size: 14px; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.8); max-width: 35vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
+      </div>
+
+      <!-- Giữa: Thanh công cụ Phóng to / Thu nhỏ / Vừa màn hình -->
+      <div style="display: flex; align-items: center; gap: 6px; background: rgba(15, 23, 42, 0.9); padding: 5px 12px; border-radius: 30px; border: 1px solid rgba(148, 163, 184, 0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+        <button onclick="zoomLightboxImage(-0.25)" class="btn btn-ghost" style="padding: 4px 10px; font-size: 14px; border-radius: 20px;" title="Thu nhỏ (-)">
+          🔍−
+        </button>
+        <span id="lightboxZoomPercent" onclick="resetLightboxZoom()" style="font-size: 12px; font-weight: 700; color: #38bdf8; min-width: 52px; text-align: center; cursor: pointer;" title="Nhấp để đặt lại 100%">100%</span>
+        <button onclick="zoomLightboxImage(0.25)" class="btn btn-ghost" style="padding: 4px 10px; font-size: 14px; border-radius: 20px;" title="Phóng to (+)">
+          🔍+
+        </button>
+        <button onclick="resetLightboxZoom()" class="btn btn-ghost" style="padding: 4px 10px; font-size: 12px; border-radius: 20px; color: #94a3b8;" title="Vừa khung hình (Fit)">
+          ⟲ Fit
+        </button>
+      </div>
+
+      <!-- Phải: Nút đóng [✕] -->
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button onclick="closeImageLightbox()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onmouseover="this.style.background='rgba(239, 68, 68, 0.8)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'" title="Đóng (Esc)">
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- Container Viewport ảnh: hỗ trợ lăn chuột zoom và kéo chuột di chuyển -->
+    <div id="lightboxViewport" style="width: 100vw; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: grab; position: relative;">
+      <img id="lightboxImg" src="" alt="" style="max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 6px; box-shadow: 0 10px 40px rgba(0,0,0,0.7); transform-origin: center center; transition: transform 0.08s ease-out; will-change: transform; user-select: none; pointer-events: none;">
+    </div>
+    
+    <!-- Hướng dẫn điều khiển nhỏ ở đáy màn hình -->
+    <div style="position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #64748b; background: rgba(15,23,42,0.7); padding: 3px 12px; border-radius: 12px; pointer-events: none; z-index: 10;">
+      💡 Lăn chuột hoặc bấm 🔍+ / 🔍− để phóng to, kéo chuột để di chuyển ảnh
     </div>
   </div>
 

@@ -1,7 +1,7 @@
 ---
 description: "Tech Debt Hunter. Chuyên viên rà soát mã chết, quét comment nợ kỹ thuật (# debt:), duy trì sổ nợ DEBT.md và đề xuất kế hoạch dọn rác, tối giản hóa mã nguồn."
 mode: all
-model: 9router/gpt-codex
+model: 9router/claude-sonet-5-9router
 permission:
   edit:
     "*": deny

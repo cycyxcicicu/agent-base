@@ -1,7 +1,7 @@
 ---
 description: "Viết và chạy test, xác nhận từng tiêu chí xong của task, báo lỗi có cách tái hiện. Không sửa src."
 mode: all
-model: 9router/gpt-codex
+model: 9router/claude-sonet-5-9router
 permission:
   edit:
     "*": deny

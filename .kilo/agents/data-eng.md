@@ -1,7 +1,7 @@
 ---
 description: "Data Engineer. Xây dựng pipeline ETL/ELT, xử lý hàng đợi dữ liệu lớn (Kafka, RabbitMQ), thiết kế kho dữ liệu phân tích (OLAP, ClickHouse, BigQuery) và tối ưu thông lượng dữ liệu."
 mode: all
-model: 9router/gpt-codex
+model: 9router/claude-sonet-5-9router
 permission:
   edit:
     "*": deny

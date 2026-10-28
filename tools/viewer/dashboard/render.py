@@ -62,6 +62,21 @@ def build_context():
         }]
         default_proj_id = proj_info['name']
 
+    # Nếu có dự án mặc định được chọn, ưu tiên dùng dữ liệu của dự án đó cho trang chính
+    if default_proj_id and default_proj_id in multi_projects:
+        def_proj = multi_projects[default_proj_id]
+        if def_proj.get('cards'):
+            cards = def_proj['cards']
+        if def_proj.get('docs'):
+            system_docs = def_proj['docs']
+        if def_proj.get('epics'):
+            epics = def_proj['epics']
+        if def_proj.get('phases'):
+            phases = def_proj['phases']
+        proj_info['name'] = def_proj.get('name', proj_info['name'])
+        proj_info['desc'] = def_proj.get('desc', proj_info['desc'])
+        roadmap_stages = build_dynamic_roadmap_stages(phases, epics, cards)
+
     total_tasks = len(cards)
     done_tasks = sum(1 for c in cards if c['status'] == 'done')
     doing_tasks = sum(1 for c in cards if c['status'] == 'doing')
@@ -228,8 +243,8 @@ def _diagram_link(ctx) -> str:
         return ''
     count = sum(1 for p in diag_dir.glob('*.html') if p.name != 'index.html')
     label = f'{count} Sơ Đồ Hệ Thống' if count else 'Sơ Đồ Hệ Thống'
-    return (f'<a href="{LINK_PREFIX}docs/diagrams/index.html" target="_blank" class="btn btn-ghost" '
-            f'style="border-color: rgba(168, 85, 247, 0.5); color: #c084fc;">🗺️ {label} (Archify) ↗</a>')
+    return (f'<a href="{LINK_PREFIX}docs/diagrams/index.html?present=true" class="btn btn-ghost" '
+            f'style="border-color: rgba(168, 85, 247, 0.5); color: #c084fc;">🗺️ {label} (Archify) ➔</a>')
 
 
 def write_site(ctx, out_dir: Path = OUTPUT_DIR) -> dict:
@@ -247,7 +262,7 @@ def write_site(ctx, out_dir: Path = OUTPUT_DIR) -> dict:
             fname = re.sub(r'[^A-Za-z0-9_.-]', '_', str(it['id']))
             body = it.get('html_body', '')
             (out_dir / sub / f"{fname}.js").write_text(f"{setter}({json.dumps(it['id'])}, {_js_json(body)});\n", encoding='utf-8')
-            slim.append({k: v for k, v in it.items() if k != 'html_body'})
+            slim.append({k: v for k, v in it.items() if k not in ('html_body', 'raw_md')})
         return slim
 
     # 1. Nội dung từng tài liệu / task card ra file riêng, chỉ mục (không kèm nội dung) vào data.js
@@ -265,6 +280,14 @@ def write_site(ctx, out_dir: Path = OUTPUT_DIR) -> dict:
             (out_dir / 'docs' / f"{fname}.js").write_text(f'window.__setDocMulti({json.dumps(p_id)}, {json.dumps(d_id)}, {_js_json(body)});\n', encoding='utf-8')
             slim_docs.append({k: v for k, v in d.items() if k != 'html_body'})
 
+        slim_cards = []
+        for c in p_data.get('cards', []):
+            c_id = c['id']
+            fname = f"{re.sub(r'[^A-Za-z0-9_.-]', '_', p_id)}_{re.sub(r'[^A-Za-z0-9_.-]', '_', str(c_id))}"
+            body = c.get('html_body', '')
+            (out_dir / 'cards' / f"{fname}.js").write_text(f'window.__setCardMulti({json.dumps(p_id)}, {json.dumps(c_id)}, {_js_json(body)});\n', encoding='utf-8')
+            slim_cards.append({k: v for k, v in c.items() if k not in ('html_body', 'raw_md')})
+
         index_multi_projects[p_id] = {
             'id': p_id,
             'name': p_data.get('name', p_id),
@@ -275,11 +298,14 @@ def write_site(ctx, out_dir: Path = OUTPUT_DIR) -> dict:
             'mantis': p_data.get('mantis', {'total': 0, 'bugs': []}),
             'epics': p_data.get('epics', {}),
             'phases': p_data.get('phases', {}),
-            'cards': p_data.get('cards', [])
+            'cards': slim_cards
         }
 
     # Chỉ mục tìm toàn văn: nội dung thô của card (chữ thường) gom vào một file, chỉ nạp khi người dùng tìm kiếm
     search_idx = {str(c['id']): str(c.get('raw_md', '')).lower() for c in ctx['cards']}
+    for p_id, p_data in ctx.get('multi_projects', {}).items():
+        for c in p_data.get('cards', []):
+            search_idx[str(c['id'])] = str(c.get('raw_md', '')).lower()
     (out_dir / 'cards' / '_search.js').write_text('window.__setSearch(' + _js_json(search_idx) + ');\n', encoding='utf-8')
     for c in index_cards:
         c.pop('raw_md', None)

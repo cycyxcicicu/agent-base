@@ -1,7 +1,7 @@
 ---
 description: "Cài đặt đúng một task trong worktree riêng, chỉ sửa file thuộc phạm vi của card, lập kế hoạch commit đúng mẫu, chạy test và ghi bàn giao. Không tự commit."
 mode: all
-model: 9router/gpt-codex
+model: 9router/claude-sonet-5-9router
 permission:
   edit:
     "*": allow

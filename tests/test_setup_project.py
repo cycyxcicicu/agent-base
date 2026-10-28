@@ -57,7 +57,11 @@ class TestSetupProject(unittest.TestCase):
 
         # 5. Kiểm tra adapter .kilo và .agents được tạo
         kilo_dir = self.tmp_dir / ".kilo"
-        self.assertTrue(kilo_dir.exists())
+        self.assertTrue(kilo_dir.is_dir())
+        self.assertFalse((kilo_dir / "agents").is_symlink())
+
+        agents_dir = self.tmp_dir / ".agents"
+        self.assertTrue(agents_dir.exists())
 
         # 6. Kiểm tra mẫu mcp.example.json được tạo an toàn
         mcp_example = self.tmp_dir / ".kilo" / "mcp.example.json"

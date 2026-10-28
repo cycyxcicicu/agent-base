@@ -1,9 +1,9 @@
     // Dữ liệu do generate-dashboard.py ghi vào data.js (window.DASH). Nội dung từng tài liệu nằm ở docs/<id>.js, nạp khi mở.
     const DASH = window.DASH || {};
-    const ALL_CARDS = DASH.cards || [];
+    let ALL_CARDS = DASH.cards || [];
     const GATES = DASH.gates || [];
     const STATUS_META = DASH.statusMeta || {};
-    const EPIC_META = DASH.epicMeta || {};
+    let EPIC_META = DASH.epicMeta || {};
     const PROJECT_INFO = DASH.projectInfo || {};
     let SYSTEM_DOCS = DASH.docs || [];
     const MULTI_PROJECTS = DASH.multiProjects || {};
@@ -31,18 +31,32 @@
         setBody('docs', MULTI_PROJECTS[projId].docs, id, html);
       }
     };
+    window.__setCardMulti = function (projId, id, html) {
+      if (MULTI_PROJECTS[projId] && MULTI_PROJECTS[projId].cards) {
+        setBody('cards', MULTI_PROJECTS[projId].cards, id, html);
+      }
+    };
 
     function loadBody(kind, item, label, cb) {
       if (item.html_body !== undefined) { cb(item.html_body); return; }
       const key = bodyKey(kind, item.id);
       BODY_CALLBACKS[key] = cb;
       const s = document.createElement('script');
-      if (kind === 'docs' && CURRENT_PROJECT_ID && MULTI_PROJECTS[CURRENT_PROJECT_ID]) {
+      if (CURRENT_PROJECT_ID && MULTI_PROJECTS[CURRENT_PROJECT_ID]) {
         s.src = kind + '/' + bodyFileName(CURRENT_PROJECT_ID) + '_' + bodyFileName(item.id) + '.js';
       } else {
         s.src = kind + '/' + bodyFileName(item.id) + '.js';
       }
-      s.onerror = function () { delete BODY_CALLBACKS[key]; cb('<p>Không tải được nội dung (' + label + '). Chạy lại python scripts/generate-dashboard.py.</p>'); };
+      s.onerror = function () {
+        // Fallback: thử tìm file không có tiền tố dự án
+        const s2 = document.createElement('script');
+        s2.src = kind + '/' + bodyFileName(item.id) + '.js';
+        s2.onerror = function () {
+          delete BODY_CALLBACKS[key];
+          cb('<p>Không tải được nội dung (' + label + '). Chạy lại python scripts/generate-dashboard.py.</p>');
+        };
+        document.head.appendChild(s2);
+      };
       document.head.appendChild(s);
     }
     function loadDocBody(doc, cb) { loadBody('docs', doc, doc.path, cb); }
@@ -68,11 +82,101 @@
       }
     }
 
+    function updateKPIAndBadges() {
+      const total = ALL_CARDS.length;
+      const done = ALL_CARDS.filter(c => c.status === 'done').length;
+      const doing = ALL_CARDS.filter(c => c.status === 'doing').length;
+      const todo = ALL_CARDS.filter(c => c.status === 'todo').length;
+      const code = ALL_CARDS.filter(c => c.is_code_task).length;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+      // Cập nhật KPI Overview
+      const pctElem = document.getElementById('kpi-pct-val');
+      if (pctElem) pctElem.innerHTML = `${pct}% <span class="kpi-sub">(${done}/${total} task)</span>`;
+      const barElem = document.getElementById('kpi-pct-bar');
+      if (barElem) barElem.style.width = `${pct}%`;
+      const doneElem = document.getElementById('kpi-done-val');
+      if (doneElem) doneElem.innerHTML = `${done} <span class="kpi-sub">tasks</span>`;
+      const doingElem = document.getElementById('kpi-doing-val');
+      if (doingElem) doingElem.innerHTML = `${doing} <span class="kpi-sub">tasks</span>`;
+      const todoElem = document.getElementById('kpi-todo-val');
+      if (todoElem) todoElem.innerHTML = `${todo} <span class="kpi-sub">tasks</span>`;
+      const codeElem = document.getElementById('kpi-code-val');
+      if (codeElem) codeElem.innerHTML = `${code} <span class="kpi-sub">code tasks</span>`;
+
+      // Cập nhật Radar Summary
+      const radarElem = document.getElementById('radar-progress-summary');
+      if (radarElem) {
+        radarElem.innerHTML = `📍 TRẠNG THÁI TIẾN ĐỘ: Đã xong ${done}/${total} task (${pct}%) • Đang thực hiện ${doing} task`;
+      }
+
+      // Cập nhật badges tab
+      const tasksBadge = document.getElementById('badge-tasks-count');
+      if (tasksBadge) tasksBadge.textContent = total;
+      const docBadge = document.getElementById('badge-docs-count');
+      if (docBadge) docBadge.textContent = SYSTEM_DOCS.length + ' Mục';
+      const mantisBadge = document.getElementById('badge-mantis-count');
+      if (mantisBadge) mantisBadge.textContent = CURRENT_MANTIS.total || 0;
+      const diagBadge = document.getElementById('badge-diagrams-count');
+      if (diagBadge) diagBadge.textContent = CURRENT_DIAGRAMS.length || 0;
+      const codeBadge = document.getElementById('badge-code-count');
+      if (codeBadge) codeBadge.textContent = code;
+
+      // Cập nhật số đếm trên Task chips
+      const chipTotal = document.getElementById('chip-total-cnt');
+      if (chipTotal) chipTotal.textContent = total;
+      const chipDone = document.getElementById('chip-done-cnt');
+      if (chipDone) chipDone.textContent = done;
+      const chipDoing = document.getElementById('chip-doing-cnt');
+      if (chipDoing) chipDoing.textContent = doing;
+      const chipTodo = document.getElementById('chip-todo-cnt');
+      if (chipTodo) chipTodo.textContent = todo;
+      const chipCode = document.getElementById('chip-code-cnt');
+      if (chipCode) chipCode.textContent = code;
+    }
+
+    function renderEpicOptions() {
+      const select = document.getElementById('epicSelect');
+      if (!select) return;
+      const epicCounts = {};
+      ALL_CARDS.forEach(c => {
+        const ep = c.epic || 'GENERAL';
+        epicCounts[ep] = (epicCounts[ep] || 0) + 1;
+      });
+      const epKeys = Object.keys(epicCounts).sort();
+      let html = `<option value="ALL">📁 Tất cả Epic (${ALL_CARDS.length})</option>`;
+      epKeys.forEach(code => {
+        const meta = EPIC_META[code] || {};
+        const name = meta.name || `Epic ${code}`;
+        html += `<option value="${code}">${code}: ${name} (${epicCounts[code]})</option>`;
+      });
+      select.innerHTML = html;
+    }
+
+    function renderDocCategoryChips() {
+      const container = document.getElementById('docCategoryChips');
+      if (!container) return;
+      const catCounts = {};
+      SYSTEM_DOCS.forEach(d => {
+        const c = d.category || 'Tài liệu chung';
+        catCounts[c] = (catCounts[c] || 0) + 1;
+      });
+      const cats = Object.keys(catCounts).sort();
+      let html = `<button class="chip-btn ${currentDocCategoryFilter === 'ALL' ? 'active' : ''}" data-cat="ALL" onclick="setDocCategoryFilter('ALL', this)">Tất cả (${SYSTEM_DOCS.length})</button>`;
+      cats.forEach(c => {
+        const act = currentDocCategoryFilter === c ? 'active' : '';
+        html += `<button class="chip-btn ${act}" data-cat="${c}" onclick="setDocCategoryFilter('${c}', this)">${c} (${catCounts[c]})</button>`;
+      });
+      container.innerHTML = html;
+    }
+
     function init() {
       // Khởi tạo dự án mặc định từ MULTI_PROJECTS nếu có
       if (CURRENT_PROJECT_ID && MULTI_PROJECTS[CURRENT_PROJECT_ID]) {
         const p = MULTI_PROJECTS[CURRENT_PROJECT_ID];
         if (p.docs && p.docs.length > 0) SYSTEM_DOCS = p.docs;
+        if (p.cards && p.cards.length > 0) ALL_CARDS = p.cards;
+        if (p.epics) EPIC_META = p.epics;
         CURRENT_MANTIS = p.mantis || { total: 0, bugs: [] };
         CURRENT_DIAGRAMS = p.diagrams || [];
         updateProjectHeader(p);
@@ -82,7 +186,9 @@
         CURRENT_DIAGRAMS = (DASH.diagrams) || [];
       }
 
-      updateBadges();
+      updateKPIAndBadges();
+      renderEpicOptions();
+      renderDocCategoryChips();
       renderCards();
       renderDocs();
       renderCodeTasks();
@@ -90,18 +196,61 @@
       renderMantisBugs();
       renderDiagrams();
       
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeDrawer();
-      });
-    }
+      // Phục hồi tab đang đứng từ hash hoặc storage
+      let initialTab = 'roadmap';
+      const hash = window.location.hash ? window.location.hash.substring(1) : '';
+      const storedTab = sessionStorage.getItem('dash_active_tab') || localStorage.getItem('dash_last_tab');
+      const validTabs = ['roadmap', 'tasks', 'docs', 'diagrams', 'mantis', 'code', 'gates'];
+      if (validTabs.includes(hash)) {
+        initialTab = hash;
+      } else if (validTabs.includes(storedTab)) {
+        initialTab = storedTab;
+      }
+      switchMainTab(initialTab);
 
-    function updateBadges() {
-      const docBadge = document.getElementById('badge-docs-count');
-      if (docBadge) docBadge.textContent = SYSTEM_DOCS.length + ' Mục';
-      const mantisBadge = document.getElementById('badge-mantis-count');
-      if (mantisBadge) mantisBadge.textContent = CURRENT_MANTIS.total || 0;
-      const diagBadge = document.getElementById('badge-diagrams-count');
-      if (diagBadge) diagBadge.textContent = CURRENT_DIAGRAMS.length || 0;
+      // Phục hồi tài liệu hoặc task card đang mở nếu có
+      try {
+        const lastDoc = sessionStorage.getItem('dash_open_doc');
+        if (lastDoc && SYSTEM_DOCS.some(d => d.id === lastDoc)) {
+          openDocDrawer(lastDoc);
+        } else {
+          const lastCard = sessionStorage.getItem('dash_open_card');
+          if (lastCard && ALL_CARDS.some(c => c.id === lastCard)) {
+            openDrawer(lastCard);
+          }
+        }
+      } catch(e) {}
+
+      window.addEventListener('hashchange', () => {
+        const h = window.location.hash ? window.location.hash.substring(1) : '';
+        if (validTabs.includes(h)) {
+          switchMainTab(h);
+        }
+      });
+
+      window.addEventListener('keydown', (e) => {
+        const modal = document.getElementById('imageLightboxModal');
+        const isModalOpen = modal && modal.style.display === 'flex';
+
+        if (e.key === 'Escape') {
+          if (isModalOpen) {
+            closeImageLightbox();
+          } else {
+            closeDrawer();
+          }
+        } else if (isModalOpen) {
+          if (e.key === '+' || e.key === '=') {
+            e.preventDefault();
+            zoomLightboxImage(0.25);
+          } else if (e.key === '-' || e.key === '_') {
+            e.preventDefault();
+            zoomLightboxImage(-0.25);
+          } else if (e.key === '0') {
+            e.preventDefault();
+            resetLightboxZoom();
+          }
+        }
+      });
     }
 
     function switchProject(projId) {
@@ -109,13 +258,20 @@
       if (MULTI_PROJECTS[projId]) {
         const p = MULTI_PROJECTS[projId];
         SYSTEM_DOCS = p.docs || [];
+        ALL_CARDS = (p.cards && p.cards.length > 0) ? p.cards : (DASH.cards || []);
+        EPIC_META = p.epics || DASH.epicMeta || {};
         CURRENT_MANTIS = p.mantis || { total: 0, bugs: [] };
         CURRENT_DIAGRAMS = p.diagrams || [];
         updateProjectHeader(p);
       }
-      updateBadges();
       currentDocCategoryFilter = 'ALL';
+      currentStatusFilter = 'ALL';
+      updateKPIAndBadges();
+      renderEpicOptions();
+      renderDocCategoryChips();
+      renderCards();
       renderDocs();
+      renderCodeTasks();
       renderMantisBugs();
       renderDiagrams();
     }
@@ -143,6 +299,13 @@
             btn.classList.add('active');
           }
         });
+        try {
+          sessionStorage.setItem('dash_active_tab', tab);
+          localStorage.setItem('dash_last_tab', tab);
+          if (window.location.hash !== '#' + tab) {
+            history.replaceState(null, '', '#' + tab);
+          }
+        } catch(e) {}
       }
     }
 
@@ -341,8 +504,8 @@
               <button class="btn btn-primary" style="padding: 5px 12px; font-size: 12px;" onclick="event.stopPropagation(); openDocDrawer('${d.id}')">
                 📖 Đọc tài liệu
               </button>
-              <a href="${d.href || d.path}" target="_blank" class="btn btn-ghost" style="padding: 5px 10px; font-size: 12px;" onclick="event.stopPropagation();" title="Mở file gốc">
-                ↗
+              <a href="${d.href || d.path}" class="btn btn-ghost" style="padding: 5px 10px; font-size: 12px;" onclick="event.stopPropagation();" title="Mở trực tiếp">
+                ➔
               </a>
             </div>
           </div>
@@ -357,6 +520,11 @@
     function openDocDrawer(docId) {
       const doc = SYSTEM_DOCS.find(d => d.id === docId);
       if (!doc) return;
+
+      try {
+        sessionStorage.setItem('dash_open_doc', docId);
+        sessionStorage.removeItem('dash_open_card');
+      } catch(e) {}
 
       document.getElementById('drawerTaskId').textContent = doc.badge;
       document.getElementById('drawerTitle').textContent = doc.title;
@@ -446,6 +614,11 @@
       const card = ALL_CARDS.find(c => c.id === taskId);
       if (!card) return;
 
+      try {
+        sessionStorage.setItem('dash_open_card', taskId);
+        sessionStorage.removeItem('dash_open_doc');
+      } catch(e) {}
+
       document.getElementById('drawerTaskId').textContent = card.id;
       document.getElementById('drawerTitle').textContent = card.title;
       
@@ -492,9 +665,138 @@
     }
 
     function closeDrawer() {
+      try {
+        sessionStorage.removeItem('dash_open_doc');
+        sessionStorage.removeItem('dash_open_card');
+      } catch(e) {}
       document.getElementById('drawerOverlay').classList.remove('open');
       document.getElementById('drawerPanel').classList.remove('open');
       document.body.style.overflow = 'auto';
+    }
+
+    /* ==========================================================================
+       IMAGE LIGHTBOX (XEM ẢNH PHÓNG TO VỚI ZOOM & PAN)
+       ========================================================================== */
+    let lightboxScale = 1;
+    let lightboxTranslateX = 0;
+    let lightboxTranslateY = 0;
+    let isLightboxDragging = false;
+    let lightboxStartX = 0;
+    let lightboxStartY = 0;
+    let lightboxEventsBound = false;
+
+    function updateLightboxTransform() {
+      const img = document.getElementById('lightboxImg');
+      const percentElem = document.getElementById('lightboxZoomPercent');
+      const viewport = document.getElementById('lightboxViewport');
+      if (img) {
+        img.style.transform = `translate(${lightboxTranslateX}px, ${lightboxTranslateY}px) scale(${lightboxScale})`;
+      }
+      if (percentElem) {
+        percentElem.textContent = Math.round(lightboxScale * 100) + '%';
+      }
+      if (viewport && !isLightboxDragging) {
+        viewport.style.cursor = lightboxScale > 1.05 ? 'grab' : 'zoom-in';
+      }
+    }
+
+    function zoomLightboxImage(delta, clientX, clientY) {
+      const oldScale = lightboxScale;
+      let newScale = Math.min(Math.max(lightboxScale + delta, 0.25), 5.0);
+      newScale = Math.round(newScale * 100) / 100;
+      if (newScale === oldScale) return;
+
+      const viewport = document.getElementById('lightboxViewport');
+      if (viewport && Number.isFinite(clientX) && Number.isFinite(clientY)) {
+        const rect = viewport.getBoundingClientRect();
+        const originX = clientX - (rect.left + rect.width / 2);
+        const originY = clientY - (rect.top + rect.height / 2);
+        const ratio = newScale / oldScale;
+        lightboxTranslateX = originX - (originX - lightboxTranslateX) * ratio;
+        lightboxTranslateY = originY - (originY - lightboxTranslateY) * ratio;
+      }
+      lightboxScale = newScale;
+      updateLightboxTransform();
+    }
+
+    function resetLightboxZoom() {
+      lightboxScale = 1;
+      lightboxTranslateX = 0;
+      lightboxTranslateY = 0;
+      updateLightboxTransform();
+    }
+
+    function initLightboxEventListeners() {
+      if (lightboxEventsBound) return;
+      const viewport = document.getElementById('lightboxViewport');
+      if (!viewport) return;
+
+      // Lăn chuột phóng to / thu nhỏ theo tâm trỏ chuột
+      viewport.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.2 : -0.2;
+        zoomLightboxImage(delta, e.clientX, e.clientY);
+      }, { passive: false });
+
+      // Nhấp đúp phóng to 2x hoặc reset về 1x
+      viewport.addEventListener('dblclick', (e) => {
+        if (e.target.tagName === 'BUTTON') return;
+        if (lightboxScale > 1.2) {
+          resetLightboxZoom();
+        } else {
+          zoomLightboxImage(1.0, e.clientX, e.clientY);
+        }
+      });
+
+      // Nhấp giữ chuột để kéo xem ảnh (Pan / Drag)
+      viewport.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        if (e.target.tagName === 'BUTTON') return;
+        isLightboxDragging = true;
+        lightboxStartX = e.clientX - lightboxTranslateX;
+        lightboxStartY = e.clientY - lightboxTranslateY;
+        viewport.style.cursor = 'grabbing';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isLightboxDragging) return;
+        lightboxTranslateX = e.clientX - lightboxStartX;
+        lightboxTranslateY = e.clientY - lightboxStartY;
+        updateLightboxTransform();
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isLightboxDragging) {
+          isLightboxDragging = false;
+          updateLightboxTransform();
+        }
+      });
+
+      lightboxEventsBound = true;
+    }
+
+    function openImageLightbox(src, caption) {
+      const modal = document.getElementById('imageLightboxModal');
+      const img = document.getElementById('lightboxImg');
+      const cap = document.getElementById('lightboxCaption');
+      if (!modal || !img) return;
+
+      initLightboxEventListeners();
+      resetLightboxZoom();
+
+      img.src = src;
+      img.alt = caption || 'Hình ảnh';
+      if (cap) cap.textContent = caption || '';
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeImageLightbox() {
+      const modal = document.getElementById('imageLightboxModal');
+      if (modal) modal.style.display = 'none';
+      resetLightboxZoom();
+      const drawer = document.getElementById('drawerPanel');
+      document.body.style.overflow = (drawer && drawer.classList.contains('open')) ? 'hidden' : 'auto';
     }
 
     function copyCode(btn) {
@@ -593,13 +895,28 @@
           ? `<img src="${d.preview_img}" alt="${d.name}" class="diagram-thumb" loading="lazy" />`
           : `<div style="font-size: 32px; color: #64748b;">📊</div>`;
         
-        const openAction = d.is_drawio
-          ? `<a href="${d.href}" download class="btn btn-ghost" style="padding: 4px 8px; font-size: 11px; color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);">Tải Draw.io 📥</a>`
-          : `<a href="${d.href}" target="_blank" class="btn btn-ghost" style="padding: 4px 8px; font-size: 11px; color: #38bdf8; border-color: rgba(56, 189, 248, 0.4);">Xem ảnh to ↗</a>`;
+        const isHtml = d.href && d.href.endsWith('.html');
+        const isImg = !isHtml && !d.is_drawio;
+        const targetUrl = isHtml ? d.href : (d.preview_img || d.href);
+        const escapedName = (d.name || '').replace(/'/g, "\\'");
+
+        let openAction = '';
+        let clickHandler = '';
+
+        if (d.is_drawio) {
+          openAction = `<a href="${d.href}" download class="btn btn-ghost" style="padding: 4px 8px; font-size: 11px; color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);">Tải Draw.io 📥</a>`;
+          clickHandler = `window.location.href='${d.href}'`;
+        } else if (isImg) {
+          openAction = `<button class="btn btn-ghost" onclick="event.stopPropagation(); openImageLightbox('${targetUrl}', '${escapedName}')" style="padding: 4px 8px; font-size: 11px; color: #38bdf8; border-color: rgba(56, 189, 248, 0.4);">Phóng to ảnh 🔍</button>`;
+          clickHandler = `openImageLightbox('${targetUrl}', '${escapedName}')`;
+        } else {
+          openAction = `<a href="${targetUrl}" class="btn btn-ghost" style="padding: 4px 8px; font-size: 11px; color: #38bdf8; border-color: rgba(56, 189, 248, 0.4);">Xem sơ đồ ➔</a>`;
+          clickHandler = `window.location.href='${targetUrl}'`;
+        }
 
         return `
           <div class="diagram-card">
-            <div class="diagram-thumb-wrap" onclick="window.open('${d.preview_img || d.href}', '_blank')" style="cursor: pointer;">
+            <div class="diagram-thumb-wrap" onclick="${clickHandler}" style="cursor: pointer;" title="${isImg ? 'Nhấp để xem phóng to tại chỗ' : 'Nhấp để xem sơ đồ'}">
               ${thumbHtml}
             </div>
             <div class="diagram-info">
@@ -615,6 +932,67 @@
         `;
       }).join('');
     }
+
+    async function refreshDashboardData() {
+      const btn = document.getElementById('btnRefreshData');
+      if (btn) {
+        btn.innerHTML = '🔄 Đang quét & nạp dữ liệu...';
+        btn.disabled = true;
+      }
+      try {
+        await fetch('/api/refresh');
+      } catch(e) {}
+      window.location.reload();
+    }
+
+    /* ==========================================================================
+       REALTIME AUTO-SYNC (TỰ ĐỘNG ĐỒNG BỘ DỮ LIỆU KHI FILE TRÊN Ổ ĐĨA THAY ĐỔI)
+       ========================================================================== */
+    let lastKnownVersion = null;
+    let isCheckingVersion = false;
+
+    function showRealtimeToast(msg) {
+      let toast = document.getElementById('realtimeSyncToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'realtimeSyncToast';
+        toast.style.cssText = 'position: fixed; bottom: 24px; right: 24px; z-index: 999999; background: rgba(15, 23, 42, 0.95); border: 1px solid #10b981; color: #f8fafc; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); backdrop-filter: blur(12px); transition: all 0.3s ease;';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<span style="color: #10b981; font-size: 16px;">⚡</span> ${msg}`;
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+      setTimeout(() => {
+        if (toast) {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(10px)';
+        }
+      }, 3500);
+    }
+
+    async function checkRealtimeUpdate() {
+      if (isCheckingVersion) return;
+      isCheckingVersion = true;
+      try {
+        const res = await fetch('/api/version?t=' + Date.now());
+        if (res.ok) {
+          const data = await res.json();
+          if (lastKnownVersion === null) {
+            lastKnownVersion = data.version;
+          } else if (data.version && data.version !== lastKnownVersion) {
+            lastKnownVersion = data.version;
+            showRealtimeToast('Phát hiện tài liệu/task thay đổi! Đang tự động cập nhật Realtime...');
+            setTimeout(() => {
+              window.location.reload();
+            }, 600);
+          }
+        }
+      } catch(e) {}
+      isCheckingVersion = false;
+    }
+
+    // Tự động kiểm tra thay đổi mỗi 2 giây
+    setInterval(checkRealtimeUpdate, 2000);
 
     window.onload = init;
   
