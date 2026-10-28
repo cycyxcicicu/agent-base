@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Theo dõi hành trình đơn">
+  <node_order><![CDATA[1]]></node_order>
+  <details><![CDATA[Bộ test case màn hình Theo dõi hành trình đơn]]></details>
+  <testsuite name="I. Chỉ số tổng quan (5 thẻ trạng thái hành trình)">
+    <node_order><![CDATA[1]]></node_order>
+    <details><![CDATA[I. Chỉ số tổng quan (5 thẻ trạng thái hành trình)]]></details>
+    <testcase name="Hiển thị chính xác số liệu trên 5 thẻ trạng thái hành trình" internalid="">
+      <node_order><![CDATA[1]]></node_order>
+      <externalid><![CDATA[TC_TRK_001]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Hiển thị chính xác số liệu trên 5 thẻ trạng thái hành trình]]></summary>
+      <preconditions><![CDATA[Đã đăng nhập, DB có các đơn hàng đã có mã vận đơn ở các giai đoạn hành trình khác nhau]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[3]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Vào màn hình "Theo dõi hành trình đơn".]]></actions>
+          <expectedresults><![CDATA[Màn hình "Theo dõi hành trình đơn" hiển thị đầy đủ, có 5 thẻ thống kê ở đầu trang.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+        <step>
+          <step_number><![CDATA[2]]></step_number>
+          <actions><![CDATA[Quan sát 5 thẻ thống kê ở đầu trang.]]></actions>
+          <expectedresults><![CDATA[Hiển thị chính xác số lượng đơn: Chờ đóng hàng (18), Chờ lấy hàng (19), Đang giao hàng (33), Giao thành công (20), Hoàn hàng (265).]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Click vào thẻ thống kê để lọc nhanh danh sách" internalid="">
+      <node_order><![CDATA[2]]></node_order>
+      <externalid><![CDATA[TC_TRK_002]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Click vào thẻ thống kê để lọc nhanh danh sách]]></summary>
+      <preconditions><![CDATA[Đang ở màn hình Theo dõi hành trình đơn]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[3]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Nhấp chuột vào thẻ "Giao thành công".]]></actions>
+          <expectedresults><![CDATA[Thẻ "Giao thành công" được kích hoạt. Bảng danh sách bên dưới lập tức lọc hiển thị đúng 20 đơn hàng đã giao thành công.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Click chuyển đổi giữa các thẻ thống kê" internalid="">
+      <node_order><![CDATA[3]]></node_order>
+      <externalid><![CDATA[TC_TRK_003]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Click chuyển đổi giữa các thẻ thống kê]]></summary>
+      <preconditions><![CDATA[Đang chọn lọc thẻ "Giao thành công"]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[2]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Nhấp sang thẻ "Đang giao hàng".]]></actions>
+          <expectedresults><![CDATA[Bảng chuyển sang hiển thị đúng 33 đơn đang giao hàng.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+        <step>
+          <step_number><![CDATA[2]]></step_number>
+          <actions><![CDATA[Nhấp chọn lại "Tất cả".]]></actions>
+          <expectedresults><![CDATA[Bảng quay về hiển thị toàn bộ tất cả các đơn hàng.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+  </testsuite>
+  <testsuite name="II. Lọc, tìm kiếm danh sách">
+    <node_order><![CDATA[2]]></node_order>
+    <details><![CDATA[II. Lọc, tìm kiếm danh sách]]></details>
+    <testcase name="Lọc đơn theo Nguồn đơn (Facebook Ads, Google Ads, Sale Page)" internalid="">
+      <node_order><![CDATA[1]]></node_order>
+      <externalid><![CDATA[TC_TRK_004]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Lọc đơn theo Nguồn đơn (Facebook Ads, Google Ads, Sale Page)]]></summary>
+      <preconditions><![CDATA[DB có đơn từ nhiều nguồn khác nhau]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[3]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Tại dropdown Nguồn đơn, chọn "Sale Page".]]></actions>
+          <expectedresults><![CDATA[Bảng chỉ hiển thị các đơn có nguồn từ Sale Page, số lượng đơn ở tiêu đề bảng cập nhật tương ứng.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Lọc đơn theo Trạng thái hành trình từ dropdown" internalid="">
+      <node_order><![CDATA[2]]></node_order>
+      <externalid><![CDATA[TC_TRK_005]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Lọc đơn theo Trạng thái hành trình từ dropdown]]></summary>
+      <preconditions><![CDATA[Đang ở màn hình theo dõi đơn]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[3]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Tại dropdown Trạng thái, chọn "Chờ đóng hàng".]]></actions>
+          <expectedresults><![CDATA[Bảng lọc ra chính xác các đơn hàng đang ở trạng thái "Chờ đóng hàng".]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Tìm kiếm theo Mã vận đơn J&amp;T" internalid="">
+      <node_order><![CDATA[3]]></node_order>
+      <externalid><![CDATA[TC_TRK_006]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Tìm kiếm theo Mã vận đơn J&T]]></summary>
+      <preconditions><![CDATA[DB có đơn với mã vận đơn cụ thể (VD: "841234567890")]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[3]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Nhập mã vận đơn "841234567890" vào ô tìm kiếm.]]></actions>
+          <expectedresults><![CDATA[Ô tìm kiếm hiển thị đúng giá trị vừa nhập.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+        <step>
+          <step_number><![CDATA[2]]></step_number>
+          <actions><![CDATA[Nhấn Enter.]]></actions>
+          <expectedresults><![CDATA[Bảng hiển thị duy nhất đơn hàng có mã vận đơn J&T tương ứng.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Tìm kiếm theo Mã đơn hàng" internalid="">
+      <node_order><![CDATA[4]]></node_order>
+      <externalid><![CDATA[TC_TRK_007]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Tìm kiếm theo Mã đơn hàng]]></summary>
+      <preconditions><![CDATA[DB có đơn hàng với mã đơn cụ thể (VD: "GDT123456")]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[3]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Nhập mã đơn "GDT123456" vào ô tìm kiếm.]]></actions>
+          <expectedresults><![CDATA[Ô tìm kiếm hiển thị đúng giá trị vừa nhập.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+        <step>
+          <step_number><![CDATA[2]]></step_number>
+          <actions><![CDATA[Nhấn Enter.]]></actions>
+          <expectedresults><![CDATA[Bảng hiển thị chính xác đơn hàng có mã trùng khớp.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Tìm kiếm theo Số điện thoại hoặc Tên khách hàng" internalid="">
+      <node_order><![CDATA[5]]></node_order>
+      <externalid><![CDATA[TC_TRK_008]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Tìm kiếm theo Số điện thoại hoặc Tên khách hàng]]></summary>
+      <preconditions><![CDATA[DB có khách hàng SĐT "0912345678"]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[2]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Nhập SĐT "0912345678" vào ô tìm kiếm.]]></actions>
+          <expectedresults><![CDATA[Ô tìm kiếm hiển thị đúng giá trị vừa nhập.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+        <step>
+          <step_number><![CDATA[2]]></step_number>
+          <actions><![CDATA[Nhấn Enter.]]></actions>
+          <expectedresults><![CDATA[Hiển thị đúng các đơn hàng thuộc số điện thoại của người nhận.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Lọc đơn theo khoảng ngày đặt hàng (Date Range Picker)" internalid="">
+      <node_order><![CDATA[6]]></node_order>
+      <externalid><![CDATA[TC_TRK_009]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Lọc đơn theo khoảng ngày đặt hàng (Date Range Picker)]]></summary>
+      <preconditions><![CDATA[DB có các đơn đặt trong tháng 09/2026]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[3]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Chọn khoảng ngày từ 01/09/2026 đến 08/09/2026 trên bộ lọc ngày.]]></actions>
+          <expectedresults><![CDATA[Bộ lọc hiển thị đúng khoảng ngày vừa chọn: 01/09/2026 - 08/09/2026.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+        <step>
+          <step_number><![CDATA[2]]></step_number>
+          <actions><![CDATA[Bấm áp dụng.]]></actions>
+          <expectedresults><![CDATA[Bảng chỉ hiển thị các đơn có ngày đặt hàng nằm trong khoảng ngày được chọn.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+  </testsuite>
+  <testsuite name="III. Thao tác đồng bộ vận chuyển J&amp;T">
+    <node_order><![CDATA[3]]></node_order>
+    <details><![CDATA[III. Thao tác đồng bộ vận chuyển J&T]]></details>
+    <testcase name="Thực hiện đồng bộ trạng thái vận chuyển J&amp;T" internalid="">
+      <node_order><![CDATA[1]]></node_order>
+      <externalid><![CDATA[TC_TRK_010]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Thực hiện đồng bộ trạng thái vận chuyển J&T]]></summary>
+      <preconditions><![CDATA[Đang xem danh sách theo dõi đơn]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[3]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Bấm nút màu tím "Đồng bộ J&T".]]></actions>
+          <expectedresults><![CDATA[Nút chuyển trạng thái loading xoay tròn, hệ thống tự động cập nhật lại số liệu thống kê và danh sách đơn hàng mới nhất từ đơn vị vận chuyển.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Hiển thị thông báo Toast sau khi đồng bộ thành công" internalid="">
+      <node_order><![CDATA[2]]></node_order>
+      <externalid><![CDATA[TC_TRK_011]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Hiển thị thông báo Toast sau khi đồng bộ thành công]]></summary>
+      <preconditions><![CDATA[Vừa bấm nút Đồng bộ J&T xong]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[2]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Quan sát góc màn hình sau khi hoàn tất đồng bộ.]]></actions>
+          <expectedresults><![CDATA[Toast màu tím xuất hiện với thông báo: "Đồng bộ thành công - Đã cập nhật trạng thái hành trình mới nhất từ đơn vị vận chuyển J&T!" và tự động ẩn sau 3 giây.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+  </testsuite>
+  <testsuite name="IV. Xem chi tiết hành trình đơn (Drawer Timeline)">
+    <node_order><![CDATA[4]]></node_order>
+    <details><![CDATA[IV. Xem chi tiết hành trình đơn (Drawer Timeline)]]></details>
+    <testcase name="Mở Drawer chi tiết hành trình đơn hàng" internalid="">
+      <node_order><![CDATA[1]]></node_order>
+      <externalid><![CDATA[TC_TRK_012]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Mở Drawer chi tiết hành trình đơn hàng]]></summary>
+      <preconditions><![CDATA[Đang xem bảng danh sách đơn hàng]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[3]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Nhấp chuột vào 1 dòng đơn bất kỳ trên bảng.]]></actions>
+          <expectedresults><![CDATA[Drawer trượt mượt mà từ cạnh phải màn hình ra, hiển thị tiêu đề và thông tin chi tiết hành trình của đơn hàng vừa chọn.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Hiển thị đầy đủ thông tin đơn hàng trên Drawer" internalid="">
+      <node_order><![CDATA[2]]></node_order>
+      <externalid><![CDATA[TC_TRK_013]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Hiển thị đầy đủ thông tin đơn hàng trên Drawer]]></summary>
+      <preconditions><![CDATA[Drawer chi tiết đang mở]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[3]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Quan sát phần thông tin đơn hàng ở nửa trên Drawer.]]></actions>
+          <expectedresults><![CDATA[Hiển thị đầy đủ và chuẩn xác: Mã đơn, Mã vận đơn J&T, Tên khách hàng, SĐT, Sản phẩm, Số lượng, Tiền thu hộ COD, Địa chỉ giao hàng.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Hiển thị Timeline lịch sử vận chuyển J&amp;T" internalid="">
+      <node_order><![CDATA[3]]></node_order>
+      <externalid><![CDATA[TC_TRK_014]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Hiển thị Timeline lịch sử vận chuyển J&T]]></summary>
+      <preconditions><![CDATA[Đơn hàng đã có lịch sử luân chuyển bưu cục]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[3]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Quan sát phần Timeline ở nửa dưới Drawer.]]></actions>
+          <expectedresults><![CDATA[Hiển thị danh sách các mốc vận chuyển theo thứ tự mới nhất ở trên cùng: thời gian, trạng thái (Đã lấy hàng, Đang giao, Phát thành công...), vị trí bưu cục kho; mốc mới nhất có badge "Hiện tại".]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Đóng Drawer chi tiết hành trình" internalid="">
+      <node_order><![CDATA[4]]></node_order>
+      <externalid><![CDATA[TC_TRK_015]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Đóng Drawer chi tiết hành trình]]></summary>
+      <preconditions><![CDATA[Drawer chi tiết đang mở]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[2]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Bấm nút dấu "X" ở góc trên Drawer (hoặc click vào vùng mờ bên ngoài).]]></actions>
+          <expectedresults><![CDATA[Drawer trượt đóng lại êm ái, người dùng trở về màn hình danh sách bình thường.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+  </testsuite>
+  <testsuite name="V. Hiển thị bảng dữ liệu &amp; Badge trạng thái">
+    <node_order><![CDATA[5]]></node_order>
+    <details><![CDATA[V. Hiển thị bảng dữ liệu & Badge trạng thái]]></details>
+    <testcase name="Xem danh sách mặc định tất cả đơn có mã vận đơn" internalid="">
+      <node_order><![CDATA[1]]></node_order>
+      <externalid><![CDATA[TC_TRK_016]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Xem danh sách mặc định tất cả đơn có mã vận đơn]]></summary>
+      <preconditions><![CDATA[DB có 355 đơn có mã vận đơn]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[3]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Mở màn hình Theo dõi hành trình đơn.]]></actions>
+          <expectedresults><![CDATA[Màn hình "Theo dõi hành trình đơn" hiển thị đầy đủ danh sách và bộ lọc mặc định.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+        <step>
+          <step_number><![CDATA[2]]></step_number>
+          <actions><![CDATA[Giữ nguyên các bộ lọc mặc định.]]></actions>
+          <expectedresults><![CDATA[Tiêu đề hiển thị "Danh sách theo dõi hành trình đơn hàng (355 đơn)", danh sách sắp xếp giảm dần theo ngày đặt hàng (đơn mới nhất lên đầu).]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Hiển thị badge trạng thái hành trình đúng màu sắc" internalid="">
+      <node_order><![CDATA[2]]></node_order>
+      <externalid><![CDATA[TC_TRK_017]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Hiển thị badge trạng thái hành trình đúng màu sắc]]></summary>
+      <preconditions><![CDATA[Đơn hàng mang các trạng thái khác nhau]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[2]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Quan sát cột "TRẠNG THÁI HÀNH TRÌNH" trên bảng.]]></actions>
+          <expectedresults><![CDATA[Hiển thị đúng badge và màu sắc: Chờ đóng hàng (cam nhạt), Chờ lấy hàng (xanh dương), Đang giao hàng (tím), Giao thành công (xanh lá), Hoàn hàng (đỏ).]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Hiển thị cột Lịch sử mới nhất" internalid="">
+      <node_order><![CDATA[3]]></node_order>
+      <externalid><![CDATA[TC_TRK_018]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Hiển thị cột Lịch sử mới nhất]]></summary>
+      <preconditions><![CDATA[Đơn hàng có lịch sử tracking J&T]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[2]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Quan sát cột "LỊCH SỬ MỚI NHẤT" trên bảng.]]></actions>
+          <expectedresults><![CDATA[Hiển thị đúng thông tin mốc quét mới nhất (VD: "Đã ký nhận: Khách hàng nhận", "Bưu tá đang giao hàng...").]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Kết hợp đồng thời nhiều điều kiện lọc" internalid="">
+      <node_order><![CDATA[4]]></node_order>
+      <externalid><![CDATA[TC_TRK_019]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Kết hợp đồng thời nhiều điều kiện lọc]]></summary>
+      <preconditions><![CDATA[DB có dữ liệu phong phú]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[3]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Chọn Nguồn: "Sale Page".]]></actions>
+          <expectedresults><![CDATA[Bộ lọc Nguồn hiển thị đúng "Sale Page" đã chọn, bảng cập nhật danh sách tương ứng.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+        <step>
+          <step_number><![CDATA[2]]></step_number>
+          <actions><![CDATA[Chọn Trạng thái: "Giao thành công".]]></actions>
+          <expectedresults><![CDATA[Bộ lọc Trạng thái hiển thị đúng "Giao thành công" đã chọn, bảng tiếp tục lọc thêm điều kiện này.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+        <step>
+          <step_number><![CDATA[3]]></step_number>
+          <actions><![CDATA[Chọn Ngày: 01/09/2026 - 08/09/2026.]]></actions>
+          <expectedresults><![CDATA[Bảng kết hợp điều kiện AND chính xác, chỉ trả về đúng các đơn hàng Sale Page đã giao thành công trong khoảng thời gian được chọn.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+  </testsuite>
+  <testsuite name="VI. Tương tác phân trang danh sách">
+    <node_order><![CDATA[6]]></node_order>
+    <details><![CDATA[VI. Tương tác phân trang danh sách]]></details>
+    <testcase name="Thay đổi số lượng bản ghi hiển thị trên trang" internalid="">
+      <node_order><![CDATA[1]]></node_order>
+      <externalid><![CDATA[TC_TRK_020]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Thay đổi số lượng bản ghi hiển thị trên trang]]></summary>
+      <preconditions><![CDATA[Danh sách có nhiều đơn hàng]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[2]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Tại dropdown phân trang ở chân trang, chọn "20 đơn / trang" (hoặc 50, 100).]]></actions>
+          <expectedresults><![CDATA[Bảng cập nhật lại số lượng dòng hiển thị đúng theo lựa chọn (20 dòng), thanh cuộn và phân trang điều chỉnh tương ứng.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Chuyển trang danh sách (Pagination)" internalid="">
+      <node_order><![CDATA[2]]></node_order>
+      <externalid><![CDATA[TC_TRK_021]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Chuyển trang danh sách (Pagination)]]></summary>
+      <preconditions><![CDATA[Danh sách có nhiều trang (VD: 355 đơn với 50 đơn/trang có 8 trang)]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[2]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Bấm nút chuyển sang Trang 2 (hoặc nút >).]]></actions>
+          <expectedresults><![CDATA[Bảng tải dữ liệu của trang 2 (đơn 51-100).]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+        <step>
+          <step_number><![CDATA[2]]></step_number>
+          <actions><![CDATA[Bấm nút quay lại Trang 1 (hoặc nút <).]]></actions>
+          <expectedresults><![CDATA[Bảng quay lại trang 1 (đơn 1-50) mượt mà không bị giật lag.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+    <testcase name="Tự động reset về Trang 1 khi đổi bộ lọc" internalid="">
+      <node_order><![CDATA[3]]></node_order>
+      <externalid><![CDATA[TC_TRK_022]]></externalid>
+      <version><![CDATA[1]]></version>
+      <summary><![CDATA[Tự động reset về Trang 1 khi đổi bộ lọc]]></summary>
+      <preconditions><![CDATA[Đang đứng ở Trang 3]]></preconditions>
+      <execution_type><![CDATA[1]]></execution_type>
+      <importance><![CDATA[2]]></importance>
+      <steps>
+        <step>
+          <step_number><![CDATA[1]]></step_number>
+          <actions><![CDATA[Người dùng đổi bộ lọc Nguồn đơn từ "Tất cả" sang "Sale Page".]]></actions>
+          <expectedresults><![CDATA[Hệ thống tự động đưa số trang hiện tại về Trang 1 để hiển thị kết quả lọc mới từ đầu.]]></expectedresults>
+          <execution_type><![CDATA[1]]></execution_type>
+        </step>
+      </steps>
+    </testcase>
+  </testsuite>
+</testsuite>
