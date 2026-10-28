@@ -307,7 +307,7 @@
           "target": "Role:architect"
         }
       ],
-      "content_sha256": "26b72db1a77ee21b18b88ed4e8e72f63b4d23abf74fe603cd37ca55022a4484d",
+      "content_sha256": "31369dee51952bd1bf805b8054b199a03287aa7c79ad226023c253d80a057c93",
       "provenance": []
     },
     {
@@ -723,6 +723,23 @@
         }
       ],
       "content_sha256": "e4e7263759dcc547499dbda53797c0a37a69ad7661bfd032b1557a158452ba6d",
+      "provenance": []
+    },
+    {
+      "id": "Source:harness2-recursive-harnessing",
+      "kind": "Source",
+      "title": "Harness2: Recursive Agent Harnessing (ghi chú nghiên cứu)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/research/harness2.md",
+      "owner_role": "ai-eng",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ai-eng"
+        }
+      ],
+      "content_sha256": "2865970f6c807533f979881d50e01823a123c9edc4dd193904e7cbb1b7613556",
       "provenance": []
     }
   ]

@@ -530,6 +530,18 @@ RAW_NODES = [
             {"type": "owned_by", "target": "Role:ba"},
         ],
     },
+    {
+        "id": "Source:harness2-recursive-harnessing",
+        "kind": "Source",
+        "title": "Harness2: Recursive Agent Harnessing (ghi chú nghiên cứu)",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/research/harness2.md",
+        "owner_role": "ai-eng",
+        "relations": [
+            {"type": "owned_by", "target": "Role:ai-eng"},
+        ],
+    },
 ]
 
 

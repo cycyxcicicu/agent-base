@@ -51,7 +51,7 @@ Nguồn: dự án gdt-workspace, đã dùng thật. Còn nhắc Mantis, TestLink
 | Thuật ngữ của khung (task, card, vai trò...) | `glossary.md` |
 | Dùng `scripts/verify.py` và `proof-check.py` | `verification-cli-runbook.md` |
 | Kỹ năng đã duyệt, vai trò nào dùng | `skills.md` |
-| Bài nghiên cứu nền (Graphify, Lauren Tan) | `research/` |
+| Bài nghiên cứu nền (Graphify, Lauren Tan, Harness²: tự cải tiến harness) | `research/` |
 
 ## Khi hai nguồn mâu thuẫn
 
