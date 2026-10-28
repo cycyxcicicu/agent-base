@@ -112,7 +112,7 @@ class TestQoderAdapters(unittest.TestCase):
 
     def test_generates_all_roles_and_is_idempotent(self):
         roles = sorted((ROOT / "agents" / "roles").glob("*.md"))
-        self.assertEqual(len(roles), 20)
+        self.assertEqual(len(roles), 21)
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             (root / "agents" / "roles").mkdir(parents=True)
