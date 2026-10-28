@@ -198,6 +198,9 @@ Dự án này sử dụng bộ khung chuẩn hóa từ `agent-base`.
         if not src_adapter.is_dir():
             continue
 
+        if dst_adapter.is_symlink():
+            dst_adapter.unlink()
+
         if not dst_adapter.exists():
             try:
                 # Ưu tiên tạo symlink thư mục adapter để luôn đồng bộ nhẹ nhàng với Hub
@@ -210,6 +213,8 @@ Dự án này sử dụng bộ khung chuẩn hóa từ `agent-base`.
             # Nếu thư mục adapter đã tồn tại từ trước (như .kilo/ đã có .gitignore), liên kết các thư mục con (ví dụ agents/)
             for child in src_adapter.iterdir():
                 dst_child = dst_adapter / child.name
+                if dst_child.is_symlink():
+                    dst_child.unlink()
                 if not dst_child.exists():
                     try:
                         dst_child.symlink_to(child, target_is_directory=child.is_dir())
