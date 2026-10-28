@@ -1,0 +1,6 @@
+{
+  "note": "Mẫu rỗng, được copy sang dự án mới. Chỉ CON NGƯỜI của dự án đó sửa file này (agents/protocols/approval.md): điền approved_by, approved_at và approved_ids (id nút, hoặc [\"*\"] cho tất cả), rồi chạy python scripts/build-knowledge-catalog.py. Không điền trong agent-base: manifest ở đây là bản mẫu và test tests/test_knowledge_seed.py yêu cầu mọi nút là draft.",
+  "approved_by": "",
+  "approved_at": "",
+  "approved_ids": []
+}

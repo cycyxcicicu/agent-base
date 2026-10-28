@@ -2,35 +2,728 @@
   "schema_version": 1,
   "nodes": [
     {
-      "id": "Source:skills-registry",
-      "kind": "Source",
-      "title": "Skills Registry Source",
+      "id": "Role:dev",
+      "kind": "Role",
+      "title": "Developer / Worker Role",
       "state": "draft",
       "version": 1,
-      "content_ref": "agents/knowledge/skills.md",
-      "content_sha256": "175d0741a5c094d078cdb7d7be3428cf9f387f54d0918089434b5e7f48fd6f37",
-      "provenance": [],
-      "owner_role": "architect",
-      "relations": []
+      "content_ref": "agents/roles/dev.md",
+      "owner_role": "catalog",
+      "relations": [],
+      "content_sha256": "a8e858392a3dc5d08c88469733d6666fccdb7b10dd81090ab97e7320e0d6188c",
+      "provenance": []
     },
     {
-      "id": "Rule:tech-radar-policy",
-      "kind": "Rule",
+      "id": "Role:qa",
+      "kind": "Role",
+      "title": "Quality Assurance Role",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/roles/qa.md",
+      "owner_role": "catalog",
+      "relations": [],
+      "content_sha256": "3ec802575635e964b78753bec7619a7e1c850972e04ef87ff01f25b88fc4c80b",
+      "provenance": []
+    },
+    {
+      "id": "Role:reviewer",
+      "kind": "Role",
+      "title": "Code Reviewer Role",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/roles/reviewer.md",
+      "owner_role": "catalog",
+      "relations": [],
+      "content_sha256": "07a2b3d80c150e1ecf0bbabaf7b506b09b0f92de135bb94fb6813f3d7fe816ae",
+      "provenance": []
+    },
+    {
+      "id": "Role:ba",
+      "kind": "Role",
+      "title": "Business Analyst Role",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/roles/ba.md",
+      "owner_role": "catalog",
+      "relations": [],
+      "content_sha256": "2bc6e2a4fb2d5bbecc504c420948b07228d15ac05f68b7bdcb16d0c5600742fa",
+      "provenance": []
+    },
+    {
+      "id": "Role:architect",
+      "kind": "Role",
+      "title": "System Architect Role",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/roles/architect.md",
+      "owner_role": "catalog",
+      "relations": [],
+      "content_sha256": "cb42abba3f57bc08461cec0451e29be3fdf5b714d99d8a2ff4e2264fae4f8c80",
+      "provenance": []
+    },
+    {
+      "id": "Role:ai-eng",
+      "kind": "Role",
+      "title": "AI Engineer Role",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/roles/ai-eng.md",
+      "owner_role": "catalog",
+      "relations": [],
+      "content_sha256": "abb070476b74b2ba1a79f69b5b54f051f91e15063799975684ed1a6c5ddc8f0f",
+      "provenance": []
+    },
+    {
+      "id": "Role:lead",
+      "kind": "Role",
+      "title": "Tech Lead / Head Chef Role",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/roles/lead.md",
+      "owner_role": "catalog",
+      "relations": [],
+      "content_sha256": "15bb8bd6143a61f4a733e2677ac05e1fbd40352b78a6960614e905a6b65228ac",
+      "provenance": []
+    },
+    {
+      "id": "Role:security",
+      "kind": "Role",
+      "title": "Security Engineer Role",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/roles/security.md",
+      "owner_role": "catalog",
+      "relations": [],
+      "content_sha256": "b685fb5125cd869a054891393fcc95ac09fed34b4e75186f6874ebdb3d67f857",
+      "provenance": []
+    },
+    {
+      "id": "Source:notebook1-agile-sdlc",
+      "kind": "Source",
+      "title": "Agile SDLC and Scrum Release Management Framework Source",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/quy-trinh-13-buoc-tdd.md",
+      "owner_role": "architect",
+      "relations": [],
+      "content_sha256": "e8572f5bf5fa764334a1f9e112cb1a9d6d9dc3b175b087d8503f904e92a34c05",
+      "provenance": []
+    },
+    {
+      "id": "Source:notebook2-spacex-ai-eng",
+      "kind": "Source",
+      "title": "High-Velocity Agent Framework Source",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/research/lauren-tan-talk.md",
+      "owner_role": "ai-eng",
+      "relations": [],
+      "content_sha256": "d1285305b0ca35dca45eb6beb934df3eb773e5016aeb5ff05fefba113bf4d47e",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:baccm-and-cr",
+      "kind": "Requirement",
+      "title": "Mô hình BACCM, Quản lý Yêu cầu (RD) & Yêu cầu Thay đổi (CR)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/baccm-yeu-cau-va-cr.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:notebook1-agile-sdlc"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        }
+      ],
+      "content_sha256": "9147e5ab113e3acb561d0f11ab049c2aaf026a149394b0c6fecc171a78a35179",
+      "provenance": [
+        "Source:notebook1-agile-sdlc"
+      ]
+    },
+    {
+      "id": "Requirement:srs-writing-standard",
+      "kind": "Requirement",
+      "title": "SRS and FDD Writing Standard",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/srs-fdd-writing-standard.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:notebook1-agile-sdlc"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        }
+      ],
+      "content_sha256": "d842b7ae069604d24f9d1c8e6240e2d6355d9260b93f381343cfbcf805a660ac",
+      "provenance": [
+        "Source:notebook1-agile-sdlc"
+      ]
+    },
+    {
+      "id": "Design:tdd-13-steps",
+      "kind": "Design",
+      "title": "Quy trình 13 Bước TDD/ATDD & Tiêu chuẩn DoD",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/quy-trinh-13-buoc-tdd.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:notebook1-agile-sdlc"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        }
+      ],
+      "content_sha256": "e8572f5bf5fa764334a1f9e112cb1a9d6d9dc3b175b087d8503f904e92a34c05",
+      "provenance": [
+        "Source:notebook1-agile-sdlc"
+      ]
+    },
+    {
+      "id": "Design:cmmi-l3-70-checks",
+      "kind": "Design",
+      "title": "Bộ 70 Mục kiểm CMMI Level 3 & PMBOK cho QA/Reviewer",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/cmmi-l3-70-muc-kiem.md",
+      "owner_role": "qa",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:notebook1-agile-sdlc"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        }
+      ],
+      "content_sha256": "1a2c3f2e773bec430c1ed17f5141255a7c04b25b64178879a2e75074290b7f60",
+      "provenance": [
+        "Source:notebook1-agile-sdlc"
+      ]
+    },
+    {
+      "id": "Design:cso-security",
+      "kind": "Design",
+      "title": "CSO Security Assessment Framework",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/cso-security-framework.md",
+      "owner_role": "security",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:security"
+        }
+      ],
+      "content_sha256": "14c186992e0f81e3fe719b4d5e99c9288859a002d2c5102f0f92d914fd0ac1fd",
+      "provenance": []
+    },
+    {
+      "id": "Design:bug-handling-pipeline",
+      "kind": "Design",
+      "title": "Quy trình Xử lý Bug Hàng loạt",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/xu-ly-bug-hang-loat.md",
+      "owner_role": "qa",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:notebook1-agile-sdlc"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        }
+      ],
+      "content_sha256": "5057b7a47c39ca339609781c5f6648708d5b045693ee9ddd0f23db8509827cb8",
+      "provenance": [
+        "Source:notebook1-agile-sdlc"
+      ]
+    },
+    {
+      "id": "Design:tech-radar-policy",
+      "kind": "Design",
       "title": "Tech Radar Adoption Policy",
       "state": "draft",
       "version": 1,
       "content_ref": "agents/knowledge/tech-radar.md",
-      "content_sha256": "ebc6785421476c706a3ddf09cc8dc13a06d22126d6f37a91cabac756982e363c",
-      "provenance": [
-        "Source:skills-registry"
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        }
       ],
+      "content_sha256": "ebc6785421476c706a3ddf09cc8dc13a06d22126d6f37a91cabac756982e363c",
+      "provenance": []
+    },
+    {
+      "id": "Skill:verification-skills-cdp",
+      "kind": "Skill",
+      "title": "Kỹ năng Tự Xác minh (Verification Skills), Feature Map & PR Nguyên tử",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/verification-skills-cdp.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:notebook2-spacex-ai-eng"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        }
+      ],
+      "content_sha256": "b6f6fdaaa5a94c43fc867b915962a794a91564fd347052822371bbfbb81bc0ba",
+      "provenance": [
+        "Source:notebook2-spacex-ai-eng"
+      ]
+    },
+    {
+      "id": "Skill:skills-registry",
+      "kind": "Skill",
+      "title": "Agent Skills Registry & Taxonomy",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/skills.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        }
+      ],
+      "content_sha256": "26b72db1a77ee21b18b88ed4e8e72f63b4d23abf74fe603cd37ca55022a4484d",
+      "provenance": []
+    },
+    {
+      "id": "EvalSuite:eval-playbook-and-constraints",
+      "kind": "EvalSuite",
+      "title": "Eval Playbook, Agent Tái hiện Bug & 5 Tầng Ràng buộc Cứng",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/eval-playbook-va-hard-constraints.md",
+      "owner_role": "ai-eng",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:notebook2-spacex-ai-eng"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ai-eng"
+        }
+      ],
+      "content_sha256": "3bcabb6970983f7c44e1dd6aa33dc7b444104b5e25c133c282f140fefcf46f89",
+      "provenance": [
+        "Source:notebook2-spacex-ai-eng"
+      ]
+    },
+    {
+      "id": "Design:prompt-as-code-registry",
+      "kind": "Design",
+      "title": "Quản trị Prompt as Code, Thư viện Golden Prompts & Chỉ số Shift-Left",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/prompt-as-code-registry.md",
       "owner_role": "architect",
       "relations": [
         {
           "type": "derived_from",
-          "target": "Source:skills-registry"
+          "target": "Source:notebook1-agile-sdlc"
+        },
+        {
+          "type": "implements",
+          "target": "Requirement:baccm-and-cr"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
         }
+      ],
+      "content_sha256": "0940074ac3f87c5a22f4845d91ffe68f9baa42cd49a9472f9d65c99f72e5f17c",
+      "provenance": [
+        "Source:notebook1-agile-sdlc"
       ]
+    },
+    {
+      "id": "Design:frontend-patterns",
+      "kind": "Design",
+      "title": "Frontend Component Contract and Design Patterns",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/frontend-patterns.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        }
+      ],
+      "content_sha256": "f3097fa6876d5f45fcc5837e9816b2223bc5d2aa2701f09bcd5c7552c53022f2",
+      "provenance": []
+    },
+    {
+      "id": "Design:chuan-ve-so-do",
+      "kind": "Design",
+      "title": "Chuẩn Vẽ Sơ đồ Kỹ thuật và Kiến trúc",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/chuan-ve-so-do.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        }
+      ],
+      "content_sha256": "ce9b21cad66e446462977ac7615e56e31ec5e4390ede62eff4dec4f14663abb5",
+      "provenance": []
+    },
+    {
+      "id": "Source:company-process",
+      "kind": "Source",
+      "title": "Quy trình công ty (ghi chú từ tài liệu hướng dẫn)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/quy-trinh-cong-ty.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        }
+      ],
+      "content_sha256": "c5980e28e1ad0afa7e6d27c19606726d6d100b2b9d1dfdbdcaeae667ec5b6c6f",
+      "provenance": []
+    },
+    {
+      "id": "Rule:task-loop",
+      "kind": "Rule",
+      "title": "Vòng 13 bước và 8 cổng kiểm soát một task (DoR 7 tiêu chí)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/task-loop.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        }
+      ],
+      "content_sha256": "c10871ad9d7fde23270bf4d12c4af553f2b3c5169104da6b570bbc84644da192",
+      "provenance": []
+    },
+    {
+      "id": "Rule:definition-of-done",
+      "kind": "Rule",
+      "title": "Định nghĩa hoàn thành theo cỡ việc",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/definition-of-done.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        }
+      ],
+      "content_sha256": "61bb46fe8331c9f0c6707c99d6e62c21ca56c5a36848eed71dd8b4ddc12fb764",
+      "provenance": []
+    },
+    {
+      "id": "Design:git-rules",
+      "kind": "Design",
+      "title": "Quy tắc Git (GitFlow, commit, MR, hook)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/git-rules.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        }
+      ],
+      "content_sha256": "629c2f257bfe5241f1f2820078a6574b350348655f43c0b1c49be254fa5078a8",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:change-request",
+      "kind": "Requirement",
+      "title": "Quản lý thay đổi yêu cầu (CR, CCB)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/change-request.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:company-process"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        }
+      ],
+      "content_sha256": "e300d9e36b669756e3441af380c21efc275da530ca77f7c511adef4621152b21",
+      "provenance": [
+        "Source:company-process"
+      ]
+    },
+    {
+      "id": "Requirement:ai-provenance",
+      "kind": "Requirement",
+      "title": "Đánh dấu nguồn gốc AI, sổ prompt, .aiignore",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/ai-provenance.md",
+      "owner_role": "ai-eng",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:company-process"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ai-eng"
+        }
+      ],
+      "content_sha256": "60c678ab608563472de0e6252066207d0033e236ab5f1305a897b603d9c93161",
+      "provenance": [
+        "Source:company-process"
+      ]
+    },
+    {
+      "id": "Requirement:plan-critique",
+      "kind": "Requirement",
+      "title": "Lập kế hoạch và phản biện trước khi sinh code",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/plan-critique.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:company-process"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        }
+      ],
+      "content_sha256": "d0ec1fd515c15ede7cf29c570145042faf0f0eda6cb34658d4637efb4fa66c37",
+      "provenance": [
+        "Source:company-process"
+      ]
+    },
+    {
+      "id": "Requirement:pair-review",
+      "kind": "Requirement",
+      "title": "Review theo cặp (Solution-Pair, Code-Review-Pair)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/pair-review.md",
+      "owner_role": "reviewer",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:company-process"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        }
+      ],
+      "content_sha256": "a6a6344b01bc0059deec1419ef70a4d225b55992e2634e28a002108f58dfe500",
+      "provenance": [
+        "Source:company-process"
+      ]
+    },
+    {
+      "id": "Requirement:release-note",
+      "kind": "Requirement",
+      "title": "Release note",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/release-note.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:company-process"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        }
+      ],
+      "content_sha256": "514e6c0c81425ed0eab03b5ead951df54f369a1f3ed1d2aaf8ff79fc2626c349",
+      "provenance": [
+        "Source:company-process"
+      ]
+    },
+    {
+      "id": "Requirement:lesson-learned",
+      "kind": "Requirement",
+      "title": "Bài học sau mỗi lần làm",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/lesson-learned.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:company-process"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        }
+      ],
+      "content_sha256": "6ce6f7808e161b284d934018c1289b60c0327dc673b42d4505afb6d20d94a001",
+      "provenance": [
+        "Source:company-process"
+      ]
+    },
+    {
+      "id": "Requirement:ticket-status",
+      "kind": "Requirement",
+      "title": "Ánh xạ trạng thái ticket công ty sang task card",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/ticket-status.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:company-process"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        }
+      ],
+      "content_sha256": "483d703d3fb87bb85520ccba760445a41697b7dfe0b5e927e9350f2c60a24548",
+      "provenance": [
+        "Source:company-process"
+      ]
+    },
+    {
+      "id": "Design:chuan-code-va-review",
+      "kind": "Design",
+      "title": "Chuẩn code, cấu trúc và checklist review",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/chuan-code-va-review.md",
+      "owner_role": "reviewer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        }
+      ],
+      "content_sha256": "31b976acec67f335f848677eeeac4112f378bbbfa6b1903edf8c5da7772bdb83",
+      "provenance": []
+    },
+    {
+      "id": "Design:chuan-sql-va-loi",
+      "kind": "Design",
+      "title": "Chuẩn SQL và xử lý lỗi cơ sở dữ liệu",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/chuan-sql-va-loi.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        }
+      ],
+      "content_sha256": "6b008de58b8e95d2f1f42bd477ca3fcc07834c7c07927fc4c8984f22ad29f910",
+      "provenance": []
+    },
+    {
+      "id": "Design:zero-downtime-migrations",
+      "kind": "Design",
+      "title": "Di chuyển cơ sở dữ liệu không gián đoạn",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/zero-downtime-migrations.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        }
+      ],
+      "content_sha256": "c32b04ca7c24e0e95057e035cb70e7fe5f097cc20a72bf0984bc0f1b038816cf",
+      "provenance": []
+    },
+    {
+      "id": "Design:cloud-recipes",
+      "kind": "Design",
+      "title": "Công thức kiến trúc đám mây",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/cloud-recipes.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        }
+      ],
+      "content_sha256": "93b0d29cafd7b82b934d4045bea03dbbcf3ae42534c15e266c7a5e462cef0779",
+      "provenance": []
+    },
+    {
+      "id": "EvalSuite:llm-redteam-taxonomy",
+      "kind": "EvalSuite",
+      "title": "Phân loại lỗ hổng và kiểm thử ứng dụng AI/LLM",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/llm-redteam-taxonomy.md",
+      "owner_role": "security",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:security"
+        }
+      ],
+      "content_sha256": "e8a9b72073f8fcf208f2ad156a736a9f3ccf93663a51a2752b58dbba3dbf55ef",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:document-templates",
+      "kind": "Requirement",
+      "title": "Chỉ mục mẫu tài liệu (đặc tả, thiết kế, test report, TestLink)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/templates/README.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        }
+      ],
+      "content_sha256": "e4e7263759dcc547499dbda53797c0a37a69ad7661bfd032b1557a158452ba6d",
+      "provenance": []
     }
   ]
 }

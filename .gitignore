@@ -49,6 +49,5 @@ Thumbs.db
 target/
 *.class
 
-
-
-
+# Ngữ cảnh tri thức theo vai: sinh bởi scripts/build-knowledge-catalog.py
+.local/
