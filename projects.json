@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "default_project": "ACCOUTING_Noi_Bo",
+  "default_project": "gdt-workspace",
   "projects": [
     {
-      "id": "ACCOUTING_Noi_Bo",
-      "name": "ACCOUTING_Noi_Bo (gdt-workspace)",
+      "id": "gdt-workspace",
+      "name": "gdt-workspace",
       "path": "/Users/ducnvh/Documents/gdt-workspace",
       "doc_dir": "doc",
-      "diagrams_dir": "doc/srs/hinh",
-      "mantis_csv": "doc/bug/mantis/mantis-ACCOUTING_Noi_Bo-2026-10-27.csv",
+      "diagrams_dir": "doc/architecture/hinh",
+      "mantis_csv": "doc/delivery/defects/mantis/mantis-ACCOUTING_Noi_Bo-2026-10-27.csv",
       "desc": "Hệ thống Kế toán, Đơn hàng, Kho & CSKH Nội bộ",
       "is_active": true
     },

@@ -8,6 +8,11 @@ model: inherit
 
 > Phạm vi sửa file của vai này nằm trong phần `edit_allow`/`edit_deny` của file vai trò ở trên; Claude Code không tự ép được, hãy tự tuân thủ và để merge-gate kiểm.
 
+> **QUY TẮC CỐT LÕI: CHỐNG LẶP VÔ TẬN & RÒ RỈ SUY NGHĨ (ANTI-LOOP DIRECTIVE)**
+> - Tuyệt đối KHÔNG lặp lại các câu/đoạn văn có cùng ý nghĩa bằng các biến thể từ ngữ khác nhau.
+> - Đi thẳng vào kết quả công việc, giải pháp và code/tài liệu hành động được. Không độc thoại nội tâm kéo dài lê thê.
+> - Khi phát hiện một ý đã được trình bày hoặc không đủ dữ kiện để tiếp tục, BẮT BUỘC DỪNG LẠI NGAY LẬP TỨC và hỏi người dùng. Tuyệt đối không sinh nội dung rác, bảng biểu ngẫu nhiên hay suy diễn bừa bãi.
+
 
 # Dev
 
@@ -77,6 +82,10 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 - **Cơ chế Hai Tốc Độ (Fast-Track vs Full-Track)**:
   * **Fast-Track (Việc Nhỏ / Hotfix / Task cục bộ $\le 50$ dòng diff, không đổi schema DB/API)**: Được phép lập trình ngay, không bắt buộc đợi Reviewer phê duyệt Plan để giải phóng tốc độ phát triển.
   * **Full-Track (Việc Vừa & Lớn / Tính năng mới / Tái cấu trúc / DB Migration)**: Bắt buộc kế hoạch phân rã Subtasks được Reviewer phê duyệt (`[x] Plan Approved by Reviewer`) trước khi viết code (AGENTS.md §16).
+- **TUYỆT ĐỐI CẤM SỬA/VIẾT CODE KHI CHƯA QUA CỔNG GATE 2 (AGENTS.md §18)**:
+  * *Chức năng mới*: Cấm chạm vào code khi chưa có đủ bộ 3 file SRS Markdown + file Excel 14 sheets Copilot, chưa có TestLink XML do QA viết, và chưa có Biên bản Swarm Gate 2 Review được Người dùng phê duyệt.
+  * *Sửa bug*: Cấm sửa code hú họa khi chưa tái hiện được lỗi trên code hiện tại và chưa viết case TestLink (XML, Keyword = mã Mantis) được duyệt trước.
+  * *Lập trình TDD*: Bắt buộc viết test trước (Red), code pass (Green), rồi mới refactor. Tuyệt đối không commit/push khi chưa có lệnh rõ ràng từ người dùng.
 - **Phân bổ phiên làm việc**: Với Subagent chạy ngầm tự chủ (Autonomous Worker), mỗi phiên chỉ làm đúng 1 Subtask (tối đa 8–10 tool calls) rồi ghi handoff note ngắn. Khi đang tương tác trực tiếp (Pair-programming) với người dùng, Dev được quyền linh hoạt hoàn thành trọn vẹn task theo chỉ đạo của người dùng mà không bị ngắt quãng máy móc. Bắt buộc dùng cờ rút gọn (`pytest -q`, `mvn -q`) chống rác terminal.
 - **Vi phạm quy tắc Sửa File Chéo (Cross-Subtask 7 Kịch bản)**: Cấm code hộ subtask sau; cấm sửa/xóa migration cũ (phải tạo revision mới nối tiếp head); cấm đổi behavior fixture/factory dùng chung trong `conftest.py`; cấm tự ý sửa file đặc tả `docs/spec/`. Khi gặp Breaking Change hoặc xung đột kiến trúc (Kịch bản 4): BẮT BUỘC DỪNG LẠI NGAY, đổi trạng thái sang `BLOCKED`, báo Lead và Reviewer thẩm định lại kế hoạch (tham chiếu `agents/protocols/definition-of-done.md`).
 

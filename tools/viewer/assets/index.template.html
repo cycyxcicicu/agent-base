@@ -84,6 +84,9 @@
       <button class="tab-btn" id="btn-tab-mantis" onclick="switchMainTab('mantis')">
         🐞 MantisBT <span class="tab-badge" id="badge-mantis-count">0</span>
       </button>
+      <button class="tab-btn" id="btn-tab-knowledge" onclick="switchMainTab('knowledge')">
+        🕸️ Đồ Thị Tri Thức <span class="tab-badge" id="badge-knowledge-count">@@LEN_KNOWLEDGE@@</span>
+      </button>
       <button class="tab-btn" onclick="switchMainTab('code')">
         💻 Code Diff <span class="tab-badge" id="badge-code-count">@@CODE_TASKS_COUNT@@</span>
       </button>
@@ -131,9 +134,10 @@
           </div>
         </div>
 
-        <div class="view-toggle">
-          <button class="view-btn active" id="viewCardsBtn" onclick="setViewMode('cards')">🔲 Thẻ</button>
-          <button class="view-btn" id="viewTableBtn" onclick="setViewMode('table')">📋 Bảng</button>
+        <div class="view-toggle" style="display: flex; gap: 6px; align-items: center;">
+          <button class="view-btn active" id="viewGroupedBtn" onclick="toggleGroupingMode(true)" title="Gom nhóm tài liệu theo Use Case (UC-01, UC-02, UC-03, UC-04...)">🗂️ Gom Use Case</button>
+          <button class="view-btn" id="viewCardsBtn" onclick="toggleGroupingMode(false)" title="Xem từng thẻ lẻ chi tiết">📄 Tất cả thẻ</button>
+          <button class="view-btn" id="viewTableBtn" onclick="setViewMode('table')" title="Xem dạng bảng tổng hợp">📋 Bảng</button>
         </div>
       </div>
 
@@ -250,9 +254,36 @@
         </table>
       </div>
     </div>
+
+    <!-- TAB 5: Đồ Thị Tri Thức (Knowledge Graph) -->
+    <div id="tab-knowledge" class="tab-content-pane" style="display: none;">
+      <div class="roadmap-hero" style="margin-bottom: 20px;">
+        <div class="radar-current">
+          🕸️ MẠNG LƯỚI TRI THỨC HỆ THỐNG: <span id="kg-total-nodes">@@LEN_KNOWLEDGE@@</span> nodes kết nối đa chiều
+        </div>
+        <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 8px;">Đồ Thị Tri Thức Kiến Trúc & Quy Trình (Knowledge Graph)</h2>
+        <p style="color: var(--text-muted); font-size: 14px; max-width: 900px;">
+          Mô hình hóa toàn bộ ma trận quan hệ giữa Vai Trò (Roles), Kỹ Năng (Skills), Quy Tắc Cốt Lõi (Rules), Thiết Kế Kiến Trúc (Designs), Yêu Cầu Kỹ Thuật (Requirements) và Tài Liệu Nguồn (Sources).
+        </p>
+      </div>
+
+      <div class="controls-panel">
+        <div class="filter-group">
+          <div class="search-box">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="kgSearchInput" placeholder="Tìm kiếm node tri thức (Role, Skill, Gate 2, TDD, CMMI...)" oninput="filterKnowledgeGraph()">
+          </div>
+          <div class="chip-group" id="kgKindChips">
+            <button class="chip-btn active" data-kind="ALL" onclick="setKnowledgeKindFilter('ALL', this)">Tất cả</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-grid" id="kgGrid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;"></div>
+    </div>
   </main>
 
-  <!-- Slide-over Drawer (Document & Task Details Viewer) -->
+  <!-- Slide-over Drawer (Document & Task Details Viewer - Hồ Sơ 360°) -->
   <div id="drawerOverlay" class="drawer-overlay" onclick="closeDrawer()"></div>
   <div id="drawerPanel" class="drawer-panel">
     <div class="drawer-header">
@@ -269,22 +300,58 @@
       <button class="drawer-close-btn" onclick="closeDrawer()" title="Đóng (Esc)">✕</button>
     </div>
 
+    <!-- Thanh Tabs Hồ Sơ 360° Trong Drawer -->
+    <div class="drawer-360-nav" id="drawer360Nav">
+      <button class="drawer-360-tab active" id="dTabBtn-progress" onclick="switchDrawer360Tab('progress')">
+        📋 Thẻ tiến độ <span id="tabBadgeProgress" class="drawer-tab-counter">0</span>
+      </button>
+      <button class="drawer-360-tab" id="dTabBtn-srs" onclick="switchDrawer360Tab('srs')">
+        📚 SRS & Thiết kế <span id="tabBadgeSrs" class="drawer-tab-counter">0</span>
+      </button>
+      <button class="drawer-360-tab" id="dTabBtn-diagrams" onclick="switchDrawer360Tab('diagrams')">
+        📊 Sơ đồ & Mockup <span id="tabBadgeDiagrams" class="drawer-tab-counter">0</span>
+      </button>
+      <button class="drawer-360-tab" id="dTabBtn-mantis" onclick="switchDrawer360Tab('mantis')">
+        🐞 Mantis & Bug <span id="tabBadgeMantis" class="drawer-tab-counter">0</span>
+      </button>
+    </div>
+
     <div class="drawer-body">
-      <div class="drawer-section" id="drawerMetaSection" style="padding: 14px 18px; margin-bottom: 16px; background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.25);">
-        <div style="font-size: 13px; display: flex; flex-direction: column; gap: 6px;">
-          <div><strong style="color: var(--primary-light);">Nhánh Git / Thư mục:</strong> <code id="drawerBranch" class="inline-code">feat/..</code></div>
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div><strong style="color: var(--primary-light);">Đường dẫn File:</strong> <span id="drawerRelPath" style="font-family: var(--font-mono); font-size: 12px; color: #94a3b8;">tasks/..</span></div>
-            <a id="drawerRawLink" href="#" class="btn btn-ghost" style="padding: 3px 8px; font-size: 11px;">Mở file raw ➔</a>
+      <!-- PANE 1: Thẻ tiến độ & Nhiệm vụ -->
+      <div id="drawerPaneProgress" class="drawer-pane">
+        <div id="drawerProgressSubNav" class="drawer-subnav" style="display: none; margin-bottom: 14px; gap: 8px; flex-wrap: wrap;"></div>
+        <div class="drawer-section" id="drawerMetaSection" style="padding: 12px 16px; margin-bottom: 16px; background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.25);">
+          <div style="font-size: 13px; display: flex; flex-direction: column; gap: 6px;">
+            <div><strong style="color: var(--primary-light);">Nhánh Git / Thư mục:</strong> <code id="drawerBranch" class="inline-code">feat/..</code></div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div><strong style="color: var(--primary-light);">Đường dẫn File:</strong> <span id="drawerRelPath" style="font-family: var(--font-mono); font-size: 12px; color: #94a3b8;">tasks/..</span></div>
+              <a id="drawerRawLink" href="#" class="btn btn-ghost" style="padding: 3px 8px; font-size: 11px;">Mở file raw ➔</a>
+            </div>
+            <div id="drawerScopeWrap"><strong style="color: var(--primary-light);">Phạm vi sửa code (scope_edit):</strong> <span id="drawerScope" style="font-family: var(--font-mono); font-size: 12px; color: #38bdf8;"></span></div>
+            <div id="drawerBlockedWrap"><strong style="color: #ef4444;">Bị chặn bởi (blocked_by):</strong> <span id="drawerBlocked" style="font-family: var(--font-mono); font-size: 12px; color: #fca5a5;"></span></div>
           </div>
-          <div id="drawerScopeWrap"><strong style="color: var(--primary-light);">Phạm vi sửa code (scope_edit):</strong> <span id="drawerScope" style="font-family: var(--font-mono); font-size: 12px; color: #38bdf8;"></span></div>
-          <div id="drawerBlockedWrap"><strong style="color: #ef4444;">Bị chặn bởi (blocked_by):</strong> <span id="drawerBlocked" style="font-family: var(--font-mono); font-size: 12px; color: #fca5a5;"></span></div>
+        </div>
+
+        <div class="drawer-section">
+          <div class="drawer-section-title" id="drawerBodyTitle">📄 Chi Tiết & Nội Dung Thẻ Tiến Độ</div>
+          <div id="drawerMdContent"></div>
         </div>
       </div>
 
-      <div class="drawer-section">
-        <div class="drawer-section-title" id="drawerBodyTitle">📄 Chi Tiết & Toàn Bộ Nội Dung Tài Liệu</div>
-        <div id="drawerMdContent"></div>
+      <!-- PANE 2: SRS & Thiết Kế Kỹ Thuật -->
+      <div id="drawerPaneSrs" class="drawer-pane" style="display: none;">
+        <div id="drawerSrsSubNav" class="drawer-subnav" style="display: none; margin-bottom: 16px; gap: 8px; flex-wrap: wrap;"></div>
+        <div id="drawerSrsContent"></div>
+      </div>
+
+      <!-- PANE 3: Sơ Đồ & Mockup -->
+      <div id="drawerPaneDiagrams" class="drawer-pane" style="display: none;">
+        <div id="drawerDiagramsGallery" class="drawer-diagrams-grid"></div>
+      </div>
+
+      <!-- PANE 4: Mantis & Bug Liên Quan -->
+      <div id="drawerPaneMantis" class="drawer-pane" style="display: none;">
+        <div id="drawerMantisContent"></div>
       </div>
     </div>
   </div>

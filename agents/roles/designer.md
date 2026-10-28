@@ -24,8 +24,7 @@ Cho Dev một thiết kế đủ rõ để làm đúng ngay lần đầu, và ng
 
 ## Kỹ năng & Cẩm nang áp dụng (Skills Applied)
 - **`feature-map`** (`.agents/skills/feature-map/SKILL.md`): Chế độ `create`: khám phá mã giao diện, dựng `docs/design/feature-map.md` (khu vực, đường vào, thao tác, selector, file nguồn), kiểm trên ứng dụng thật rồi trình người dùng duyệt; chạy `python scripts/feature-map-check.py` cho đến khi sạch lệch.
-- **`archify`** (`.agents/skills/archify/SKILL.md`): Chuẩn hóa và biên dịch sơ đồ luồng trải nghiệm người dùng (Workflow / User Journey) sang HTML/SVG tương tác. Lưu file nguồn `.json` và file `.html` tại `docs/diagrams/`, gắn liên kết vào `docs/diagrams/index.html`.
-- **`diagram-design`** (`.agents/skills/diagram-design/SKILL.md`): Sử dụng thư viện 41 mẫu sơ đồ kỹ thuật và UI SVG vector thuần để thiết kế wireframe, luồng màn hình và kiến trúc thông tin giao diện.
+- **`archify` & `diagram-design`** (`.agents/skills/diagram-design/SKILL.md`): Sử dụng thư viện 41 mẫu sơ đồ kỹ thuật và UI SVG vector thuần để thiết kế wireframe, luồng màn hình và kiến trúc thông tin giao diện. Lưu file nguồn `.json`/`.drawio` và ảnh `.png` tại `doc/features/<UC>/hinh/` hoặc `doc/references/screens/`. Bắt buộc tuân thủ quy chuẩn bơi làn, 1 điểm kết thúc duy nhất và đủ các nhánh ngoại lệ.
 - **`ui-ux-pro-max`** (`.agents/skills/ui-ux-pro-max/SKILL.md`):
   * Bộ máy suy luận hệ thống thiết kế (192 reasoning rules, 79 UI styles, 74 font pairings, 119 UX guidelines).
   * Biên dịch Design Tokens tự động: `node .agents/skills/ui-ux-pro-max/scripts/generate-tokens.cjs --config <tokens.json> -o <tokens.css>`.

@@ -1,6 +1,8 @@
     // Dữ liệu do generate-dashboard.py ghi vào data.js (window.DASH). Nội dung từng tài liệu nằm ở docs/<id>.js, nạp khi mở.
     const DASH = window.DASH || {};
     let ALL_CARDS = DASH.cards || [];
+    let GROUPED_CARDS = DASH.groupedCards || [];
+    let isGroupingMode = true; // Mặc định gom nhóm Use Case
     const GATES = DASH.gates || [];
     const STATUS_META = DASH.statusMeta || {};
     let EPIC_META = DASH.epicMeta || {};
@@ -10,7 +12,18 @@
     let CURRENT_PROJECT_ID = DASH.defaultProject || (DASH.projectList && DASH.projectList[0] ? DASH.projectList[0].id : null);
     let CURRENT_MANTIS = { total: 0, bugs: [] };
     let CURRENT_DIAGRAMS = [];
+    let CURRENT_KNOWLEDGE = DASH.knowledgeGraph || { nodes_count: 0, nodes: [], categories: {} };
+    let currentKgKindFilter = 'ALL';
     let currentMantisStatusFilter = 'ALL';
+
+    function toggleGroupingMode(enableGroup) {
+      isGroupingMode = enableGroup;
+      const grpBtn = document.getElementById('viewGroupedBtn');
+      const crdBtn = document.getElementById('viewCardsBtn');
+      if (grpBtn) grpBtn.classList.toggle('active', isGroupingMode);
+      if (crdBtn) crdBtn.classList.toggle('active', !isGroupingMode);
+      renderCards();
+    }
 
     // Nạp nội dung theo yêu cầu: kind = 'docs' (tài liệu) hoặc 'cards' (task card); file nằm ở <kind>/<id>.js
     const BODY_CALLBACKS = {};
@@ -42,10 +55,11 @@
       const key = bodyKey(kind, item.id);
       BODY_CALLBACKS[key] = cb;
       const s = document.createElement('script');
+      const cacheBust = '?t=' + Date.now();
       if (CURRENT_PROJECT_ID && MULTI_PROJECTS[CURRENT_PROJECT_ID]) {
-        s.src = kind + '/' + bodyFileName(CURRENT_PROJECT_ID) + '_' + bodyFileName(item.id) + '.js';
+        s.src = kind + '/' + bodyFileName(CURRENT_PROJECT_ID) + '_' + bodyFileName(item.id) + '.js' + cacheBust;
       } else {
-        s.src = kind + '/' + bodyFileName(item.id) + '.js';
+        s.src = kind + '/' + bodyFileName(item.id) + '.js' + cacheBust;
       }
       s.onerror = function () {
         // Fallback: thử tìm file không có tiền tố dự án
@@ -119,6 +133,10 @@
       if (mantisBadge) mantisBadge.textContent = CURRENT_MANTIS.total || 0;
       const diagBadge = document.getElementById('badge-diagrams-count');
       if (diagBadge) diagBadge.textContent = CURRENT_DIAGRAMS.length || 0;
+      const kgBadge = document.getElementById('badge-knowledge-count');
+      if (kgBadge) kgBadge.textContent = CURRENT_KNOWLEDGE.nodes_count || (CURRENT_KNOWLEDGE.nodes ? CURRENT_KNOWLEDGE.nodes.length : 0);
+      const kgTotalElem = document.getElementById('kg-total-nodes');
+      if (kgTotalElem) kgTotalElem.textContent = CURRENT_KNOWLEDGE.nodes_count || (CURRENT_KNOWLEDGE.nodes ? CURRENT_KNOWLEDGE.nodes.length : 0);
       const codeBadge = document.getElementById('badge-code-count');
       if (codeBadge) codeBadge.textContent = code;
 
@@ -176,12 +194,14 @@
         const p = MULTI_PROJECTS[CURRENT_PROJECT_ID];
         if (p.docs && p.docs.length > 0) SYSTEM_DOCS = p.docs;
         if (p.cards && p.cards.length > 0) ALL_CARDS = p.cards;
+        if (p.grouped_cards && p.grouped_cards.length > 0) GROUPED_CARDS = p.grouped_cards;
         if (p.epics) EPIC_META = p.epics;
         CURRENT_MANTIS = p.mantis || { total: 0, bugs: [] };
         CURRENT_DIAGRAMS = p.diagrams || [];
         updateProjectHeader(p);
       } else {
         // Dự án hiện tại
+        if (DASH.groupedCards && DASH.groupedCards.length > 0) GROUPED_CARDS = DASH.groupedCards;
         CURRENT_MANTIS = (DASH.mantis) || { total: 0, bugs: [] };
         CURRENT_DIAGRAMS = (DASH.diagrams) || [];
       }
@@ -195,12 +215,13 @@
       renderGates();
       renderMantisBugs();
       renderDiagrams();
+      renderKnowledgeGraph();
       
       // Phục hồi tab đang đứng từ hash hoặc storage
       let initialTab = 'roadmap';
       const hash = window.location.hash ? window.location.hash.substring(1) : '';
       const storedTab = sessionStorage.getItem('dash_active_tab') || localStorage.getItem('dash_last_tab');
-      const validTabs = ['roadmap', 'tasks', 'docs', 'diagrams', 'mantis', 'code', 'gates'];
+      const validTabs = ['roadmap', 'tasks', 'docs', 'diagrams', 'mantis', 'knowledge', 'code', 'gates'];
       if (validTabs.includes(hash)) {
         initialTab = hash;
       } else if (validTabs.includes(storedTab)) {
@@ -259,6 +280,7 @@
         const p = MULTI_PROJECTS[projId];
         SYSTEM_DOCS = p.docs || [];
         ALL_CARDS = (p.cards && p.cards.length > 0) ? p.cards : (DASH.cards || []);
+        GROUPED_CARDS = (p.grouped_cards && p.grouped_cards.length > 0) ? p.grouped_cards : (DASH.groupedCards || []);
         EPIC_META = p.epics || DASH.epicMeta || {};
         CURRENT_MANTIS = p.mantis || { total: 0, bugs: [] };
         CURRENT_DIAGRAMS = p.diagrams || [];
@@ -274,6 +296,7 @@
       renderCodeTasks();
       renderMantisBugs();
       renderDiagrams();
+      renderKnowledgeGraph();
     }
 
     function switchMainTab(tab) {
@@ -286,6 +309,7 @@
         'docs': 'tab-docs',
         'diagrams': 'tab-diagrams',
         'mantis': 'tab-mantis',
+        'knowledge': 'tab-knowledge',
         'code': 'tab-code',
         'gates': 'tab-gates'
       };
@@ -346,11 +370,12 @@
     }
 
     function getFilteredCards() {
+      const sourceList = (isGroupingMode && GROUPED_CARDS && GROUPED_CARDS.length > 0) ? GROUPED_CARDS : ALL_CARDS;
       const query = (document.getElementById('searchInput').value || '').toLowerCase().trim();
       const epic = document.getElementById('epicSelect').value;
       if (query) ensureSearchIndex();
 
-      return ALL_CARDS.filter(c => {
+      return sourceList.filter(c => {
         if (epic !== 'ALL' && c.epic !== epic) return false;
         
         if (currentStatusFilter === 'code_only') {
@@ -360,10 +385,11 @@
         }
 
         if (query) {
-          const matchId = c.id.toLowerCase().includes(query);
-          const matchTitle = c.title.toLowerCase().includes(query);
+          const matchId = (c.id || '').toLowerCase().includes(query);
+          const matchTitle = (c.title || '').toLowerCase().includes(query);
+          const matchGroup = (c.group_key || '').toLowerCase().includes(query);
           const matchRaw = !!(SEARCH_INDEX && (SEARCH_INDEX[c.id] || '').includes(query));
-          if (!matchId && !matchTitle && !matchRaw) return false;
+          if (!matchId && !matchTitle && !matchGroup && !matchRaw) return false;
         }
         return true;
       });
@@ -396,6 +422,27 @@
       container.innerHTML = filtered.map(c => {
         const sm = STATUS_META[c.status] || STATUS_META['todo'];
         const isCodeBadge = c.is_code_task ? '<span class="task-tag task-code-badge">💻 Code</span>' : '';
+        const bundle = c.bundle || {};
+        let bundleBadgesHtml = '';
+        if (bundle.total_resources > 0 || c.is_group) {
+          const parts = [];
+          if (c.is_group && c.sub_cards_count) {
+            parts.push(`<span class="bundle-badge highlight">🗂️ ${c.sub_cards_count} thẻ con</span>`);
+          }
+          if (bundle.progress_docs && bundle.progress_docs.length > 0) {
+            parts.push(`<span class="bundle-badge">📋 ${bundle.progress_docs.length} Tiến độ</span>`);
+          }
+          if (bundle.srs_docs && bundle.srs_docs.length > 0) {
+            parts.push(`<span class="bundle-badge">📚 ${bundle.srs_docs.length} SRS & Thiết kế</span>`);
+          }
+          if (bundle.diagrams && bundle.diagrams.length > 0) {
+            parts.push(`<span class="bundle-badge">📊 ${bundle.diagrams.length} Sơ đồ</span>`);
+          }
+          if (bundle.mantis_bugs && bundle.mantis_bugs.length > 0) {
+            parts.push(`<span class="bundle-badge" style="color: #f87171;">🐞 ${bundle.mantis_bugs.length} Bug</span>`);
+          }
+          bundleBadgesHtml = `<div class="bundle-badge-row">${parts.join('')}</div>`;
+        }
         return `
           <div class="task-card-item status-${c.status}" onclick="openDrawer('${c.id}')">
             <div>
@@ -406,6 +453,7 @@
                 </span>
               </div>
               <div class="task-item-title">${c.title}</div>
+              ${bundleBadgesHtml}
             </div>
             <div class="task-item-meta">
               <div style="display: flex; gap: 6px; align-items: center;">
@@ -413,7 +461,7 @@
                 <span class="task-tag">${c.owner}</span>
                 ${isCodeBadge}
               </div>
-              <span style="color: var(--primary-light); font-weight: 600;">Xem chi tiết ↗</span>
+              <span style="color: var(--primary-light); font-weight: 600;">Hồ sơ 360° ↗</span>
             </div>
           </div>
         `;
@@ -610,8 +658,24 @@
       renderCards();
     }
 
+    let currentDrawer360Tab = 'progress';
+
+    function switchDrawer360Tab(tabName) {
+      currentDrawer360Tab = tabName;
+      ['progress', 'srs', 'diagrams', 'mantis'].forEach(t => {
+        const btn = document.getElementById('dTabBtn-' + t);
+        const pane = document.getElementById('drawerPane' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (btn) btn.classList.toggle('active', t === tabName);
+        if (pane) pane.style.display = (t === tabName) ? 'block' : 'none';
+      });
+    }
+
     function openDrawer(taskId) {
-      const card = ALL_CARDS.find(c => c.id === taskId);
+      let card = ALL_CARDS.find(c => c.id === taskId) || GROUPED_CARDS.find(c => c.id === taskId);
+      if (!card) {
+        card = ALL_CARDS.find(c => String(c.id).toLowerCase() === String(taskId).toLowerCase()) ||
+               GROUPED_CARDS.find(c => String(c.id).toLowerCase() === String(taskId).toLowerCase());
+      }
       if (!card) return;
 
       try {
@@ -619,7 +683,7 @@
         sessionStorage.removeItem('dash_open_doc');
       } catch(e) {}
 
-      document.getElementById('drawerTaskId').textContent = card.id;
+      document.getElementById('drawerTaskId').textContent = card.group_key || card.id;
       document.getElementById('drawerTitle').textContent = card.title;
       
       const sm = STATUS_META[card.status] || STATUS_META['todo'];
@@ -633,10 +697,10 @@
       document.getElementById('drawerPhaseBadge').textContent = 'Phase: ' + card.phase;
       document.getElementById('drawerOwnerBadge').textContent = 'Owner: ' + card.owner;
 
-      document.getElementById('drawerBranch').textContent = card.branch || 'main';
-      document.getElementById('drawerRelPath').textContent = card.rel_path;
-      document.getElementById('drawerRawLink').href = card.rel_path;
-      document.getElementById('drawerRawLink').style.display = 'inline-flex';
+      document.getElementById('drawerBranch').textContent = card.branch || 'develop';
+      document.getElementById('drawerRelPath').textContent = card.rel_path || '';
+      document.getElementById('drawerRawLink').href = card.rel_path || '#';
+      document.getElementById('drawerRawLink').style.display = card.rel_path ? 'inline-flex' : 'none';
       
       const scopeWrap = document.getElementById('drawerScopeWrap');
       if (card.scope_edit && card.scope_edit.length > 0) {
@@ -654,14 +718,307 @@
         blockedWrap.style.display = 'none';
       }
 
-      document.getElementById('drawerBodyTitle').textContent = '📄 Chi Tiết & Toàn Bộ Tài Liệu Công Việc';
+      // ==========================================
+      // THIẾT LẬP HỒ SƠ 360° THEO 4 TABS
+      // ==========================================
+      const bundle = card.bundle || {};
+      const pDocs = bundle.progress_docs || [];
+      const sDocs = bundle.srs_docs || [];
+      const diags = bundle.diagrams || [];
+      const bugs = bundle.mantis_bugs || [];
+
+      // 1. Cập nhật số đếm badge
+      const hasSubCards = card.is_group && card.sub_cards && card.sub_cards.length > 0;
+      const pCount = hasSubCards ? card.sub_cards.length : (pDocs.length > 0 ? pDocs.length : 1);
+      document.getElementById('tabBadgeProgress').textContent = pCount;
+      document.getElementById('tabBadgeSrs').textContent = sDocs.length;
+      document.getElementById('tabBadgeDiagrams').textContent = diags.length;
+      document.getElementById('tabBadgeMantis').textContent = bugs.length;
+
+      // 2. Tab 1: Tiến độ & Nhiệm vụ
+      const pSubNav = document.getElementById('drawerProgressSubNav');
       const cardBox = document.getElementById('drawerMdContent');
-      cardBox.innerHTML = '<p style="color: var(--text-subtle);">Đang tải nội dung…</p>';
-      loadCardBody(card, function (html) { cardBox.innerHTML = html; });
+      if (hasSubCards && card.sub_cards.length > 1) {
+        // ƯU TIÊN 1: Hiển thị danh sách các thẻ kỹ thuật con (T-04.1 -> T-04.7)
+        const sortedSubCards = card.sub_cards.slice().sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' }));
+        pSubNav.style.display = 'flex';
+        pSubNav.innerHTML = sortedSubCards.map((sc, idx) => `
+          <button class="drawer-subnav-btn ${idx === 0 ? 'active' : ''}" onclick="selectDrawerCardItem('${sc.id}', this)">
+            📋 ${sc.title}
+          </button>
+        `).join('');
+        const firstCard = ALL_CARDS.find(c => c.id === sortedSubCards[0].id) || sortedSubCards[0];
+        if (firstCard) {
+          document.getElementById('drawerTitle').textContent = firstCard.title;
+          document.getElementById('drawerRelPath').textContent = firstCard.rel_path || '';
+          document.getElementById('drawerRawLink').href = firstCard.rel_path || '#';
+        }
+        cardBox.innerHTML = '<p style="color: var(--text-subtle);">Đang tải nội dung…</p>';
+        loadCardBody(firstCard, function (html) { cardBox.innerHTML = html; });
+      } else if (pDocs.length > 1) {
+        // ƯU TIÊN 2: Nếu không có thẻ con mà có nhiều văn bản tiến độ
+        const sortedPDocs = pDocs.slice().sort((a, b) => a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' }));
+        pSubNav.style.display = 'flex';
+        pSubNav.innerHTML = sortedPDocs.map((pd, idx) => `
+          <button class="drawer-subnav-btn ${idx === 0 ? 'active' : ''}" onclick="selectDrawerProgressDoc('${pd.id}', this)">
+            📋 ${pd.title}
+          </button>
+        `).join('');
+        cardBox.innerHTML = '<p style="color: var(--text-subtle);">Đang tải nội dung…</p>';
+        const firstDoc = SYSTEM_DOCS.find(d => d.id === sortedPDocs[0].id) || sortedPDocs[0];
+        loadDocBody(firstDoc, function (html) { cardBox.innerHTML = html; });
+      } else {
+        pSubNav.style.display = 'none';
+        pSubNav.innerHTML = '';
+        cardBox.innerHTML = '<p style="color: var(--text-subtle);">Đang tải nội dung…</p>';
+        loadCardBody(card, function (html) { cardBox.innerHTML = html; });
+      }
+
+      // 3. Tab 2: SRS & Thiết kế kỹ thuật
+      const sSubNav = document.getElementById('drawerSrsSubNav');
+      const srsBox = document.getElementById('drawerSrsContent');
+      if (sDocs.length > 0) {
+        const sortedSDocs = sDocs.slice().sort((a, b) => {
+          const rank = (str) => {
+            const s = (str || '').toLowerCase();
+            if (s.includes('srs') && !s.includes('thiet-ke') && !s.includes('doi-chieu') && !s.includes('happy') && !s.includes('testlink')) return 1;
+            if (s.includes('thiet-ke')) return 2;
+            if (s.includes('happy')) return 3;
+            if (s.includes('testlink') || s.endsWith('.xml')) return 4;
+            if (s.includes('man-hinh')) return 5;
+            if (s.includes('so-do') || s.includes('quy-trinh')) return 6;
+            if (s.includes('doi-chieu')) return 7;
+            return 8;
+          };
+          const rA = rank(a.path || a.title);
+          const rB = rank(b.path || b.title);
+          if (rA !== rB) return rA - rB;
+          return a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' });
+        });
+        sSubNav.style.display = 'flex';
+        sSubNav.innerHTML = sortedSDocs.map((sd, idx) => {
+          const isTestLink = (sd.badge === 'TestLink') || (sd.title && sd.title.toLowerCase().includes('testlink')) || (sd.path && sd.path.endsWith('.xml'));
+          let icon = '📚';
+          let label = sd.title;
+          let extraStyle = '';
+          if (isTestLink) {
+            icon = '🧪';
+            label = 'TestLink XML (20 Test Cases)';
+            extraStyle = 'background: rgba(16, 185, 129, 0.15) !important; color: #10b981 !important; border: 1px solid rgba(16, 185, 129, 0.5) !important; font-weight: 700 !important; box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);';
+          } else if (sd.title.toLowerCase().includes('happy cases') || sd.title.toLowerCase().includes('kịch bản kiểm thử')) {
+            icon = '✅';
+            label = 'Kịch bản Happy Cases (20 cases)';
+          } else if (sd.title.toLowerCase().includes('thiết kế kỹ thuật')) {
+            icon = '⚙️';
+            label = 'Thiết kế kỹ thuật';
+          } else if (sd.title.toLowerCase().includes('mô tả màn hình')) {
+            icon = '🖥️';
+            label = 'Mô tả 10 màn hình';
+          } else if (sd.title.toLowerCase().includes('sơ đồ')) {
+            icon = '📊';
+            label = 'Đặc tả Sơ đồ & Kiến trúc';
+          } else if (sd.title.toLowerCase().includes('srs')) {
+            icon = '📑';
+            label = 'SRS Đặc tả chức năng';
+          }
+          return `
+            <button class="drawer-subnav-btn ${idx === 0 ? 'active' : ''}" style="${extraStyle}" onclick="selectDrawerSrsDoc('${sd.id}', this)" title="${sd.title}">
+              ${icon} ${label}
+            </button>
+          `;
+        }).join('');
+        srsBox.innerHTML = '<p style="color: var(--text-subtle);">Đang tải tài liệu đặc tả…</p>';
+        const firstDoc = SYSTEM_DOCS.find(d => d.id === sortedSDocs[0].id) || sortedSDocs[0];
+        loadDocBody(firstDoc, function (html) { srsBox.innerHTML = html; });
+      } else {
+        sSubNav.style.display = 'none';
+        sSubNav.innerHTML = '';
+        srsBox.innerHTML = `
+          <div style="text-align: center; padding: 48px 24px; color: var(--text-muted); background: rgba(15,23,42,0.4); border-radius: 8px; border: 1px dashed var(--border-subtle);">
+            <div style="font-size: 32px; margin-bottom: 10px;">📚</div>
+            <div style="font-weight: 700; color: #fff; margin-bottom: 6px;">Chưa có tài liệu SRS gắn riêng cho mã này</div>
+            <div style="font-size: 13px;">Các yêu cầu kỹ thuật hiện được mô tả trực tiếp trong thẻ tiến độ.</div>
+          </div>
+        `;
+      }
+
+      // 4. Tab 3: Sơ đồ & Mockup
+      const diagsBox = document.getElementById('drawerDiagramsGallery');
+      if (diags.length > 0) {
+        diagsBox.innerHTML = diags.map(dg => {
+          const isDrawio = dg.is_drawio || (dg.filename && dg.filename.endsWith('.drawio'));
+          const isHtml = dg.href && dg.href.endsWith('.html');
+          const isImg = !isDrawio && !isHtml;
+          const escapedName = (dg.name || '').replace(/'/g, "\\'");
+          const imgUrl = dg.preview_img || (isImg ? dg.href : '');
+
+          let thumbHtml = '';
+          let clickHandler = '';
+          let actionsHtml = '';
+
+          if (isDrawio) {
+            thumbHtml = `
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 110px; background: rgba(245, 158, 11, 0.08); border-radius: 6px;">
+                <div style="font-size: 32px; margin-bottom: 4px;">📐</div>
+                <span style="font-size: 11px; font-weight: 700; color: #f59e0b; text-transform: uppercase;">Draw.io Nguồn</span>
+              </div>
+            `;
+            clickHandler = `window.location.href='${dg.href}'`;
+            actionsHtml = `
+              <a href="${dg.href}" download class="btn btn-ghost" style="flex: 1; padding: 4px 8px; font-size: 11px; color: #f59e0b; border-color: rgba(245, 158, 11, 0.4); text-align: center;">Tải Draw.io 📥</a>
+            `;
+          } else if (isHtml) {
+            thumbHtml = imgUrl ? `
+              <img src="${imgUrl}" alt="${escapedName}" class="diagram-thumb" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+              <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 110px; background: rgba(56, 189, 248, 0.08); border-radius: 6px;">
+                <div style="font-size: 32px; margin-bottom: 4px;">⚡</div>
+                <span style="font-size: 11px; font-weight: 700; color: #38bdf8;">Sơ đồ tương tác</span>
+              </div>
+            ` : `
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 110px; background: rgba(56, 189, 248, 0.08); border-radius: 6px;">
+                <div style="font-size: 32px; margin-bottom: 4px;">⚡</div>
+                <span style="font-size: 11px; font-weight: 700; color: #38bdf8;">Sơ đồ tương tác</span>
+              </div>
+            `;
+            clickHandler = `window.open('${dg.href}?present=true', '_blank')`;
+            actionsHtml = `
+              <a href="${dg.href}?present=true" target="_blank" class="btn btn-ghost" style="flex: 1; padding: 4px 8px; font-size: 11px; color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); text-align: center;">Xem tương tác ⚡</a>
+            `;
+          } else {
+            thumbHtml = `
+              <img src="${imgUrl}" alt="${escapedName}" class="diagram-thumb" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'200\\' height=\\'120\\'><text x=\\'50%\\' y=\\'50%\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' fill=\\'%2394a3b8\\' font-size=\\'12\\'>Sơ đồ</text></svg>';" />
+            `;
+            clickHandler = `openImageLightbox('${imgUrl}', '${escapedName}')`;
+            actionsHtml = `
+              <button onclick="event.stopPropagation(); openImageLightbox('${imgUrl}', '${escapedName}')" class="btn btn-ghost" style="flex: 1; font-size: 11px;">🔍 Phóng to</button>
+              <a href="${dg.href}" target="_blank" class="btn btn-ghost" style="padding: 4px 8px; font-size: 11px;">Mở gốc ➔</a>
+            `;
+          }
+
+          return `
+            <div class="diagram-card" style="margin: 0;">
+              <div class="diagram-thumb-wrap" onclick="${clickHandler}" style="cursor: pointer;" title="${isImg ? 'Nhấp để xem phóng to (Zoom & Pan)' : (isHtml ? 'Nhấp để mở sơ đồ tương tác' : 'Nhấp để tải file .drawio')}">
+                ${thumbHtml}
+              </div>
+              <div class="diagram-info">
+                <div>
+                  <div class="diagram-title">${dg.name}</div>
+                  <div class="diagram-meta">${dg.filename} • ${dg.size_kb} KB</div>
+                </div>
+                <div class="diagram-actions">
+                  ${actionsHtml}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        diagsBox.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 48px 24px; color: var(--text-muted); background: rgba(15,23,42,0.4); border-radius: 8px; border: 1px dashed var(--border-subtle);">
+            <div style="font-size: 32px; margin-bottom: 10px;">📊</div>
+            <div style="font-weight: 700; color: #fff; margin-bottom: 6px;">Chưa có sơ đồ hoặc mockup đính kèm</div>
+            <div style="font-size: 13px;">Mọi sơ đồ sequence, kiến trúc hoặc ảnh giao diện thuộc task này sẽ hiển thị tại đây.</div>
+          </div>
+        `;
+      }
+
+      // 5. Tab 4: Mantis & Bug
+      const mantisBox = document.getElementById('drawerMantisContent');
+      if (bugs.length > 0) {
+        mantisBox.innerHTML = `
+          <div class="mantis-table-wrap">
+            <table class="mantis-table">
+              <thead>
+                <tr>
+                  <th style="width: 75px;">ID</th>
+                  <th style="width: 120px;">TRẠNG THÁI</th>
+                  <th style="width: 100px;">MỨC ĐỘ</th>
+                  <th>TÓM TẮT BUG</th>
+                  <th style="width: 110px;">GÁN CHO</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${bugs.map(b => {
+                  const bId = b.id || '';
+                  const bStatus = b.status || 'open';
+                  const bSev = b.severity || 'normal';
+                  let statusColor = '#94a3b8';
+                  if (['resolved', 'closed', 'đã giải quyết', 'đã đóng'].includes(bStatus.toLowerCase())) statusColor = '#10b981';
+                  else if (['assigned', 'feedback', 'đang xử lý'].includes(bStatus.toLowerCase())) statusColor = '#3b82f6';
+                  else if (['acknowledged', 'confirmed', 'tiếp nhận'].includes(bStatus.toLowerCase())) statusColor = '#f59e0b';
+                  return `
+                    <tr>
+                      <td><span class="mantis-id-badge">#${bId}</span></td>
+                      <td><span style="color: ${statusColor}; font-weight: 700; font-size: 12px;">● ${bStatus.toUpperCase()}</span></td>
+                      <td><span style="font-size: 12px; color: ${bSev === 'block' || bSev === 'crash' ? '#ef4444' : 'var(--text-muted)'};">${bSev}</span></td>
+                      <td><strong>${b.summary || ''}</strong></td>
+                      <td><span style="font-size: 12px; color: #94a3b8;">${b.assigned_to || '—'}</span></td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else {
+        mantisBox.innerHTML = `
+          <div style="text-align: center; padding: 48px 24px; color: var(--text-muted); background: rgba(15,23,42,0.4); border-radius: 8px; border: 1px dashed var(--border-subtle);">
+            <div style="font-size: 32px; margin-bottom: 10px;">🐞</div>
+            <div style="font-weight: 700; color: #fff; margin-bottom: 6px;">Không có lỗi Mantis nào gắn với task này</div>
+            <div style="font-size: 13px;">Dự án hiện không ghi nhận bug nào liên quan trực tiếp đến mã công việc này.</div>
+          </div>
+        `;
+      }
+
+      // Mặc định mở Tab 1
+      switchDrawer360Tab('progress');
 
       document.getElementById('drawerOverlay').classList.add('open');
       document.getElementById('drawerPanel').classList.add('open');
       document.body.style.overflow = 'hidden';
+    }
+
+    function selectDrawerProgressDoc(docId, btn) {
+      document.querySelectorAll('#drawerProgressSubNav .drawer-subnav-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const doc = SYSTEM_DOCS.find(d => d.id === docId);
+      const cardBox = document.getElementById('drawerMdContent');
+      if (doc) {
+        cardBox.innerHTML = '<p style="color: var(--text-subtle);">Đang tải nội dung…</p>';
+        loadDocBody(doc, function (html) { cardBox.innerHTML = html; });
+      }
+    }
+
+    function selectDrawerCardItem(cardId, btn) {
+      document.querySelectorAll('#drawerProgressSubNav .drawer-subnav-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const card = ALL_CARDS.find(c => c.id === cardId);
+      const cardBox = document.getElementById('drawerMdContent');
+      if (card) {
+        document.getElementById('drawerTitle').textContent = card.title;
+        document.getElementById('drawerRelPath').textContent = card.rel_path || '';
+        document.getElementById('drawerRawLink').href = card.rel_path || '#';
+        const sm = STATUS_META[card.status] || STATUS_META['todo'];
+        const pill = document.getElementById('drawerStatusPill');
+        pill.textContent = sm.icon + ' ' + sm.label;
+        pill.style.background = sm.bg;
+        pill.style.color = sm.color;
+        pill.style.border = '1px solid ' + sm.border;
+
+        cardBox.innerHTML = '<p style="color: var(--text-subtle);">Đang tải nội dung…</p>';
+        loadCardBody(card, function (html) { cardBox.innerHTML = html; });
+      }
+    }
+
+    function selectDrawerSrsDoc(docId, btn) {
+      document.querySelectorAll('#drawerSrsSubNav .drawer-subnav-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const doc = SYSTEM_DOCS.find(d => d.id === docId);
+      const srsBox = document.getElementById('drawerSrsContent');
+      if (doc) {
+        srsBox.innerHTML = '<p style="color: var(--text-subtle);">Đang tải tài liệu đặc tả…</p>';
+        loadDocBody(doc, function (html) { srsBox.innerHTML = html; });
+      }
     }
 
     function closeDrawer() {
@@ -776,6 +1133,20 @@
     }
 
     function openImageLightbox(src, caption) {
+      if (!src) return;
+      // Phòng vệ: Nếu vô tình mở file không phải ảnh (drawio, html, xml, json)
+      if (src.endsWith('.drawio') || src.endsWith('.xml') || src.endsWith('.json')) {
+        const a = document.createElement('a');
+        a.href = src;
+        a.download = '';
+        a.click();
+        return;
+      }
+      if (src.endsWith('.html')) {
+        window.open(src + (src.includes('?') ? '&' : '?') + 'present=true', '_blank');
+        return;
+      }
+
       const modal = document.getElementById('imageLightboxModal');
       const img = document.getElementById('lightboxImg');
       const cap = document.getElementById('lightboxCaption');
@@ -941,8 +1312,172 @@
       }
       try {
         await fetch('/api/refresh');
+        await reloadDashboardDataInPlace();
       } catch(e) {}
-      window.location.reload();
+      if (btn) {
+        btn.innerHTML = '🔄 Cập nhật';
+        btn.disabled = false;
+      }
+    }
+
+    /* ==========================================================================
+       KNOWLEDGE GRAPH (ĐỒ THỊ TRI THỨC HỆ THỐNG)
+       ========================================================================== */
+    function getKindBadgeStyle(kind) {
+      switch ((kind || '').toLowerCase()) {
+        case 'role': return { bg: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', border: 'rgba(56, 189, 248, 0.3)' };
+        case 'skill': return { bg: 'rgba(168, 85, 247, 0.15)', color: '#c084fc', border: 'rgba(168, 85, 247, 0.3)' };
+        case 'rule': return { bg: 'rgba(244, 63, 94, 0.15)', color: '#fb7185', border: 'rgba(244, 63, 94, 0.3)' };
+        case 'design': return { bg: 'rgba(16, 185, 129, 0.15)', color: '#34d399', border: 'rgba(16, 185, 129, 0.3)' };
+        case 'requirement': return { bg: 'rgba(245, 158, 11, 0.15)', color: '#fbbf24', border: 'rgba(245, 158, 11, 0.3)' };
+        case 'source': return { bg: 'rgba(20, 184, 166, 0.15)', color: '#2dd4bf', border: 'rgba(20, 184, 166, 0.3)' };
+        default: return { bg: 'rgba(99, 102, 241, 0.15)', color: '#818cf8', border: 'rgba(99, 102, 241, 0.3)' };
+      }
+    }
+
+    function renderKgKindChips() {
+      const container = document.getElementById('kgKindChips');
+      if (!container) return;
+
+      const nodes = CURRENT_KNOWLEDGE.nodes || [];
+      const cats = {};
+      nodes.forEach(n => {
+        const k = n.kind || 'Other';
+        cats[k] = (cats[k] || 0) + 1;
+      });
+
+      let html = `<button class="chip-btn ${currentKgKindFilter === 'ALL' ? 'active' : ''}" data-kind="ALL" onclick="setKnowledgeKindFilter('ALL', this)">Tất cả (${nodes.length})</button>`;
+      
+      const kindOrder = ['Role', 'Skill', 'Rule', 'Design', 'Requirement', 'Source'];
+      kindOrder.forEach(k => {
+        if (cats[k]) {
+          html += `<button class="chip-btn ${currentKgKindFilter === k ? 'active' : ''}" data-kind="${k}" onclick="setKnowledgeKindFilter('${k}', this)">${k} (${cats[k]})</button>`;
+        }
+      });
+      // Any remaining kinds
+      Object.keys(cats).forEach(k => {
+        if (!kindOrder.includes(k)) {
+          html += `<button class="chip-btn ${currentKgKindFilter === k ? 'active' : ''}" data-kind="${k}" onclick="setKnowledgeKindFilter('${k}', this)">${k} (${cats[k]})</button>`;
+        }
+      });
+
+      container.innerHTML = html;
+    }
+
+    function setKnowledgeKindFilter(kind, elem) {
+      currentKgKindFilter = kind;
+      if (elem && elem.parentElement) {
+        elem.parentElement.querySelectorAll('.chip-btn').forEach(btn => btn.classList.remove('active'));
+        elem.classList.add('active');
+      }
+      renderKnowledgeGraph();
+    }
+
+    function filterKnowledgeGraph() {
+      renderKnowledgeGraph();
+    }
+
+    function filterByKnowledgeTarget(targetId) {
+      const input = document.getElementById('kgSearchInput');
+      if (input) {
+        input.value = targetId;
+        currentKgKindFilter = 'ALL';
+        renderKgKindChips();
+        renderKnowledgeGraph();
+      }
+    }
+
+    function copyNodeId(id, btn) {
+      navigator.clipboard.writeText(id).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✓ Đã chép';
+        btn.style.color = '#34d399';
+        setTimeout(() => {
+          btn.innerHTML = orig;
+          btn.style.color = '';
+        }, 1500);
+      });
+    }
+
+    function renderKnowledgeGraph() {
+      renderKgKindChips();
+      const container = document.getElementById('kgGrid');
+      if (!container) return;
+
+      const nodes = CURRENT_KNOWLEDGE.nodes || [];
+      const query = (document.getElementById('kgSearchInput') ? document.getElementById('kgSearchInput').value : '').toLowerCase().trim();
+
+      const filtered = nodes.filter(n => {
+        if (currentKgKindFilter !== 'ALL' && n.kind !== currentKgKindFilter) return false;
+        if (query) {
+          const matchId = (n.id || '').toLowerCase().includes(query);
+          const matchTitle = (n.title || '').toLowerCase().includes(query);
+          const matchRef = (n.content_ref || '').toLowerCase().includes(query);
+          const matchOwner = (n.owner_role || '').toLowerCase().includes(query);
+          const matchRel = (n.relations || []).some(r => (r.target || '').toLowerCase().includes(query) || (r.type || '').toLowerCase().includes(query));
+          if (!matchId && !matchTitle && !matchRef && !matchOwner && !matchRel) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 48px; color: var(--text-muted); background: var(--bg-surface); border: 1px dashed var(--border-subtle); border-radius: var(--radius-md);">
+            <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
+            <div>Không tìm thấy node tri thức nào khớp với bộ lọc hoặc từ khóa "${query}".</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(n => {
+        const style = getKindBadgeStyle(n.kind);
+        const rels = n.relations || [];
+        const relationsHtml = rels.length > 0 ? `
+          <div style="margin-top: 10px;">
+            <div style="font-size: 10px; color: var(--text-subtle); margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+              Kết nối quan hệ (${rels.length}):
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+              ${rels.slice(0, 6).map(r => `
+                <span onclick="filterByKnowledgeTarget('${r.target}')" style="font-size: 10px; cursor: pointer; background: rgba(255,255,255,0.05); padding: 2px 7px; border-radius: 4px; color: #93c5fd; border: 1px solid rgba(255,255,255,0.08); transition: all 0.2s;" onmouseover="this.style.background='rgba(59,130,246,0.2)'; this.style.borderColor='#3b82f6';" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.borderColor='rgba(255,255,255,0.08)';" title="${r.type}: Click để tìm kiếm node này">
+                  🔗 ${r.target.length > 28 ? r.target.substring(0, 26) + '…' : r.target}
+                </span>
+              `).join('')}
+              ${rels.length > 6 ? `<span style="font-size: 10px; color: var(--text-subtle); align-self: center;">+${rels.length - 6} nữa</span>` : ''}
+            </div>
+          </div>
+        ` : '';
+
+        return `
+          <div class="doc-card" style="display: flex; flex-direction: column; justify-content: space-between; padding: 16px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); transition: transform 0.2s, border-color 0.2s;">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span class="status-pill" style="background: ${style.bg}; color: ${style.color}; border: 1px solid ${style.border}; font-weight: 700; text-transform: uppercase;">
+                  ${n.kind}
+                </span>
+                <span style="font-size: 11px; color: var(--text-subtle);">Owner: <strong style="color: #cbd5e1;">${n.owner_role || 'system'}</strong></span>
+              </div>
+              <div style="font-size: 11px; font-family: var(--font-mono); color: #818cf8; margin-bottom: 6px; word-break: break-all;">
+                ${n.id}
+              </div>
+              <h3 style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px; line-height: 1.4;">${n.title || n.id}</h3>
+              ${n.content_ref ? `
+                <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px; word-break: break-all;">
+                  📄 <code style="font-size: 10px; color: #94a3b8; background: rgba(0,0,0,0.3); padding: 2px 4px; border-radius: 3px;">${n.content_ref}</code>
+                </div>
+              ` : ''}
+              ${relationsHtml}
+            </div>
+            <div style="border-top: 1px solid var(--border-subtle); padding-top: 10px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; color: var(--text-subtle);">v${n.version || 1} • <span style="text-transform: capitalize;">${n.state || 'active'}</span></span>
+              <button class="btn btn-ghost" style="padding: 3px 8px; font-size: 11px;" onclick="copyNodeId('${n.id}', this)" title="Sao chép Node ID">
+                📋 Copy
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     /* ==========================================================================
@@ -970,6 +1505,84 @@
       }, 3500);
     }
 
+    async function reloadDashboardDataInPlace() {
+      try {
+        const res = await fetch('/data.js?t=' + Date.now());
+        if (!res.ok) return;
+        const text = await res.text();
+        const jsonMatch = text.match(/window\.DASH\s*=\s*(\{[\s\S]*\});?\s*$/);
+        if (!jsonMatch) return;
+        const newDash = JSON.parse(jsonMatch[1]);
+        window.DASH = newDash;
+
+        if (newDash.multiProjects) {
+          Object.assign(MULTI_PROJECTS, newDash.multiProjects);
+        }
+
+        if (CURRENT_PROJECT_ID && newDash.multiProjects && newDash.multiProjects[CURRENT_PROJECT_ID]) {
+          const p = newDash.multiProjects[CURRENT_PROJECT_ID];
+          SYSTEM_DOCS = p.docs || [];
+          ALL_CARDS = (p.cards && p.cards.length > 0) ? p.cards : (newDash.cards || []);
+          GROUPED_CARDS = (p.grouped_cards && p.grouped_cards.length > 0) ? p.grouped_cards : (newDash.groupedCards || []);
+          EPIC_META = p.epics || newDash.epicMeta || {};
+          CURRENT_MANTIS = p.mantis || { total: 0, bugs: [] };
+          CURRENT_DIAGRAMS = p.diagrams || [];
+          updateProjectHeader(p);
+        } else {
+          SYSTEM_DOCS = newDash.docs || [];
+          ALL_CARDS = newDash.cards || [];
+          GROUPED_CARDS = newDash.groupedCards || [];
+          EPIC_META = newDash.epicMeta || {};
+          CURRENT_MANTIS = newDash.mantis || { total: 0, bugs: [] };
+          CURRENT_DIAGRAMS = newDash.diagrams || [];
+        }
+        CURRENT_KNOWLEDGE = newDash.knowledgeGraph || { nodes_count: 0, nodes: [], categories: {} };
+
+        // Cập nhật ngầm lại toàn bộ DOM (không reload, không chớp trang)
+        updateKPIAndBadges();
+        renderEpicOptions();
+        renderDocCategoryChips();
+        renderCards();
+        renderDocs();
+        renderCodeTasks();
+        renderGates();
+        renderMantisBugs();
+        renderDiagrams();
+        renderKnowledgeGraph();
+
+        // Nếu người dùng đang mở Drawer tài liệu, cập nhật ngầm ngay nội dung mới
+        const openDocId = sessionStorage.getItem('dash_open_doc');
+        const drawerPanel = document.getElementById('drawerPanel');
+        if (openDocId && drawerPanel && drawerPanel.classList.contains('open')) {
+          const doc = SYSTEM_DOCS.find(d => d.id === openDocId);
+          if (doc) {
+            doc.html_body = undefined;
+            loadDocBody(doc, html => {
+              const bodyElem = document.getElementById('drawerDocBody');
+              if (bodyElem) bodyElem.innerHTML = html;
+            });
+          }
+        }
+
+        // Tương tự cho task card đang mở
+        const openCardId = sessionStorage.getItem('dash_open_card');
+        if (openCardId && drawerPanel && drawerPanel.classList.contains('open')) {
+          const card = ALL_CARDS.find(c => c.id === openCardId);
+          if (card) {
+            card.html_body = undefined;
+            loadCardBody(card, html => {
+              const bodyElem = document.getElementById('drawerTaskBody');
+              if (bodyElem) bodyElem.innerHTML = html;
+            });
+          }
+        }
+
+        showRealtimeToast('Đã tự động cập nhật ngầm dữ liệu mới nhất (không gián đoạn trang)!');
+      } catch (e) {
+        console.warn('Lỗi cập nhật ngầm:', e);
+      }
+    }
+
     async function checkRealtimeUpdate() {
       if (isCheckingVersion) return;
       isCheckingVersion = true;
@@ -981,10 +1594,7 @@
             lastKnownVersion = data.version;
           } else if (data.version && data.version !== lastKnownVersion) {
             lastKnownVersion = data.version;
-            showRealtimeToast('Phát hiện tài liệu/task thay đổi! Đang tự động cập nhật Realtime...');
-            setTimeout(() => {
-              window.location.reload();
-            }, 600);
+            await reloadDashboardDataInPlace();
           }
         }
       } catch(e) {}

@@ -25,7 +25,7 @@ except Exception:
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
-TASKS = ROOT / 'tasks'
+TASKS = (ROOT / 'doc' / 'delivery' / 'tasks') if (ROOT / 'doc' / 'delivery' / 'tasks').is_dir() else (ROOT / 'tasks')
 PHASE_ORDER = ['PT', 'GĐ1', 'GĐ2']
 STATUS_ICON = {'done': '✅', 'review': '👀', 'doing': '🔄', 'todo': '⬜', 'blocked': '⛔', 'cancelled': '🚫'}
 

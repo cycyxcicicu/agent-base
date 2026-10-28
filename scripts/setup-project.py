@@ -116,25 +116,39 @@ def setup_project(target_dir: Path) -> int:
     print(f"📁 Dự Án Mục Tiêu:           {target_dir}")
     print("-" * 70)
 
-    # 1. Tạo cấu trúc thư mục chuẩn cục bộ
-    inbox_dir = target_dir / "docs" / "notes" / "inbox"
-    archive_dir = target_dir / "docs" / "notes" / "archive"
-    tasks_dir = target_dir / "tasks"
-    doc_dir = target_dir / "doc"
+    # 1. Thống nhất một thư mục tài liệu duy nhất (doc hoặc docs)
+    doc_name = "doc" if (target_dir / "doc").is_dir() else ("docs" if (target_dir / "docs").is_dir() else "doc")
+    doc_dir = target_dir / doc_name
+    inbox_dir = doc_dir / "notes" / "inbox"
+    archive_dir = doc_dir / "notes" / "archive"
+    tasks_dir = doc_dir / "delivery" / "tasks"
 
-    for d in [inbox_dir, archive_dir, tasks_dir, doc_dir]:
+    doc_subdirs = [
+        doc_dir / "features",      # Gói hồ sơ theo từng Use Case / Feature
+        doc_dir / "architecture",  # Kiến trúc hệ thống, Domain Glossary, chuẩn DB
+        doc_dir / "references",    # Dữ liệu nguồn, Master Data, API đối tác ngoài
+        doc_dir / "governance",    # Quy trình kỹ thuật (TDD, Scrum, CMMI) & Templates
+        doc_dir / "delivery",      # Tiến độ Roadmap, Handoff, Quản trị Defect/Bug
+        tasks_dir,                 # Thẻ task, Kanban Board trong delivery
+    ]
+
+    for d in [inbox_dir, archive_dir, doc_dir] + doc_subdirs:
         d.mkdir(parents=True, exist_ok=True)
         gitkeep = d / ".gitkeep"
         if not gitkeep.is_file() and not any(d.iterdir()):
             gitkeep.touch()
 
-    print("✅ 1. Khởi tạo cấu trúc thư mục chuẩn:")
-    print("   - docs/notes/inbox/   (Hộp thư bàn giao nội bộ của dự án)")
-    print("   - docs/notes/archive/ (Lưu trữ bài học)")
-    print("   - tasks/              (Quản lý task & thẻ việc)")
-    print("   - doc/                (Tài liệu nghiệp vụ & đặc tả chức năng)")
+    print(f"✅ 1. Khởi tạo cấu trúc tài liệu chuẩn Enterprise Global (tại {doc_name}/):")
+    print(f"   - {doc_name}/notes/inbox/         (Hộp thư bàn giao nội bộ của dự án)")
+    print(f"   - {doc_name}/notes/archive/       (Lưu trữ bài học)")
+    print(f"   - {doc_name}/delivery/tasks/      (Quản lý task & thẻ việc)")
+    print(f"   - {doc_name}/features/            (Hồ sơ đóng gói theo từng Use Case)")
+    print(f"   - {doc_name}/architecture/        (Kiến trúc tổng thể & Domain Glossary)")
+    print(f"   - {doc_name}/references/          (Tài liệu nguồn, Master Data & API đối tác)")
+    print(f"   - {doc_name}/governance/          (Quy trình phát triển & Biểu mẫu)")
+    print(f"   - {doc_name}/delivery/            (Lộ trình Roadmap, Báo cáo & Lỗi Mantis)")
 
-    # 2. Tạo file tasks/BOARD.md nếu chưa có
+    # 2. Tạo file BOARD.md nếu chưa có
     board_file = tasks_dir / "BOARD.md"
     if not board_file.is_file():
         board_content = f"""# Bảng Công Việc Dự Án (Task Board)
@@ -153,9 +167,9 @@ def setup_project(target_dir: Path) -> int:
 *(Chưa có)*
 """
         board_file.write_text(board_content, encoding="utf-8")
-        print("✅ 2. Tạo bảng công việc khởi điểm: tasks/BOARD.md")
+        print(f"✅ 2. Tạo bảng công việc khởi điểm: {doc_name}/delivery/tasks/BOARD.md")
     else:
-        print("⚪ 2. Bảng công việc tasks/BOARD.md: Đã có sẵn")
+        print(f"⚪ 2. Bảng công việc: Đã có sẵn ({doc_name}/delivery/tasks/BOARD.md)")
 
     # 3. Ghi file liên kết .agentbase.json
     agentbase_link_file = target_dir / ".agentbase.json"
@@ -323,8 +337,8 @@ Dự án này sử dụng bộ khung chuẩn hóa từ `agent-base`.
     print("      - Tham khảo các mẫu server tại: .kilo/mcp.example.json")
     print("      - Nếu muốn dùng MCP riêng trên máy bạn: sao chép thành .kilo/mcp.json và tự chỉnh sửa.")
     print("      - File .kilo/mcp.json đã được .gitignore bảo vệ 100%, không bao giờ bị đẩy lên Git!")
-    print("   4. Mọi tài liệu nghiệp vụ ghi vào: doc/")
-    print("   5. Mọi task theo dõi tại:          tasks/BOARD.md")
+    print(f"   4. Mọi tài liệu nghiệp vụ ghi vào: {doc_name}/")
+    print(f"   5. Mọi task theo dõi tại:          {doc_name}/delivery/tasks/BOARD.md")
     print("=" * 70)
     return 0
 

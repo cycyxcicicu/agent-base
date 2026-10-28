@@ -40,6 +40,7 @@ Bắt lỗi và vi phạm quy tắc trước khi code vào nhánh tích hợp, v
 
 ## Đầu ra
 - Kết luận **duyệt** hoặc **trả lại** ghi vào card, kèm danh sách nhận xét: file, dòng, vấn đề, gợi ý.
+- **Biên bản Thẩm định Gate 2 Review (AGENTS.md §18)**: Thẩm định thiết kế trước khi code (DoR): quét rủi ro DB table lock, Full Table Scan, index phù hợp, rủi ro tràn bộ nhớ OOM, idempotency. Ký Biên bản Gate 2 cùng Architect và QA trước khi trình Người dùng duyệt cho Dev lập trình.
 - Kết quả checklist (mục bên dưới).
 
 ## Quyền hạn

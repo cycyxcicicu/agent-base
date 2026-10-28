@@ -259,6 +259,11 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             if file_path.suffix.lower() == ".html" and file_path != (VIEWER_DIR / "index.html") and file_path != (VIEWER_DIR / "monitor.html"):
                 content = file_path.read_text(encoding="utf-8", errors="ignore")
                 injected = """
+<script>
+  if (window.self !== window.top) {
+    document.documentElement.classList.add('archify-in-iframe');
+  }
+</script>
 <style id="archify-clean-view">
   html, body {
     margin: 0 !important;
@@ -266,6 +271,77 @@ class DashboardHandler(SimpleHTTPRequestHandler):
     padding-bottom: 0.5rem !important;
     box-sizing: border-box !important;
   }
+  /* Khi nhúng trong iframe (Drawer / Tab SRS / Viewer modal): ẨN nút quay lại, bỏ margin né nút */
+  html.archify-in-iframe #archify-back-to-dashboard {
+    display: none !important;
+  }
+  html.archify-in-iframe .header {
+    margin-left: 0 !important;
+    padding-right: 15rem !important;
+    margin-bottom: 0.4rem !important;
+  }
+  html.archify-in-iframe .header-row {
+    min-width: 0 !important;
+  }
+  html.archify-in-iframe .header-row h1 {
+    font-size: 1.1rem !important;
+    line-height: 1.35 !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* Khi mở trực tiếp toàn màn hình ngoài tab mới */
+  html:not(.archify-in-iframe) #archify-back-to-dashboard {
+    position: fixed;
+    top: 12px;
+    left: 16px;
+    z-index: 99999;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    background: rgba(15, 23, 42, 0.92);
+    color: #38bdf8;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid rgba(56, 189, 248, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.45);
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+  }
+  html:not(.archify-in-iframe) #archify-back-to-dashboard:hover {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #38bdf8;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+  }
+  @media (min-width: 1024px) {
+    html:not(.archify-in-iframe) .header {
+      margin-left: 190px !important;
+      margin-bottom: 0.4rem !important;
+    }
+  }
+  @media (max-width: 1023px) {
+    html:not(.archify-in-iframe) .header {
+      margin-top: 48px !important;
+      margin-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  }
+
+  /* Cố định tiêu đề h1 không bao giờ bị bóp nát thành cột dọc */
+  .header-row h1 {
+    white-space: normal !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    min-width: 0 !important;
+  }
+
   /* Khi cột ở bên phải hoặc thu gọn: giữ fit màn hình không trượt trang */
   html:is([data-reader-rail="true"], [data-reader-rail="collapsed"], [data-reader-rail="overlay"]) {
     height: 100vh !important;
@@ -287,40 +363,6 @@ class DashboardHandler(SimpleHTTPRequestHandler):
     height: auto !important;
     max-height: none !important;
     overflow-y: auto !important;
-  }
-  /* Nút Quay lại Dashboard tinh tế, duy nhất ở góc trên bên trái */
-  #archify-back-to-dashboard {
-    position: fixed;
-    top: 12px;
-    left: 16px;
-    z-index: 99999;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 16px;
-    background: rgba(15, 23, 42, 0.92);
-    color: #38bdf8;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    text-decoration: none;
-    border: 1px solid rgba(56, 189, 248, 0.5);
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.45);
-    backdrop-filter: blur(10px);
-    transition: all 0.2s ease;
-  }
-  #archify-back-to-dashboard:hover {
-    background: #0284c7;
-    color: #ffffff;
-    border-color: #38bdf8;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
-  }
-  /* Tiêu đề sơ đồ né vừa vặn nút quay lại, thoáng đãng */
-  .header {
-    margin-left: 200px !important;
-    margin-bottom: 0.4rem !important;
   }
   .diagram-container {
     height: calc(100vh - 4.5rem) !important;

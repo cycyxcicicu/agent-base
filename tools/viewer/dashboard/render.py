@@ -20,6 +20,7 @@ from pathlib import Path
 from .collect import (
     DOCS_DIR, ROOT, STATUS_META, build_dynamic_roadmap_stages, discover_system_docs, load_all_cards,
     load_code_commits, load_epics_and_phases, load_gates, load_project_info, collect_multi_projects,
+    attach_task_360_bundles,
 )
 
 ASSETS_DIR = Path(__file__).resolve().parent.parent / 'assets'
@@ -41,6 +42,7 @@ def build_context():
     gates = load_gates()
     git_stat = load_code_commits()
     system_docs = discover_system_docs(LINK_PREFIX)
+    cards, grouped_cards = attach_task_360_bundles(cards, system_docs, [], {})
     roadmap_stages = build_dynamic_roadmap_stages(phases, epics, cards)
 
     # Nạp danh sách đa dự án (Multi-Project Registry) nếu có projects.json
@@ -49,6 +51,7 @@ def build_context():
     multi_projects = multi.get('all_projects', {})
     project_list = multi.get('project_list', [])
     default_proj_id = multi.get('default_project')
+    knowledge_graph = multi.get('knowledge_graph', {'nodes_count': 0, 'nodes': []})
 
     # Nếu dự án hiện tại chưa có trong multi_projects, thêm vào danh sách
     if not project_list:
@@ -67,6 +70,8 @@ def build_context():
         def_proj = multi_projects[default_proj_id]
         if def_proj.get('cards'):
             cards = def_proj['cards']
+        if def_proj.get('grouped_cards'):
+            grouped_cards = def_proj['grouped_cards']
         if def_proj.get('docs'):
             system_docs = def_proj['docs']
         if def_proj.get('epics'):
@@ -225,14 +230,14 @@ def build_context():
     '''
 
     return {
-        'proj_info': proj_info, 'epics': epics, 'cards': cards, 'gates': gates, 'git_stat': git_stat,
+        'proj_info': proj_info, 'epics': epics, 'cards': cards, 'grouped_cards': grouped_cards, 'gates': gates, 'git_stat': git_stat,
         'system_docs': system_docs, 'total_tasks': total_tasks, 'done_tasks': done_tasks,
         'doing_tasks': doing_tasks, 'todo_tasks': todo_tasks, 'code_tasks_count': code_tasks_count,
         'pct_complete': pct_complete, 'now_str': now_str, 'brand_letter': brand_letter,
         'doc_category_chips_str': doc_category_chips_str, 'epic_options_str': epic_options_str,
         'roadmap_stages_rendered_str': roadmap_stages_rendered_str, 'doc_categories': doc_categories,
         'multi_projects': multi_projects, 'project_list': project_list, 'default_proj_id': default_proj_id,
-        'project_selector_html': project_selector_html
+        'project_selector_html': project_selector_html, 'knowledge_graph': knowledge_graph
     }
 
 
@@ -268,6 +273,7 @@ def write_site(ctx, out_dir: Path = OUTPUT_DIR) -> dict:
     # 1. Nội dung từng tài liệu / task card ra file riêng, chỉ mục (không kèm nội dung) vào data.js
     index_docs = split_bodies(ctx['system_docs'], 'docs', 'window.__setDoc')
     index_cards = split_bodies(ctx['cards'], 'cards', 'window.__setCard')
+    index_grouped_cards = split_bodies(ctx.get('grouped_cards', []), 'cards', 'window.__setCard')
 
     # Xử lý các tài liệu của từng project trong Multi-Projects
     index_multi_projects = {}
@@ -288,6 +294,14 @@ def write_site(ctx, out_dir: Path = OUTPUT_DIR) -> dict:
             (out_dir / 'cards' / f"{fname}.js").write_text(f'window.__setCardMulti({json.dumps(p_id)}, {json.dumps(c_id)}, {_js_json(body)});\n', encoding='utf-8')
             slim_cards.append({k: v for k, v in c.items() if k not in ('html_body', 'raw_md')})
 
+        slim_grouped = []
+        for c in p_data.get('grouped_cards', []):
+            c_id = c['id']
+            fname = f"{re.sub(r'[^A-Za-z0-9_.-]', '_', p_id)}_{re.sub(r'[^A-Za-z0-9_.-]', '_', str(c_id))}"
+            body = c.get('html_body', '')
+            (out_dir / 'cards' / f"{fname}.js").write_text(f'window.__setCardMulti({json.dumps(p_id)}, {json.dumps(c_id)}, {_js_json(body)});\n', encoding='utf-8')
+            slim_grouped.append({k: v for k, v in c.items() if k not in ('html_body', 'raw_md')})
+
         index_multi_projects[p_id] = {
             'id': p_id,
             'name': p_data.get('name', p_id),
@@ -298,7 +312,8 @@ def write_site(ctx, out_dir: Path = OUTPUT_DIR) -> dict:
             'mantis': p_data.get('mantis', {'total': 0, 'bugs': []}),
             'epics': p_data.get('epics', {}),
             'phases': p_data.get('phases', {}),
-            'cards': slim_cards
+            'cards': slim_cards,
+            'grouped_cards': slim_grouped
         }
 
     # Chỉ mục tìm toàn văn: nội dung thô của card (chữ thường) gom vào một file, chỉ nạp khi người dùng tìm kiếm
@@ -309,12 +324,15 @@ def write_site(ctx, out_dir: Path = OUTPUT_DIR) -> dict:
     (out_dir / 'cards' / '_search.js').write_text('window.__setSearch(' + _js_json(search_idx) + ');\n', encoding='utf-8')
     for c in index_cards:
         c.pop('raw_md', None)
+    for c in index_grouped_cards:
+        c.pop('raw_md', None)
 
     data = {
-        'cards': index_cards, 'gates': ctx['gates'], 'statusMeta': STATUS_META, 'epicMeta': ctx['epics'],
+        'cards': index_cards, 'groupedCards': index_grouped_cards, 'gates': ctx['gates'], 'statusMeta': STATUS_META, 'epicMeta': ctx['epics'],
         'projectInfo': ctx['proj_info'], 'docs': index_docs,
         'multiProjects': index_multi_projects, 'projectList': ctx.get('project_list', []),
         'defaultProject': ctx.get('default_proj_id'),
+        'knowledgeGraph': ctx.get('knowledge_graph'),
     }
     (out_dir / 'data.js').write_text('window.DASH = ' + _js_json(data) + ';\n', encoding='utf-8')
 
@@ -328,6 +346,7 @@ def write_site(ctx, out_dir: Path = OUTPUT_DIR) -> dict:
         'DOC_CATEGORY_CHIPS_STR': ctx['doc_category_chips_str'], 'EPIC_OPTIONS_STR': ctx['epic_options_str'],
         'ROADMAP_STAGES_RENDERED_STR': ctx['roadmap_stages_rendered_str'], 'DIAGRAM_LINK': _diagram_link(ctx),
         'PROJECT_SELECTOR_HTML': ctx.get('project_selector_html', ''),
+        'LEN_KNOWLEDGE': ctx.get('knowledge_graph', {}).get('nodes_count', 0),
     }
     html = (ASSETS_DIR / 'index.template.html').read_text(encoding='utf-8')
     # Thay một lượt bằng regex để giá trị chứa '@@' (nếu có) không bị thay lần hai
@@ -350,3 +369,8 @@ def main():
           f"({len(ctx['cards'])} task cards, {len(ctx['system_docs'])} tài liệu, {stats['files']} file, "
           f"tổng {stats['bytes'] // 1024} KB; trang đầu {stats['index_bytes'] // 1024} KB + data {stats['data_bytes'] // 1024} KB)")
     return 0
+
+
+if __name__ == '__main__':
+    import sys
+    sys.exit(main())

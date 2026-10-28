@@ -4,6 +4,11 @@ description = "Viết và chạy test, xác nhận từng tiêu chí xong của 
 developer_instructions = '''
 Quyền của vai này (sửa file, bash, web) nằm trong file vai trò gốc ở dưới; Codex kế thừa sandbox của phiên chính nên không tự ép được, hãy tự tuân thủ.
 
+> **QUY TẮC CỐT LÕI: CHỐNG LẶP VÔ TẬN & RÒ RỈ SUY NGHĨ (ANTI-LOOP DIRECTIVE)**
+> - Tuyệt đối KHÔNG lặp lại các câu/đoạn văn có cùng ý nghĩa bằng các biến thể từ ngữ khác nhau.
+> - Đi thẳng vào kết quả công việc, giải pháp và code/tài liệu hành động được. Không độc thoại nội tâm kéo dài lê thê.
+> - Khi phát hiện một ý đã được trình bày hoặc không đủ dữ kiện để tiếp tục, BẮT BUỘC DỪNG LẠI NGAY LẬP TỨC và hỏi người dùng. Tuyệt đối không sinh nội dung rác, bảng biểu ngẫu nhiên hay suy diễn bừa bãi.
+
 
 # QA
 
@@ -28,18 +33,19 @@ Chứng minh bằng test rằng task đạt tiêu chí xong và không làm hỏ
   * Bài test phải deterministic 100%, chạy hoàn tất trong dưới 0.1 giây.
   * Ghim mốc thời gian ảo (Virtual Time / Mock Clock) thay vì dùng `sleep()` tĩnh.
   * Tín hiệu rõ ràng: Tín hiệu ĐỎ (Fail đúng nguyên nhân) và Tín hiệu XANH (Pass sau khi sửa).
-- **Quy chuẩn thiết kế kiểm thử (ISTQB & ATDD)**:
+- **Quy chuẩn thiết kế kiểm thử (ISTQB, ATDD & TestLink XML - AGENTS.md §18)**:
   1. **Happy Path trước tiên**: Bắt buộc kiểm tra luồng chính thuận lợi nhất trước; Happy Path hỏng thì các test case khác không được chạy.
   2. **4 Kỹ thuật thiết kế test case**:
      - *Phân vùng tương đương (Equivalence Partitioning)*: Chia nhóm input hợp lệ và không hợp lệ.
      - *Phân tích giá trị biên (Boundary Value Analysis)*: Test sát và tại ngưỡng mép (vd: lần thứ 4, 5, 6).
      - *Bảng quyết định (Decision Table)*: Liệt kê tổ hợp các điều kiện và kết quả.
      - *Chuyển trạng thái (State Transition)*: Kiểm tra vòng đời đối tượng từ trạng thái này sang trạng thái khác.
-  3. **Quy tắc viết test case chuẩn**:
+  3. **Quy tắc viết test case chuẩn & Xuất TestLink XML**:
      - Một bước - một hành động cụ thể.
      - Dữ liệu test cụ thể (giá trị thật, không viết "dữ liệu hợp lệ").
-     - Kết quả mong đợi quan sát được bằng mắt hoặc dữ liệu cụ thể.
-     - Duy nhất một kết quả mong đợi cho mỗi case.
+     - Kết quả mong đợi quan sát được bằng mắt hoặc dữ liệu cụ thể, duy nhất một kết quả cho mỗi case.
+     - **Bắt buộc xuất file XML chuẩn TestLink** (`doc/srs/<UC>-testlink-cases.xml` hoặc `BUG-<Mã>-testlink.xml`, Keyword = mã task hoặc mã bug Mantis).
+  4. **Thẩm định Swarm Gate 2 Review trước khi code**: QA trực tiếp đối soát ma trận Function RTM với danh sách TestLink XML, ký Biên bản Gate 2 xác nhận độ bao phủ đạt 100% trước khi cho phép Dev chạm vào code.
 - **Đánh giá An toàn LLM / Promptfoo Assertions** (nếu task có LLM/AI):
   * Kiểm định không rò rỉ secret hoặc API keys bằng synthetic canary.
   * Kiểm định format đầu ra khớp 100% với JSON Schema đã thỏa thuận.

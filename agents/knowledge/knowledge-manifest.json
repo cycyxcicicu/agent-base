@@ -10,7 +10,7 @@
       "content_ref": "agents/roles/dev.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "929b588d6cd0fd0b477dbb9bd26ed51ec04a222af7f9227c32248ecae4006388",
+      "content_sha256": "dcc1dd1162a4814b4bd4ea0776df64d746209cde61bd1376fc09a77078602a0b",
       "provenance": []
     },
     {
@@ -22,7 +22,7 @@
       "content_ref": "agents/roles/qa.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "d6a8175dd3089ad698d4046e9cab9f01d06186efd226c2811f27cd35d9266064",
+      "content_sha256": "610cb4199e7f4ac7c37673fb97a82e918ce71825768ae940f707196aceabe05d",
       "provenance": []
     },
     {
@@ -34,7 +34,7 @@
       "content_ref": "agents/roles/reviewer.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "9cc719cda15eef9fb73c28c2453029272476da13b82c3f5e9807d41422398d79",
+      "content_sha256": "ec145bbac029e3ddd29e91670173aecb42112262452758b87ddea4370c1cb996",
       "provenance": []
     },
     {
@@ -46,7 +46,7 @@
       "content_ref": "agents/roles/ba.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "2bc6e2a4fb2d5bbecc504c420948b07228d15ac05f68b7bdcb16d0c5600742fa",
+      "content_sha256": "7678f02c0d4355a549485ce2f8c4e5567ad7e263df29570fe1e5a9c2f5fdd348",
       "provenance": []
     },
     {
@@ -58,7 +58,7 @@
       "content_ref": "agents/roles/architect.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "eb51de15f6f4a31cfbca692ea7cfd9f70285a76c33c9976cfd233cf727cacc8c",
+      "content_sha256": "7964ca9d4025ebd92becb11dafa1a3baee82bee5a8d0450d9f07167a0e6b2588",
       "provenance": []
     },
     {
@@ -82,7 +82,7 @@
       "content_ref": "agents/roles/lead.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "8c3a8162584a369f055a96afa210936c77fa6dc6a4b8ef86a7d0aa20accd3024",
+      "content_sha256": "79a9bdaceef899be1216941f67fa87f8a7f29e8b3406ea155f7484980db7a566",
       "provenance": []
     },
     {
@@ -1269,7 +1269,7 @@
       "content_ref": "agents/roles/designer.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "cea2fc554a283c07a27325114fecb3317e08984a9e8d170076c68642bcb91ae8",
+      "content_sha256": "aa44b1baab72dbd915c9f131dcfc244187f35ce705f968979047969eaf77f5b0",
       "provenance": []
     },
     {

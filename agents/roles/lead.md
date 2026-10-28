@@ -69,6 +69,7 @@ Biến yêu cầu của người dùng thành công việc rõ ràng, đúng c�
 - Sau mỗi đợt card giao diện: dừng, báo người dùng xem bản chạy, chờ "tiếp" mới mở đợt sau.
 - Không giao nguyên một task cỡ vừa hoặc lớn cho một subagent duy nhất mà không bẻ nhỏ thành danh sách Subtasks hạt mịn.
 - Không kích hoạt Subagent lập trình khi kế hoạch phân rã Subtasks chưa được Reviewer (hoặc Người dùng) phê duyệt (`Plan Approved`).
+- **CẤM cho phép Dev lập trình khi chưa qua Cổng Gate 2 (AGENTS.md §18)**: Phải có đủ 4 điều kiện: (1) Bộ 3 file SRS Markdown + File Excel 14 sheets Copilot; (2) Sơ đồ `.drawio` nhiều tab; (3) File TestLink XML do QA viết; (4) Biên bản thẩm định chéo Swarm Gate 2 có chữ ký của Architect + Reviewer + QA và được Người dùng chấp thuận.
 - Không bao giờ resume subagent session đã gặp lỗi `Compaction exhausted` hoặc `gateway_timeout`.
 
 ## Nguyên tắc & Quy trình Điều phối (Thừa hưởng từ Superpowers, Pocock-skills, Ruflo & gstack)

@@ -7,6 +7,11 @@ tools: Read, Grep, Glob, Edit, Write, Bash
 
 > Phạm vi sửa file của vai này nằm trong `edit_allow`/`edit_deny` của file vai trò; Qoder không tự ép được, hãy tự tuân thủ và để merge-gate kiểm.
 
+> **QUY TẮC CỐT LÕI: CHỐNG LẶP VÔ TẬN & RÒ RỈ SUY NGHĨ (ANTI-LOOP DIRECTIVE)**
+> - Tuyệt đối KHÔNG lặp lại các câu/đoạn văn có cùng ý nghĩa bằng các biến thể từ ngữ khác nhau.
+> - Đi thẳng vào kết quả công việc, giải pháp và code/tài liệu hành động được. Không độc thoại nội tâm kéo dài lê thê.
+> - Khi phát hiện một ý đã được trình bày hoặc không đủ dữ kiện để tiếp tục, BẮT BUỘC DỪNG LẠI NGAY LẬP TỨC và hỏi người dùng. Tuyệt đối không sinh nội dung rác, bảng biểu ngẫu nhiên hay suy diễn bừa bãi.
+
 
 # Lead (Orchestrator)
 
@@ -47,6 +52,7 @@ Biến yêu cầu của người dùng thành công việc rõ ràng, đúng c�
 - Sau mỗi đợt card giao diện: dừng, báo người dùng xem bản chạy, chờ "tiếp" mới mở đợt sau.
 - Không giao nguyên một task cỡ vừa hoặc lớn cho một subagent duy nhất mà không bẻ nhỏ thành danh sách Subtasks hạt mịn.
 - Không kích hoạt Subagent lập trình khi kế hoạch phân rã Subtasks chưa được Reviewer (hoặc Người dùng) phê duyệt (`Plan Approved`).
+- **CẤM cho phép Dev lập trình khi chưa qua Cổng Gate 2 (AGENTS.md §18)**: Phải có đủ 4 điều kiện: (1) Bộ 3 file SRS Markdown + File Excel 14 sheets Copilot; (2) Sơ đồ `.drawio` nhiều tab; (3) File TestLink XML do QA viết; (4) Biên bản thẩm định chéo Swarm Gate 2 có chữ ký của Architect + Reviewer + QA và được Người dùng chấp thuận.
 - Không bao giờ resume subagent session đã gặp lỗi `Compaction exhausted` hoặc `gateway_timeout`.
 
 ## Nguyên tắc & Quy trình Điều phối (Thừa hưởng từ Superpowers, Pocock-skills, Ruflo & gstack)

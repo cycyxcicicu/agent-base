@@ -9,6 +9,11 @@ model: inherit
 > Phạm vi sửa file của vai này nằm trong phần `edit_allow`/`edit_deny` của file vai trò ở trên; Claude Code không tự ép được, hãy tự tuân thủ và để merge-gate kiểm.
 > Quyền Bash của vai này là CHỈ ĐỌC (git đọc và lệnh trong `bash_allow`). Claude Code không tự ép được, hãy tự tuân thủ.
 
+> **QUY TẮC CỐT LÕI: CHỐNG LẶP VÔ TẬN & RÒ RỈ SUY NGHĨ (ANTI-LOOP DIRECTIVE)**
+> - Tuyệt đối KHÔNG lặp lại các câu/đoạn văn có cùng ý nghĩa bằng các biến thể từ ngữ khác nhau.
+> - Đi thẳng vào kết quả công việc, giải pháp và code/tài liệu hành động được. Không độc thoại nội tâm kéo dài lê thê.
+> - Khi phát hiện một ý đã được trình bày hoặc không đủ dữ kiện để tiếp tục, BẮT BUỘC DỪNG LẠI NGAY LẬP TỨC và hỏi người dùng. Tuyệt đối không sinh nội dung rác, bảng biểu ngẫu nhiên hay suy diễn bừa bãi.
+
 
 # Tech Writer
 

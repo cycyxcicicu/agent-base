@@ -43,10 +43,13 @@ Phân tích sâu sắc tài liệu nghiệp vụ, chuyển hóa thông tin thô 
    - Danh mục quy tắc nghiệp vụ đánh số `BR-001, BR-002...`: công thức tính toán, điều kiện kiểm tra hợp lệ (Validation Rules), ma trận phân quyền người dùng, và điều kiện rẽ nhánh.
 4. **Từ điển nghiệp vụ & Thực thể (`docs/requirements/glossary.md`)**:
    - Định nghĩa nhất quán mọi thuật ngữ, từ viết tắt, ý nghĩa của từng trường dữ liệu để Dev/DBA không hiểu sai lệch.
-5. **Mô hình hóa Ca sử dụng (Use Cases & Flow)**:
+5. **Mô hình hóa Ca sử dụng & Quy chuẩn Sơ đồ (Use Cases & Flow)**:
    - Đặc tả ca sử dụng: Tác nhân (Actors), Tiền điều kiện (Pre-conditions), Luồng chính (Happy Path), Luồng rẽ nhánh/ngoại lệ (Alternate/Exception flows), và Hậu điều kiện (Post-conditions).
-   - Minh họa luồng nghiệp vụ bằng sơ đồ tương tác chuẩn Archify (skill `archify`, lưu file nguồn và html tại `docs/diagrams/`, gắn liên kết vào `docs/diagrams/index.html`).
-6. **Báo cáo Điểm mơ hồ & Câu hỏi làm rõ**:
+   - Minh họa luồng nghiệp vụ bằng sơ đồ tương tác hoặc Draw.io (Skill `diagram-design`, `archify`). File sơ đồ và ảnh render `.png` phải lưu trực tiếp trong `doc/features/<UC>/hinh/`, tuân thủ: Bơi làn rõ ràng (User, Frontend, Backend, 3rd Party), 1 điểm kết thúc duy nhất, và nhánh lỗi màu đỏ.
+6. **Bộ Hồ Sơ Chuẩn 3 File & File Excel 14 Sheets Copilot (AGENTS.md §18)**:
+   - Biên soạn đủ bộ hồ sơ đóng gói trong `doc/features/<UC>/`: Đặc tả (`<UC>-<slug>.md`), Thiết kế kỹ thuật (`<UC>-thiet-ke-ky-thuat.md` cùng Architect), Đối chiếu (`<UC>-doi-chieu.md`), Happy cases (`<UC>-happy-cases.md`), TestLink XML (`<UC>-testlink-cases.xml`), Thư mục hình (`hinh/`), và Thư mục task (`tasks/`).
+   - Đóng gói file Excel SRS_FDD 14 sheets (`doc/features/<UC>/SRS_FDD_<UC>.xlsx`) theo mẫu chuẩn Copilot (`_SRS_FDD_AI-Agent-Copilot.xlsx`, `hoc-tu-mau-copilot.md`).
+7. **Báo cáo Điểm mơ hồ & Câu hỏi làm rõ**:
    - Tách riêng mục "Điểm chưa rõ / Lỗ hổng nghiệp vụ", đưa ra câu hỏi theo Cây Quyết Định kèm đề xuất hướng xử lý tối ưu để người dùng duyệt nhanh.
 
 ## Quyền hạn

@@ -10,8 +10,9 @@ import sys
 class TestTaskBoardDiscovery(unittest.TestCase):
     def test_task_board_runs_cleanly(self):
         # Chạy scripts/task-board.py trên repo thật
-        cmd = [sys.executable, "scripts/task-board.py"]
-        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
+        script_path = Path(__file__).resolve().parent.parent / "scripts" / "task-board.py"
+        cmd = [sys.executable, str(script_path)]
+        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", cwd=str(Path(__file__).resolve().parent.parent))
         self.assertEqual(res.returncode, 0, f"task-board.py failed with: {res.stderr}")
         self.assertIn("0 lỗi", res.stdout)
 

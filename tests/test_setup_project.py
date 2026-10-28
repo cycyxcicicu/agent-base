@@ -32,14 +32,17 @@ class TestSetupProject(unittest.TestCase):
         code = setup_project(self.tmp_dir)
         self.assertEqual(code, 0)
 
-        # 1. Kiểm tra cấu trúc thư mục chuẩn
-        self.assertTrue((self.tmp_dir / "docs" / "notes" / "inbox").is_dir())
-        self.assertTrue((self.tmp_dir / "docs" / "notes" / "archive").is_dir())
-        self.assertTrue((self.tmp_dir / "tasks").is_dir())
-        self.assertTrue((self.tmp_dir / "doc").is_dir())
+        # 1. Kiểm tra cấu trúc thư mục chuẩn Enterprise Global (doc/)
+        self.assertTrue((self.tmp_dir / "doc" / "notes" / "inbox").is_dir())
+        self.assertTrue((self.tmp_dir / "doc" / "notes" / "archive").is_dir())
+        self.assertTrue((self.tmp_dir / "doc" / "features").is_dir())
+        self.assertTrue((self.tmp_dir / "doc" / "architecture").is_dir())
+        self.assertTrue((self.tmp_dir / "doc" / "references").is_dir())
+        self.assertTrue((self.tmp_dir / "doc" / "governance").is_dir())
+        self.assertTrue((self.tmp_dir / "doc" / "delivery" / "tasks").is_dir())
 
-        # 2. Kiểm tra tasks/BOARD.md
-        board = self.tmp_dir / "tasks" / "BOARD.md"
+        # 2. Kiểm tra doc/delivery/tasks/BOARD.md
+        board = self.tmp_dir / "doc" / "delivery" / "tasks" / "BOARD.md"
         self.assertTrue(board.is_file())
         self.assertIn("Task Board", board.read_text(encoding="utf-8"))
 

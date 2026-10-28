@@ -1055,4 +1055,121 @@
       display: flex;
       gap: 8px;
     }
+
+    /* ==========================================================================
+       HỒ SƠ 360° THEO TABS TRONG DRAWER
+       ========================================================================== */
+    .drawer-360-nav {
+      display: flex;
+      gap: 4px;
+      padding: 0 24px;
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid var(--border-subtle);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .drawer-360-nav::-webkit-scrollbar {
+      display: none;
+    }
+    .drawer-360-tab {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 12px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .drawer-360-tab:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .drawer-360-tab.active {
+      color: var(--primary-light);
+      border-bottom-color: var(--primary-light);
+      background: rgba(99, 102, 241, 0.08);
+    }
+    .drawer-tab-counter {
+      background: rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+    .drawer-360-tab.active .drawer-tab-counter {
+      background: rgba(99, 102, 241, 0.3);
+      color: #a5b4fc;
+    }
+
+    .drawer-subnav {
+      display: flex;
+      gap: 8px;
+      padding: 10px 14px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    .drawer-subnav-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .drawer-subnav-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+    .drawer-subnav-btn.active {
+      background: var(--primary);
+      border-color: var(--primary-light);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+    }
+
+    .drawer-diagrams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .bundle-badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+    .bundle-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #94a3b8;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .bundle-badge.highlight {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
   

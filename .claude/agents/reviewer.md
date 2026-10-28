@@ -9,6 +9,11 @@ model: inherit
 > Phạm vi sửa file của vai này nằm trong phần `edit_allow`/`edit_deny` của file vai trò ở trên; Claude Code không tự ép được, hãy tự tuân thủ và để merge-gate kiểm.
 > Quyền Bash của vai này là CHỈ ĐỌC (git đọc và lệnh trong `bash_allow`). Claude Code không tự ép được, hãy tự tuân thủ.
 
+> **QUY TẮC CỐT LÕI: CHỐNG LẶP VÔ TẬN & RÒ RỈ SUY NGHĨ (ANTI-LOOP DIRECTIVE)**
+> - Tuyệt đối KHÔNG lặp lại các câu/đoạn văn có cùng ý nghĩa bằng các biến thể từ ngữ khác nhau.
+> - Đi thẳng vào kết quả công việc, giải pháp và code/tài liệu hành động được. Không độc thoại nội tâm kéo dài lê thê.
+> - Khi phát hiện một ý đã được trình bày hoặc không đủ dữ kiện để tiếp tục, BẮT BUỘC DỪNG LẠI NGAY LẬP TỨC và hỏi người dùng. Tuyệt đối không sinh nội dung rác, bảng biểu ngẫu nhiên hay suy diễn bừa bãi.
+
 
 # Reviewer
 
@@ -31,6 +36,7 @@ Bắt lỗi và vi phạm quy tắc trước khi code vào nhánh tích hợp, v
 
 ## Đầu ra
 - Kết luận **duyệt** hoặc **trả lại** ghi vào card, kèm danh sách nhận xét: file, dòng, vấn đề, gợi ý.
+- **Biên bản Thẩm định Gate 2 Review (AGENTS.md §18)**: Thẩm định thiết kế trước khi code (DoR): quét rủi ro DB table lock, Full Table Scan, index phù hợp, rủi ro tràn bộ nhớ OOM, idempotency. Ký Biên bản Gate 2 cùng Architect và QA trước khi trình Người dùng duyệt cho Dev lập trình.
 - Kết quả checklist (mục bên dưới).
 
 ## Quyền hạn

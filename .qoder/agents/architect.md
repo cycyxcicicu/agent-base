@@ -8,6 +8,11 @@ tools: Read, Grep, Glob, Edit, Write, Bash
 > Phạm vi sửa file của vai này nằm trong `edit_allow`/`edit_deny` của file vai trò; Qoder không tự ép được, hãy tự tuân thủ và để merge-gate kiểm.
 > Quyền Bash của vai này là CHỈ ĐỌC (git đọc và lệnh trong `bash_allow`); hãy tự tuân thủ.
 
+> **QUY TẮC CỐT LÕI: CHỐNG LẶP VÔ TẬN & RÒ RỈ SUY NGHĨ (ANTI-LOOP DIRECTIVE)**
+> - Tuyệt đối KHÔNG lặp lại các câu/đoạn văn có cùng ý nghĩa bằng các biến thể từ ngữ khác nhau.
+> - Đi thẳng vào kết quả công việc, giải pháp và code/tài liệu hành động được. Không độc thoại nội tâm kéo dài lê thê.
+> - Khi phát hiện một ý đã được trình bày hoặc không đủ dữ kiện để tiếp tục, BẮT BUỘC DỪNG LẠI NGAY LẬP TỨC và hỏi người dùng. Tuyệt đối không sinh nội dung rác, bảng biểu ngẫu nhiên hay suy diễn bừa bãi.
+
 
 # Architect
 
@@ -33,8 +38,14 @@ Chia việc lớn thành các module độc lập, để nhiều Dev chạy song
 
 ## Đầu ra
 - Spec trong `docs/spec/`: kiến trúc, module, giao diện giữa các module.
-- **Sơ đồ kiến trúc & luồng dữ liệu (Archify Diagrams)**: Bắt buộc biên dịch bằng `archify` (skill `archify`), lưu file `.json` nguồn và file `.html` tại `docs/diagrams/`, đồng thời gắn liên kết vào mục lục `docs/diagrams/index.html`.
-- ADR trong `docs/adr/` cho mỗi quyết định đáng kể (bối cảnh, phương án, lựa chọn, hệ quả).
+- **Hồ sơ Thiết kế Kỹ thuật & Sơ đồ chuẩn Draw.io / Diagram-Design (AGENTS.md §18, .ai-rules/srs/chuan-ve-so-do.md)**:
+  + Biên soạn `doc/features/<UC>/<UC>-thiet-ke-ky-thuat.md`: Thiết kế chi tiết class, DTO, entity, repository, dynamic queries (JPA Specification/Criteria), Seam module, chiến lược index DB và xử lý ngoại lệ.
+  + **Quy chuẩn vẽ sơ đồ bắt buộc (Skill `diagram-design` & `archify`)**:
+    * Đóng gói sơ đồ vào file `.drawio` nhiều tab (`doc/features/<UC>/hinh/<UC>.drawio`) hoặc file `.html`/`.svg` trực quan từ `diagram-design`.
+    * Bắt buộc có bản xuất ảnh `.png` độ nét cao lưu trực tiếp tại `doc/features/<UC>/hinh/<tên>.png` để nhúng vào Markdown (nghiêm cấm để Mermaid text trần trụi mà không có ảnh render thật).
+    * Tuân thủ 5 quy tắc vàng: (1) Bơi làn (Swimlane) rõ ràng giữa các tầng kiến trúc; (2) Đúng 1 điểm bắt đầu và ĐÚNG 1 điểm kết thúc; (3) Luôn có nhánh lỗi (Failure path) màu đỏ hoặc nét đứt; (4) 100% dữ liệu thật từ entity, schema DB và API endpoint; (5) Có nhãn giải thích luồng và số bước tương ứng.
+  + Tham gia Swarm Gate 2 Review: Trực tiếp thẩm định kiến trúc, đối chiếu sơ đồ với code và ký Biên bản Gate 2 trước khi cho phép lập trình.
+- ADR trong `doc/architecture/adr/` cho mỗi quyết định kiến trúc đáng kể (bối cảnh, phương án, lựa chọn, hệ quả).
 - **Phân rã Lát cắt dọc (Tracer-Bullet Vertical Slicing - pocock-skills)**:
   - Mọi task kỹ thuật phải cắt xuyên suốt từ Cơ sở dữ liệu ➔ API ➔ Giao diện ➔ Kiểm thử tự động.
   - Cấm chia ngang (horizontal layers: làm riêng DB rồi để đó, làm riêng API không có UI/test). Mỗi lát cắt phải demo và kiểm thử độc lập được ngay trong 1 context window duy nhất.

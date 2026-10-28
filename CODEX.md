@@ -6,12 +6,13 @@ Nguồn quy tắc duy nhất. `GEMINI.md`, `.agents/rules/agents-core.md` đư�
 ## 0. Nguyên tắc chung
 
 Việc hoàn tác được trong phạm vi được giao thì cứ làm. **Hỏi trước khi làm việc có tác động**: mất code, dữ liệu hay lịch sử; đụng nhánh chung hoặc việc của người khác; tốn tiền hoặc tài nguyên ngoài; lộ khóa bí mật hay dữ liệu cá nhân; chạy mã bên ngoài chưa duyệt. Người dùng đã nói đồng ý rõ ràng trong chat thì làm ngay và ghi trích dẫn vào file (`agents/protocols/approval.md`). Câu chung chung ("ok" không rõ việc gì) thì hỏi lại.
+- **Chống lặp vô tận & rò rỉ suy nghĩ (Anti-Loop)**: Không lặp lại cùng một câu/đoạn văn dưới nhiều biến thể từ ngữ. Trả lời dứt khoát, đi thẳng vào kết quả công việc và hành động, không độc thoại nội tâm lê thê. Nếu phát hiện đang lặp ý hoặc thiếu dữ kiện, DỪNG LẠI NGAY và hỏi người dùng; tuyệt đối không sinh nội dung rác hoặc bảng biểu không liên quan.
 
 ## 1. Đọc gì trước khi làm
 
 1. `PROJECT.md`: tên dự án, stack, lệnh build/test/lint, phạm vi.
 2. `agents/stacks/<stack>.md`: quy ước của ngôn ngữ đang dùng.
-3. **`docs/PROJECT-NOTES.md`** và các file chưa gộp trong **`docs/notes/inbox/`**: bộ nhớ chung, ghi chú của các agent làm trước bạn (bẫy, quyết định, việc dở dang).
+3. **`doc/notes/PROJECT-NOTES.md`** (hoặc `docs/PROJECT-NOTES.md`) và các file chưa gộp trong **`doc/notes/inbox/`** (hoặc `docs/notes/inbox/`): bộ nhớ chung, ghi chú của các agent làm trước bạn (bẫy, quyết định, việc dở dang).
 4. Task card của bạn trong `tasks/`.
 5. File vai trò của bạn trong `agents/roles/`.
 6. Tri thức: **không nạp sẵn**. Gặp chủ đề thì tự tra `python scripts/knowledge.py query -q "<từ khóa>" --role <vai>` (trả tóm tắt, mục và đường dẫn, khoảng 1.200 token), rồi chỉ đọc phần cần; mục lục: `agents/knowledge/README.md`.
@@ -68,7 +69,7 @@ Tự nâng lên từ "vừa" trở lên khi: đụng file dùng chung, đổi AP
 
 ## 5. Task card
 
-Việc từ cỡ "vừa" có một card `tasks/<thư mục epic>/T-<ticket>-<loại>-<mô tả>.md` (epic: `tasks/EPICS.md`, tiến độ: `tasks/BOARD.md`) theo `agents/protocols/task-card.md`. Card là **bản ghi chính thức** của phạm vi, trạng thái, nhật ký phiên, kết quả test và kịch bản hoàn tác.
+Việc từ cỡ "vừa" có một card `doc/delivery/tasks/T-<ticket>-<loại>-<mô tả>.md` hoặc `doc/features/<UC>/tasks/` (hoặc `tasks/`, tiến độ: `doc/delivery/tasks/BOARD.md` hoặc `tasks/BOARD.md`) theo `agents/protocols/task-card.md`. Card là **bản ghi chính thức** của phạm vi, trạng thái, nhật ký phiên, kết quả test và kịch bản hoàn tác.
 Trạng thái: `todo → doing → review → done`, hoặc `blocked` (kèm lý do).
 Việc cỡ "nhỏ": ghi một dòng vào `tasks/quick-log.md` nếu không tạo card.
 
@@ -90,9 +91,9 @@ Việc cỡ "nhỏ": ghi một dòng vào `tasks/quick-log.md` nếu không tạ
 
 Ghi chú ghi **điều agent sau cần biết** mà code hay git log không cho thấy: bẫy, quyết định và lý do, khu vực dễ vỡ, giả định chưa kiểm chứng, việc dở dang, hướng đã thử mà không chạy.
 
-- **Ghi**: sau khi xử lý xong, tạo `docs/notes/inbox/<Task>-<slug>-<agent>.md` theo `agents/protocols/handoff-note.md`. Chỉ khi có điều agent sau cần biết (bẫy, quyết định, việc dở); không có thì bỏ qua. `runner` không ghi file, kết quả trả thẳng cho vai gọi.
-- **Không sửa trực tiếp** `docs/PROJECT-NOTES.md`. Chỉ `writer` gộp hộp thư vào đó sau mỗi lần merge. Nhờ vậy các nhánh song song không xung đột.
-- **Đọc**: đầu mỗi việc, đọc `docs/PROJECT-NOTES.md` và các file chưa gộp trong `docs/notes/inbox/`.
+- **Ghi**: sau khi xử lý xong, tạo file tại `doc/notes/inbox/<Task>-<slug>-<agent>.md` (hoặc `docs/notes/inbox/`) theo `agents/protocols/handoff-note.md`. Chỉ khi có điều agent sau cần biết (bẫy, quyết định, việc dở); không có thì bỏ qua. `runner` không ghi file, kết quả trả thẳng cho vai gọi.
+- **Không sửa trực tiếp** `PROJECT-NOTES.md`. Chỉ `writer` gộp hộp thư vào đó sau mỗi lần merge. Nhờ vậy các nhánh song song không xung đột.
+- **Đọc**: đầu mỗi việc, đọc `doc/notes/PROJECT-NOTES.md` và các file chưa gộp trong `doc/notes/inbox/`.
 
 ## 9. Nhập và phân tích tài liệu (doc, xlsx, pdf, ảnh)
 
@@ -158,3 +159,18 @@ Task cỡ "lớn" chỉ code sau dấu `[x] Plan Approved by <vai>` trong card (
 ## 17. Tự Động Chọn & Áp Dụng Skill
 
 Trước khi code: đối chiếu `agents/knowledge/skills.md`, đọc `SKILL.md` khớp task; nếu có dùng skill thì ghi 2 dòng `Skill đã chọn & áp dụng:` và `Checklist đã tuân thủ:` vào handoff note. Ánh xạ và toàn văn: `agents/protocols/full-workflow.md` §17.
+
+## 18. Quy Trình Bắt Buộc Khi Làm 1 Task (TDD, ATDD, SRS Excel, Gate 2)
+
+Mọi chức năng mới hoặc task sửa đổi bắt buộc phải tuân thủ nghiêm ngặt chu trình 5 bước trước khi được chạm vào code:
+1. **Khảo sát hiện trạng & Phản biện (Clarification First):** Đọc code/DB thật, đối chiếu yêu cầu. Không đoán mò: chưa rõ thì hỏi ngay trước khi làm. Mỗi lần đưa lựa chọn: 3 phương án, 1 khuyến nghị dứt khoát, kèm lý do và cách khắc phục rủi ro.
+2. **Thiết kế Kỹ thuật & Sơ đồ Luồng (Architecture & Diagram):** Xác định class, DTO, entity, repository, ranh giới seam, index DB, rủi ro concurrency. Bắt buộc kích hoạt skill `diagram-design` / `archify`: Sơ đồ đóng gói vào file `.drawio` nhiều tab (`doc/features/<UC>/hinh/<UC>.drawio`), tuân thủ 5 quy tắc chuẩn (.ai-rules/srs/chuan-ve-so-do.md): bơi làn (swimlane) rõ ràng giữa các tầng, đúng 1 điểm bắt đầu và ĐÚNG 1 điểm kết thúc duy nhất, có nhánh lỗi màu đỏ, 100% dữ liệu thật từ code/DB, và bắt buộc xuất ảnh `.png` độ nét cao lưu tại `doc/features/<UC>/hinh/<tên>.png` nhúng vào Markdown (nghiêm cấm để Mermaid text trần trụi thiếu ảnh).
+3. **Thiết kế Kiểm thử Trước (ATDD/TDD Test Design):** Viết đầy đủ Happy Path (100% kịch bản thành công), Error Cases, Edge Cases, Boundary Values. Bắt buộc xuất file TestLink XML (`doc/features/<UC>/<UC>-testlink-cases.xml`) với Keyword chuẩn và cấu trúc 1-1.
+4. **Đóng Gói Bộ Hồ Sơ Chuẩn & File Excel 14 Sheets:**
+   - Bộ hồ sơ đóng gói trong `doc/features/<UC>/`: Đặc tả (`<UC>-<slug>.md`), Thiết kế kỹ thuật (`<UC>-thiet-ke-ky-thuat.md`), Đối chiếu (`<UC>-doi-chieu.md`), Happy cases (`<UC>-happy-cases.md`), TestLink XML (`<UC>-testlink-cases.xml`), Thư mục hình (`hinh/`), và Thư mục task (`tasks/`).
+   - File Excel SRS_FDD 14 sheets (`doc/features/<UC>/SRS_FDD_<UC>.xlsx`) theo mẫu chuẩn Copilot (`_SRS_FDD_AI-Agent-Copilot.xlsx`, `hoc-tu-mau-copilot.md`).
+5. **Thẩm Định Chéo Swarm Gate 2 & Phê Duyệt Trước Khi Code:**
+   - Bộ ba vai trò tự review chéo và lập Biên bản Gate 2 (`<UC>-bien-ban-tham-dinh-gate-2.md`): `architect` duyệt kiến trúc/JPA; `reviewer` duyệt hiệu năng/DB lock/an toàn; `qa` duyệt ma trận bao phủ ATDD/TestLink.
+   - **CẤM CODE KHI CHƯA ĐƯỢC DUYỆT**: Chỉ khi Biên bản Gate 2 được Người dùng duyệt thì Dev mới được bắt đầu lập trình (TDD: Red - Green - Refactor).
+   - Với task sửa bug: Bắt buộc tái hiện lỗi trên code hiện tại, viết case TestLink (XML, Keyword = mã Mantis) được duyệt trước rồi mới sửa code.
+
