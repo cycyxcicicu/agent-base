@@ -5,7 +5,7 @@ AI viết kế hoạch này vào mục "Kế hoạch commit" của task card. Sa
 - **Người dùng tự chạy** từng lệnh (như trước).
 - **Người dùng nhờ AI chạy** ("commit hộ tôi"): AI chạy đúng các lệnh `git add <đường dẫn>`, `git commit`, `git push` trong kế hoạch. Công cụ hỏi người dùng duyệt **từng lệnh**; commit dùng danh tính git của người dùng. Việc thêm dòng trailer `Co-Authored-By:` được quyết định theo cấu hình mục **Attribution commit** trong `PROJECT.md` (mặc định là `co-authored-by`; nếu dự án đặt `none` thì không thêm trailer này).
 
-AI **không bao giờ** chạy `git add -A`/`.`/`-f`, `commit --amend`, `--no-verify`, push ép hoặc push vào `main`/`develop`/`release/*`, `rebase`, `reset`, `merge`, `tag` (những việc này người dùng làm). Quy tắc gốc: `agents/protocols/git-rules.md`.
+AI **không bao giờ** chạy `git add -A`/`.`/`-f`, `commit --amend`, `--no-verify`, push ép hoặc push vào `main`/`develop`/`release/*`, `reset`, `clean`, xóa nhánh hay tag (những việc này người dùng làm). `rebase`, `merge`, `tag` mới trong nhánh của mình AI tự chạy được theo `AGENTS.md` quy tắc 4. Quy tắc gốc: `agents/protocols/git-rules.md`.
 
 ### Khi được nhờ chạy: các bước
 

@@ -212,6 +212,28 @@ git_write_deny += [
     'git  *', '*git  *', 'git.exe  *', '*git.exe  *',
 ]
 
+# ---------------------------------------------------------------------------
+# Vai chỉ đọc (reviewer, qa, ...) dùng nguyên `git_write_deny` ở trên: không ghi git.
+# Vai ghi được (bash: full) và Claude Code dùng `git_hard_deny`: chỉ chặn cái làm hỏng dự án (mất code hoặc lịch sử,
+# đẩy vào nhánh chung, ép, bỏ hook, đổi cấu hình/remote). Các lệnh hoàn tác được trong nhánh của mình
+# (pull, fetch, merge, rebase, checkout, switch, restore, stash, tag mới, cherry-pick, revert, rm, mv, apply, am,
+# branch, worktree) được phép. `add`/`commit`/`push` vẫn hỏi duyệt qua `git_commit_ask`.
+# ---------------------------------------------------------------------------
+_git_loosened_verbs = re.compile(
+    r'(?<![\w-])(pull|fetch|merge|rebase|checkout|switch|restore|stash|cherry-pick|revert|rm|mv|apply|am|branch|worktree|tag)(?![\w-])')
+_git_still_dangerous = re.compile(
+    r'--force|--delete|(?<![\w-])-[Df](?![\w-])|tag -d|stash (?:drop|clear)|worktree (?:prune|lock|unlock)')
+
+
+def _is_loosened_git_pattern(pattern: str) -> bool:
+    if 'git' not in pattern:
+        return False
+    probe = re.sub(r'-C \*', '', pattern)  # `git -C <thư mục>` là chọn thư mục, không phải cờ nguy hiểm
+    return bool(_git_loosened_verbs.search(probe)) and not _git_still_dangerous.search(probe)
+
+
+git_hard_deny = [p for p in git_write_deny if not _is_loosened_git_pattern(p) and p != '*new-worktree*']
+
 # Launchers that hide the command name from the prefix patterns.
 danger_deny += [
     '*Start-Process*git*', '*saps *git*', '*Invoke-Command*git*',
@@ -433,7 +455,7 @@ def build_kilo(meta: dict, body: str, src_rel: str) -> str:
         lines.append('    "*": allow')
         for c in (danger_ask + extra_ask + git_commit_ask):
             lines.append(f'    {yq(c)}: ask')
-        for c in (git_write_deny + danger_deny + extra_deny):
+        for c in (git_hard_deny + danger_deny + extra_deny):
             lines.append(f'    {yq(c)}: deny')
         for c in git_read_allow:
             lines.append(f'    {yq(c)}: allow')
@@ -598,7 +620,7 @@ def main():
 
     # Generate .claude/settings.json to enforce deny rules on Claude Code
     # Use tool specifiers Bash(...) and PowerShell(...) strictly; no bare strings
-    claude_deny = [f"Bash({c})" for c in (git_write_deny + danger_deny)] + [f"PowerShell({c})" for c in (git_write_deny + danger_deny)]
+    claude_deny = [f"Bash({c})" for c in (git_hard_deny + danger_deny)] + [f"PowerShell({c})" for c in (git_hard_deny + danger_deny)]
     claude_ask = [f"Bash({c})" for c in (danger_ask + git_commit_ask)] + [f"PowerShell({c})" for c in (danger_ask + git_commit_ask)]
     claude_settings = {
         "$schema": "https://json.schemastore.org/claude-code-settings.json",

@@ -81,15 +81,11 @@ class TestSecurityDenyRules(unittest.TestCase):
             "git push origin main",
             "git push --force origin main",
             "git reset --hard HEAD~1",
-            "git revert HEAD",
-            "git.exe revert HEAD",
-            "git am patch.mbox",
-            "git.exe am patch.mbox",
-            "git rebase main",
-            "git merge main",
-            "git checkout -b new-branch",
-            "git branch -d feat",
-            "git tag -a v1.0.0 -m 'release'"
+            "git clean -fd",
+            "git branch -D feat",
+            "git tag -d v1.0.0",
+            "git stash drop",
+            "git filter-branch --all",
         ]
         for cmd in dangerous_cmds:
             blocked_bash = self._is_blocked(cmd, self.bash_patterns)
@@ -97,6 +93,32 @@ class TestSecurityDenyRules(unittest.TestCase):
 
             blocked_ps = self._is_blocked(cmd, self.ps_patterns)
             self.assertTrue(blocked_ps, f"Lệnh Git nguy hiểm bị lọt trong PowerShell: {cmd}")
+
+    def test_git_reversible_work_allowed_in_bash_and_powershell(self):
+        """Lệnh Git hoàn tác được trong nhánh của mình KHÔNG bị chặn: agent phải dùng git được để làm việc."""
+        allowed_cmds = [
+            "git checkout -b new-branch",
+            "git switch -c new-branch",
+            "git switch main",
+            "git fetch origin",
+            "git pull --ff-only",
+            "git merge main",
+            "git rebase main",
+            "git stash push -m wip",
+            "git stash pop",
+            "git revert HEAD",
+            "git cherry-pick abc123",
+            "git rm old.txt",
+            "git mv a.txt b.txt",
+            "git am patch.mbox",
+            "git branch new-feature",
+            "git tag v1.0.0",
+            "git tag -a v1.0.0 -m 'release'",
+            "git worktree add ../wt feature/1-x",
+        ]
+        for cmd in allowed_cmds:
+            self.assertFalse(self._is_blocked(cmd, self.bash_patterns), f"Lệnh Git an toàn bị chặn trong Bash: {cmd}")
+            self.assertFalse(self._is_blocked(cmd, self.ps_patterns), f"Lệnh Git an toàn bị chặn trong PowerShell: {cmd}")
 
     def test_hash_commands_with_dash_c_not_blocked(self):
         """Các lệnh kiểm tra checksum shasum -c, sha256sum -c KHÔNG bị chặn nhầm."""
@@ -156,10 +178,11 @@ class TestSecurityDenyRules(unittest.TestCase):
     def test_kilo_agent_roles_sync(self):
         """Kilo agent dev có quy tắc chặn chính xác tương đương."""
         self.assertTrue(len(self.kilo_dev_denies) > 0)
-        self.assertTrue(any("git am" in p for p in self.kilo_dev_denies))
+        self.assertTrue(any("git reset" in p for p in self.kilo_dev_denies))
         self.assertFalse(any("*git*am*" in p for p in self.kilo_dev_denies))
         self.assertFalse(self._is_blocked("git diff --name-only", self.kilo_dev_denies))
-        self.assertTrue(self._is_blocked("git am patch.mbox", self.kilo_dev_denies))
+        self.assertFalse(self._is_blocked("git am patch.mbox", self.kilo_dev_denies))
+        self.assertTrue(self._is_blocked("git reset --hard HEAD~1", self.kilo_dev_denies))
 
 
 @functools.lru_cache(maxsize=None)
@@ -339,7 +362,7 @@ GIT_WRITE_ALWAYS_DENIED = [
     "git commit -m x && git push --force origin feature/1-x",
     "git status; git push origin develop",
     "git\tcommit -m x", "git  commit -m x", "g`it commit -m x", "command git commit -m x", "& git commit -m x",
-    "git reset --hard", "git rebase main", "git merge x", "git checkout -b x", "git switch -c x",
+    "git reset --hard", "git clean -fd", "git branch -D x",
 ]
 
 GIT_WRITE_MUST_NOT_BE_DENIED = [
@@ -351,6 +374,7 @@ GIT_WRITE_MUST_NOT_BE_DENIED = [
     'git commit -m "fix main and develop docs"',
     'git commit -m "add --tags support"',
     "git add docs/all.md",
+    "git rebase main", "git merge x", "git checkout -b x", "git switch -c x", "git pull --ff-only", "git stash push",
 ]
 
 
