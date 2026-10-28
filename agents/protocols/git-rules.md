@@ -36,7 +36,7 @@ Loại: `feature`, `bugfix`, `hotfix`, `release`, `chore`, `refactor`, `docs`, `
 
 Ví dụ: `feature/43-create-thumbnail-from-s3`, `bugfix/26-count-creating-credit`, `hotfix/113-dont-update-x`, `devops/256-edit-docker-stuffs`. Nhánh release: `release/1.2.0`.
 
-**Ticket = số của task card.** Ticket 12 ↔ `tasks/T-12.md` ↔ nhánh `feature/12-token-check`.
+**Ticket = số của task card.** Ticket 12 ↔ `tasks/<epic>/T-12-feat-token-check.md` ↔ nhánh `feature/12-token-check` (cùng tên; loại việc `feat` ứng với nhánh `feature`).
 
 ## 3. Commit
 

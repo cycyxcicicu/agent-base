@@ -987,6 +987,7 @@ KEYWORDS = {
     "Requirement:lesson-learned": "bài học retro retrospective kinh nghiệm",
     "Requirement:ticket-status": "trạng thái ticket status board",
     "Design:chuan-code-va-review": "review code checklist soát code reviewer",
+    "Requirement:srs-workflow": "viết srs quy trình đặc tả từ đầu đến cuối checklist kiểm srs-check sơ đồ tối thiểu thư mục srs",
 }
 
 # Cụm kiến thức liên quan: "clique" nối mọi cặp, "star" nối phần tử đầu (hub) với các phần tử còn lại.
@@ -1040,6 +1041,11 @@ RELATED_CLUSTERS += [
     ("clique", ["Source:company-process", "Requirement:change-request", "Rule:task-loop", "Design:git-rules"]),
     ("star", ["Design:glossary", "Rule:task-loop", "Rule:definition-of-done"]),
     ("clique", ["Design:verification-cli-runbook", "Skill:verification-skills-cdp", "Design:tdd-13-steps"]),
+]
+RELATED_CLUSTERS += [
+    ("clique", ["Requirement:srs-workflow", "Requirement:spec-writing", "Requirement:srs-writing-standard",
+                "Requirement:document-templates", "Design:diagram-mo-ta-hoat-dong-so-do", "Design:chuan-ve-so-do",
+                "Design:diagram-quy-uoc-draw-io-va-archify", "Requirement:test-cases"]),
 ]
 FALLBACK_HUB = {"Requirement": "Rule:task-loop", "Skill": "Skill:skills-registry"}
 

@@ -41,6 +41,7 @@ def parse_task_frontmatter(text: str, path: Optional[Path] = None) -> Dict[str, 
         "_path": path,
         "id": "",
         "title": "",
+        "slug": "",
         "status": "todo",
         "owner": "?",
         "epic": "",
@@ -83,6 +84,11 @@ def parse_task_frontmatter(text: str, path: Optional[Path] = None) -> Dict[str, 
     # Tìm id nếu chưa có
     if not meta.get("id") and path:
         meta["id"] = path.stem
+
+    # Tên có nghĩa nằm sau mã trong tên file: T-12-chuan-hoa-ten-task.md -> slug "chuan-hoa-ten-task"
+    if not meta.get("slug") and path:
+        sm = re.match(r"^T-\d+(?:\.\d+)?-(.+)$", path.stem)
+        meta["slug"] = sm.group(1) if sm else ""
 
     # Chuẩn hóa status
     if "status" in meta and isinstance(meta["status"], str):

@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "default_project": "ACCOUTING_Noi_Bo",
+  "projects": [
+    {
+      "id": "ACCOUTING_Noi_Bo",
+      "name": "ACCOUTING_Noi_Bo (gdt-workspace)",
+      "path": "/Users/ducnvh/Documents/gdt-workspace",
+      "doc_dir": "doc",
+      "diagrams_dir": "doc/srs/hinh",
+      "mantis_csv": "doc/bug/mantis/mantis-ACCOUTING_Noi_Bo-2026-10-27.csv",
+      "desc": "Hệ thống Kế toán, Đơn hàng, Kho & CSKH Nội bộ",
+      "is_active": true
+    },
+    {
+      "id": "tiktok_shopee",
+      "name": "tiktok_shopee (TikTok & Shopee Sync)",
+      "path": "/Users/ducnvh/Documents/tiktok_shoppe_jt",
+      "doc_dir": "docs",
+      "diagrams_dir": "docs/diagrams",
+      "mantis_csv": null,
+      "desc": "Đồng bộ đơn hàng TikTok Shop & Shopee với vận chuyển J&T Express",
+      "is_active": true
+    },
+    {
+      "id": "tmprpecop0s",
+      "name": "tmprpecop0s",
+      "path": "/private/var/folders/j9/dmxsyxnx3yl5x1gmyfv50_hh0000gn/T/tmprpecop0s",
+      "doc_dir": "doc",
+      "diagrams_dir": "doc/hinh",
+      "mantis_csv": null,
+      "desc": "Dự án tmprpecop0s kết nối qua setup-project",
+      "is_active": true
+    },
+    {
+      "id": "tmpzhhhqv9d",
+      "name": "tmpzhhhqv9d",
+      "path": "/private/var/folders/j9/dmxsyxnx3yl5x1gmyfv50_hh0000gn/T/tmpzhhhqv9d",
+      "doc_dir": "doc",
+      "diagrams_dir": "doc/hinh",
+      "mantis_csv": null,
+      "desc": "Dự án tmpzhhhqv9d kết nối qua setup-project",
+      "is_active": true
+    },
+    {
+      "id": "tmpzeetp_qt",
+      "name": "tmpzeetp_qt",
+      "path": "/private/var/folders/j9/dmxsyxnx3yl5x1gmyfv50_hh0000gn/T/tmpzeetp_qt",
+      "doc_dir": "doc",
+      "diagrams_dir": "doc/hinh",
+      "mantis_csv": null,
+      "desc": "Dự án tmpzeetp_qt kết nối qua setup-project",
+      "is_active": true
+    },
+    {
+      "id": "tmpciccvfjp",
+      "name": "tmpciccvfjp",
+      "path": "/private/var/folders/j9/dmxsyxnx3yl5x1gmyfv50_hh0000gn/T/tmpciccvfjp",
+      "doc_dir": "doc",
+      "diagrams_dir": "doc/hinh",
+      "mantis_csv": null,
+      "desc": "Dự án tmpciccvfjp kết nối qua setup-project",
+      "is_active": true
+    }
+  ]
+}

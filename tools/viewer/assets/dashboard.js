@@ -5,14 +5,19 @@
     const STATUS_META = DASH.statusMeta || {};
     const EPIC_META = DASH.epicMeta || {};
     const PROJECT_INFO = DASH.projectInfo || {};
-    const SYSTEM_DOCS = DASH.docs || [];
+    let SYSTEM_DOCS = DASH.docs || [];
+    const MULTI_PROJECTS = DASH.multiProjects || {};
+    let CURRENT_PROJECT_ID = DASH.defaultProject || (DASH.projectList && DASH.projectList[0] ? DASH.projectList[0].id : null);
+    let CURRENT_MANTIS = { total: 0, bugs: [] };
+    let CURRENT_DIAGRAMS = [];
+    let currentMantisStatusFilter = 'ALL';
 
     // Nạp nội dung theo yêu cầu: kind = 'docs' (tài liệu) hoặc 'cards' (task card); file nằm ở <kind>/<id>.js
     const BODY_CALLBACKS = {};
     function bodyKey(kind, id) { return kind + ':' + id; }
     function bodyFileName(id) { return String(id).replace(/[^A-Za-z0-9_.-]/g, '_'); }
     function setBody(kind, list, id, html) {
-      const item = list.find(x => x.id === id);
+      const item = list.find(x => String(x.id) === String(id));
       if (item) item.html_body = html;
       const key = bodyKey(kind, id);
       const cb = BODY_CALLBACKS[key];
@@ -21,12 +26,22 @@
     }
     window.__setDoc = function (id, html) { setBody('docs', SYSTEM_DOCS, id, html); };
     window.__setCard = function (id, html) { setBody('cards', ALL_CARDS, id, html); };
+    window.__setDocMulti = function (projId, id, html) {
+      if (MULTI_PROJECTS[projId] && MULTI_PROJECTS[projId].docs) {
+        setBody('docs', MULTI_PROJECTS[projId].docs, id, html);
+      }
+    };
+
     function loadBody(kind, item, label, cb) {
       if (item.html_body !== undefined) { cb(item.html_body); return; }
       const key = bodyKey(kind, item.id);
       BODY_CALLBACKS[key] = cb;
       const s = document.createElement('script');
-      s.src = kind + '/' + bodyFileName(item.id) + '.js';
+      if (kind === 'docs' && CURRENT_PROJECT_ID && MULTI_PROJECTS[CURRENT_PROJECT_ID]) {
+        s.src = kind + '/' + bodyFileName(CURRENT_PROJECT_ID) + '_' + bodyFileName(item.id) + '.js';
+      } else {
+        s.src = kind + '/' + bodyFileName(item.id) + '.js';
+      }
       s.onerror = function () { delete BODY_CALLBACKS[key]; cb('<p>Không tải được nội dung (' + label + '). Chạy lại python scripts/generate-dashboard.py.</p>'); };
       document.head.appendChild(s);
     }
@@ -38,14 +53,53 @@
     let currentDocCategoryFilter = 'ALL';
 
     function init() {
+      // Khởi tạo dự án mặc định từ MULTI_PROJECTS nếu có
+      if (CURRENT_PROJECT_ID && MULTI_PROJECTS[CURRENT_PROJECT_ID]) {
+        const p = MULTI_PROJECTS[CURRENT_PROJECT_ID];
+        if (p.docs && p.docs.length > 0) SYSTEM_DOCS = p.docs;
+        CURRENT_MANTIS = p.mantis || { total: 0, bugs: [] };
+        CURRENT_DIAGRAMS = p.diagrams || [];
+      } else {
+        // Dự án hiện tại
+        CURRENT_MANTIS = (DASH.mantis) || { total: 0, bugs: [] };
+        CURRENT_DIAGRAMS = (DASH.diagrams) || [];
+      }
+
+      updateBadges();
       renderCards();
       renderDocs();
       renderCodeTasks();
       renderGates();
+      renderMantisBugs();
+      renderDiagrams();
       
       window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeDrawer();
       });
+    }
+
+    function updateBadges() {
+      const docBadge = document.getElementById('badge-docs-count');
+      if (docBadge) docBadge.textContent = SYSTEM_DOCS.length + ' Mục';
+      const mantisBadge = document.getElementById('badge-mantis-count');
+      if (mantisBadge) mantisBadge.textContent = CURRENT_MANTIS.total || 0;
+      const diagBadge = document.getElementById('badge-diagrams-count');
+      if (diagBadge) diagBadge.textContent = CURRENT_DIAGRAMS.length || 0;
+    }
+
+    function switchProject(projId) {
+      CURRENT_PROJECT_ID = projId;
+      if (MULTI_PROJECTS[projId]) {
+        const p = MULTI_PROJECTS[projId];
+        SYSTEM_DOCS = p.docs || [];
+        CURRENT_MANTIS = p.mantis || { total: 0, bugs: [] };
+        CURRENT_DIAGRAMS = p.diagrams || [];
+      }
+      updateBadges();
+      currentDocCategoryFilter = 'ALL';
+      renderDocs();
+      renderMantisBugs();
+      renderDiagrams();
     }
 
     function switchMainTab(tab) {
@@ -53,16 +107,24 @@
       document.querySelectorAll('.tab-content-pane').forEach(pane => pane.style.display = 'none');
       
       const tabMap = {
-        'roadmap': [0, 'tab-roadmap'],
-        'tasks': [1, 'tab-tasks'],
-        'docs': [2, 'tab-docs'],
-        'code': [3, 'tab-code'],
-        'gates': [4, 'tab-gates']
+        'roadmap': 'tab-roadmap',
+        'tasks': 'tab-tasks',
+        'docs': 'tab-docs',
+        'diagrams': 'tab-diagrams',
+        'mantis': 'tab-mantis',
+        'code': 'tab-code',
+        'gates': 'tab-gates'
       };
 
       if (tabMap[tab]) {
-        document.querySelectorAll('.tab-btn')[tabMap[tab][0]].classList.add('active');
-        document.getElementById(tabMap[tab][1]).style.display = 'block';
+        const pane = document.getElementById(tabMap[tab]);
+        if (pane) pane.style.display = 'block';
+        // Active đúng button
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes("'" + tab + "'")) {
+            btn.classList.add('active');
+          }
+        });
       }
     }
 
@@ -424,6 +486,116 @@
         btn.innerText = 'Đã chép!';
         setTimeout(() => btn.innerText = orig, 1500);
       });
+    }
+
+    /* ==========================================================================
+       MANTISBT BUGS / ISSUES TRACKER
+       ========================================================================== */
+    function setMantisStatusFilter(status, elem) {
+      currentMantisStatusFilter = status;
+      document.querySelectorAll('#mantisStatusChips .chip-btn').forEach(btn => btn.classList.remove('active'));
+      elem.classList.add('active');
+      renderMantisBugs();
+    }
+
+    function filterMantisBugs() {
+      renderMantisBugs();
+    }
+
+    function renderMantisBugs() {
+      const tbody = document.getElementById('mantisTableBody');
+      if (!tbody) return;
+
+      const bugs = CURRENT_MANTIS.bugs || [];
+      const query = (document.getElementById('mantisSearchInput') ? document.getElementById('mantisSearchInput').value : '').toLowerCase().trim();
+
+      const filtered = bugs.filter(b => {
+        if (currentMantisStatusFilter !== 'ALL' && b.status.toLowerCase() !== currentMantisStatusFilter.toLowerCase()) return false;
+        if (query) {
+          const matchId = (b.id || '').toLowerCase().includes(query);
+          const matchSummary = (b.summary || '').toLowerCase().includes(query);
+          const matchReporter = (b.reporter || '').toLowerCase().includes(query);
+          const matchAssigned = (b.assigned_to || '').toLowerCase().includes(query);
+          if (!matchId && !matchSummary && !matchReporter && !matchAssigned) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 48px; color: var(--text-subtle);">Không có bug nào phù hợp (Dự án có tổng cộng ${bugs.length} bug).</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(b => {
+        const statusClass = `mantis-status-${(b.status || 'new').toLowerCase()}`;
+        const sevClass = `mantis-sev-${(b.severity || 'normal').toLowerCase()}`;
+        return `
+          <tr>
+            <td><code class="task-id-badge">${b.id}</code></td>
+            <td><span class="${sevClass}">${b.severity}</span></td>
+            <td><span class="mantis-badge ${statusClass}">${b.status}</span></td>
+            <td>
+              <div style="font-weight: 600; color: #fff; margin-bottom: 2px;">${b.summary}</div>
+              <div style="font-size: 11px; color: var(--text-muted);">${b.category} • Nghị quyết: ${b.resolution}</div>
+            </td>
+            <td><span class="task-tag">${b.reporter}</span></td>
+            <td>${b.assigned_to ? `<span class="task-tag" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">${b.assigned_to}</span>` : '<span style="color: #64748b;">(chưa gán)</span>'}</td>
+            <td style="font-size: 12px; color: var(--text-muted); font-family: var(--font-mono);">${b.updated}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    /* ==========================================================================
+       DIAGRAMS GALLERY (SƠ ĐỒ DỰ ÁN)
+       ========================================================================== */
+    function filterDiagrams() {
+      renderDiagrams();
+    }
+
+    function renderDiagrams() {
+      const container = document.getElementById('diagramsListContainer');
+      if (!container) return;
+
+      const diagrams = CURRENT_DIAGRAMS || [];
+      const query = (document.getElementById('diagramSearchInput') ? document.getElementById('diagramSearchInput').value : '').toLowerCase().trim();
+
+      const filtered = diagrams.filter(d => {
+        if (query && !(d.name || '').toLowerCase().includes(query)) return false;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 48px; color: var(--text-subtle);">Không tìm thấy sơ đồ nào (Dự án có ${diagrams.length} sơ đồ).</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(d => {
+        const thumbHtml = d.preview_img 
+          ? `<img src="${d.preview_img}" alt="${d.name}" class="diagram-thumb" loading="lazy" />`
+          : `<div style="font-size: 32px; color: #64748b;">📊</div>`;
+        
+        const openAction = d.is_drawio
+          ? `<a href="${d.href}" download class="btn btn-ghost" style="padding: 4px 8px; font-size: 11px; color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);">Tải Draw.io 📥</a>`
+          : `<a href="${d.href}" target="_blank" class="btn btn-ghost" style="padding: 4px 8px; font-size: 11px; color: #38bdf8; border-color: rgba(56, 189, 248, 0.4);">Xem ảnh to ↗</a>`;
+
+        return `
+          <div class="diagram-card">
+            <div class="diagram-thumb-wrap" onclick="window.open('${d.preview_img || d.href}', '_blank')" style="cursor: pointer;">
+              ${thumbHtml}
+            </div>
+            <div class="diagram-info">
+              <div>
+                <div class="diagram-title" title="${d.name}">${d.name}</div>
+                <div class="diagram-meta">${d.ext.toUpperCase()} • ${d.size_kb} KB • ${d.rel_path}</div>
+              </div>
+              <div class="diagram-actions">
+                ${openAction}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     window.onload = init;

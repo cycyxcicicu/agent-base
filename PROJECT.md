@@ -9,6 +9,8 @@
 | Stack | (chọn file trong `agents/stacks/`: python / node / dotnet / ...) |
 | Nhánh chính | main |
 | Nhánh tích hợp | develop |
+| Thư mục tài liệu | docs |
+| Thư mục SRS | docs/spec |
 
 ## Lệnh
 

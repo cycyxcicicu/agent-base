@@ -115,11 +115,75 @@ def load_epics_and_phases():
 
 def inline_format(text: str) -> str:
     text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+    # Render cú pháp ảnh Markdown: ![alt](src)
+    def _img_sub(m):
+        cap = m.group(1)
+        src = m.group(2)
+        return (f'<div class="md-img-wrap" style="text-align: center; margin: 18px 0; background: rgba(15,23,42,0.4); padding: 14px; border-radius: 8px; border: 1px solid var(--border-subtle);">'
+                f'<a href="{src}" target="_blank" title="Nhấp để xem ảnh kích thước gốc">'
+                f'<img src="{src}" alt="{cap}" style="max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 4px 14px rgba(0,0,0,0.35);" loading="lazy" />'
+                f'</a>'
+                f'<div style="font-size: 12px; color: var(--text-muted); margin-top: 8px; font-style: italic;">📷 {cap or "Sơ đồ kiến trúc / quy trình"} (Nhấp ảnh để mở to)</div>'
+                f'</div>')
+    text = re.sub(r'!\[([^\]]*)\]\(([^)]+)\)', _img_sub, text)
     text = re.sub(r'`([^`]+)`', r'<code class="inline-code">\1</code>', text)
     text = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', text)
     text = re.sub(r'\*([^*]+)\*', r'<em>\1</em>', text)
     text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2" target="_blank" class="md-link">\1 ↗</a>', text)
     return text
+
+
+def load_mantis_bugs(csv_path: Path) -> dict:
+    """Đọc file CSV MantisBT xuất ra và bóc tách thành dữ liệu chuẩn bảng điều khiển."""
+    if not csv_path or not csv_path.is_file():
+        return {'total': 0, 'bugs': [], 'status_counts': {}, 'severity_counts': {}}
+
+    bugs = []
+    status_counts = {}
+    severity_counts = {}
+
+    try:
+        import csv
+        with open(csv_path, encoding='utf-8-sig', errors='ignore') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                bug_id = row.get('Id', '').strip()
+                if not bug_id:
+                    continue
+                status = row.get('Status', 'new').strip()
+                severity = row.get('Severity', 'normal').strip()
+                priority = row.get('Priority', 'normal').strip()
+                summary = row.get('Summary', '').strip()
+                reporter = row.get('Reporter', '').strip()
+                assigned_to = row.get('Assigned To', '').strip()
+                updated = row.get('Updated', '').strip()
+                category = row.get('Category', 'General').strip()
+                resolution = row.get('Resolution', 'open').strip()
+
+                status_counts[status] = status_counts.get(status, 0) + 1
+                severity_counts[severity] = severity_counts.get(severity, 0) + 1
+
+                bugs.append({
+                    'id': bug_id,
+                    'status': status,
+                    'severity': severity,
+                    'priority': priority,
+                    'summary': summary,
+                    'reporter': reporter,
+                    'assigned_to': assigned_to,
+                    'updated': updated,
+                    'category': category,
+                    'resolution': resolution
+                })
+    except Exception as e:
+        print(f"Lỗi đọc Mantis CSV {csv_path}: {e}")
+
+    return {
+        'total': len(bugs),
+        'bugs': bugs,
+        'status_counts': status_counts,
+        'severity_counts': severity_counts
+    }
 
 
 def markdown_to_html(md: str) -> str:
@@ -242,16 +306,31 @@ def parse_front_and_body(text: str):
     return meta, body_str
 
 
-def discover_system_docs(link_prefix: str = ''):
-    """Tự động quét toàn bộ thư mục docs/ và sinh HTML hoàn chỉnh để đọc trực tiếp trên giao diện.
-
-    link_prefix: tiền tố đường dẫn từ nơi đặt trang dashboard về gốc dự án (ví dụ '../../' khi dashboard nằm ở build/viewer/),
-    dùng cho href/iframe trỏ tới file gốc. Trường `path` luôn là đường dẫn từ gốc dự án để hiển thị."""
+def discover_system_docs(link_prefix: str = '', root_path: Path = None):
+    """Tự động quét toàn bộ thư mục doc/ và docs/ và sinh HTML hoàn chỉnh để đọc trực tiếp trên giao diện."""
+    cur_root = root_path if root_path else ROOT
     docs = []
-    if not DOCS_DIR.exists():
+
+    doc_roots = []
+    if (cur_root / 'docs').is_dir():
+        doc_roots.append(cur_root / 'docs')
+    if (cur_root / 'doc').is_dir():
+        doc_roots.append(cur_root / 'doc')
+
+    if not doc_roots:
         return docs
 
     FOLDER_META = {
+        'srs': {'category': 'Đặc tả Chức năng & SRS/FDD', 'badge': 'SRS/FDD'},
+        'thiet-ke': {'category': 'Thiết kế Hệ thống & Luồng', 'badge': 'Design'},
+        'quy-trinh': {'category': 'Quy trình Nghiệp vụ', 'badge': 'Process'},
+        'ky-thuat': {'category': 'Tiêu chuẩn & Kỹ thuật', 'badge': 'Engineering'},
+        'bug': {'category': 'Theo dõi & Quản lý Bug', 'badge': 'Bug'},
+        'tien-do': {'category': 'Tiến độ & Nhiệm vụ', 'badge': 'Progress'},
+        'ban-giao': {'category': 'Bàn giao Dự án', 'badge': 'Handover'},
+        'dich-vu': {'category': 'Tài liệu Dịch vụ & Module', 'badge': 'Services'},
+        'uat': {'category': 'Kiểm thử Chấp nhận (UAT)', 'badge': 'UAT'},
+        'yeu-cau': {'category': 'Yêu cầu Nghiệp vụ', 'badge': 'Requirements'},
         'diagrams': {'category': 'Sơ đồ Kiến trúc & Luồng', 'badge': 'Architecture'},
         'spec': {'category': 'Đặc tả Kỹ thuật & Ranh giới', 'badge': 'Spec'},
         'requirements': {'category': 'Yêu cầu Nghiệp vụ', 'badge': 'Requirements'},
@@ -267,94 +346,94 @@ def discover_system_docs(link_prefix: str = ''):
         'runbooks': {'category': 'Sổ tay Vận hành', 'badge': 'Runbook'},
     }
 
-    # 1. Kiểm tra trung tâm sơ đồ trực quan (Archify / HTML / SVG)
-    diag_index = DOCS_DIR / 'diagrams' / 'index.html'
-    if diag_index.exists():
-        diag_files = [p for p in (DOCS_DIR / 'diagrams').glob('*.*') if p.suffix.lower() in ('.html', '.svg') and p.name != 'index.html']
-        diag_count = len(diag_files)
-        rel_diag = 'docs/diagrams/index.html'
-        docs.append({
-            'id': 'doc_0',
-            'category': 'Sơ đồ Kiến trúc & Luồng',
-            'title': f"Bản đồ {diag_count} Sơ đồ Kiến trúc & Luồng Nghiệp vụ (Archify)" if diag_count else "Bản đồ Sơ đồ Kiến trúc Archify",
-            'path': rel_diag,
-            'href': link_prefix + rel_diag,
-            'desc': f"Tổng hợp {diag_count} sơ đồ trực quan tương tác SVG: Luồng nghiệp vụ, Module, RBAC và Mô hình ERD." if diag_count else "Tổng hợp sơ đồ trực quan tương tác kiến trúc hệ thống.",
-            'badge': f"{diag_count} Diagrams" if diag_count else "Diagrams",
-            'html_body': f'<div style="margin-bottom: 14px;"><a href="{link_prefix + rel_diag}" target="_blank" class="btn btn-primary" style="display: inline-flex;">Mở bản đồ sơ đồ Archify toàn màn hình ↗</a></div><iframe src="{link_prefix + rel_diag}" style="width: 100%; height: 80vh; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: #0b0f19;"></iframe>',
-            'is_diagram': True
-        })
+    for d_dir in doc_roots:
+        # 1. Kiểm tra trung tâm sơ đồ trực quan (Archify / HTML / SVG)
+        diag_index = d_dir / 'diagrams' / 'index.html'
+        if diag_index.exists():
+            diag_files = [p for p in (d_dir / 'diagrams').glob('*.*') if p.suffix.lower() in ('.html', '.svg') and p.name != 'index.html']
+            diag_count = len(diag_files)
+            rel_diag = str(diag_index.relative_to(cur_root)).replace('\\', '/')
+            docs.append({
+                'id': f'doc_{len(docs)}',
+                'category': 'Sơ đồ Kiến trúc & Luồng',
+                'title': f"Bản đồ {diag_count} Sơ đồ Kiến trúc & Luồng Nghiệp vụ (Archify)" if diag_count else "Bản đồ Sơ đồ Kiến trúc Archify",
+                'path': rel_diag,
+                'href': link_prefix + rel_diag,
+                'desc': f"Tổng hợp {diag_count} sơ đồ trực quan tương tác SVG: Luồng nghiệp vụ, Module, RBAC và Mô hình ERD." if diag_count else "Tổng hợp sơ đồ trực quan tương tác kiến trúc hệ thống.",
+                'badge': f"{diag_count} Diagrams" if diag_count else "Diagrams",
+                'html_body': f'<div style="margin-bottom: 14px;"><a href="{link_prefix + rel_diag}" target="_blank" class="btn btn-primary" style="display: inline-flex;">Mở bản đồ sơ đồ Archify toàn màn hình ↗</a></div><iframe src="{link_prefix + rel_diag}" style="width: 100%; height: 80vh; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: #0b0f19;"></iframe>',
+                'is_diagram': True
+            })
 
-    # 2. Quét đệ quy các thư mục con trong docs/
-    skip_folders = {'source', 'converted', 'notes', '__pycache__', 'screens'}
-    for sub in sorted(DOCS_DIR.iterdir()):
-        if not sub.is_dir() or sub.name in skip_folders:
-            continue
-        cat_info = FOLDER_META.get(sub.name, {'category': sub.name.replace('-', ' ').title(), 'badge': sub.name.upper()})
-        
-        for f in sorted(sub.glob('**/*')):
-            if not f.is_file():
+        # 2. Quét đệ quy các thư mục con trong doc/ hoặc docs/
+        skip_folders = {'source', 'converted', 'notes', '__pycache__', 'screens', 'hinh', '_ban-ghi'}
+        for sub in sorted(d_dir.iterdir()):
+            if not sub.is_dir() or sub.name in skip_folders:
                 continue
-            if f.suffix.lower() not in ('.md', '.html') or f.name.lower() in ('index.html', 'readme.md'):
-                continue
-            if 'screens' in f.parts:
-                continue
+            cat_info = FOLDER_META.get(sub.name.lower(), {'category': sub.name.replace('-', ' ').title(), 'badge': sub.name.upper()})
 
-            try:
-                content = f.read_text(encoding='utf-8', errors='ignore')
-                title = None
-                if f.suffix.lower() == '.html':
-                    m_t = re.search(r'<title>(.*?)</title>', content, re.I)
-                    if m_t:
-                        title = m_t.group(1).strip()
-                else:
-                    m_t = re.search(r'^#\s+(.+)$', content, re.M)
-                    if m_t:
-                        title = m_t.group(1).strip()
-                if not title:
-                    title = f.stem.replace('-', ' ').replace('_', ' ').title()
+            for f in sorted(sub.glob('**/*')):
+                if not f.is_file():
+                    continue
+                if f.suffix.lower() not in ('.md', '.html') or f.name.lower() in ('index.html', 'readme.md'):
+                    continue
+                if 'screens' in f.parts or '_ban-ghi' in f.parts:
+                    continue
 
-                # Tóm tắt dòng mô tả đầu tiên
-                desc = ""
-                for line in content.splitlines():
-                    line_s = line.strip()
-                    if not line_s or line_s.startswith('#') or line_s.startswith('|') or line_s.startswith('---') or line_s.startswith('```') or line_s.startswith('<!--'):
-                        continue
-                    desc = re.sub(r'[*_`\[\]]', '', line_s)
-                    if len(desc) > 160:
-                        desc = desc[:157] + '...'
-                    break
-                if not desc:
-                    desc = f"Tài liệu kỹ thuật tại {f.name}"
+                try:
+                    content = f.read_text(encoding='utf-8', errors='ignore')
+                    title = None
+                    if f.suffix.lower() == '.html':
+                        m_t = re.search(r'<title>(.*?)</title>', content, re.I)
+                        if m_t:
+                            title = m_t.group(1).strip()
+                    else:
+                        m_t = re.search(r'^#\s+(.+)$', content, re.M)
+                        if m_t:
+                            title = m_t.group(1).strip()
+                    if not title:
+                        title = f.stem.replace('-', ' ').replace('_', ' ').title()
 
-                rel_path = f.relative_to(ROOT).as_posix()
-                badge = cat_info['badge']
-                if 'adr' in sub.name.lower():
-                    badge = f.stem.split('-')[0].upper() if '-' in f.stem else 'ADR'
-                elif 'rk' in f.stem.lower():
-                    badge = f.stem.split('-')[0].upper()
+                    desc = ""
+                    for line in content.splitlines():
+                        line_s = line.strip()
+                        if not line_s or line_s.startswith('#') or line_s.startswith('|') or line_s.startswith('---') or line_s.startswith('```') or line_s.startswith('<!--'):
+                            continue
+                        desc = re.sub(r'[*_`\[\]]', '', line_s)
+                        if len(desc) > 160:
+                            desc = desc[:157] + '...'
+                        break
+                    if not desc:
+                        desc = f"Tài liệu kỹ thuật tại {f.name}"
 
-                doc_id = f"doc_{len(docs)}"
-                if f.suffix.lower() == '.html':
-                    html_body = f'<div style="margin-bottom: 14px;"><a href="{link_prefix + rel_path}" target="_blank" class="btn btn-primary" style="display: inline-flex;">Mở toàn màn hình tab mới ↗</a></div><iframe src="{link_prefix + rel_path}" style="width: 100%; height: 75vh; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: #0b0f19;"></iframe>'
-                    is_diagram = True
-                else:
-                    html_body = markdown_to_html(content)
-                    is_diagram = False
+                    rel_path = f.relative_to(cur_root).as_posix()
+                    badge = cat_info['badge']
+                    if 'adr' in sub.name.lower():
+                        badge = f.stem.split('-')[0].upper() if '-' in f.stem else 'ADR'
+                    elif 'rk' in f.stem.lower():
+                        badge = f.stem.split('-')[0].upper()
 
-                docs.append({
-                    'id': doc_id,
-                    'category': cat_info['category'],
-                    'title': title,
-                    'path': rel_path,
-                    'href': link_prefix + rel_path,
-                    'desc': desc,
-                    'badge': badge,
-                    'html_body': html_body,
-                    'is_diagram': is_diagram
-                })
-            except Exception:
-                pass
+                    doc_id = f"doc_{len(docs)}"
+                    if f.suffix.lower() == '.html':
+                        html_body = f'<div style="margin-bottom: 14px;"><a href="{link_prefix + rel_path}" target="_blank" class="btn btn-primary" style="display: inline-flex;">Mở toàn màn hình tab mới ↗</a></div><iframe src="{link_prefix + rel_path}" style="width: 100%; height: 75vh; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: #0b0f19;"></iframe>'
+                        is_diagram = True
+                    else:
+                        html_body = markdown_to_html(content)
+                        is_diagram = False
+
+                    docs.append({
+                        'id': doc_id,
+                        'category': cat_info['category'],
+                        'title': title,
+                        'path': rel_path,
+                        'href': link_prefix + rel_path,
+                        'desc': desc,
+                        'badge': badge,
+                        'html_body': html_body,
+                        'is_diagram': is_diagram
+                    })
+                except Exception:
+                    pass
 
     return docs
 
@@ -541,5 +620,154 @@ def build_dynamic_roadmap_stages(phases, epics, cards):
         })
 
     return stages
+
+
+def discover_diagrams(proj_root: Path, diagrams_dir_name: str, link_prefix: str = '') -> list:
+    """Quét toàn bộ sơ đồ (.drawio, .png, .svg, .html) của một dự án."""
+    candidates = [
+        proj_root / diagrams_dir_name,
+        proj_root / 'doc' / 'srs' / 'hinh',
+        proj_root / 'docs' / 'diagrams',
+        proj_root / 'doc' / 'hinh'
+    ]
+    diag_dir = None
+    for cand in candidates:
+        if cand.is_dir():
+            diag_dir = cand
+            break
+
+    diagrams = []
+    if not diag_dir:
+        return diagrams
+
+    for p in sorted(diag_dir.glob('*.*')):
+        if p.name.startswith('.') or p.name.startswith('_'):
+            continue
+        ext = p.suffix.lower()
+        if ext in ('.png', '.svg', '.drawio', '.html'):
+            try:
+                rel_path = str(p.relative_to(proj_root)).replace('\\', '/')
+            except Exception:
+                rel_path = p.name
+
+            preview_img = None
+            if ext == '.drawio':
+                for alt_ext in ('.png', '.svg'):
+                    alt_p = diag_dir / (p.stem + alt_ext)
+                    if alt_p.is_file():
+                        try:
+                            preview_img = link_prefix + str(alt_p.relative_to(proj_root)).replace('\\', '/')
+                        except Exception:
+                            preview_img = None
+                        break
+            elif ext in ('.png', '.svg'):
+                preview_img = link_prefix + rel_path
+
+            diagrams.append({
+                'name': p.stem,
+                'filename': p.name,
+                'ext': ext,
+                'rel_path': rel_path,
+                'href': link_prefix + rel_path,
+                'preview_img': preview_img,
+                'is_drawio': ext == '.drawio',
+                'size_kb': round(p.stat().st_size / 1024, 1)
+            })
+    return diagrams
+
+
+def collect_multi_projects(hub_root: Path, link_prefix: str = '../../') -> dict:
+    """Thu thập dữ liệu của toàn bộ các dự án đã đăng ký trong projects.json."""
+    projects_file = hub_root / 'projects.json'
+    registry = {'projects': [], 'default_project': None}
+    if projects_file.is_file():
+        try:
+            registry = json.loads(projects_file.read_text(encoding='utf-8'))
+        except Exception as e:
+            print(f"Lỗi đọc {projects_file}: {e}")
+
+    projects_data = {}
+    project_list = []
+    default_id = registry.get('default_project')
+
+    for proj in registry.get('projects', []):
+        p_id = proj.get('id', '')
+        if not p_id:
+            continue
+        p_path_str = proj.get('path', '')
+        p_path = Path(p_path_str).resolve()
+        if not p_path.is_dir():
+            continue
+
+        p_name = proj.get('name', p_id)
+        p_desc = proj.get('desc', '')
+        doc_dir = proj.get('doc_dir', 'doc')
+        diagrams_dir = proj.get('diagrams_dir', 'doc/srs/hinh')
+        mantis_rel = proj.get('mantis_csv')
+
+        # 1. Thu thập tài liệu
+        docs = discover_system_docs(link_prefix, root_path=p_path)
+
+        # 2. Thu thập sơ đồ
+        diagrams = discover_diagrams(p_path, diagrams_dir, link_prefix)
+
+        # 3. Thu thập Mantis bugs
+        mantis_file = (p_path / mantis_rel) if mantis_rel else None
+        if not mantis_file or not mantis_file.is_file():
+            # Thử tự tìm trong doc/bug/mantis/*.csv
+            candidates = list((p_path / 'doc' / 'bug' / 'mantis').glob('*.csv')) if (p_path / 'doc' / 'bug' / 'mantis').is_dir() else []
+            if candidates:
+                mantis_file = sorted(candidates, key=lambda x: x.stat().st_mtime, reverse=True)[0]
+        mantis_data = load_mantis_bugs(mantis_file)
+
+        # 4. Thu thập Tasks/Cards (nếu có tasks/)
+        epics = {}
+        phases = {}
+        cards = []
+        epics_file = p_path / 'tasks' / 'EPICS.md'
+        if epics_file.is_file():
+            try:
+                # Đọc epics/phases
+                txt = epics_file.read_text(encoding='utf-8')
+                for line in txt.splitlines():
+                    if line.strip().startswith('|---'):
+                        continue
+                    m_ep = re.match(r'^\|\s*([A-Za-z0-9_]+)\s*\|\s*`?([^|`]+?)`?\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|', line)
+                    if m_ep and m_ep.group(1).lower() != 'epic':
+                        c_epic = m_ep.group(1).strip()
+                        epics[c_epic] = {'code': c_epic, 'name': m_ep.group(3).strip(), 'desc': m_ep.group(3).strip()}
+            except Exception:
+                pass
+
+        projects_data[p_id] = {
+            'id': p_id,
+            'name': p_name,
+            'desc': p_desc,
+            'path': str(p_path),
+            'docs': docs,
+            'diagrams': diagrams,
+            'mantis': mantis_data,
+            'epics': epics,
+            'phases': phases,
+            'cards': cards
+        }
+
+        project_list.append({
+            'id': p_id,
+            'name': p_name,
+            'desc': p_desc,
+            'docs_count': len(docs),
+            'diagrams_count': len(diagrams),
+            'mantis_count': mantis_data['total']
+        })
+
+    if not default_id and project_list:
+        default_id = project_list[0]['id']
+
+    return {
+        'all_projects': projects_data,
+        'project_list': project_list,
+        'default_project': default_id
+    }
 
 

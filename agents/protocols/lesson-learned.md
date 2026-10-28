@@ -10,7 +10,7 @@ Nguồn: quy trình công ty (`quy-trinh-cong-ty.md` mục 1 và 4). Bổ sung c
 
 ## Cách ghi
 
-1. Trong ghi chú bàn giao `docs/notes/inbox/<Task>-<agent>.md`, thêm mục `## Bài học` (bỏ trống nếu không có). Mỗi bài học ba dòng:
+1. Trong ghi chú bàn giao `docs/notes/inbox/<Task>-<slug>-<agent>.md`, thêm mục `## Bài học` (bỏ trống nếu không có). Mỗi bài học ba dòng:
    - **Chuyện gì xảy ra:** sự việc, có số liệu nếu có.
    - **Nguyên nhân gốc:** không đổ lỗi cho người.
    - **Lần sau làm gì:** hành động cụ thể, kiểm chứng được.

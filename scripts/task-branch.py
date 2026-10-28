@@ -43,6 +43,8 @@ ROOT = deploy.ROOT
 # Tên nhánh phải khớp hook pre-commit: <feature|bugfix|hotfix|fix|chore|refactor|docs|test|devops>/<số>-<mô-tả>.
 # "feat" vẫn nhận nhưng được đổi thành "feature" cho hợp hook.
 VALID_TYPES = {'feat', 'feature', 'bugfix', 'hotfix', 'fix', 'chore', 'refactor', 'docs', 'test', 'devops'}
+# Loại nhánh -> từ loại việc ở đầu slug của card (T-12-fix-loi-xuat-excel <-> nhánh fix/12-loi-xuat-excel)
+TYPE_WORD = {'feature': 'feat', 'bugfix': 'fix'}
 git, fail = deploy.git, deploy.fail
 
 
@@ -93,7 +95,7 @@ def worktree_for(ticket: str):
 
 def start_worktree(args, cfg, branch):
     main_branch = cfg['branch']
-    path = wt_root(cfg) / f'T-{args.ticket}'
+    path = wt_root(cfg) / f'T-{args.ticket}-{TYPE_WORD.get(args.type, args.type)}-{args.slug}'
     if path.exists():
         fail(f'Thư mục worktree đã có: {path}. Dùng lại hoặc gỡ trước.')
     if args.dry_run:

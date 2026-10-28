@@ -22,6 +22,7 @@
         </div>
       </div>
       <div class="header-actions">
+        @@PROJECT_SELECTOR_HTML@@
         @@DIAGRAM_LINK@@
         <a href="monitor.html" class="btn btn-ghost" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
           ⚡ Giám Sát Agent Swarm
@@ -71,7 +72,13 @@
         📋 Quản Lý Task & Đọc Tài Liệu <span class="tab-badge">@@TOTAL_TASKS@@</span>
       </button>
       <button class="tab-btn" onclick="switchMainTab('docs')">
-        📚 Thư Viện Tài Liệu Hệ Thống <span class="tab-badge">@@LEN_DOCS@@ Mục</span>
+        📚 Thư Viện Tài Liệu Hệ Thống <span class="tab-badge" id="badge-docs-count">@@LEN_DOCS@@ Mục</span>
+      </button>
+      <button class="tab-btn" id="btn-tab-diagrams" onclick="switchMainTab('diagrams')">
+        📊 Sơ Đồ Dự Án <span class="tab-badge" id="badge-diagrams-count">0</span>
+      </button>
+      <button class="tab-btn" id="btn-tab-mantis" onclick="switchMainTab('mantis')">
+        🐞 Bug MantisBT <span class="tab-badge" id="badge-mantis-count">0</span>
       </button>
       <button class="tab-btn" onclick="switchMainTab('code')">
         💻 Theo Dõi Code Thay Đổi <span class="tab-badge">@@CODE_TASKS_COUNT@@</span>
@@ -188,6 +195,55 @@
       <div class="drawer-section">
         <h3 style="font-size: 16px; margin-bottom: 16px; color: #fff;">🚦 Trạng Thái Cổng Kiểm Soát Chất Lượng (Quality Gates)</h3>
         <div id="gatesListContainer" style="display: grid; gap: 14px;"></div>
+      </div>
+    </div>
+    <!-- TAB: Sơ Đồ Hệ Thống -->
+    <div id="tab-diagrams" class="tab-content-pane" style="display: none;">
+      <div class="controls-panel">
+        <div class="filter-group">
+          <div class="search-box">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="diagramSearchInput" placeholder="Tìm kiếm sơ đồ theo tên..." oninput="filterDiagrams()">
+          </div>
+        </div>
+      </div>
+      <div id="diagramsListContainer" class="diagrams-grid"></div>
+    </div>
+
+    <!-- TAB: Bug MantisBT -->
+    <div id="tab-mantis" class="tab-content-pane" style="display: none;">
+      <div class="controls-panel">
+        <div class="filter-group">
+          <div class="search-box">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="mantisSearchInput" placeholder="Tìm mã bug, tóm tắt lỗi, người báo, người gán..." oninput="filterMantisBugs()">
+          </div>
+          <div class="chip-group" id="mantisStatusChips">
+            <button class="chip-btn active" data-mantis-status="ALL" onclick="setMantisStatusFilter('ALL', this)">Tất cả</button>
+            <button class="chip-btn" data-mantis-status="new" onclick="setMantisStatusFilter('new', this)">🔴 Mới (New)</button>
+            <button class="chip-btn" data-mantis-status="feedback" onclick="setMantisStatusFilter('feedback', this)">🟣 Phản hồi (Feedback)</button>
+            <button class="chip-btn" data-mantis-status="acknowledged" onclick="setMantisStatusFilter('acknowledged', this)">🟡 Đã nhận (Acknowledged)</button>
+            <button class="chip-btn" data-mantis-status="assigned" onclick="setMantisStatusFilter('assigned', this)">🔵 Đã gán (Assigned)</button>
+            <button class="chip-btn" data-mantis-status="resolved" onclick="setMantisStatusFilter('resolved', this)">🟢 Đã sửa (Resolved)</button>
+            <button class="chip-btn" data-mantis-status="closed" onclick="setMantisStatusFilter('closed', this)">⚪ Đã đóng (Closed)</button>
+          </div>
+        </div>
+      </div>
+      <div class="mantis-table-wrap">
+        <table class="mantis-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">MÃ ID</th>
+              <th style="width: 100px;">MỨC ĐỘ</th>
+              <th style="width: 120px;">TRẠNG THÁI</th>
+              <th>TÓM TẮT NỘI DUNG BUG</th>
+              <th style="width: 110px;">NGƯỜI BÁO</th>
+              <th style="width: 110px;">GÁN CHO</th>
+              <th style="width: 110px;">CẬP NHẬT</th>
+            </tr>
+          </thead>
+          <tbody id="mantisTableBody"></tbody>
+        </table>
       </div>
     </div>
   </main>

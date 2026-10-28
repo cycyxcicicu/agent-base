@@ -1,6 +1,6 @@
 # Mẫu task card
 
-Sao chép nội dung dưới đây thành `tasks/<thư mục epic>/T-<ticket>.md` (xem mục "Nhóm việc và tài liệu"). Số ticket dùng luôn trong tên nhánh: ticket 12 ↔ `tasks/T-12.md` ↔ `feature/12-token-check`. Phần giữa hai dòng `---` được script đọc (`scripts/merge-gate.ps1`), giữ đúng tên khóa và định dạng danh sách.
+Sao chép nội dung dưới đây thành `tasks/<thư mục epic>/T-<ticket>-<slug>.md` (xem mục "Nhóm việc và tài liệu"). Số ticket dùng luôn trong tên nhánh: ticket 12 ↔ `tasks/T-12.md` ↔ `feature/12-token-check`. Phần giữa hai dòng `---` được script đọc (`scripts/merge-gate.ps1`), giữ đúng tên khóa và định dạng danh sách.
 
 ```markdown
 ---
@@ -94,10 +94,41 @@ scope_deny:
 | `scope_edit` | mẫu đường dẫn tính từ gốc repo, dùng `*` (trong một thư mục) và `**` (nhiều cấp) |
 | `scope_deny` | mẫu đường dẫn, luôn thắng `scope_edit` |
 
+## Đặt tên task (nhìn tên là biết làm gì)
+
+Mã số không nói được việc gì. Mã `T-<số>` chỉ là **khóa ổn định** (script, `blocked_by`, nhánh đều dựa vào nó, không đổi sau khi tạo); **tên** thì luôn kèm nghĩa.
+
+**Tên task = loại việc + việc gì**, giống tên nhánh: đọc `T-13-fix-loi-xuat-excel` là biết ngay đây là sửa lỗi xuất Excel.
+
+| Loại việc (từ đầu của slug) | Dùng khi | Nhánh tương ứng |
+|---|---|---|
+| `feat` | thêm hoặc đổi chức năng | `feature/...` (hoặc `feat/...`) |
+| `fix` | sửa lỗi | `fix/...` (hoặc `bugfix/...`) |
+| `hotfix` | sửa lỗi gấp trên bản đang chạy | `hotfix/...` |
+| `refactor` | tổ chức lại mã, không đổi hành vi | `refactor/...` |
+| `docs` | viết hoặc sửa tài liệu | `docs/...` |
+| `test` | thêm hoặc sửa test | `test/...` |
+| `chore`, `devops`, `perf` | việc vặt, hạ tầng và CI, hiệu năng | cùng tên |
+
+| Thứ | Quy tắc | Ví dụ |
+|---|---|---|
+| Tên file card | `T-<số>-<loại>-<mô tả>.md` | `T-13-fix-loi-xuat-excel.md` |
+| Slug (phần sau số) | chữ thường không dấu, số, gạch ngang, tối đa 40 ký tự; bắt đầu bằng **loại việc**, rồi **động từ + đối tượng**; cấm chữ vô nghĩa (`update`, `misc`, `task-moi`) | `feat-them-cot-an-hien`, `docs-chuan-hoa-ten-task` |
+| Tiêu đề (dòng `# T-13: ...`) | tiếng Việt có dấu, một câu tối đa 70 ký tự, nói rõ **kết quả** người dùng thấy, không bắt đầu bằng mã | `# T-13: Sửa lỗi xuất Excel mất dòng cuối` |
+| Nhánh | `<loại nhánh>/<số>-<mô tả>` (mô tả bỏ từ loại vì đã nằm ở tên nhánh) | `fix/13-loi-xuat-excel` |
+| Thư mục worktree | `T-<số>-<loại>-<mô tả>` | `T-13-fix-loi-xuat-excel` |
+| Ghi chú bàn giao | `T-<số>-<loại>-<mô tả>-<vai>.md` | `T-13-fix-loi-xuat-excel-dev.md` |
+| Subtask | `T-<số>.<n>-<loại>-<mô tả>` | `T-13.1-test-viet-kiem-tra` |
+| Mã khác (rủi ro, thay đổi) | mã + mô tả | `RK-3-xoa-hang-loat-nhat-ky.md`, `CR-2-doi-dinh-dang-xuat.md` (`ADR-13-file-approval.md` đã đúng) |
+
+- **Cùng một cái tên** cho card, nhánh, worktree và ghi chú, để lần theo bằng mắt và bằng lệnh `grep`.
+- Trong văn bản, lần nhắc đầu viết `T-13 (sửa lỗi xuất Excel)`, sau đó chỉ `T-13`.
+- `python scripts/task-board.py --check` **cảnh báo** (chưa chặn) khi tên file chỉ có mã, slug sai dạng hoặc không bắt đầu bằng loại việc, hoặc thiếu tiêu đề thật. Card cũ đổi tên khi có dịp; đổi tên file không đổi `id` nên không làm hỏng `blocked_by`.
+
 ## Nhóm việc và tài liệu
 
 - Mỗi card thuộc đúng **một epic** và **một phase** trong `tasks/EPICS.md`. Chưa có epic phù hợp thì Lead thêm vào `tasks/EPICS.md` và báo người dùng, không để trống.
-- **Card nằm trong thư mục của epic**: `tasks/<Thư mục>/T-<số>.md` (cột "Thư mục" trong `tasks/EPICS.md`), ví dụ `tasks/E2-tuyen-dung-cv/T-12.md`. Số `T-<số>` vẫn tăng dần duy nhất cho cả dự án, không đánh lại theo từng thư mục. Merge gate chấp nhận card ở `tasks/T-<số>.md` hoặc `tasks/<thư mục>/T-<số>.md`.
+- **Card nằm trong thư mục của epic**: `tasks/<Thư mục>/T-<số>-<slug>.md` (cột "Thư mục" trong `tasks/EPICS.md`), ví dụ `tasks/E2-tuyen-dung-cv/T-12.md`. Số `T-<số>` vẫn tăng dần duy nhất cho cả dự án, không đánh lại theo từng thư mục. Merge gate chấp nhận card ở `tasks/T-<số>.md` hoặc `tasks/<thư mục>/T-<số>.md`.
 - Dự án mới: **trước khi tạo card đầu tiên**, Lead thay bảng mẫu trong `tasks/EPICS.md` bằng epic thật của dự án và trình người dùng duyệt.
 - Task viết tài liệu phải liệt kê **từng file** trong `outputs` (không dùng `**`). Mỗi file tài liệu đó mở đầu bằng dòng:
   `> Task: T-<n> · Epic: E<n> · Vai: <vai>`

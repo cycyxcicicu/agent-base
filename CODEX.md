@@ -68,7 +68,7 @@ Tự nâng lên từ "vừa" trở lên khi: đụng file dùng chung, đổi AP
 
 ## 5. Task card
 
-Việc từ cỡ "vừa" có một card `tasks/<thư mục epic>/T-<ticket>.md` (epic: `tasks/EPICS.md`, tiến độ: `tasks/BOARD.md`) theo `agents/protocols/task-card.md`. Card là **bản ghi chính thức** của phạm vi, trạng thái, nhật ký phiên, kết quả test và kịch bản hoàn tác.
+Việc từ cỡ "vừa" có một card `tasks/<thư mục epic>/T-<ticket>-<loại>-<mô tả>.md` (epic: `tasks/EPICS.md`, tiến độ: `tasks/BOARD.md`) theo `agents/protocols/task-card.md`. Card là **bản ghi chính thức** của phạm vi, trạng thái, nhật ký phiên, kết quả test và kịch bản hoàn tác.
 Trạng thái: `todo → doing → review → done`, hoặc `blocked` (kèm lý do).
 Việc cỡ "nhỏ": ghi một dòng vào `tasks/quick-log.md` nếu không tạo card.
 
@@ -90,7 +90,7 @@ Việc cỡ "nhỏ": ghi một dòng vào `tasks/quick-log.md` nếu không tạ
 
 Ghi chú ghi **điều agent sau cần biết** mà code hay git log không cho thấy: bẫy, quyết định và lý do, khu vực dễ vỡ, giả định chưa kiểm chứng, việc dở dang, hướng đã thử mà không chạy.
 
-- **Ghi**: sau khi xử lý xong, tạo `docs/notes/inbox/<Task>-<agent>.md` theo `agents/protocols/handoff-note.md`. Chỉ khi có điều agent sau cần biết (bẫy, quyết định, việc dở); không có thì bỏ qua. `runner` không ghi file, kết quả trả thẳng cho vai gọi.
+- **Ghi**: sau khi xử lý xong, tạo `docs/notes/inbox/<Task>-<slug>-<agent>.md` theo `agents/protocols/handoff-note.md`. Chỉ khi có điều agent sau cần biết (bẫy, quyết định, việc dở); không có thì bỏ qua. `runner` không ghi file, kết quả trả thẳng cho vai gọi.
 - **Không sửa trực tiếp** `docs/PROJECT-NOTES.md`. Chỉ `writer` gộp hộp thư vào đó sau mỗi lần merge. Nhờ vậy các nhánh song song không xung đột.
 - **Đọc**: đầu mỗi việc, đọc `docs/PROJECT-NOTES.md` và các file chưa gộp trong `docs/notes/inbox/`.
 

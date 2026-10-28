@@ -70,7 +70,8 @@ def main():
     if 'onedrive' in str(wt_root).lower():
         print("WARNING: the worktree folder is inside OneDrive. Every worktree is a full checkout and OneDrive syncs it slowly. Prefer --root on another drive or folder.")
 
-    target_path = wt_root / f"T-{args.ticket}"
+    type_word = {"feature": "feat", "bugfix": "fix"}.get(args.type, args.type)
+    target_path = wt_root / f"T-{args.ticket}-{type_word}-{args.slug}"
     branch = f"{args.type}/{args.ticket}-{args.slug}"
 
     if target_path.exists():
@@ -87,8 +88,8 @@ def main():
     print(f"\nWorktree: {target_path}")
     print(f"Branch:   {branch} (from {base})\n")
     print("Next: open that folder in the editor and let the agent edit files there.")
-    print(f"Agents do not commit. When they finish, read the commit plan in tasks/T-{args.ticket}.md and run it yourself.")
-    print(f"Before opening a Merge Request: git rebase {base}, then python scripts/merge-gate.py --branch {branch} --card tasks/T-{args.ticket}.md --base {base}")
+    print(f"Agents do not commit. When they finish, read the commit plan in the card tasks/<epic-folder>/T-{args.ticket}-{type_word}-{args.slug}.md and run it yourself.")
+    print(f"Before opening a Merge Request: git rebase {base}, then python scripts/merge-gate.py --branch {branch} --card tasks/<epic-folder>/T-{args.ticket}-{type_word}-{args.slug}.md --base {base}")
 
 
 if __name__ == '__main__':

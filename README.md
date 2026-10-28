@@ -85,7 +85,7 @@ Chưa giới hạn: vai nào được gọi vai nào (quyền `task`), và MCP (
 
 ## Ghi chú cho agent sau
 
-Sau khi xử lý xong, mỗi agent viết một file `docs/notes/inbox/<Task>-<agent>.md` (mẫu `agents/protocols/handoff-note.md`): bẫy gặp phải, quyết định và lý do, khu vực dễ vỡ, giả định chưa kiểm chứng, việc dở dang, ảnh hưởng tới task khác. Sau mỗi merge, `writer` gộp chúng vào `docs/PROJECT-NOTES.md`. Agent bắt đầu việc đọc cả hai nơi.
+Sau khi xử lý xong, mỗi agent viết một file `docs/notes/inbox/<Task>-<slug>-<agent>.md` (mẫu `agents/protocols/handoff-note.md`): bẫy gặp phải, quyết định và lý do, khu vực dễ vỡ, giả định chưa kiểm chứng, việc dở dang, ảnh hưởng tới task khác. Sau mỗi merge, `writer` gộp chúng vào `docs/PROJECT-NOTES.md`. Agent bắt đầu việc đọc cả hai nơi.
 
 Vì mỗi agent ghi vào một file riêng, các nhánh chạy song song **không xung đột** ở bước này.
 
@@ -204,10 +204,10 @@ Mã nằm ở `tools/viewer/` (thu thập dữ liệu, dựng site, giao diện 
 
 ```
 powershell -File scripts/new-worktree.ps1 -Ticket 12 -Slug token-check
-powershell -File scripts/merge-gate.ps1 -Branch feature/12-token-check -Card tasks/T-12.md -Base develop
+powershell -File scripts/merge-gate.ps1 -Branch feature/12-token-check -Card tasks/<epic>/T-12-feat-token-check.md -Base develop
 ```
 
-- **Người dùng chạy** `new-worktree`: tạo `../<tên-repo>-worktrees/T-12` và nhánh `feature/12-token-check` từ `develop` (`hotfix` tách từ `main`). AI không chạy được script này và không commit: AI chỉ sửa file rồi viết kế hoạch commit vào card.
+- **Người dùng chạy** `new-worktree`: tạo `../<tên-repo>-worktrees/T-12-feat-token-check` và nhánh `feature/12-token-check` từ `develop` (`hotfix` tách từ `main`). AI không chạy được script này và không commit: AI chỉ sửa file rồi viết kế hoạch commit vào card.
 - `merge-gate` từ chối nếu có file thay đổi ngoài `scope_edit` (hoặc trong `scope_deny`) của card. Card và ghi chú `docs/notes/inbox/<Task>-*.md` luôn được phép.
 - Kilo Agent Manager cũng tự tạo worktree cho từng phiên. Script chỉ cần khi làm ngoài nó.
 - Bắt đầu với 2 Dev song song. Chỉ giao song song các task không chung file.

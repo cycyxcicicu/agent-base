@@ -1,5 +1,5 @@
 ---
-# Lưu thành tasks/<thư mục epic trong tasks/EPICS.md>/T-<số>.md
+# Lưu thành tasks/<thư mục epic trong tasks/EPICS.md>/T-<số>-<slug>.md (bắt đầu bằng loại việc rồi việc gì, ví dụ T-13-fix-loi-xuat-excel, T-12-feat-them-cot-an-hien)
 id: T-0
 size: medium
 status: todo
@@ -19,7 +19,7 @@ scope_deny:
   - package.json
 ---
 
-# T-0: <tiêu đề ngắn gọn theo domain glossary>
+# T-0: <tiêu đề tiếng Việt nói rõ kết quả, tối đa 70 ký tự, không bắt đầu bằng mã>
 
 ## 1. Bản Chất Bài Toán & Lát Cắt Dọc (Tracer-Bullet Vertical Slice)
 - **Hành vi End-to-End từ góc nhìn người dùng**: (Mô tả hành vi hoàn chỉnh từ Giao diện ➔ API ➔ Cơ sở dữ liệu ➔ Kiểm thử. Hoàn thành task này là người dùng hoặc test có thể bấm/thử nghiệm được ngay, không chia ngang theo tầng kỹ thuật).
@@ -73,7 +73,7 @@ scope_deny:
 ## 6. Nhật Ký Phiên & Lời Phán Quyết (Session Log & Rulings)
 - `Ruling: <quyết định kiến trúc> — <lý do> — <hậu quả nếu quyết định sai>`
 - Danh sách file đã đổi:
-- Ghi chú bàn giao cho Agent sau: (Tạo file `docs/notes/inbox/<Task>-<agent>.md`)
+- Ghi chú bàn giao cho Agent sau: (Tạo file `docs/notes/inbox/<Task>-<slug>-<agent>.md`)
 
 ## 7. Kế Hoạch Commit (Người Dùng Thực Hiện - AI Không Tự Commit)
 ```bash

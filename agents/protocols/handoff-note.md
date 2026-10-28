@@ -6,14 +6,14 @@ Sau khi xử lý xong việc của mình, **mỗi agent ghi lại những gì ag
 
 Nếu mọi agent sửa chung một file, các nhánh chạy song song sẽ xung đột. Vì vậy:
 
-1. **Agent ghi vào hộp thư đến**: một file riêng cho mỗi lần làm, `docs/notes/inbox/<Task>-<agent>.md` (ví dụ `T-12-dev-a.md`). File tên riêng nên không bao giờ xung đột, và merge gate cho phép sẵn file này.
+1. **Agent ghi vào hộp thư đến**: một file riêng cho mỗi lần làm, `docs/notes/inbox/<Task>-<slug>-<agent>.md` (ví dụ `T-13-fix-loi-xuat-excel-dev-a.md`). File tên riêng nên không bao giờ xung đột, và merge gate cho phép sẵn file này.
 2. **Tech Writer gộp** vào `docs/PROJECT-NOTES.md` sau mỗi lần merge: đưa đúng mục, gộp trùng, giữ nguồn T-xxx, rồi ghi danh sách file đã gộp vào kế hoạch commit để **người dùng** xóa (lịch sử vẫn nằm trong git).
 3. **Agent bắt đầu việc** đọc cả `docs/PROJECT-NOTES.md` **và** các file chưa gộp trong `docs/notes/inbox/`.
 
 Chỉ Tech Writer được sửa `docs/PROJECT-NOTES.md`. Agent khác chỉ ghi vào hộp thư đến.
 
 ## Mẫu 1: Ghi chú Task chính (Standard Handoff Note)
-Áp dụng khi một vai trò hoàn thành hoặc tạm dừng phiên của một Task card lớn (`docs/notes/inbox/<Task>-<agent>.md`, ví dụ `T-12-dev.md`).
+Áp dụng khi một vai trò hoàn thành hoặc tạm dừng phiên của một Task card lớn (`docs/notes/inbox/<Task>-<slug>-<agent>.md`, ví dụ `T-12-dev.md`).
 
 ```markdown
 > summary: (một dòng, ≤120 ký tự — note này nói về gì, agent nào cần đọc)

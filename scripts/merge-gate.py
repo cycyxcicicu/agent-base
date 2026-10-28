@@ -15,7 +15,7 @@ Hardened against bypasses:
   Mặc định chỉ CẢNH BÁO; thêm --strict-size để biến thành FAIL.
 
 Usage:
-  python scripts/merge-gate.py --branch feature/12-token-check --card tasks/T-12.md [--base develop] [--max-lines 400] [--strict-size]
+  python scripts/merge-gate.py --branch feature/12-token-check --card tasks/<epic>/T-12-feat-token-check.md [--base develop] [--max-lines 400] [--strict-size]
 """
 
 import os
@@ -158,7 +158,7 @@ def check_files_in_scope(files: list, allow: list, deny: list) -> list:
 def main():
     parser = argparse.ArgumentParser(description="Check branch file changes against task card scope.")
     parser.add_argument("--branch", required=True, help="Feature branch name.")
-    parser.add_argument("--card", required=True, help="Task card path (e.g. tasks/T-12.md).")
+    parser.add_argument("--card", required=True, help="Task card path (e.g. tasks/<epic>/T-12-feat-token-check.md; a bare tasks/T-12.md also works).")
     parser.add_argument("--base", default="develop", help="Base integration branch (default: develop).")
     parser.add_argument("--max-lines", type=int, default=0, help="Ngưỡng số dòng thay đổi (xem đầu file).")
     parser.add_argument("--strict-size", action="store_true", help="Vượt ngưỡng thì FAIL thay vì chỉ cảnh báo.")
@@ -240,8 +240,8 @@ def main():
         sys.exit(2)
 
     files = [f.strip().replace('\\', '/') for f in raw_diff.splitlines() if f.strip()]
-    # Card may live at tasks/T-n.md or in its epic folder tasks/<epic-folder>/T-n.md.
-    card_re = re.compile(rf"^tasks/(?:[^/]+/)?{re.escape(task_id)}\.md$")
+    # Card may live at tasks/T-n.md or in its epic folder tasks/<epic-folder>/T-n.md; a meaningful slug may follow the id (T-n-<slug>.md).
+    card_re = re.compile(rf"^tasks/(?:[^/]+/)?{re.escape(task_id)}(?:-[a-z0-9]+(?:-[a-z0-9]+)*)?\.md$")
     violations = []
 
     for f in files:

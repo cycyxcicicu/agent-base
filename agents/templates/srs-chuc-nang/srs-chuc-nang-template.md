@@ -1,6 +1,6 @@
 <!--
 KHUNG SRS MỘT CHỨC NĂNG (dạng md) — ánh xạ từng mục sang sheet của mẫu SRS_FDD_Template-v3.0.
-Cách dùng: sao chép file này thành doc/srs/<mã>-<slug>.md rồi điền. Quy tắc viết: agents/knowledge/srs/srs-fdd-writing-standard.md
+Cách dùng: sao chép file này thành <Thư mục SRS>/UC-<nn>-<loại>-<mô tả>.md (xem agents/protocols/srs-workflow.md) rồi điền; kiểm bằng python scripts/srs-check.py. Quy tắc viết: agents/knowledge/srs/srs-fdd-writing-standard.md
 Quy ước: bỏ các chú thích <!-- --> khi xong; chỗ chưa rõ ghi "(chưa xác nhận — hỏi: …)"; KHÔNG tự điền ô "Người duyệt/ Xác nhận".
 -->
 
@@ -10,7 +10,7 @@ Quy ước: bỏ các chú thích <!-- --> khi xong; chỗ chưa rõ ghi "(chưa
 |---|---|
 | **Mã chức năng** | `UC-<nn>` (và `US_<nn>` nếu dùng user story) |
 | **Phạm vi** | <màn hình/ service/ module thuộc chức năng này> |
-| **Dự án / Epic** | GDT Accounting / <epic> |
+| **Dự án / Epic** | <tên dự án> / <epic> |
 | **Trạng thái tài liệu** | Draft <!-- Draft → Đã soát → Approved (chỉ người dùng đổi) --> |
 | **Người soạn / Người duyệt** | <tên> / *(để trống cho người duyệt)* |
 | **Ngày tạo / cập nhật** | dd/mm/yyyy |

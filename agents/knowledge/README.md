@@ -13,7 +13,7 @@ Không nạp sẵn. Gặp việc thuộc dòng nào thì chạy `python scripts/
 | Viết hoặc tối ưu SQL, JPA, chỉ mục | `sql chậm`, `jpa n+1`, `chỉ mục` |
 | Đổi schema, migration | `migration không dừng hệ thống` |
 | Vẽ hoặc mô tả sơ đồ | `sơ đồ hoạt động`, `mô tả sơ đồ`, `drawio` |
-| Viết đặc tả, tài liệu thiết kế | `srs đặc tả`, `mẫu tài liệu` |
+| Viết đặc tả SRS và sơ đồ từ đầu đến cuối | `viết srs quy trình`, `srs đặc tả`, `mẫu tài liệu` |
 | Đổi yêu cầu đã duyệt | `thay đổi yêu cầu ccb` |
 | Xử lý nhiều bug | `bug hàng loạt` |
 | Viết test, TDD | `tdd spring boot`, `testcontainers` |

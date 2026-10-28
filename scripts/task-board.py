@@ -83,6 +83,7 @@ def load_cards() -> list:
             'folder': c['folder'],
             'id': c['id'],
             'title': c['title'],
+            'slug': c.get('slug', ''),
             'status': c['status'],
             'owner': c.get('owner', '?'),
             'epic': c.get('epic', ''),
@@ -92,6 +93,30 @@ def load_cards() -> list:
             'is_example': str(c.get('is_example', '')).lower() == 'true',
         })
     return cards
+
+
+NAME_OK = re.compile(r'^[a-z0-9]+(-[a-z0-9]+)*$')
+# Từ đầu của slug là loại việc, cùng bộ với loại nhánh/commit: feat (nhánh feature), fix (nhánh fix, bugfix), hotfix...
+TASK_TYPES = {'feat', 'fix', 'hotfix', 'refactor', 'docs', 'test', 'chore', 'devops', 'perf'}
+
+
+def name_warnings(cards: list) -> list:
+    """Cảnh báo (không chặn) khi tên task không cho biết nó làm gì: file phải là T-<số>-<slug>.md, có tiêu đề thật."""
+    out = []
+    for c in cards:
+        if c.get('is_example'):
+            continue
+        fname = Path(c['file']).name
+        if not c['slug']:
+            out.append(f"{c['id']}: tên file '{fname}' chỉ có mã, nên đặt T-<số>-<slug>.md (động từ + đối tượng, ví dụ T-12-docs-chuan-hoa-ten-task.md)")
+        elif not NAME_OK.match(c['slug']) or len(c['slug']) > 40:
+            out.append(f"{c['id']}: slug '{c['slug']}' phải là chữ thường, số, gạch ngang, tối đa 40 ký tự")
+        elif c['slug'].split('-')[0] not in TASK_TYPES:
+            out.append(f"{c['id']}: slug '{c['slug']}' nên bắt đầu bằng loại việc ({', '.join(sorted(TASK_TYPES))}), ví dụ T-12-fix-loi-xuat-excel")
+        title = (c['title'] or '').strip()
+        if not title or re.match(r'^T-\d', title):
+            out.append(f"{c['id']}: thiếu tiêu đề nói rõ việc làm gì (dòng '# {c['id']}: <tiêu đề>')")
+    return out
 
 
 def check(cards: list, epics: dict) -> list:
@@ -202,6 +227,8 @@ def main():
     if args.check:
         for p in problems:
             print(f'LỖI  {p}')
+        for w in name_warnings(cards):
+            print(f'CẢNH BÁO tên  {w}')
         print(f'{len(cards)} card, {len(problems)} lỗi')
         sys.exit(1 if problems else 0)
 
@@ -209,6 +236,8 @@ def main():
     print(f'wrote    tasks/BOARD.md ({len(cards)} card, {len(problems)} lỗi)')
     for p in problems:
         print(f'LỖI  {p}')
+    for w in name_warnings(cards):
+        print(f'CẢNH BÁO tên  {w}')
 
 
 if __name__ == '__main__':

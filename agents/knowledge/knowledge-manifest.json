@@ -218,9 +218,25 @@
         {
           "type": "related_to",
           "target": "Requirement:spec-writing"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-mo-ta-hoat-dong-so-do"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-quy-uoc-draw-io-va-archify"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:test-cases"
         }
       ],
-      "content_sha256": "d842b7ae069604d24f9d1c8e6240e2d6355d9260b93f381343cfbcf805a660ac",
+      "content_sha256": "cb637f0184b80ca3644a6cc8ef5223cd389b33bf437312c817f3be10976b9672",
       "provenance": [
         "Source:notebook1-agile-sdlc"
       ],
@@ -615,6 +631,10 @@
         {
           "type": "related_to",
           "target": "Skill:archify"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:test-cases"
         }
       ],
       "content_sha256": "b4cc222cb2edfa0db77e25a98b9a3181cc25fbaa7c8d82491aef943e96de324b",
@@ -770,7 +790,7 @@
           "target": "Requirement:worktree-lifecycle"
         }
       ],
-      "content_sha256": "65ef45383122910eb5a2f03db08e3c97969769f162a133443eae077342a91b83",
+      "content_sha256": "69788f0505b43c9ee9188509de092ce27442485fa86982be7b5aa523fc40539d",
       "provenance": [],
       "keywords": "git commit nhánh branch merge request tag release gitflow message"
     },
@@ -992,7 +1012,7 @@
           "target": "Requirement:release-note"
         }
       ],
-      "content_sha256": "6ce6f7808e161b284d934018c1289b60c0327dc673b42d4505afb6d20d94a001",
+      "content_sha256": "01e6f88c8253b928d3c804f11c766b1fa16cfc6f4c0c656ba17257d42bee929b",
       "provenance": [
         "Source:company-process"
       ],
@@ -1198,6 +1218,22 @@
         {
           "type": "related_to",
           "target": "Requirement:spec-writing"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-mo-ta-hoat-dong-so-do"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-quy-uoc-draw-io-va-archify"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:test-cases"
         }
       ],
       "content_sha256": "e4e7263759dcc547499dbda53797c0a37a69ad7661bfd032b1557a158452ba6d",
@@ -1452,6 +1488,10 @@
         {
           "type": "related_to",
           "target": "Skill:archify"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:test-cases"
         }
       ],
       "content_sha256": "ce268626b5ab7e9173a4e06e87cf62b36d225e8a1f4a0a9f5f0980015890089b",
@@ -1503,6 +1543,10 @@
         {
           "type": "related_to",
           "target": "Skill:archify"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:test-cases"
         }
       ],
       "content_sha256": "e8c8bd62d9e0b4a52cd23e116789ec62071141de378813740421e86e1c54b5a3",
@@ -2226,7 +2270,7 @@
           "target": "Requirement:worktree-lifecycle"
         }
       ],
-      "content_sha256": "980b84563b1b64a9136b282ef2d27e6f2986623140d46452aecbb217fb1d8d2f",
+      "content_sha256": "6a319dd2ccbf06b847060233b64fd3bb3f15889f1b32ff279d1ee7729d6a5d47",
       "provenance": []
     },
     {
@@ -2331,7 +2375,7 @@
           "target": "Rule:task-loop"
         }
       ],
-      "content_sha256": "73597b04b1db09604417107233d90daf1f4a497aedd2f06c43159c4d27e01027",
+      "content_sha256": "9ea0b0ba51415a67cd51ebf88bf3041f1d4ab643c4266476f6d0492f217e6bef",
       "provenance": []
     },
     {
@@ -2602,10 +2646,72 @@
         {
           "type": "owned_by",
           "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-mo-ta-hoat-dong-so-do"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-quy-uoc-draw-io-va-archify"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:test-cases"
         }
       ],
-      "content_sha256": "f006ce77be2d02c14d682f37b2a1f7aae9f070c013b9131f0cd8726b1027fcae",
+      "content_sha256": "5415205e7d99fc321614247be4feb907218cfaf11df445fd27a1ba8301aa5b92",
       "provenance": []
+    },
+    {
+      "id": "Requirement:srs-workflow",
+      "kind": "Requirement",
+      "title": "Quy trình viết SRS và sơ đồ (khung dùng chung)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/srs-workflow.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:spec-writing"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:srs-writing-standard"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:document-templates"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-mo-ta-hoat-dong-so-do"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-quy-uoc-draw-io-va-archify"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:test-cases"
+        }
+      ],
+      "content_sha256": "eddb8282d5f04fa9a52ff201d23832c90f15e218533798cdb5075d2213a0c05e",
+      "provenance": [],
+      "keywords": "viết srs quy trình đặc tả từ đầu đến cuối checklist kiểm srs-check sơ đồ tối thiểu thư mục srs"
     },
     {
       "id": "Requirement:task-branch",
@@ -2646,7 +2752,7 @@
           "target": "Rule:task-loop"
         }
       ],
-      "content_sha256": "08ed5bdced248f7734df89ef9a16d9803abe85eb12107ea36555a7cd43bfa8c0",
+      "content_sha256": "c297dab2ea3e4d5deda40147286c7d5e6f3a2a5013d531a728d605964facbbf2",
       "provenance": []
     },
     {
@@ -2713,7 +2819,7 @@
           "target": "Role:dev"
         }
       ],
-      "content_sha256": "183dcbcfef32d09c8f83e46ade5761faf9ce8ac8272b707ac2604cc1d301821e",
+      "content_sha256": "ed5285de21d9fa7ef2d9f59f60ef8161a96f1a171bc515c720ceb6ab47309219",
       "provenance": []
     },
     {

@@ -19,7 +19,7 @@ from pathlib import Path
 
 from .collect import (
     DOCS_DIR, ROOT, STATUS_META, build_dynamic_roadmap_stages, discover_system_docs, load_all_cards,
-    load_code_commits, load_epics_and_phases, load_gates, load_project_info,
+    load_code_commits, load_epics_and_phases, load_gates, load_project_info, collect_multi_projects,
 )
 
 ASSETS_DIR = Path(__file__).resolve().parent.parent / 'assets'
@@ -42,6 +42,25 @@ def build_context():
     git_stat = load_code_commits()
     system_docs = discover_system_docs(LINK_PREFIX)
     roadmap_stages = build_dynamic_roadmap_stages(phases, epics, cards)
+
+    # Nạp danh sách đa dự án (Multi-Project Registry) nếu có projects.json
+    hub_dir = Path(__file__).resolve().parents[3]
+    multi = collect_multi_projects(hub_dir, LINK_PREFIX)
+    multi_projects = multi.get('all_projects', {})
+    project_list = multi.get('project_list', [])
+    default_proj_id = multi.get('default_project')
+
+    # Nếu dự án hiện tại chưa có trong multi_projects, thêm vào danh sách
+    if not project_list:
+        project_list = [{
+            'id': proj_info['name'],
+            'name': proj_info['name'],
+            'desc': proj_info['desc'],
+            'docs_count': len(system_docs),
+            'diagrams_count': 0,
+            'mantis_count': 0
+        }]
+        default_proj_id = proj_info['name']
 
     total_tasks = len(cards)
     done_tasks = sum(1 for c in cards if c['status'] == 'done')
@@ -175,6 +194,21 @@ def build_context():
 
     roadmap_stages_rendered_str = '\n'.join(roadmap_stages_html)
 
+    # Tạo HTML cho Dropdown chọn dự án chuẩn MantisBT
+    proj_options = []
+    for p in project_list:
+        sel = 'selected' if p['id'] == default_proj_id else ''
+        cnt_info = f" ({p.get('mantis_count', 0)} bugs • {p.get('docs_count', 0)} docs)" if (p.get('mantis_count') or p.get('docs_count')) else ""
+        proj_options.append(f'<option value="{p["id"]}" {sel}>{p["name"]}{cnt_info}</option>')
+    project_selector_html = f'''
+    <div class="mantis-project-box">
+      <span class="mantis-label">📁 DỰ ÁN:</span>
+      <select id="mantisProjectSelect" class="mantis-select" onchange="switchProject(this.value)">
+        {''.join(proj_options)}
+      </select>
+    </div>
+    '''
+
     return {
         'proj_info': proj_info, 'epics': epics, 'cards': cards, 'gates': gates, 'git_stat': git_stat,
         'system_docs': system_docs, 'total_tasks': total_tasks, 'done_tasks': done_tasks,
@@ -182,6 +216,8 @@ def build_context():
         'pct_complete': pct_complete, 'now_str': now_str, 'brand_letter': brand_letter,
         'doc_category_chips_str': doc_category_chips_str, 'epic_options_str': epic_options_str,
         'roadmap_stages_rendered_str': roadmap_stages_rendered_str, 'doc_categories': doc_categories,
+        'multi_projects': multi_projects, 'project_list': project_list, 'default_proj_id': default_proj_id,
+        'project_selector_html': project_selector_html
     }
 
 
@@ -217,6 +253,31 @@ def write_site(ctx, out_dir: Path = OUTPUT_DIR) -> dict:
     # 1. Nội dung từng tài liệu / task card ra file riêng, chỉ mục (không kèm nội dung) vào data.js
     index_docs = split_bodies(ctx['system_docs'], 'docs', 'window.__setDoc')
     index_cards = split_bodies(ctx['cards'], 'cards', 'window.__setCard')
+
+    # Xử lý các tài liệu của từng project trong Multi-Projects
+    index_multi_projects = {}
+    for p_id, p_data in ctx.get('multi_projects', {}).items():
+        slim_docs = []
+        for d in p_data.get('docs', []):
+            d_id = d['id']
+            fname = f"{re.sub(r'[^A-Za-z0-9_.-]', '_', p_id)}_{re.sub(r'[^A-Za-z0-9_.-]', '_', str(d_id))}"
+            body = d.get('html_body', '')
+            (out_dir / 'docs' / f"{fname}.js").write_text(f'window.__setDocMulti({json.dumps(p_id)}, {json.dumps(d_id)}, {_js_json(body)});\n', encoding='utf-8')
+            slim_docs.append({k: v for k, v in d.items() if k != 'html_body'})
+
+        index_multi_projects[p_id] = {
+            'id': p_id,
+            'name': p_data.get('name', p_id),
+            'desc': p_data.get('desc', ''),
+            'path': p_data.get('path', ''),
+            'docs': slim_docs,
+            'diagrams': p_data.get('diagrams', []),
+            'mantis': p_data.get('mantis', {'total': 0, 'bugs': []}),
+            'epics': p_data.get('epics', {}),
+            'phases': p_data.get('phases', {}),
+            'cards': p_data.get('cards', [])
+        }
+
     # Chỉ mục tìm toàn văn: nội dung thô của card (chữ thường) gom vào một file, chỉ nạp khi người dùng tìm kiếm
     search_idx = {str(c['id']): str(c.get('raw_md', '')).lower() for c in ctx['cards']}
     (out_dir / 'cards' / '_search.js').write_text('window.__setSearch(' + _js_json(search_idx) + ');\n', encoding='utf-8')
@@ -226,6 +287,8 @@ def write_site(ctx, out_dir: Path = OUTPUT_DIR) -> dict:
     data = {
         'cards': index_cards, 'gates': ctx['gates'], 'statusMeta': STATUS_META, 'epicMeta': ctx['epics'],
         'projectInfo': ctx['proj_info'], 'docs': index_docs,
+        'multiProjects': index_multi_projects, 'projectList': ctx.get('project_list', []),
+        'defaultProject': ctx.get('default_proj_id'),
     }
     (out_dir / 'data.js').write_text('window.DASH = ' + _js_json(data) + ';\n', encoding='utf-8')
 
@@ -238,6 +301,7 @@ def write_site(ctx, out_dir: Path = OUTPUT_DIR) -> dict:
         'LEN_GATES': len(ctx['gates']), 'LEN_DOCS': len(ctx['system_docs']), 'GIT_STAT': ctx['git_stat'],
         'DOC_CATEGORY_CHIPS_STR': ctx['doc_category_chips_str'], 'EPIC_OPTIONS_STR': ctx['epic_options_str'],
         'ROADMAP_STAGES_RENDERED_STR': ctx['roadmap_stages_rendered_str'], 'DIAGRAM_LINK': _diagram_link(ctx),
+        'PROJECT_SELECTOR_HTML': ctx.get('project_selector_html', ''),
     }
     html = (ASSETS_DIR / 'index.template.html').read_text(encoding='utf-8')
     # Thay một lượt bằng regex để giá trị chứa '@@' (nếu có) không bị thay lần hai

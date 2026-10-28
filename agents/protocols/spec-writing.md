@@ -21,13 +21,15 @@ Quy chuẩn văn phong và cấu trúc tài liệu đặc tả giúp đảm bả
 
 ## 2. Bộ ba file chuẩn cho mỗi tính năng (Tách biệt mối quan tâm)
 
+Thư mục và tên file do `agents/protocols/srs-workflow.md` quy định (`Thư mục SRS` đọc từ `PROJECT.md`; tài liệu của dự án nằm trong dự án, không nằm trong khung). File này chỉ giữ phần văn phong.
+
 Mỗi phân hệ hoặc chức năng phức tạp được tách thành 3 tài liệu độc lập:
 
 | File | Đường dẫn quy ước | Mục đích & Nội dung |
 |---|---|---|
-| **Đặc tả nghiệp vụ** | `docs/requirements/R-<mã>.md` | Hệ thống PHẢI làm gì (User Stories, BR, A/C, kịch bản tương tác). |
-| **Thiết kế kỹ thuật** | `docs/spec/T-<mã>-design.md` hoặc `docs/adr/` | Hệ thống ĐƯỢC XÂY NHƯ THẾ NÀO (Data schema, API contracts, sequence diagram, ADR). |
-| **Đối chiếu hiện trạng** | `docs/analysis/T-<mã>-analysis.md` | Hiện trạng code THẬT SO VỚI ĐẶC TẢ (chênh lệch, nợ kỹ thuật, kế hoạch bù đắp). |
+| **Đặc tả nghiệp vụ** | `<Thư mục SRS>/UC-<nn>-<loại>-<mô tả>.md` | Hệ thống PHẢI làm gì (User Stories, BR, A/C, kịch bản tương tác). |
+| **Thiết kế kỹ thuật** | `<Thư mục SRS>/UC-<nn>-<loại>-<mô tả>-thiet-ke.md` (quyết định lớn: `<Thư mục tài liệu>/adr/`) | Hệ thống ĐƯỢC XÂY NHƯ THẾ NÀO (Data schema, API contracts, sequence diagram, ADR). |
+| **Đối chiếu hiện trạng** | `<Thư mục SRS>/UC-<nn>-<loại>-<mô tả>-doi-chieu.md` | Hiện trạng code THẬT SO VỚI ĐẶC TẢ (chênh lệch, nợ kỹ thuật, kế hoạch bù đắp). |
 
 ---
 

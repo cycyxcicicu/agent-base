@@ -64,7 +64,7 @@ git commit -m "test(auth): thêm test token hết hạn"
 git status
 git log --oneline develop..HEAD
 git diff --stat develop...HEAD
-powershell -File scripts/merge-gate.ps1 -Branch feature/12-token-check -Card tasks/T-12.md -Base develop
+powershell -File scripts/merge-gate.ps1 -Branch feature/12-token-check -Card tasks/<epic>/T-12-feat-token-check.md -Base develop
 ```
 
 ### 3. Rebase và đẩy

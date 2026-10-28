@@ -13,7 +13,7 @@ powershell -File scripts/new-worktree.ps1 -Ticket 12 -Slug token-check
 ```
 
 - Tạo nhánh `feature/12-token-check` từ `develop` (`hotfix` tách từ `main`).
-- **Nơi tạo**: mặc định thư mục cạnh repo, `<tên-repo>-worktrees\T-12`. Đổi nơi bằng `-Root`, ví dụ `-Root D:\worktrees\agent-base`.
+- **Nơi tạo**: mặc định thư mục cạnh repo, `<tên-repo>-worktrees\T-12-feat-token-check`. Đổi nơi bằng `-Root`, ví dụ `-Root D:\worktrees\agent-base`.
 - **Đừng đặt trong OneDrive** (repo hiện nằm trong OneDrive nên mặc định sẽ rơi vào OneDrive): mỗi worktree là một bản checkout đầy đủ các file, OneDrive sẽ đồng bộ rất chậm và đôi khi làm lỗi file. Đặt ở ổ khác hoặc thư mục ngoài OneDrive bằng `-Root`.
 - Mỗi ticket một worktree, mỗi nhánh chỉ mở ở **một** worktree (Git không cho mở cùng một nhánh ở hai nơi).
 

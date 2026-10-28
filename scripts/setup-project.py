@@ -32,6 +32,72 @@ from pathlib import Path
 HUB_ROOT = Path(__file__).resolve().parent.parent
 
 
+def register_project_in_dashboard(target_dir: Path) -> None:
+    """Tự động đăng ký dự án mới vào danh mục Multi-Project của Dashboard."""
+    projects_file = HUB_ROOT / "projects.json"
+    registry = {"version": "1.0.0", "default_project": "ACCOUTING_Noi_Bo", "projects": []}
+    if projects_file.is_file():
+        try:
+            registry = json.loads(projects_file.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+
+    # Phát hiện thư mục tài liệu & sơ đồ
+    doc_dir = "doc" if (target_dir / "doc").is_dir() else ("docs" if (target_dir / "docs").is_dir() else "doc")
+    diagrams_dir = "doc/srs/hinh" if (target_dir / "doc" / "srs" / "hinh").is_dir() else (
+        "docs/diagrams" if (target_dir / "docs" / "diagrams").is_dir() else f"{doc_dir}/hinh"
+    )
+
+    # Phát hiện file Mantis CSV và tên dự án chuẩn
+    mantis_csv = None
+    project_id = target_dir.name
+    project_name = target_dir.name
+
+    mantis_candidates = list((target_dir / "doc" / "bug" / "mantis").glob("*.csv")) if (target_dir / "doc" / "bug" / "mantis").is_dir() else []
+    if not mantis_candidates and (target_dir / "mantis").is_dir():
+        mantis_candidates = list((target_dir / "mantis").glob("*.csv"))
+
+    if mantis_candidates:
+        latest_csv = sorted(mantis_candidates, key=lambda p: p.stat().st_mtime, reverse=True)[0]
+        mantis_csv = str(latest_csv.relative_to(target_dir)).replace("\\", "/")
+        try:
+            lines = latest_csv.read_text(encoding="utf-8", errors="ignore").splitlines()
+            if len(lines) > 1:
+                parts = lines[1].split(",")
+                if len(parts) > 1 and parts[1].strip():
+                    project_id = parts[1].strip()
+                    project_name = f"{project_id} ({target_dir.name})"
+        except Exception:
+            pass
+
+    # Cập nhật danh sách
+    existing = next((p for p in registry.get("projects", []) if Path(p.get("path", "")).resolve() == target_dir.resolve()), None)
+    if existing:
+        existing["id"] = project_id
+        existing["name"] = project_name
+        existing["doc_dir"] = doc_dir
+        existing["diagrams_dir"] = diagrams_dir
+        if mantis_csv:
+            existing["mantis_csv"] = mantis_csv
+    else:
+        registry.setdefault("projects", []).append({
+            "id": project_id,
+            "name": project_name,
+            "path": str(target_dir),
+            "doc_dir": doc_dir,
+            "diagrams_dir": diagrams_dir,
+            "mantis_csv": mantis_csv,
+            "desc": f"Dự án {project_name} kết nối qua setup-project",
+            "is_active": True
+        })
+
+    try:
+        projects_file.write_text(json.dumps(registry, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(f"✅ 3.1. Đã đăng ký dự án [{project_id}] vào Multi-Project Dashboard của agent-base")
+    except Exception as e:
+        print(f"⚪ 3.1. Không thể ghi projects.json: {e}")
+
+
 def setup_project(target_dir: Path) -> int:
     target_dir = target_dir.resolve()
     print("=" * 70)
@@ -93,6 +159,9 @@ def setup_project(target_dir: Path) -> int:
     }
     agentbase_link_file.write_text(json.dumps(link_data, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"✅ 3. Gắn thẻ định danh liên kết: .agentbase.json")
+
+    # 3.1. Tự động đăng ký dự án vào Dashboard trung tâm (Multi-Project Registry)
+    register_project_in_dashboard(target_dir)
 
     # 4. Sao chép hoặc tạo file luật AGENTS.md cơ sở nếu dự án chưa có
     agents_rule_file = target_dir / "AGENTS.md"
@@ -179,6 +248,28 @@ Dự án này sử dụng bộ khung chuẩn hóa từ `agent-base`.
             for r in missing_rules:
                 f.write(f"{r}\n")
         print("✅ 6. Cập nhật .gitignore dự án: Đã chặn các file cấu hình MCP cá nhân không bị commit.")
+
+    # 7. Tự động kiểm tra và tải ngầm động cơ Harness² nếu máy người mới chưa có
+    harness2_dir = Path.home() / "Documents" / "skill" / "repos" / "harness2"
+    if not harness2_dir.is_dir():
+        print("📥 7. Chưa phát hiện động cơ Harness² trên máy. Đang tự động tải ngầm...")
+        try:
+            harness2_dir.parent.mkdir(parents=True, exist_ok=True)
+            subprocess.run(
+                ["git", "clone", "--depth", "1", "https://github.com/google-research/harness2.git", str(harness2_dir)],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=30
+            )
+            if harness2_dir.is_dir():
+                print("✅ 7. Đã tự động tải thành công Harness² về máy!")
+            else:
+                print("⚪ 7. Mạng offline — Hệ thống tự động dùng động cơ tích hợp sẵn.")
+        except Exception:
+            print("⚪ 7. Mạng offline — Hệ thống tự động dùng động cơ tích hợp sẵn.")
+    else:
+        print(f"✅ 7. Động cơ Harness²: Đã sẵn sàng tại {harness2_dir}")
 
     print("-" * 70)
     print("🎉 DỰ ÁN ĐÃ ĐƯỢC KẾT NỐI VÀ KHỞI TẠO THÀNH CÔNG VỚI AGENT-BASE!")
