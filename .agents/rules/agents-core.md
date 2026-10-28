@@ -13,6 +13,7 @@ trigger: manual
 3. **`docs/PROJECT-NOTES.md`** và các file chưa gộp trong **`docs/notes/inbox/`**: bộ nhớ chung, ghi chú của các agent làm trước bạn (bẫy, quyết định, việc dở dang).
 4. Task card của bạn trong `tasks/`.
 5. File vai trò của bạn trong `agents/roles/`.
+6. Tri thức theo vai, nạp đúng phần cần: `python scripts/knowledge.py context --root . --manifest agents/knowledge/knowledge-manifest.json --role <vai> --include-draft` (mục lục kèm đường dẫn; chỉ mở file khớp việc; tra cứu: `agents/knowledge/README.md`).
 
 Chưa rõ thì hỏi, đừng đoán. Không có nguồn thì không khẳng định.
 
@@ -48,7 +49,7 @@ Tự nâng lên từ "vừa" trở lên khi: đụng file dùng chung, đổi AP
 
 **Khi sửa**
 3. Làm việc trong nhánh do `scripts/task-branch.py` tạo. Ghi git theo quy tắc 4.
-4. **Git chủ yếu để xem.** Được: `status`, `diff`, `log`, `show`, `blame`, `branch --list`, `ls-files`, `rev-parse`, `merge-base`, `rev-list`. `add <đường dẫn>`, `commit`, `push` (nhánh cá nhân, không ép) **chỉ khi người dùng yêu cầu rõ**: công cụ hỏi duyệt từng lệnh, commit dùng danh tính người dùng kèm `Co-Authored-By`. **Luôn cấm**: `add -A`/`.`/`-f`, `commit --amend`, push ép hoặc vào `main`/`develop`/`release/*`, `pull`, `fetch`, `merge`, `rebase`, `reset`, `checkout`, `switch`, `restore`, `stash`, `tag`, `cherry-pick`, `revert`, `rm`, `mv`, `clean`, `worktree add`, `config`, `init`, `clone`, `--no-verify`. Trừ `scripts/deploy.py`, `scripts/task-branch.py`.
+4. **Dùng git bình thường để làm việc, chỉ chặn thứ làm hỏng dự án.** Được tự chạy: lệnh xem (`status`, `diff`, `log`, `show`, `blame`, `ls-files`, `rev-parse`, `merge-base`, `rev-list`) và lệnh hoàn tác được trong nhánh của mình (`checkout`/`switch`, `branch`, `fetch`, `pull`, `merge`, `rebase`, `restore`, `stash`, `cherry-pick`, `revert`, `rm`, `mv`, `apply`, `am`, `worktree`, `tag` mới). `add <đường dẫn>`, `commit`, `push` (nhánh cá nhân, không ép) **chỉ khi người dùng yêu cầu rõ**: công cụ hỏi duyệt từng lệnh, commit dùng danh tính người dùng kèm `Co-Authored-By`. **Luôn cấm** (mất code hoặc lịch sử, ảnh hưởng người khác): `reset`, `clean`, `add -A`/`.`/`-f`, `commit --amend`, push ép hoặc vào `main`/`develop`/`release/*`, xóa nhánh hoặc tag, `stash drop`/`clear`, `filter-branch` và lệnh viết lại lịch sử, `config`, đổi `remote`, `init`, `clone`, `--no-verify`. Vai chỉ đọc (reviewer, qa, runner...) không ghi git. Trừ `scripts/deploy.py`, `scripts/task-branch.py`.
 
 **Sau khi sửa**
 5. Chạy test và lint theo `PROJECT.md` (hoặc nhờ `runner`), ghi kết quả vào card.
@@ -114,12 +115,12 @@ Hoàn tác một task: `git revert -m 1 <mã merge commit>` trên nhánh mới (
 ## 12. Quy tắc Git (theo GitFlow)
 
 Chi tiết: `agents/protocols/git-rules.md`. Tóm tắt:
-- **Ghi git: người dùng làm, hoặc nhờ AI làm theo quy tắc 4** (duyệt từng lệnh). Rebase, merge, tag, push ép do người dùng.
+- **Ghi git:** việc hoàn tác được trong nhánh của mình agent tự làm; commit/push khi người dùng yêu cầu rõ (duyệt từng lệnh). Push ép, push vào nhánh chung, xóa nhánh/tag do người dùng.
 - Nhánh: `main` (prod), `develop` (tích hợp), `release/*`, `feature/*`, `fix/*`, `hotfix/*`. Không commit/push thẳng vào `main`, `develop`, `release/*`.
 - Tên nhánh `<type>/<ticket>-<mô-tả>`, commit `<type>(scope): <tóm tắt>` (tối đa 72 ký tự). Một commit là một thay đổi logic, tách riêng refactor, tính năng, test.
 - Nhánh cá nhân **rebase** lên nhánh gốc trước khi tạo Merge Request. Đẩy lại bằng `--force-with-lease`.
 - Tag `v<MAJOR>.<MINOR>.<PATCH>` mỗi lần release trên `main`.
-- Worktree do người dùng tạo (`scripts/new-worktree.py / .ps1 / .sh`), đặt ngoài OneDrive.
+- Worktree tạo bằng `git worktree add` hoặc `scripts/new-worktree.py / .ps1 / .sh`, đặt ngoài OneDrive.
 
 ## 13. Merge gate
 

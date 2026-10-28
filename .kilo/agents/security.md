@@ -59,49 +59,18 @@ permission:
     "git -C * push*": ask
     "git --* push*": ask
     "git -* push*": ask
-    "git pull*": deny
-    "git fetch*": deny
-    "git merge *": deny
-    "git rebase*": deny
     "git reset*": deny
-    "git checkout*": deny
-    "git switch*": deny
-    "git restore*": deny
-    "git stash push*": deny
-    "git stash pop*": deny
     "git stash drop*": deny
     "git stash clear*": deny
-    "git stash apply*": deny
-    "git stash branch*": deny
-    "git tag -a*": deny
     "git tag -d*": deny
     "git tag -f*": deny
-    "git tag -m*": deny
     "git tag --delete*": deny
-    "git tag [a-zA-Z0-9]*": deny
-    "git cherry-pick*": deny
-    "git revert*": deny
-    "git rm*": deny
-    "git mv*": deny
     "git clean*": deny
-    "git apply*": deny
-    "git am*": deny
     "git init*": deny
     "git clone*": deny
-    "git branch -d*": deny
     "git branch -D*": deny
-    "git branch -m*": deny
-    "git branch -M*": deny
-    "git branch -c*": deny
-    "git branch -C*": deny
     "git branch --delete*": deny
-    "git branch --move*": deny
-    "git branch --copy*": deny
-    "git branch [!-]**": deny
-    "git worktree add*": deny
-    "git worktree remove*": deny
     "git worktree prune*": deny
-    "git worktree move*": deny
     "git worktree lock*": deny
     "git worktree unlock*": deny
     "git remote add*": deny
@@ -109,55 +78,17 @@ permission:
     "git remote set-url*": deny
     "git remote rename*": deny
     "git config *": deny
-    "*new-worktree*": deny
     "*install-hooks*": deny
-    "git -C * merge*": deny
-    "git -C * rebase*": deny
     "git -C * reset*": deny
-    "git -C * checkout*": deny
-    "git -C * switch*": deny
-    "git -C * branch*": deny
-    "git -C * tag*": deny
-    "git -C * restore*": deny
-    "git -C * rm*": deny
-    "git -C * mv*": deny
     "git -C * clean*": deny
-    "git -C * apply*": deny
     "git -C * config*": deny
-    "git --* merge*": deny
-    "git --* rebase*": deny
     "git --* reset*": deny
-    "git --* checkout*": deny
-    "git --* switch*": deny
-    "git --* branch*": deny
-    "git --* tag*": deny
-    "git --* restore*": deny
-    "git --* rm*": deny
-    "git --* mv*": deny
     "git --* clean*": deny
     "git --* config*": deny
-    "git -* merge*": deny
-    "git -* rebase*": deny
     "git -* reset*": deny
-    "git -* checkout*": deny
-    "git -* switch*": deny
-    "git -* branch*": deny
-    "git -* tag*": deny
     "*&&*git reset*": deny
     "*;*git reset*": deny
     "*|*git reset*": deny
-    "*&&*git rebase*": deny
-    "*;*git rebase*": deny
-    "*|*git rebase*": deny
-    "*&&*git merge*": deny
-    "*;*git merge*": deny
-    "*|*git merge*": deny
-    "*&&*git checkout*": deny
-    "*;*git checkout*": deny
-    "*&&*git switch*": deny
-    "*;*git switch*": deny
-    "*&&*git branch*": deny
-    "*;*git branch*": deny
     "git push --force*": deny
     "git push -f*": deny
     "git reset --hard*": deny
@@ -167,61 +98,20 @@ permission:
     "'git' *": deny
     "*git reset*": deny
     "*git.exe reset*": deny
-    "*git rebase*": deny
-    "*git.exe rebase*": deny
-    "*git merge *": deny
-    "*git.exe merge *": deny
-    "*git checkout*": deny
-    "*git.exe checkout*": deny
-    "*git switch*": deny
-    "*git.exe switch*": deny
-    "*git restore*": deny
-    "*git.exe restore*": deny
-    "*git*stash push*": deny
-    "*git*stash pop*": deny
     "*git*stash drop*": deny
     "*git*stash clear*": deny
-    "*git*stash apply*": deny
-    "*git*tag -a*": deny
     "*git*tag -d*": deny
     "*git*tag -f*": deny
-    "*git*tag -m*": deny
     "*git*tag --delete*": deny
-    "*git*tag [a-zA-Z0-9]*": deny
-    "*git cherry-pick*": deny
-    "*git.exe cherry-pick*": deny
-    "*git revert*": deny
-    "*git.exe revert*": deny
-    "*git rm *": deny
-    "*git.exe rm *": deny
-    "*git mv *": deny
-    "*git.exe mv *": deny
     "*git clean*": deny
     "*git.exe clean*": deny
-    "*git apply*": deny
-    "*git.exe apply*": deny
-    "*git am *": deny
-    "*git am": deny
-    "*git.exe am *": deny
-    "*git.exe am": deny
     "*git init*": deny
     "*git.exe init*": deny
     "*git clone*": deny
     "*git.exe clone*": deny
-    "*git*branch -d*": deny
     "*git*branch -D*": deny
-    "*git*branch -m*": deny
-    "*git*branch -M*": deny
-    "*git*branch -c*": deny
-    "*git*branch -C*": deny
     "*git*branch --delete*": deny
-    "*git*branch --move*": deny
-    "*git*branch --copy*": deny
-    "*git*branch [!-]**": deny
-    "*git*worktree add*": deny
-    "*git*worktree remove*": deny
     "*git*worktree prune*": deny
-    "*git*worktree move*": deny
     "*git*worktree lock*": deny
     "*git*worktree unlock*": deny
     "*git*remote add*": deny
@@ -234,9 +124,6 @@ permission:
     "*`*git*`*": deny
     "*git*--no-verify*": deny
     "*\ngit reset*": deny
-    "*\ngit rebase*": deny
-    "*\ngit checkout*": deny
-    "*\ngit merge*": deny
     "git add -A*": deny
     "git add --all*": deny
     "git add .": deny
@@ -277,8 +164,6 @@ permission:
     "git push* develop": deny
     "git push* develop *": deny
     "git push* release/*": deny
-    "git checkout -B*": deny
-    "git switch -C*": deny
     "*git add -A*": deny
     "*git add --all*": deny
     "*git add .": deny
@@ -319,8 +204,6 @@ permission:
     "*git push* develop": deny
     "*git push* develop *": deny
     "*git push* release/*": deny
-    "*git checkout -B*": deny
-    "*git switch -C*": deny
     "git -c alias.*": deny
     "*git -c alias.*": deny
     "git.exe -c alias.*": deny

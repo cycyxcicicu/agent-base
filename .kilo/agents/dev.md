@@ -79,49 +79,18 @@ permission:
     "git -C * push*": ask
     "git --* push*": ask
     "git -* push*": ask
-    "git pull*": deny
-    "git fetch*": deny
-    "git merge *": deny
-    "git rebase*": deny
     "git reset*": deny
-    "git checkout*": deny
-    "git switch*": deny
-    "git restore*": deny
-    "git stash push*": deny
-    "git stash pop*": deny
     "git stash drop*": deny
     "git stash clear*": deny
-    "git stash apply*": deny
-    "git stash branch*": deny
-    "git tag -a*": deny
     "git tag -d*": deny
     "git tag -f*": deny
-    "git tag -m*": deny
     "git tag --delete*": deny
-    "git tag [a-zA-Z0-9]*": deny
-    "git cherry-pick*": deny
-    "git revert*": deny
-    "git rm*": deny
-    "git mv*": deny
     "git clean*": deny
-    "git apply*": deny
-    "git am*": deny
     "git init*": deny
     "git clone*": deny
-    "git branch -d*": deny
     "git branch -D*": deny
-    "git branch -m*": deny
-    "git branch -M*": deny
-    "git branch -c*": deny
-    "git branch -C*": deny
     "git branch --delete*": deny
-    "git branch --move*": deny
-    "git branch --copy*": deny
-    "git branch [!-]**": deny
-    "git worktree add*": deny
-    "git worktree remove*": deny
     "git worktree prune*": deny
-    "git worktree move*": deny
     "git worktree lock*": deny
     "git worktree unlock*": deny
     "git remote add*": deny
@@ -129,55 +98,17 @@ permission:
     "git remote set-url*": deny
     "git remote rename*": deny
     "git config *": deny
-    "*new-worktree*": deny
     "*install-hooks*": deny
-    "git -C * merge*": deny
-    "git -C * rebase*": deny
     "git -C * reset*": deny
-    "git -C * checkout*": deny
-    "git -C * switch*": deny
-    "git -C * branch*": deny
-    "git -C * tag*": deny
-    "git -C * restore*": deny
-    "git -C * rm*": deny
-    "git -C * mv*": deny
     "git -C * clean*": deny
-    "git -C * apply*": deny
     "git -C * config*": deny
-    "git --* merge*": deny
-    "git --* rebase*": deny
     "git --* reset*": deny
-    "git --* checkout*": deny
-    "git --* switch*": deny
-    "git --* branch*": deny
-    "git --* tag*": deny
-    "git --* restore*": deny
-    "git --* rm*": deny
-    "git --* mv*": deny
     "git --* clean*": deny
     "git --* config*": deny
-    "git -* merge*": deny
-    "git -* rebase*": deny
     "git -* reset*": deny
-    "git -* checkout*": deny
-    "git -* switch*": deny
-    "git -* branch*": deny
-    "git -* tag*": deny
     "*&&*git reset*": deny
     "*;*git reset*": deny
     "*|*git reset*": deny
-    "*&&*git rebase*": deny
-    "*;*git rebase*": deny
-    "*|*git rebase*": deny
-    "*&&*git merge*": deny
-    "*;*git merge*": deny
-    "*|*git merge*": deny
-    "*&&*git checkout*": deny
-    "*;*git checkout*": deny
-    "*&&*git switch*": deny
-    "*;*git switch*": deny
-    "*&&*git branch*": deny
-    "*;*git branch*": deny
     "git push --force*": deny
     "git push -f*": deny
     "git reset --hard*": deny
@@ -187,61 +118,20 @@ permission:
     "'git' *": deny
     "*git reset*": deny
     "*git.exe reset*": deny
-    "*git rebase*": deny
-    "*git.exe rebase*": deny
-    "*git merge *": deny
-    "*git.exe merge *": deny
-    "*git checkout*": deny
-    "*git.exe checkout*": deny
-    "*git switch*": deny
-    "*git.exe switch*": deny
-    "*git restore*": deny
-    "*git.exe restore*": deny
-    "*git*stash push*": deny
-    "*git*stash pop*": deny
     "*git*stash drop*": deny
     "*git*stash clear*": deny
-    "*git*stash apply*": deny
-    "*git*tag -a*": deny
     "*git*tag -d*": deny
     "*git*tag -f*": deny
-    "*git*tag -m*": deny
     "*git*tag --delete*": deny
-    "*git*tag [a-zA-Z0-9]*": deny
-    "*git cherry-pick*": deny
-    "*git.exe cherry-pick*": deny
-    "*git revert*": deny
-    "*git.exe revert*": deny
-    "*git rm *": deny
-    "*git.exe rm *": deny
-    "*git mv *": deny
-    "*git.exe mv *": deny
     "*git clean*": deny
     "*git.exe clean*": deny
-    "*git apply*": deny
-    "*git.exe apply*": deny
-    "*git am *": deny
-    "*git am": deny
-    "*git.exe am *": deny
-    "*git.exe am": deny
     "*git init*": deny
     "*git.exe init*": deny
     "*git clone*": deny
     "*git.exe clone*": deny
-    "*git*branch -d*": deny
     "*git*branch -D*": deny
-    "*git*branch -m*": deny
-    "*git*branch -M*": deny
-    "*git*branch -c*": deny
-    "*git*branch -C*": deny
     "*git*branch --delete*": deny
-    "*git*branch --move*": deny
-    "*git*branch --copy*": deny
-    "*git*branch [!-]**": deny
-    "*git*worktree add*": deny
-    "*git*worktree remove*": deny
     "*git*worktree prune*": deny
-    "*git*worktree move*": deny
     "*git*worktree lock*": deny
     "*git*worktree unlock*": deny
     "*git*remote add*": deny
@@ -254,9 +144,6 @@ permission:
     "*`*git*`*": deny
     "*git*--no-verify*": deny
     "*\ngit reset*": deny
-    "*\ngit rebase*": deny
-    "*\ngit checkout*": deny
-    "*\ngit merge*": deny
     "git add -A*": deny
     "git add --all*": deny
     "git add .": deny
@@ -297,8 +184,6 @@ permission:
     "git push* develop": deny
     "git push* develop *": deny
     "git push* release/*": deny
-    "git checkout -B*": deny
-    "git switch -C*": deny
     "*git add -A*": deny
     "*git add --all*": deny
     "*git add .": deny
@@ -339,8 +224,6 @@ permission:
     "*git push* develop": deny
     "*git push* develop *": deny
     "*git push* release/*": deny
-    "*git checkout -B*": deny
-    "*git switch -C*": deny
     "git -c alias.*": deny
     "*git -c alias.*": deny
     "git.exe -c alias.*": deny
@@ -915,7 +798,7 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 ## Điều cấm
 - Không sửa file ngoài `scope_edit` hoặc trong `scope_deny`. Cần thì ghi yêu cầu vào card của task đó.
 - Không sửa file dùng chung nếu không được chỉ định.
-- Không chạy lệnh git ghi nguy hiểm (`pull`, `fetch`, `merge`, `rebase`, `reset`, `checkout`, `switch`, `stash`, `tag`, `add -A`, `commit --amend`, push ép...) dưới bất kỳ hình thức nào (kể cả dùng cờ `git -C`, `git -c`, gọi gián tiếp qua `python -c`, `powershell -c`, `bash -c`, `node -e` hoặc subshell). Git chủ yếu để xem: `status`, `diff`, `log`, `show`. `git add <đường dẫn>`, `commit`, `push` (nhánh cá nhân) chỉ khi người dùng yêu cầu rõ trong phiên này và duyệt từng lệnh (`AGENTS.md` quy tắc 4). Tuyệt đối không tự commit khi chưa được yêu cầu.
+- Git theo `AGENTS.md` quy tắc 4: tự chạy được lệnh xem và lệnh hoàn tác trong nhánh của mình (`checkout`/`switch`, `branch`, `fetch`, `pull`, `merge`, `rebase`, `restore`, `stash`, `cherry-pick`, `revert`, `tag` mới, `worktree`). Không chạy `reset`, `clean`, `add -A`, `commit --amend`, `--no-verify`, push ép hoặc vào nhánh chung, xóa nhánh hay tag, `git config` dưới bất kỳ hình thức nào (kể cả `git -c` đặt khóa nguy hiểm, gọi gián tiếp qua `python -c`, `powershell -c`, `bash -c`, `node -e` hoặc subshell). `git add <đường dẫn>`, `commit`, `push` (nhánh cá nhân) chỉ khi người dùng yêu cầu rõ trong phiên này và duyệt từng lệnh. Tuyệt đối không tự commit khi chưa được yêu cầu.
 - Không chạy lệnh xóa phá hoại (`rm -rf`, `rmdir /s`, `del /s`, `Remove-Item -Recurse`).
 - Không sửa `AGENTS.md`, `agents/roles/`, `docs/source/`, `docs/risk/` (phiếu rủi ro), `docs/PROJECT-NOTES.md` (chỉ `writer` sửa), `.env`, file sinh tự động.
 - Không xóa, ghi đè hay đổi tên hàng loạt, và không làm việc có thể mất code hay dữ liệu, khi chưa có phiếu rủi ro `Status: APPROVED` (`agents/protocols/risk-gate.md`). Thấy việc như vậy thì dừng và báo Lead.

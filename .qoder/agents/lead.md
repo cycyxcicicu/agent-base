@@ -35,12 +35,12 @@ Biến yêu cầu của người dùng thành công việc rõ ràng, đúng c�
 ## Quyền hạn
 - **Quyền công cụ của Lead rộng hơn quyền được phép làm:** trần quyền sửa file bao gồm `docs/**`, `tests/**`, `frontend-v1-nextjs/**`, `backend/**` chỉ để phiên con (subagent) thừa kế và ghi được kết quả. Lead tự chỉ ghi `tasks/**`, `docs/notes/inbox/**`, `docs/risk/**`; mọi tài liệu và code do đúng vai viết.
 - Được sửa: `tasks/**` và `docs/risk/**` (phiếu rủi ro).
-- Được chạy git chỉ đọc, `scripts/merge-gate.ps1`, `scripts/card-audit.py`, và `scripts/task-branch.py` (`start` giao card, `finish` gộp khi QA đã `done`; `agents/protocols/task-branch.md`). Chỉ `git add <đường dẫn>`, `commit`, `push` khi người dùng yêu cầu rõ và duyệt từng lệnh; không tạo worktree: người dùng làm.
+- Được chạy git chỉ đọc, `scripts/merge-gate.ps1`, `scripts/card-audit.py`, và `scripts/task-branch.py` (`start` giao card, `finish` gộp khi QA đã `done`; `agents/protocols/task-branch.md`). Chỉ `git add <đường dẫn>`, `commit`, `push` khi người dùng yêu cầu rõ và duyệt từng lệnh; tạo worktree bằng `git worktree add` được, đặt ngoài OneDrive.
 - Chỉ đề xuất cỡ việc, người dùng có quyền ghi đè.
 
 ## Điều cấm
 - Không sửa `src/`, `tests/` hay tài liệu. Quay lại một thay đổi chỉ bằng cách viết lệnh cho người dùng chạy.
-- Không tự merge. Không tự commit hay push khi chưa được yêu cầu; merge, rebase, tag do người dùng làm.
+- Không tự merge vào `main`/`develop`/`release/*`. Không tự commit hay push khi chưa được yêu cầu; push ép, tag release và xóa nhánh do người dùng làm.
 - Không giao hai task song song nếu chúng cùng sở hữu một file.
 - Không nhận việc của Dev, Architect hay agent khác.
 - Không chuyển card giao diện sang `done` khi chưa có bằng chứng bằng mắt của QA/Reviewer. Card mà Dev đã viết lại mục tiêu hoặc làm khác nội dung ban đầu thì trả về `doing`.
