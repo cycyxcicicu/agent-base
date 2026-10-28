@@ -10,10 +10,15 @@ Hardened against bypasses:
 - C3: Validates risk tickets (docs/risk/RK-*.md) ensuring Status: APPROVED,
       human approval statement, and prohibiting agent-authored risk approvals.
 
+- Cỡ thay đổi (PR nguyên tử): cảnh báo khi số dòng đổi vượt ngưỡng (mặc định 600, không tính lockfile, build, card, ghi chú).
+  Đổi ngưỡng bằng --max-lines N, biến môi trường MERGE_GATE_MAX_LINES, hoặc dòng `Giới hạn dòng thay đổi | N` trong PROJECT.md.
+  Mặc định chỉ CẢNH BÁO; thêm --strict-size để biến thành FAIL.
+
 Usage:
-  python scripts/merge-gate.py --branch feature/12-token-check --card tasks/T-12.md [--base develop]
+  python scripts/merge-gate.py --branch feature/12-token-check --card tasks/T-12.md [--base develop] [--max-lines 400] [--strict-size]
 """
 
+import os
 import sys
 import re
 import argparse
@@ -25,6 +30,52 @@ try:
         sys.stdout.reconfigure(encoding='utf-8')
 except Exception:
     pass
+
+ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_MAX_LINES = 600
+# Không tính vào cỡ thay đổi: file sinh ra hoặc khóa phụ thuộc, thư mục build, card và ghi chú bàn giao.
+SIZE_IGNORE_GLOBS = [
+    '**/package-lock.json', '**/pnpm-lock.yaml', '**/yarn.lock', '**/poetry.lock', '**/Pipfile.lock', '**/composer.lock',
+    '**/Cargo.lock', '**/go.sum', 'build/**', 'dist/**', '**/*.min.js', '**/*.map', 'tasks/**', 'docs/notes/inbox/**',
+]
+
+
+def read_max_lines(repo: str, cli_value) -> int:
+    """Thứ tự ưu tiên: --max-lines, biến môi trường, PROJECT.md, mặc định."""
+    if cli_value:
+        return cli_value
+    env = os.environ.get('MERGE_GATE_MAX_LINES', '').strip()
+    if env.isdigit() and int(env) > 0:
+        return int(env)
+    project = Path(repo) / 'PROJECT.md'
+    if project.exists():
+        m = re.search(r'Giới hạn dòng thay đổi\s*\|\s*(\d+)', project.read_text(encoding='utf-8', errors='replace'))
+        if m and int(m.group(1)) > 0:
+            return int(m.group(1))
+    return DEFAULT_MAX_LINES
+
+
+def count_changed_lines(repo: str, diff_range: str):
+    """Tổng dòng thêm + xóa của các file tính vào cỡ thay đổi. Trả về (tổng, danh sách file lớn nhất)."""
+    try:
+        out = subprocess.check_output(
+            ['git', '-C', repo, '-c', 'core.quotepath=false', 'diff', '--numstat', '--no-renames', diff_range],
+            text=True, encoding='utf-8')
+    except Exception:
+        return 0, []
+    total, per_file = 0, []
+    for line in out.splitlines():
+        parts = line.split('\t')
+        if len(parts) != 3 or not (parts[0].isdigit() and parts[1].isdigit()):
+            continue  # file nhị phân ("-\t-\tname")
+        name = parts[2].replace('\\', '/')
+        if test_match(name, SIZE_IGNORE_GLOBS):
+            continue
+        n = int(parts[0]) + int(parts[1])
+        total += n
+        per_file.append((n, name))
+    per_file.sort(reverse=True)
+    return total, per_file[:3]
 
 
 def glob_to_regex(glob_str: str) -> str:
@@ -109,6 +160,8 @@ def main():
     parser.add_argument("--branch", required=True, help="Feature branch name.")
     parser.add_argument("--card", required=True, help="Task card path (e.g. tasks/T-12.md).")
     parser.add_argument("--base", default="develop", help="Base integration branch (default: develop).")
+    parser.add_argument("--max-lines", type=int, default=0, help="Ngưỡng số dòng thay đổi (xem đầu file).")
+    parser.add_argument("--strict-size", action="store_true", help="Vượt ngưỡng thì FAIL thay vì chỉ cảnh báo.")
     args = parser.parse_args()
 
     try:
@@ -169,7 +222,7 @@ def main():
         sys.exit(2)
 
     if not allow:
-        print("FAIL: scope_edit is empty in the card. Architect or Orchestrator must declare the scope.")
+        print("FAIL: scope_edit is empty in the card. Architect or Lead must declare the scope.")
         sys.exit(1)
 
     diff_range = f"{args.base}...{args.branch}"
@@ -187,13 +240,14 @@ def main():
         sys.exit(2)
 
     files = [f.strip().replace('\\', '/') for f in raw_diff.splitlines() if f.strip()]
-    expected_card = f"tasks/{task_id}.md"
+    # Card may live at tasks/T-n.md or in its epic folder tasks/<epic-folder>/T-n.md.
+    card_re = re.compile(rf"^tasks/(?:[^/]+/)?{re.escape(task_id)}\.md$")
     violations = []
 
     for f in files:
-        if f == expected_card:
+        if card_re.match(f) or f == "tasks/BOARD.md":
             continue
-        if re.match(rf"^docs/notes/inbox/{re.escape(task_id)}-.*\.md$", f):
+        if re.match(rf"^docs/notes/inbox/(?:{re.escape(task_id)}/|{re.escape(task_id)}[\.-]).*\.md$", f):
             continue
 
         # ---------------------------------------------------------------------
@@ -285,7 +339,25 @@ def main():
         print("FAIL: fix the branch, or ask the task owner to widen scope_edit in the base card.")
         sys.exit(1)
 
+    total_lines, biggest = count_changed_lines(repo, diff_range)
+    limit = read_max_lines(repo, args.max_lines)
+    if total_lines > limit:
+        top = ", ".join(f"{name} ({n})" for n, name in biggest)
+        level = "FAIL" if args.strict_size else "WARN"
+        print(f"{level}: {total_lines} dòng thay đổi, vượt ngưỡng {limit}. Lớn nhất: {top}.")
+        print("  Chia thành PR nguyên tử (50 đến vài trăm dòng, một thay đổi logic): agents/protocols/atomic-changes.md")
+        if args.strict_size:
+            sys.exit(1)
+
     print("PASS: all changed files are within scope.")
+    # Tự động cập nhật Bảng điều khiển & Sơ đồ lộ trình nếu script tồn tại
+    try:
+        dash_script = ROOT / 'scripts' / 'generate-dashboard.py'
+        # Chỉ cập nhật khi cổng chạy trên chính dự án chứa script này (không đụng bảng điều khiển của repo khác)
+        if dash_script.exists() and Path(repo).resolve() == ROOT.resolve():
+            subprocess.run([sys.executable, str(dash_script)], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        pass
     sys.exit(0)
 
 

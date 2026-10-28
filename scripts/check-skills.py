@@ -2,7 +2,9 @@
 """
 scripts/check-skills.py
 Read-only screening of agent skills (folders that contain SKILL.md).
-Checks front matter, folder names, descriptions, suspicious patterns, and registry.
+Checks front matter, folder names, descriptions, suspicious patterns, registry,
+SKILL.md size (Agent Skills spec recommends 500 lines or fewer) and broken
+internal markdown links (links inside code fences / inline code are ignored).
 
 Usage:
   python scripts/check-skills.py
@@ -38,6 +40,147 @@ PATTERNS = [
 
 SCRIPT_EXT = {'.ps1', '.psm1', '.sh', '.bat', '.cmd', '.py', '.js', '.mjs', '.cjs', '.ts', '.exe', '.dll', '.jar', '.vbs', '.zip', '.7z', '.gz', '.tar'}
 TEXT_EXT = {'.md', '.txt', '.json', '.yaml', '.yml', '.ps1', '.psm1', '.sh', '.bat', '.cmd', '.py', '.js', '.mjs', '.cjs', '.ts', '.toml', '.xml', '.html'}
+
+# Agent Skills spec: keep SKILL.md small and push detail into references/.
+MAX_SKILL_LINES = 500
+FENCE_RE = re.compile(r'^[ \t]*(`{3,}|~{3,})')
+SCHEME_RE = re.compile(r'^[a-zA-Z][a-zA-Z0-9+.\-]*:')
+
+
+def count_lines(text):
+    """Count lines the way wc -l reports them (a trailing newline does not add a line)."""
+    if not text:
+        return 0
+    return text.count('\n') + (0 if text.endswith('\n') else 1)
+
+
+def strip_inline_code(line):
+    """Blank out `code spans` so example links inside them are not resolved."""
+    out = []
+    i = 0
+    n = len(line)
+    while i < n:
+        if line[i] != '`':
+            out.append(line[i])
+            i += 1
+            continue
+        j = i
+        while j < n and line[j] == '`':
+            j += 1
+        run = j - i
+        k = j
+        close = -1
+        while k < n:
+            if line[k] == '`':
+                m = k
+                while m < n and line[m] == '`':
+                    m += 1
+                if m - k == run:
+                    close = m
+                    break
+                k = m
+            else:
+                k += 1
+        if close == -1:
+            out.append(line[i:j])
+            i = j
+        else:
+            out.append(' ' * (close - i))
+            i = close
+    return ''.join(out)
+
+
+def strip_code(text):
+    """Replace fenced code blocks and inline code with blanks, keeping line numbers stable."""
+    out = []
+    fence = None
+    for line in text.split('\n'):
+        m = FENCE_RE.match(line)
+        if fence is None:
+            if m:
+                fence = m.group(1)
+                out.append('')
+            else:
+                out.append(strip_inline_code(line))
+        else:
+            if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= len(fence) \
+                    and not line.strip()[len(m.group(1)):].strip():
+                fence = None
+            out.append('')
+    return '\n'.join(out)
+
+
+def iter_link_targets(text):
+    """Yield (offset, target) for inline links `[text](target "title")` in plain markdown."""
+    pos = 0
+    n = len(text)
+    while pos < n:
+        k = text.find('](', pos)
+        if k == -1:
+            return
+        depth = 1
+        j = k - 1
+        while j >= 0:
+            c = text[j]
+            if c == ']':
+                depth += 1
+            elif c == '[':
+                depth -= 1
+                if depth == 0:
+                    break
+            elif c == '\n':
+                j = -1
+                break
+            j -= 1
+        if j < 0:
+            pos = k + 2
+            continue
+        if j > 0 and text[j - 1] == '!':
+            # image link, not an internal document link
+            pos = k + 2
+            continue
+        depth = 0
+        e = k + 1
+        end = -1
+        while e < n:
+            c = text[e]
+            if c == '(':
+                depth += 1
+            elif c == ')':
+                depth -= 1
+                if depth == 0:
+                    end = e
+                    break
+            elif c == '\n':
+                break
+            e += 1
+        if end == -1:
+            pos = k + 2
+            continue
+        inner = text[k + 2:end].strip()
+        if inner.startswith('<') and '>' in inner:
+            target = inner[1:inner.index('>')]
+        else:
+            parts = inner.split()
+            target = parts[0] if parts else ''
+        if target:
+            yield k, target
+        pos = end + 1
+
+
+def is_non_local_target(target):
+    """True for links the checker must not resolve on disk."""
+    if not target:
+        return True
+    if target.startswith('#') or target.startswith('/'):
+        return True
+    if SCHEME_RE.match(target):
+        return True
+    if '{' in target or '}' in target:
+        return True
+    if target.endswith('/'):
+        return True
+    return False
 
 
 def main():
@@ -83,6 +226,10 @@ def main():
             continue
 
         text = skill_md.read_text(encoding='utf-8').replace('\r\n', '\n')
+        n_lines = count_lines(text)
+        if n_lines > MAX_SKILL_LINES:
+            print(f"  WARN: SKILL.md is {n_lines} lines; the Agent Skills spec recommends {MAX_SKILL_LINES} or fewer. Move detail into references/")
+            warnings += 1
         m = re.match(r'(?s)^---\n(.*?)\n---', text)
         if not m:
             print("  ERROR: SKILL.md has no front matter (--- block)")
@@ -144,6 +291,18 @@ def main():
         if hits > 0:
             warnings += 1
             print(f"  {hits} suspicious line(s). Each one needs a human decision.")
+
+        plain = strip_code(text)
+        for offset, target in iter_link_targets(plain):
+            if is_non_local_target(target):
+                continue
+            local_target = target.split('#', 1)[0].strip()
+            if not local_target:
+                continue
+            if not (d / local_target).exists():
+                line_no = plain.count('\n', 0, offset) + 1
+                print(f"  ERROR: BROKEN LINK SKILL.md:{line_no} -> {target}")
+                problems += 1
 
         if in_repo or args.registry:
             if not re.search(r'(?m)^\|\s*' + re.escape(name) + r'\s*\|', reg_text):

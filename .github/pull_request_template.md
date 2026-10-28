@@ -22,7 +22,10 @@
 - [ ] Tên nhánh đúng dạng `<type>/<ticket>-<mô-tả-ngắn>`
 - [ ] Mỗi commit một thay đổi logic, đúng `<type>(scope): <tóm tắt>`
 - [ ] Nhánh đã **rebase** lên nhánh gốc mới nhất (không dùng merge vào nhánh cá nhân)
-- [ ] `scripts/merge-gate.ps1` PASS
+- [ ] `scripts/merge-gate.ps1` PASS (nếu báo WARN vì cỡ thay đổi lớn: card có lý do, hoặc đã tách PR, xem `agents/protocols/atomic-changes.md`)
+- [ ] Nếu dự án có `docs/HARD-RULES.json`: `python scripts/hard-check.py --changed-against <nhánh gốc>` PASS
+- [ ] Nếu đổi giao diện: Feature Map đã cập nhật và `python scripts/feature-map-check.py` PASS
+- [ ] Nếu là sửa lỗi: đã tái hiện lỗi trước khi sửa, có test hồi quy, phiếu lỗi trong card (`agents/protocols/bug-repro.md`)
 - [ ] CI qua
 - [ ] Không có khóa bí mật, `.env`, file lớn hoặc file sinh ra không thuộc quy ước
 - [ ] Ghi chú cho agent sau nằm trong `docs/notes/inbox/`

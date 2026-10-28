@@ -21,9 +21,17 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install test dependencies
+      - name: Install project and test dependencies
         shell: powershell
-        run: python -m pip install --quiet pyyaml
+        run: |
+          $installable = (Test-Path pyproject.toml) -and
+            (Select-String -Path pyproject.toml -Pattern '^\[build-system\]' -Quiet) -and
+            (Select-String -Path pyproject.toml -Pattern '^\s*dev\s*=' -Quiet)
+          if ($installable) {
+            python -m pip install --quiet -e ".[dev]"
+          } else {
+            python -m pip install --quiet pyyaml
+          }
 
       - name: Generated adapter files match their sources
         shell: powershell
@@ -88,23 +96,93 @@ jobs:
           BASE_REF: ${{ github.base_ref }}
         run: |
           if ($env:HEAD_REF -match '^[a-z]+/([0-9]+)-') {
-            $card = "tasks/T-$($Matches[1]).md"
-            if (Test-Path $card) {
-              powershell -NoProfile -ExecutionPolicy Bypass -File scripts/merge-gate.ps1 -Branch "origin/$($env:HEAD_REF)" -Card $card -Base "origin/$($env:BASE_REF)"
+            $ticket = $Matches[1]
+            $cards = @(Get-ChildItem -Path tasks -Recurse -Filter "T-$ticket.md" -File -ErrorAction SilentlyContinue)
+            if ($cards.Count -gt 1) {
+              Write-Host "Ambiguous task cards for T-$ticket.md:"
+              $cards | ForEach-Object { Write-Host "  $($_.FullName)" }
+              exit 1
+            }
+            if ($cards.Count -eq 1) {
+              powershell -NoProfile -ExecutionPolicy Bypass -File scripts/merge-gate.ps1 -Branch "origin/$($env:HEAD_REF)" -Card $cards[0].FullName -Base "origin/$($env:BASE_REF)"
               exit $LASTEXITCODE
             }
-            Write-Host "No task card $card, skipping merge gate."
+            Write-Host "No task card T-$ticket.md under tasks/, skipping merge gate."
           } else {
             Write-Host "Branch is not named after a ticket, skipping merge gate."
           }
+
+      - name: Task board schema (cards in tasks/)
+        shell: powershell
+        run: |
+          if (Test-Path tasks/EPICS.md) {
+            python scripts/task-board.py --check
+          } else {
+            Write-Host "No tasks/EPICS.md, skipping task board check."
+          }
+
+      - name: Hard rules (docs/HARD-RULES.json, changed files only)
+        if: github.event_name == 'pull_request'
+        shell: powershell
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: python scripts/hard-check.py --changed-against "origin/$($env:BASE_REF)"
+
+      - name: Feature Map matches the code (only if the project has one)
+        if: github.event_name == 'pull_request'
+        shell: powershell
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: python scripts/feature-map-check.py --changed-against "origin/$($env:BASE_REF)"
 
       - name: Run Unit Tests
         shell: powershell
         run: python -m unittest discover -s tests -v
 
+      - name: Generated adapters and notes index are fresh
+        shell: powershell
+        run: |
+          python scripts/sync-adapters.py --check
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/notes-index.py --check
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Skill discovery bridges (Claude Code, Qoder)
+        shell: powershell
+        run: |
+          python scripts/link-skills.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/link-skills.py --check
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - name: Check Skills Registry Integrity
         shell: powershell
         run: python scripts/check-skills.py
+
+      - name: Validate Knowledge Catalog
+        shell: powershell
+        run: |
+          if (Test-Path agents/knowledge/knowledge-manifest.json) {
+            python scripts/knowledge.py validate --root . --manifest agents/knowledge/knowledge-manifest.json
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
+      - name: Check Requirements Traceability Matrix (RTM)
+        shell: powershell
+        run: |
+          if (Test-Path scripts/rtm.py) {
+            python scripts/rtm.py --check
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
+      - name: Diagnostic Task Claim Check (Advisory)
+        shell: powershell
+        run: |
+          if ((Test-Path scripts/task-claim-check.py) -and (Test-Path tasks/E2-tri-thuc-quy-trinh/T-12.md)) {
+            python scripts/task-claim-check.py --card tasks/E2-tri-thuc-quy-trinh/T-12.md
+            Write-Host "Claim check chi la chan doan co van, khong lam CI do (exit $LASTEXITCODE)"
+          }
+          exit 0
 
       - name: Static Security Audit (CSO Scanner)
         shell: powershell

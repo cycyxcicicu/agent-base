@@ -49,11 +49,6 @@ from agent_core.debt.ledger import DebtLedger
 from agent_core.ingest.doc_converter import DocumentConverter
 from agent_core.ingest.web_cleaner import WebCleaner
 
-# Import công cụ cookie rotation
-_gemini_src = str(ROOT_DIR / "tools" / "gemini-api" / "src")
-if _gemini_src not in sys.path:
-    sys.path.insert(0, _gemini_src)
-from tools.cookie_rotation.account_manager import GeminiAccount, AccountPool
 
 
 def run_full_simulation_cycle(iteration: int = 1) -> bool:
