@@ -59,6 +59,8 @@ VALID_RELATION_ENDPOINTS: Dict[str, Tuple[Set[str], Set[str]]] = {
     "owned_by": (VALID_KINDS - {"Role"}, {"Role"}),
     "supersedes": (VALID_KINDS, VALID_KINDS), # Kiểm tra thêm: cùng kind
     "depends_on": ({"Task"}, {"Task"}),
+    # Liên quan về chủ đề (không có hướng ngữ nghĩa); tra cứu coi như cạnh hai chiều.
+    "related_to": (VALID_KINDS - {"Role"}, VALID_KINDS - {"Role"}),
 }
 
 NODE_ID_REGEX = re.compile(r"^[A-Za-z0-9_-]+:[A-Za-z0-9_.-]+$")

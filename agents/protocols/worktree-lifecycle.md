@@ -3,10 +3,10 @@
 Worktree là một **thư mục làm việc thứ hai** của cùng một repo, mỗi cái đang đứng trên **một nhánh riêng** và dùng chung `.git`. Dùng để nhiều agent làm song song mà không đè file của nhau. Quy tắc chung: `agents/protocols/git-rules.md`.
 
 ```
-tạo (bạn) → AI sửa file → bạn commit → rebase → đẩy + Merge Request → merge vào develop → bạn cập nhật nhánh hiện tại → dọn worktree
+tạo (bạn hoặc AI) → AI sửa file → commit → rebase → đẩy + Merge Request → merge vào develop → bạn cập nhật nhánh hiện tại → dọn worktree
 ```
 
-## 1. Tạo (người dùng làm, AI không tạo)
+## 1. Tạo (người dùng hoặc AI đều làm được)
 
 ```
 powershell -File scripts/new-worktree.ps1 -Ticket 12 -Slug token-check

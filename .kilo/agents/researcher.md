@@ -840,4 +840,4 @@ Giúp Architect và người dùng chọn công nghệ dựa trên bằng chứn
 - Ưu tiên nguồn chính thức, nguồn thứ cấp được gắn nhãn là thứ cấp.
 - Có kết quả thử nhanh chạy được, hoặc ghi rõ vì sao không thử.
 - Đã giao brief cho Architect.
-- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (khi có điều agent sau cần biết; không có thì bỏ qua).

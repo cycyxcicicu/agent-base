@@ -73,4 +73,4 @@ Chia việc lớn thành các module độc lập, để nhiều Dev chạy song
 - Mỗi task có tiêu chí xong đo được và (nếu đụng DB hay deploy) có kịch bản hoàn tác.
 - Đã đánh giá rủi ro tải 10x, khóa bảng DB và bán kính ảnh hưởng.
 - ADR đã ghi cho mọi quyết định khó đảo ngược.
-- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (khi có điều agent sau cần biết; không có thì bỏ qua).

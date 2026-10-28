@@ -42,4 +42,4 @@ description: "Xây và giữ CI/CD, môi trường chạy, đóng gói và quy t
 - Pipeline chạy xanh trên nhánh thử, thất bại thì báo rõ bước nào.
 - Có runbook và kịch bản hoàn tác tự động được chứng minh khả năng revert trong < 60 giây.
 - Không có bí mật nào trong file đã sửa; tuân thủ chuẩn Least Privilege.
-- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (khi có điều agent sau cần biết; không có thì bỏ qua).

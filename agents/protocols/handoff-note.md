@@ -24,7 +24,7 @@ Task: T-12        Agent: dev-a        Ngày: YYYY-MM-DD
 (1–3 dòng)
 
 ## Lưu ý cho agent sau
-(bắt buộc. Nếu thật sự không có, ghi "không có lưu ý")
+(chỉ khi có điều agent sau cần biết. Nếu không có, bỏ qua cả ghi chú)
 - Bẫy hoặc hành vi bất ngờ: (ví dụ: hàm X trả về null khi ..., cần kiểm tra trước khi dùng)
 - Quyết định đã đưa ra và lý do:
 - File hoặc khu vực dễ vỡ, cần cẩn thận: (đường dẫn cụ thể)

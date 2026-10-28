@@ -1,4 +1,4 @@
-# Lauren Tan / pstack: nguồn chính thức và áp dụng vào agent-base
+# PStack & High-Velocity Engineering: nguồn chính thức và áp dụng vào agent-base
 
 Ngày: 2026-10-27 · Người viết: researcher · Xem lại: 2027-01-25 (90 ngày).
 

@@ -43,12 +43,14 @@ Khi Subtask hiện tại BẮT BUỘC phải sửa một file thuộc quyền s�
    - Đóng băng Spec đối với Dev: Dev tuyệt đối không tự ý sửa file trong `docs/spec/` để "hợp thức hóa" code chạy khác spec.
    - Nếu phát hiện spec có điểm bất hợp lý hoặc thiếu sót: DỪNG LẠI, đánh dấu `BLOCKED`, yêu cầu Architect hoặc Lead thẩm định và cập nhật spec chính thức.
 
-## Nhỏ
-- [ ] Sửa trong nhánh riêng do người dùng tạo (`<type>/<ticket>-<mô-tả>`).
+## Nhỏ (Cơ Chế Fast-Track: Diff $\le 50$ dòng, không đổi schema DB/API)
+- [ ] Áp dụng Fast-Track: Dev được phép viết code ngay, **không bắt buộc chờ Reviewer duyệt Plan**.
+- [ ] Reviewer được phép Quick Fix các lỗi cực nhỏ (typo, formatting $\le 5$ dòng) để đóng task ngay.
+- [ ] Sửa trong nhánh riêng (`<type>/<ticket>-<mô-tả>`).
 - [ ] Test và lint chạy qua (có thể nhờ `runner` chạy).
 - [ ] `scripts/merge-gate.ps1` PASS (hoặc diff nằm trong phạm vi đã nêu).
 - [ ] Kế hoạch commit trong `tasks/quick-log.md` hoặc card: mỗi commit một thay đổi logic, đúng `<type>(scope): <tóm tắt>`.
-- [ ] Ghi chú cho agent sau trong `docs/notes/inbox/` (ngắn được, nhưng không bỏ qua).
+- [ ] Ghi chú cho agent sau trong `docs/notes/inbox/` (chỉ khi có điều agent sau cần biết; ngắn được).
 - [ ] Người dùng đã xem diff và tự chạy các lệnh commit.
 
 ## Vừa

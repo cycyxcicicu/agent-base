@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json.schemastore.org/kilo-mcp.json",
+  "mcpServers": {
+    "postgres-local": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://postgres:password@localhost:5432/my_database"],
+      "disabled": true,
+      "description": "Mẫu kết nối PostgreSQL cục bộ của developer. Bật 'disabled: false' và đổi cổng/mật khẩu trên máy bạn."
+    },
+    "doc-filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "./doc"],
+      "disabled": true,
+      "description": "Mẫu cấp quyền cho Agent đọc tài liệu thư mục doc/ của dự án."
+    },
+    "notebooklm": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@roomi-fields/notebooklm-mcp@latest"
+      ],
+      "env": {
+        "BROWSER_CHANNEL": "chrome"
+      },
+      "disabled": false,
+      "description": "Kết nối Google NotebookLM (Gemini 2.5) nghiên cứu tài liệu được ground trên nguồn dữ liệu của bạn."
+    },
+    "fetch-docs": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"],
+      "disabled": true,
+      "description": "Mẫu hỗ trợ cào tài liệu thư viện mới nhất từ internet cho Researcher."
+    }
+  }
+}

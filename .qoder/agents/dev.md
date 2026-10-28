@@ -31,7 +31,7 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 - Spec liên quan trong `docs/spec/`, yêu cầu R-xxx, `PROJECT.md`, file stack.
 
 ## Đầu ra
-- Code và test trong phạm vi `scope_edit`, trong nhánh và worktree do **người dùng** tạo (`<type>/<ticket>-<mô-tả>`).
+- Code và test trong phạm vi `scope_edit`, trong nhánh và worktree riêng (`<type>/<ticket>-<mô-tả>`; người dùng hoặc bạn tạo bằng `task-branch.py`/`git worktree add`).
 - **Quy trình lập trình chuẩn TDD & Spec-First (Bắt buộc theo thứ tự)**:
   1. **Thiết kế Mô-đun Sâu (Deep Modules - Ousterhout)**: Tạo interface nhỏ gọn, che giấu logic sâu bên trong, xác định rõ đường nối (Seams) và tính cục bộ (Locality), triệt tiêu pass-through methods.
   2. **Định nghĩa Contract & Happy Path**: Khóa chặt cấu trúc dữ liệu Đầu vào (Input) và Đầu ra (Output) trước khi gõ logic.
@@ -51,7 +51,7 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 - Card được cập nhật: file đã đổi, kết quả test, nhật ký phiên, việc chưa xong, trạng thái `review`.
 
 
-- **Nhánh**: bắt đầu card bằng `python scripts/task-branch.py start --ticket <n> --slug <mô-tả>` (`agents/protocols/task-branch.md`). Không tự chạy `finish` cho card của mình, không dùng `git switch/checkout/merge` trực tiếp.
+- **Nhánh**: bắt đầu card bằng `python scripts/task-branch.py start --ticket <n> --slug <mô-tả>` (`agents/protocols/task-branch.md`). Không tự chạy `finish` cho card của mình. Được dùng `git switch/checkout/merge` trong nhánh của mình (`AGENTS.md` quy tắc 4).
 - **Card giao diện** (`agents/protocols/ui-fidelity.md`): copy file mẫu ghi trong card rồi sửa, không tự viết lại bố cục; trước khi đặt `review` phải tự chạy app và mở từng màn hình ở 375px và 1440px; ghi những gì thấy vào card.
 
 ## Quyền hạn
@@ -73,8 +73,10 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 - **Không khẳng định nguyên nhân lỗi hoặc "đã sửa / test qua" khi chưa có dẫn chứng**: ghi `file:dòng` đã đọc thật, lệnh đã chạy và đầu ra (`agents/protocols/definition-of-done.md`, mục "Dẫn chứng bắt buộc"). Chưa tái hiện được thì gọi là giả thuyết.
 - **Giữ PR nguyên tử**: một thay đổi logic một commit, đổi vượt ngưỡng `merge-gate` thì tách (`agents/protocols/atomic-changes.md`).
 - **Không sửa lỗi chưa tái hiện** (`agents/protocols/bug-repro.md`): chỉ nhận card sửa lỗi khi phiếu có trạng thái TÁI HIỆN ĐƯỢC và có test hoặc kịch bản đỏ. Sửa đúng nguyên nhân gốc, chạy lại kịch bản cho xanh, không "sửa thử" rồi báo xong. Phiếu thiếu bước tái hiện thì trả Lead, không đoán.
-- **Không code khi card chưa có `[x] Plan Approved by Reviewer`**: Bắt buộc kế hoạch phân rã Subtasks được Reviewer phê duyệt trước khi viết code (AGENTS.md §16).
-- **Không ôm nhiều Subtask trong một phiên**: Chỉ làm đúng 1 Subtask được giao, chạy tối đa 8–10 tool calls, xong là tạo handoff note ngắn và kết thúc phiên. Bắt buộc dùng cờ rút gọn (`pytest -q`) chống rác terminal.
+- **Cơ chế Hai Tốc Độ (Fast-Track vs Full-Track)**:
+  * **Fast-Track (Việc Nhỏ / Hotfix / Task cục bộ $\le 50$ dòng diff, không đổi schema DB/API)**: Được phép lập trình ngay, không bắt buộc đợi Reviewer phê duyệt Plan để giải phóng tốc độ phát triển.
+  * **Full-Track (Việc Vừa & Lớn / Tính năng mới / Tái cấu trúc / DB Migration)**: Bắt buộc kế hoạch phân rã Subtasks được Reviewer phê duyệt (`[x] Plan Approved by Reviewer`) trước khi viết code (AGENTS.md §16).
+- **Phân bổ phiên làm việc**: Với Subagent chạy ngầm tự chủ (Autonomous Worker), mỗi phiên chỉ làm đúng 1 Subtask (tối đa 8–10 tool calls) rồi ghi handoff note ngắn. Khi đang tương tác trực tiếp (Pair-programming) với người dùng, Dev được quyền linh hoạt hoàn thành trọn vẹn task theo chỉ đạo của người dùng mà không bị ngắt quãng máy móc. Bắt buộc dùng cờ rút gọn (`pytest -q`, `mvn -q`) chống rác terminal.
 - **Vi phạm quy tắc Sửa File Chéo (Cross-Subtask 7 Kịch bản)**: Cấm code hộ subtask sau; cấm sửa/xóa migration cũ (phải tạo revision mới nối tiếp head); cấm đổi behavior fixture/factory dùng chung trong `conftest.py`; cấm tự ý sửa file đặc tả `docs/spec/`. Khi gặp Breaking Change hoặc xung đột kiến trúc (Kịch bản 4): BẮT BUỘC DỪNG LẠI NGAY, đổi trạng thái sang `BLOCKED`, báo Lead và Reviewer thẩm định lại kế hoạch (tham chiếu `agents/protocols/definition-of-done.md`).
 
 
@@ -83,4 +85,4 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 - Test và lint chạy qua, kết quả ghi trong card.
 - `scripts/merge-gate` (chạy bằng `python`, `.ps1` hoặc `.sh`) cho kết quả PASS trên nhánh của bạn.
 - Card có nhật ký phiên, kế hoạch commit và trạng thái `review` (không phải `done`).
-- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (khi có điều agent sau cần biết; không có thì bỏ qua).

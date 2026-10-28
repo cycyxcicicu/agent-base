@@ -542,15 +542,646 @@ RAW_NODES = [
             {"type": "owned_by", "target": "Role:ai-eng"},
         ],
     },
+
+    # --- 10. SƠ ĐỒ (agents/knowledge/diagrams) ---
+    {
+        "id": "Role:designer",
+        "kind": "Role",
+        "title": "Designer Role",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/roles/designer.md",
+        "owner_role": "catalog",
+        "relations": [],
+    },
+    {
+        "id": "Design:diagram-aws-architecture-icons-guide",
+        "kind": "Design",
+        "title": "Icon và bố cục hạ tầng AWS",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/aws-architecture-icons-guide.md",
+        "owner_role": "designer",
+        "relations": [
+            {"type": "owned_by", "target": "Role:designer"},
+        ],
+    },
+    {
+        "id": "Design:diagram-bpmn-20-camunda-guide",
+        "kind": "Design",
+        "title": "BPMN 2.0 Camunda",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/bpmn-20-camunda-guide.md",
+        "owner_role": "designer",
+        "relations": [
+            {"type": "owned_by", "target": "Role:designer"},
+        ],
+    },
+    {
+        "id": "Design:diagram-c4-plantuml-guide",
+        "kind": "Design",
+        "title": "C4-PlantUML",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/c4-plantuml-guide.md",
+        "owner_role": "designer",
+        "relations": [
+            {"type": "owned_by", "target": "Role:designer"},
+        ],
+    },
+    {
+        "id": "Design:diagram-dbml-and-d2-guide",
+        "kind": "Design",
+        "title": "DBML và D2",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/dbml-and-d2-guide.md",
+        "owner_role": "designer",
+        "relations": [
+            {"type": "owned_by", "target": "Role:designer"},
+        ],
+    },
+    {
+        "id": "Design:diagram-diagrams-cheatsheet-and-decision-matrix",
+        "kind": "Design",
+        "title": "Ma trận chọn công cụ vẽ sơ đồ",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/diagrams-cheatsheet-and-decision-matrix.md",
+        "owner_role": "designer",
+        "relations": [
+            {"type": "owned_by", "target": "Role:designer"},
+        ],
+    },
+    {
+        "id": "Design:diagram-drawio-csv-autolayout",
+        "kind": "Design",
+        "title": "Draw.io CSV Auto-Layout",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/drawio-csv-autolayout.md",
+        "owner_role": "designer",
+        "relations": [
+            {"type": "owned_by", "target": "Role:designer"},
+        ],
+    },
+    {
+        "id": "Design:diagram-drawio-icons-index",
+        "kind": "Design",
+        "title": "Danh mục icon Draw.io",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/drawio-icons-index.md",
+        "owner_role": "designer",
+        "relations": [
+            {"type": "owned_by", "target": "Role:designer"},
+        ],
+    },
+    {
+        "id": "Design:diagram-mermaid-syntax-guide",
+        "kind": "Design",
+        "title": "Cú pháp Mermaid",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/mermaid-syntax-guide.md",
+        "owner_role": "designer",
+        "relations": [
+            {"type": "owned_by", "target": "Role:designer"},
+        ],
+    },
+    {
+        "id": "Design:diagram-mo-ta-hoat-dong-so-do",
+        "kind": "Design",
+        "title": "Mô tả hoạt động đi kèm sơ đồ",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/mo-ta-hoat-dong-so-do.md",
+        "owner_role": "ba",
+        "relations": [
+            {"type": "owned_by", "target": "Role:ba"},
+        ],
+    },
+    {
+        "id": "Design:diagram-python-diagrams-and-drawpyo",
+        "kind": "Design",
+        "title": "Vẽ sơ đồ bằng Python diagrams và drawpyo",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/python-diagrams-and-drawpyo.md",
+        "owner_role": "designer",
+        "relations": [
+            {"type": "owned_by", "target": "Role:designer"},
+        ],
+    },
+    {
+        "id": "Design:diagram-quy-uoc-draw-io-va-archify",
+        "kind": "Design",
+        "title": "Quy ước vẽ và sửa sơ đồ bằng draw.io và archify",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/quy-uoc-draw-io-va-archify.md",
+        "owner_role": "designer",
+        "relations": [
+            {"type": "owned_by", "target": "Role:designer"},
+        ],
+    },
+    {
+        "id": "Design:diagram-structurizr-dsl-guide",
+        "kind": "Design",
+        "title": "Structurizr DSL",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/structurizr-dsl-guide.md",
+        "owner_role": "designer",
+        "relations": [
+            {"type": "owned_by", "target": "Role:designer"},
+        ],
+    },
+    {
+        "id": "Design:diagram-uml-25-guide",
+        "kind": "Design",
+        "title": "Tra cứu UML 2.5.1",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/uml-25-guide.md",
+        "owner_role": "designer",
+        "relations": [
+            {"type": "owned_by", "target": "Role:designer"},
+        ],
+    },
+    {
+        "id": "Design:playwright-and-k6-testing",
+        "kind": "Design",
+        "title": "Playwright E2E & Grafana K6 Load Testing Standards",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/playwright-and-k6-testing.md",
+        "owner_role": "qa",
+        "relations": [
+            {"type": "owned_by", "target": "Role:qa"},
+            {"type": "owned_by", "target": "Role:dev"},
+        ],
+    },
+    {
+        "id": "Design:openapi-commits-and-backstage",
+        "kind": "Design",
+        "title": "Conventional Commits, OpenAPI 3.0 & Backstage Software Catalog",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/openapi-commits-and-backstage.md",
+        "owner_role": "architect",
+        "relations": [
+            {"type": "owned_by", "target": "Role:architect"},
+            {"type": "owned_by", "target": "Role:dev"},
+            {"type": "owned_by", "target": "Role:lead"},
+        ],
+    },
+
+
+    # --- 11. KỸ THUẬT BỔ SUNG ---
+    {
+        "id": "Design:clean-architecture-and-ddd",
+        "kind": "Design",
+        "title": "Clean Architecture, DDD và mẫu thiết kế",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/clean-architecture-and-ddd.md",
+        "owner_role": "architect",
+        "relations": [
+            {"type": "owned_by", "target": "Role:architect"},
+        ],
+    },
+    {
+        "id": "Design:kubernetes-architecture-and-manifests",
+        "kind": "Design",
+        "title": "Kiến trúc Kubernetes và manifest production",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/kubernetes-architecture-and-manifests.md",
+        "owner_role": "architect",
+        "relations": [
+            {"type": "owned_by", "target": "Role:architect"},
+        ],
+    },
+    {
+        "id": "Design:sql-postgresql-and-jpa-hibernate",
+        "kind": "Design",
+        "title": "Tối ưu PostgreSQL và JPA/Hibernate",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/sql-postgresql-and-jpa-hibernate.md",
+        "owner_role": "architect",
+        "relations": [
+            {"type": "owned_by", "target": "Role:architect"},
+        ],
+    },
+    {
+        "id": "Design:technical-writing-and-doc-standards",
+        "kind": "Design",
+        "title": "Technical Documentation Standards (Google, Microsoft & The Good Docs Project)",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/srs/technical-writing-and-doc-standards.md",
+        "owner_role": "ba",
+        "relations": [
+            {"type": "owned_by", "target": "Role:ba"},
+            {"type": "owned_by", "target": "Role:architect"},
+        ],
+    },
+    {
+        "id": "Design:postgresql-partitioning-and-performance",
+        "kind": "Design",
+        "title": "PostgreSQL Declarative Partitioning & Keyset Pagination (Use The Index Luke)",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/postgresql-partitioning-and-performance.md",
+        "owner_role": "dev",
+        "relations": [
+            {"type": "owned_by", "target": "Role:dev"},
+            {"type": "owned_by", "target": "Role:architect"},
+        ],
+    },
+    {
+        "id": "Design:redis-patterns-and-enterprise-architecture",
+        "kind": "Design",
+        "title": "Redis Architecture Patterns & Enterprise Application Patterns (Martin Fowler)",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/redis-patterns-and-enterprise-architecture.md",
+        "owner_role": "architect",
+        "relations": [
+            {"type": "owned_by", "target": "Role:architect"},
+            {"type": "owned_by", "target": "Role:dev"},
+            {"type": "owned_by", "target": "Role:lead"},
+        ],
+    },
+    {
+        "id": "Design:clean-code-and-refactoring-guide",
+        "kind": "Design",
+        "title": "Clean Code, Martin Fowler Refactoring Catalog & Google Engineering Practices",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/clean-code-and-refactoring-guide.md",
+        "owner_role": "dev",
+        "relations": [
+            {"type": "owned_by", "target": "Role:dev"},
+            {"type": "owned_by", "target": "Role:reviewer"},
+        ],
+    },
+    {
+        "id": "Design:gof-design-patterns-and-solid",
+        "kind": "Design",
+        "title": "Detailed 23 GoF Design Patterns, SOLID & GRASP Principles",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/gof-design-patterns-and-solid.md",
+        "owner_role": "architect",
+        "relations": [
+            {"type": "owned_by", "target": "Role:architect"},
+            {"type": "owned_by", "target": "Role:dev"},
+        ],
+    },
+    {
+        "id": "Design:big-o-and-jvm-performance-tuning",
+        "kind": "Design",
+        "title": "Big-O Algorithmic Complexity & JVM Performance Tuning (Java 21 LTS)",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/big-o-and-jvm-performance-tuning.md",
+        "owner_role": "dev",
+        "relations": [
+            {"type": "owned_by", "target": "Role:dev"},
+            {"type": "owned_by", "target": "Role:architect"},
+        ],
+    },
+    {
+        "id": "Design:enterprise-integration-and-microservices-patterns",
+        "kind": "Design",
+        "title": "Enterprise Integration Patterns (EIP) & Microservices Patterns (Saga, Outbox)",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/enterprise-integration-and-microservices-patterns.md",
+        "owner_role": "architect",
+        "relations": [
+            {"type": "owned_by", "target": "Role:architect"},
+            {"type": "owned_by", "target": "Role:dev"},
+            {"type": "owned_by", "target": "Role:lead"},
+        ],
+    },
+    {
+        "id": "Design:sonarqube-vault-and-terraform",
+        "kind": "Design",
+        "title": "SonarQube Quality Gates, HashiCorp Vault & Terraform (IaC)",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/sonarqube-vault-and-terraform.md",
+        "owner_role": "security",
+        "relations": [
+            {"type": "owned_by", "target": "Role:security"},
+            {"type": "owned_by", "target": "Role:architect"},
+            {"type": "owned_by", "target": "Role:reviewer"},
+        ],
+    },
+    {
+        "id": "Design:distributed-systems-and-ddia",
+        "kind": "Design",
+        "title": "Designing Data-Intensive Applications (DDIA - Martin Kleppmann)",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/distributed-systems-and-ddia.md",
+        "owner_role": "architect",
+        "relations": [
+            {"type": "owned_by", "target": "Role:architect"},
+            {"type": "owned_by", "target": "Role:dev"},
+            {"type": "owned_by", "target": "Role:lead"},
+        ],
+    },
+    {
+        "id": "Design:kafka-spark-and-iceberg-lakehouse",
+        "kind": "Design",
+        "title": "Apache Kafka, Apache Spark & Apache Iceberg Data Lakehouse Standards",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/kafka-spark-and-iceberg-lakehouse.md",
+        "owner_role": "architect",
+        "relations": [
+            {"type": "owned_by", "target": "Role:architect"},
+            {"type": "owned_by", "target": "Role:dev"},
+            {"type": "owned_by", "target": "Role:ai-eng"},
+        ],
+    },
+    {
+        "id": "Design:mcp-and-bdd-testing",
+        "kind": "Design",
+        "title": "Model Context Protocol (MCP) & Cucumber BDD Testing Standards",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/mcp-and-bdd-testing.md",
+        "owner_role": "ai-eng",
+        "relations": [
+            {"type": "owned_by", "target": "Role:ai-eng"},
+            {"type": "owned_by", "target": "Role:qa"},
+            {"type": "owned_by", "target": "Role:ba"},
+        ],
+    },
+    {
+        "id": "Design:junit5-mockito-testcontainers-and-jest",
+        "kind": "Design",
+        "title": "JUnit 5, Mockito, Testcontainers Real Database & Jest Frontend TDD",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/ky-thuat/junit5-mockito-testcontainers-and-jest.md",
+        "owner_role": "dev",
+        "relations": [
+            {"type": "owned_by", "target": "Role:dev"},
+            {"type": "owned_by", "target": "Role:qa"},
+            {"type": "owned_by", "target": "Role:reviewer"},
+        ],
+    },
 ]
+
+
+# ---------------------------------------------------------------------------
+# Tự đăng ký nút cho file chưa có trong RAW_NODES (protocol, tri thức, skill) và nối cạnh liên quan.
+# Thêm file mới vào agents/protocols, agents/knowledge hoặc .agents/skills thì chạy lại là có nút, không cần sửa tay.
+# ---------------------------------------------------------------------------
+import re
+
+ROLE_NODES = {"dev", "qa", "reviewer", "ba", "architect", "ai-eng", "lead", "security", "designer"}
+ROLE_ALIAS = {
+    "analyst": "ba", "writer": "ba", "product": "ba", "researcher": "architect", "sre": "dev", "dba": "architect",
+    "devops": "architect", "data-eng": "architect", "mobile": "dev", "debt-hunter": "reviewer", "runner": "qa",
+    "model-tester": "qa",
+}
+PROTOCOL_OWNER = {
+    "bug-repro": "qa", "challenger": "architect", "test-cases": "qa", "spec-writing": "ba", "intake": "ba",
+    "hard-rules": "reviewer", "commit-plan": "dev", "task-branch": "dev", "worktree-lifecycle": "dev", "deploy": "dev",
+    "mcp-policy": "security", "skill-eval": "ai-eng", "research-brief": "architect", "feature-map": "qa",
+    "ui-fidelity": "designer", "atomic-changes": "reviewer", "harness-recursion": "lead",
+}
+KNOWLEDGE_OWNER = {
+    "verification-cli-runbook": "qa", "glossary": "lead", "lauren-tan-primary-sources": "ai-eng", "graphify": "architect",
+}
+
+# Từ khóa và từ đồng nghĩa (tiếng Việt, tiếng Anh) để tra cứu theo từ khóa trúng hơn.
+KEYWORDS = {
+    "Design:sql-postgresql-and-jpa-hibernate": "sql chậm slow query chỉ mục index explain n+1 jpa hibernate postgres tối ưu truy vấn",
+    "Design:chuan-sql-va-loi": "sql lỗi cơ sở dữ liệu database deadlock unique violation giao dịch transaction liquibase",
+    "Design:zero-downtime-migrations": "migration đổi schema không dừng hệ thống expand contract đổi cột đổi tên bảng",
+    "Design:diagram-mo-ta-hoat-dong-so-do": "mô tả sơ đồ hoạt động bước nhánh activity diagram description đọc sơ đồ",
+    "Design:chuan-ve-so-do": "vẽ sơ đồ erd sequence activity use case state checklist diagram",
+    "Design:tdd-13-steps": "tdd test trước 13 bước dod definition of done rtm",
+    "Design:bug-handling-pipeline": "bug lỗi hàng loạt gom nhóm mantis tái hiện reproduce",
+    "Design:git-rules": "git commit nhánh branch merge request tag release gitflow message",
+    "Requirement:change-request": "thay đổi yêu cầu cr ccb change request",
+    "Requirement:ai-provenance": "ai sinh code prompt registry aiignore nguồn gốc ai-generated",
+    "Design:cso-security": "bảo mật audit lỗ hổng security vulnerability",
+    "Design:kubernetes-architecture-and-manifests": "k8s kubernetes triển khai pod deployment manifest",
+    "Design:redis-patterns-and-enterprise-architecture": "redis cache khóa phân tán distributed lock",
+    "Requirement:srs-writing-standard": "srs đặc tả viết tài liệu fdd yêu cầu specification",
+    "Design:clean-architecture-and-ddd": "kiến trúc sạch clean architecture ddd tầng domain hexagonal",
+    "Requirement:plan-critique": "kế hoạch phản biện pseudo-code trước khi code probe",
+    "Requirement:pair-review": "review cặp solution pair soát chéo",
+    "Requirement:release-note": "phát hành release note changelog",
+    "Requirement:lesson-learned": "bài học retro retrospective kinh nghiệm",
+    "Requirement:ticket-status": "trạng thái ticket status board",
+    "Design:chuan-code-va-review": "review code checklist soát code reviewer",
+}
+
+# Cụm kiến thức liên quan: "clique" nối mọi cặp, "star" nối phần tử đầu (hub) với các phần tử còn lại.
+# Phần tử là id nút hoặc đường dẫn file (nút tự đăng ký có id suy ra từ đường dẫn).
+RELATED_CLUSTERS = [
+    ("clique", ["Design:diagram-mo-ta-hoat-dong-so-do", "Design:diagram-quy-uoc-draw-io-va-archify", "Design:chuan-ve-so-do",
+                "Design:diagram-diagrams-cheatsheet-and-decision-matrix", "Skill:diagram-design", "Skill:archify"]),
+    ("star", ["Design:diagram-diagrams-cheatsheet-and-decision-matrix", "Design:diagram-drawio-csv-autolayout",
+              "Design:diagram-drawio-icons-index", "Design:diagram-python-diagrams-and-drawpyo", "Design:diagram-mermaid-syntax-guide",
+              "Design:diagram-c4-plantuml-guide", "Design:diagram-structurizr-dsl-guide", "Design:diagram-dbml-and-d2-guide",
+              "Design:diagram-uml-25-guide", "Design:diagram-bpmn-20-camunda-guide", "Design:diagram-aws-architecture-icons-guide"]),
+    ("clique", ["Design:chuan-sql-va-loi", "Design:sql-postgresql-and-jpa-hibernate", "Design:postgresql-partitioning-and-performance",
+                "Design:zero-downtime-migrations", "Skill:postgres-patterns", "Skill:jpa-patterns"]),
+    ("clique", ["Design:junit5-mockito-testcontainers-and-jest", "Skill:springboot-tdd", "Skill:springboot-patterns",
+                "Design:tdd-13-steps", "Skill:test-value", "Skill:subagent-driven-development", "Skill:systematic-debugging"]),
+    ("clique", ["Rule:task-loop", "Rule:definition-of-done", "Design:tdd-13-steps", "Requirement:plan-critique",
+                "Requirement:pair-review", "Requirement:ticket-status", "Requirement:lesson-learned", "Requirement:release-note"]),
+    ("clique", ["Requirement:change-request", "Requirement:baccm-and-cr", "Requirement:srs-writing-standard",
+                "Requirement:document-templates", "Design:technical-writing-and-doc-standards", "agents/protocols/spec-writing.md"]),
+    ("clique", ["Design:git-rules", "Design:openapi-commits-and-backstage", "agents/protocols/commit-plan.md",
+                "agents/protocols/task-branch.md", "agents/protocols/worktree-lifecycle.md"]),
+    ("clique", ["Requirement:ai-provenance", "Design:prompt-as-code-registry", "EvalSuite:eval-playbook-and-constraints",
+                "Skill:verification-skills-cdp", "Source:harness2-recursive-harnessing", "agents/protocols/hard-rules.md"]),
+    ("clique", ["Design:cso-security", "EvalSuite:llm-redteam-taxonomy", "Skill:security-scan", "Skill:careful", "Skill:cso",
+                "agents/protocols/mcp-policy.md"]),
+    ("star", ["Design:clean-architecture-and-ddd", "Design:gof-design-patterns-and-solid", "Design:enterprise-integration-and-microservices-patterns",
+              "Design:distributed-systems-and-ddia", "Design:redis-patterns-and-enterprise-architecture", "Skill:codebase-design",
+              "Skill:domain-modeling", "Skill:architecture-decision-records", "Design:kafka-spark-and-iceberg-lakehouse",
+              "Design:kubernetes-architecture-and-manifests", "Design:cloud-recipes"]),
+    ("clique", ["Design:bug-handling-pipeline", "agents/protocols/bug-repro.md", "Skill:investigate", "Skill:systematic-debugging"]),
+    ("clique", ["agents/protocols/approval.md", "agents/protocols/risk-gate.md", "agents/protocols/source-precedence.md",
+                "Requirement:change-request"]),
+    ("clique", ["Design:chuan-code-va-review", "agents/protocols/atomic-changes.md", "Skill:open-code-review", "Requirement:pair-review"]),
+    ("clique", ["agents/protocols/test-cases.md", "Design:cmmi-l3-70-checks", "Skill:qa-web", "Design:junit5-mockito-testcontainers-and-jest"]),
+    ("clique", ["Skill:plan-ceo-review", "Skill:plan-eng-review", "Skill:grilling", "Skill:to-spec", "Skill:to-tickets",
+                "Skill:wayfinder", "agents/protocols/challenger.md"]),
+]
+RELATED_CLUSTERS += [
+    ("clique", ["Design:clean-code-and-refactoring-guide", "Design:big-o-and-jvm-performance-tuning", "Design:chuan-code-va-review",
+                "Design:gof-design-patterns-and-solid"]),
+    ("clique", ["Design:playwright-and-k6-testing", "Design:mcp-and-bdd-testing", "Design:junit5-mockito-testcontainers-and-jest",
+                "agents/protocols/test-cases.md"]),
+    ("clique", ["Design:sonarqube-vault-and-terraform", "Design:cso-security", "Design:kubernetes-architecture-and-manifests",
+                "Design:cloud-recipes"]),
+    ("clique", ["Design:frontend-patterns", "Skill:ui-ux-pro-max", "Design:playwright-and-k6-testing"]),
+    ("clique", ["Design:tech-radar-policy", "agents/protocols/research-brief.md", "Source:graphify",
+                "Source:lauren-tan-primary-sources", "Source:harness2-recursive-harnessing"]),
+    ("clique", ["Source:notebook1-agile-sdlc", "Design:tdd-13-steps", "Requirement:baccm-and-cr", "Design:cmmi-l3-70-checks"]),
+    ("clique", ["Source:notebook2-spacex-ai-eng", "Design:prompt-as-code-registry", "EvalSuite:eval-playbook-and-constraints",
+                "Skill:verification-skills-cdp"]),
+    ("clique", ["Source:company-process", "Requirement:change-request", "Rule:task-loop", "Design:git-rules"]),
+    ("star", ["Design:glossary", "Rule:task-loop", "Rule:definition-of-done"]),
+    ("clique", ["Design:verification-cli-runbook", "Skill:verification-skills-cdp", "Design:tdd-13-steps"]),
+]
+FALLBACK_HUB = {"Requirement": "Rule:task-loop", "Skill": "Skill:skills-registry"}
+
+
+def _h1(text, fallback):
+    for line in text.splitlines():
+        if line.startswith("# "):
+            return line[2:].strip()
+    return fallback
+
+
+def _slug(name):
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+
+
+def _registry_roles(root_dir):
+    """Đọc cột 'Vai được dùng' trong sổ agents/knowledge/skills.md."""
+    path = root_dir / "agents" / "knowledge" / "skills.md"
+    out = {}
+    if not path.is_file():
+        return out
+    for line in path.read_text(encoding="utf-8").splitlines():
+        parts = [c.strip() for c in line.split("|")]
+        if len(parts) > 7 and parts[1] and not parts[1].startswith(("Skill", "---")):
+            out[parts[1]] = [r.strip() for r in parts[6].split(",") if r.strip()]
+    return out
+
+
+def _owners(roles):
+    mapped = []
+    for r in roles:
+        r = ROLE_ALIAS.get(r, r)
+        if r in ROLE_NODES and r not in mapped:
+            mapped.append(r)
+    return mapped or ["lead"]
+
+
+def _neutral(title):
+    """Tiêu đề trong manifest mẫu không mang tên người hay tên dự án (tests/test_knowledge_seed.py)."""
+    title = re.sub(r"(?i)lauren tan", "bài nói của tác giả", title)
+    return re.sub(r"(?i)\bgdt\b", "dự án", title)
+
+
+def _auto_node(node_id, kind, title, ref, owners):
+    title = _neutral(title)
+    return {
+        "id": node_id, "kind": kind, "title": title, "state": "draft", "version": 1, "content_ref": ref,
+        "owner_role": owners[0],
+        "relations": [{"type": "owned_by", "target": f"Role:{o}"} for o in owners],
+    }
+
+
+def auto_nodes(root_dir):
+    # File cục bộ chưa muốn đưa vào catalog (ví dụ bản nháp chưa commit): .local/catalog-exclude.txt, mỗi dòng một đường dẫn.
+    excl = root_dir / ".local" / "catalog-exclude.txt"
+    skipped = {l.strip() for l in excl.read_text(encoding="utf-8").splitlines() if l.strip()} if excl.is_file() else set()
+    taken_refs = {r["content_ref"] for r in RAW_NODES} | skipped
+    taken_ids = {r["id"] for r in RAW_NODES}
+    out = []
+
+    def add(kind, base, title, ref, owners):
+        if ref in taken_refs:
+            return
+        node_id = f"{kind}:{base}"
+        if node_id in taken_ids:
+            node_id = f"{kind}:{kind.lower()}-{base}"
+        taken_ids.add(node_id)
+        taken_refs.add(ref)
+        out.append(_auto_node(node_id, kind, title, ref, owners))
+
+    for path in sorted((root_dir / "agents" / "protocols").glob("*.md")):
+        text = path.read_text(encoding="utf-8")
+        owner = PROTOCOL_OWNER.get(path.stem, "lead")
+        add("Requirement", _slug(path.stem), _h1(text, path.stem), f"agents/protocols/{path.name}", [owner])
+
+    for path in sorted((root_dir / "agents" / "knowledge").rglob("*.md")):
+        rel = path.relative_to(root_dir).as_posix()
+        if path.name == "README.md" or "/review-rules/" in rel:
+            continue
+        text = path.read_text(encoding="utf-8")
+        kind = "Source" if "/research/" in rel else "Design"
+        owner = KNOWLEDGE_OWNER.get(path.stem, "lead")
+        add(kind, _slug(path.stem), _h1(text, path.stem), rel, [owner])
+
+    registry = _registry_roles(root_dir)
+    for path in sorted((root_dir / ".agents" / "skills").glob("*/SKILL.md")):
+        name = path.parent.name
+        text = path.read_text(encoding="utf-8", errors="replace")
+        fm = re.search(r"^description:\s*(.+)$", text, re.M)
+        desc = re.sub(r"\s+", " ", fm.group(1)).strip().strip("\"'")[:90] if fm else ""
+        title = f"{name}: {desc}" if desc else name
+        add("Skill", _slug(name), title, f".agents/skills/{name}/SKILL.md", _owners(registry.get(name, [])))
+    return out
+
+
+def add_keywords_and_related(nodes):
+    by_id = {n["id"]: n for n in nodes}
+    by_ref = {n["content_ref"]: n["id"] for n in nodes}
+    for nid, words in KEYWORDS.items():
+        if nid in by_id:
+            by_id[nid]["keywords"] = words
+
+    def resolve(x):
+        return x if x in by_id else by_ref.get(x)
+
+    def link(a, b):
+        if not a or not b or a == b:
+            return
+        have = {(r["type"], r["target"]) for r in by_id[a]["relations"]}
+        rev = {(r["type"], r["target"]) for r in by_id[b]["relations"]}
+        if ("related_to", b) in have or ("related_to", a) in rev:
+            return
+        by_id[a]["relations"].append({"type": "related_to", "target": b})
+
+    for kind, members in RELATED_CLUSTERS:
+        ids = [m for m in (resolve(x) for x in members) if m]
+        if kind == "star":
+            for other in ids[1:]:
+                link(ids[0], other)
+        else:
+            for i, a in enumerate(ids):
+                for b in ids[i + 1:]:
+                    link(a, b)
+
+    def degree(nid):
+        n = sum(1 for r in by_id[nid]["relations"] if r["type"] == "related_to")
+        return n + sum(1 for m in nodes for r in m["relations"] if r["type"] == "related_to" and r["target"] == nid)
+
+    for n in nodes:
+        hub = FALLBACK_HUB.get(n["kind"])
+        if hub and n["kind"] != "Role" and hub in by_id and n["id"] != hub and degree(n["id"]) == 0:
+            link(n["id"], hub)
+
 
 
 def build_catalog_manifest(root_dir: Path) -> dict:
     """Tự động tính toán hash sha256 cho toàn bộ nodes và tạo manifest json chuẩn."""
     nodes = []
-    print(f"📦 Bắt đầu quét và tính toán sha256 cho {len(RAW_NODES)} nodes...")
+    extra = auto_nodes(root_dir)
+    print(f"📦 Bắt đầu quét và tính toán sha256 cho {len(RAW_NODES)} nodes khai báo + {len(extra)} nodes tự đăng ký...")
 
-    for raw in RAW_NODES:
+    for raw in list(RAW_NODES) + extra:
         rel_path = raw["content_ref"]
         abs_path = root_dir / rel_path
 
@@ -564,6 +1195,7 @@ def build_catalog_manifest(root_dir: Path) -> dict:
         node_copy["provenance"] = [r["target"] for r in raw["relations"] if r["type"] == "derived_from"]
         nodes.append(node_copy)
 
+    add_keywords_and_related(nodes)
     apply_human_approvals(root_dir, nodes)
     manifest_data = {
         "schema_version": 1,
@@ -601,7 +1233,7 @@ def generate_role_contexts(root_dir: Path, manifest_path: Path):
     context_dir = root_dir / ".local" / "context"
     context_dir.mkdir(parents=True, exist_ok=True)
 
-    target_roles = ["dev", "qa", "reviewer", "ba", "architect", "ai-eng", "lead", "security"]
+    target_roles = ["dev", "qa", "reviewer", "ba", "architect", "ai-eng", "lead", "security", "designer"]
     print(f"\n🎯 Đang phân vùng Scoped Context cho các vai trò vào: {context_dir.relative_to(root_dir)}/")
 
     for role in target_roles:

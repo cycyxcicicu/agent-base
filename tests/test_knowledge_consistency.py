@@ -18,7 +18,7 @@ class TestKnowledgeIsReference(unittest.TestCase):
     def test_knowledge_files_are_labeled_reference(self):
         """Tri thức không đặt luật: mỗi file quy-trinh, ky-thuat, srs có nhãn 'tham khảo' ở đầu."""
         missing = []
-        for sub in ("quy-trinh", "ky-thuat", "srs"):
+        for sub in ("quy-trinh", "ky-thuat", "srs", "diagrams"):
             for p in _md_files("agents", "knowledge", sub):
                 head = "\n".join(p.read_text(encoding="utf-8").split("\n")[:6])
                 if LABEL not in head:
@@ -28,7 +28,7 @@ class TestKnowledgeIsReference(unittest.TestCase):
     def test_every_knowledge_file_is_in_the_index(self):
         readme = (ROOT / "agents" / "knowledge" / "README.md").read_text(encoding="utf-8")
         missing = []
-        for sub in ("quy-trinh", "ky-thuat", "srs"):
+        for sub in ("quy-trinh", "ky-thuat", "srs", "diagrams"):
             for p in _md_files("agents", "knowledge", sub):
                 if f"{sub}/{p.name}" not in readme:
                     missing.append(f"{sub}/{p.name}")
@@ -44,7 +44,7 @@ class TestKnowledgeGraphCoverage(unittest.TestCase):
         required = [f"agents/protocols/{n}.md" for n in (
             "task-loop", "definition-of-done", "git-rules", "change-request", "ai-provenance",
             "plan-critique", "pair-review", "release-note", "lesson-learned", "ticket-status")]
-        for sub in ("quy-trinh", "ky-thuat", "srs"):
+        for sub in ("quy-trinh", "ky-thuat", "srs", "diagrams"):
             required += [f"agents/knowledge/{sub}/{p.name}" for p in _md_files("agents", "knowledge", sub)]
         missing = [r for r in required if r not in refs]
         self.assertEqual(missing, [], f"Chưa có nút trong catalog (chạy scripts/build-knowledge-catalog.py): {missing}")
@@ -78,6 +78,31 @@ class TestStatusesAndGit(unittest.TestCase):
                 if ban.search(line):
                     offenders.append(f"{p.name}:{n}")
         self.assertEqual(offenders, [], f"Vai trò còn cấm lệnh git đã được phép: {offenders}")
+
+
+class TestLowFrictionRules(unittest.TestCase):
+    def test_agents_md_fits_antigravity_limit(self):
+        n = len((ROOT / "AGENTS.md").read_text(encoding="utf-8"))
+        self.assertLessEqual(n, 12000, f"AGENTS.md dài {n} ký tự, vượt giới hạn 12.000 của Antigravity")
+
+    def test_refresh_check_passes(self):
+        """Một lệnh kiểm cả bốn file sinh tự động mà CI yêu cầu (adapter, catalog, task board, notes index)."""
+        import subprocess
+        import sys
+        r = subprocess.run([sys.executable, "scripts/refresh.py", "--check"], cwd=ROOT, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+    def test_chat_consent_is_valid_and_recorded(self):
+        text = (ROOT / "agents" / "protocols" / "approval.md").read_text(encoding="utf-8")
+        self.assertIn("AI ghi hộ", text)
+        self.assertIn("trích nguyên văn", text)
+
+    def test_no_role_or_protocol_forces_empty_handoff_notes(self):
+        offenders = []
+        for p in list((ROOT / "agents" / "roles").glob("*.md")) + list((ROOT / "agents" / "protocols").glob("*.md")):
+            if 'dù chỉ ghi "không có lưu ý"' in p.read_text(encoding="utf-8"):
+                offenders.append(p.name)
+        self.assertEqual(offenders, [], f"Còn bắt ghi chú bàn giao rỗng: {offenders}")
 
 
 if __name__ == "__main__":

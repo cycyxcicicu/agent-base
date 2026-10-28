@@ -2,7 +2,7 @@
 
 Nguồn: bài giảng "GitFlow CI/CD" của người dùng (33 slide), cộng quy tắc riêng của `agent-base`. Chỗ nào là suy luận của tôi hoặc bài giảng chưa rõ đều ghi ở mục 13.
 
-## 0. Quy tắc số 1: người dùng làm việc ghi git, hoặc nhờ AI làm và duyệt từng lệnh
+## 0. Quy tắc số 1: hoàn tác được thì cứ làm; commit/push khi người dùng yêu cầu; việc mất dữ liệu thì hỏi trước
 
 | Ai | Tự làm được | Làm khi người dùng yêu cầu rõ và duyệt từng lệnh | Không bao giờ |
 |---|---|---|---|
@@ -12,7 +12,7 @@ Nguồn: bài giảng "GitFlow CI/CD" của người dùng (33 slide), cộng qu
 - Quyền của AI được **ép ở công cụ**: Kilo (`.kilo/agents/*.md`) và Claude Code (`.claude/settings.json`) đều sinh từ `scripts/sync-adapters.py`. Cột giữa là danh sách **hỏi** (`ask`): công cụ dừng lại chờ người dùng bấm duyệt từng lệnh. Cột phải là danh sách **cấm cứng** (`deny`), thắng danh sách hỏi.
 - Khi người dùng nói "commit hộ tôi", AI dùng **danh tính git của người dùng**; việc thêm dòng `Co-Authored-By:` tuân thủ cấu hình mục Attribution commit trong `PROJECT.md` (mặc định là `co-authored-by`; nếu dự án đặt `none` thì không thêm), và chỉ `git add` từng đường dẫn cụ thể (mẫu `agents/protocols/commit-plan.md`). Người dùng đọc lệnh trong hộp thoại duyệt trước khi cho chạy. Hook `pre-commit`/`commit-msg` vẫn chạy như với người: chặn commit trên nhánh chung, sai tên nhánh, sai định dạng message, file và dòng giống bí mật.
 - Danh tính có đuôi `(agent)` (ví dụ `Bot (agent)`) bị hook từ chối: AI không tự đặt danh tính riêng để commit.
-- Khi không được yêu cầu commit, AI ghi **kế hoạch commit** vào task card (mẫu `agents/protocols/commit-plan.md`): danh sách lệnh `git add` và `git commit` chia theo chức năng, cộng lệnh rebase và push. Người dùng đọc, sửa nếu cần, rồi tự chạy hoặc nhờ AI chạy.
+- Khi không được yêu cầu commit, AI ghi **kế hoạch commit** vào task card (mẫu `agents/protocols/commit-plan.md`): danh sách lệnh `git add` và `git commit` chia theo chức năng, cộng lệnh rebase và push. Người dùng đọc, sửa nếu cần, rồi tự chạy hoặc nói "commit" để AI chạy.
 - Việc git ghi ngoài hai cột đầu (xóa nhánh hoặc tag, `reset`, `clean`, push ép, push vào nhánh chung) vẫn viết thành lệnh cho người dùng chạy. Việc có thể làm mất code hay dữ liệu còn phải qua **cổng rủi ro** (`agents/protocols/risk-gate.md`). Vòng đời worktree từ tạo đến dọn: `agents/protocols/worktree-lifecycle.md`.
 
 ## 1. Nhánh (GitFlow)

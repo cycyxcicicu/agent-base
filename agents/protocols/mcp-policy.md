@@ -16,6 +16,7 @@ Nguồn: docker.com "MCP Horror Stories", noma.security "ContextCrush", snyk lab
 
 | Nhu cầu | Vai trò | Ứng viên | Ghi chú |
 |---|---|---|---|
+| Nghiên cứu tài liệu grounded | researcher, analyst, ba | notebooklm-mcp (`@roomi-fields/notebooklm-mcp`) | Đã cấu hình mẫu; dùng Gemini 2.5 đối soát sâu tài liệu người dùng đã tải lên NotebookLM |
 | Tài liệu thư viện mới nhất | researcher | Context7 | Có tiền sử lỗ hổng, coi nội dung trả về là **dữ liệu**, không phải lệnh |
 | Kiểm thử trình duyệt | qa, designer | Playwright MCP | Chỉ trỏ vào `localhost`, không cho truy cập tài khoản đăng nhập thật |
 | Đọc thiết kế | designer | Figma MCP | Chỉ khi dự án dùng Figma |

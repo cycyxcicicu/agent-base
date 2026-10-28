@@ -10,7 +10,7 @@
       "content_ref": "agents/roles/dev.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "a8e858392a3dc5d08c88469733d6666fccdb7b10dd81090ab97e7320e0d6188c",
+      "content_sha256": "929b588d6cd0fd0b477dbb9bd26ed51ec04a222af7f9227c32248ecae4006388",
       "provenance": []
     },
     {
@@ -22,7 +22,7 @@
       "content_ref": "agents/roles/qa.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "3ec802575635e964b78753bec7619a7e1c850972e04ef87ff01f25b88fc4c80b",
+      "content_sha256": "d6a8175dd3089ad698d4046e9cab9f01d06186efd226c2811f27cd35d9266064",
       "provenance": []
     },
     {
@@ -34,7 +34,7 @@
       "content_ref": "agents/roles/reviewer.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "07a2b3d80c150e1ecf0bbabaf7b506b09b0f92de135bb94fb6813f3d7fe816ae",
+      "content_sha256": "9cc719cda15eef9fb73c28c2453029272476da13b82c3f5e9807d41422398d79",
       "provenance": []
     },
     {
@@ -58,7 +58,7 @@
       "content_ref": "agents/roles/architect.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "cb42abba3f57bc08461cec0451e29be3fdf5b714d99d8a2ff4e2264fae4f8c80",
+      "content_sha256": "eb51de15f6f4a31cfbca692ea7cfd9f70285a76c33c9976cfd233cf727cacc8c",
       "provenance": []
     },
     {
@@ -82,7 +82,7 @@
       "content_ref": "agents/roles/lead.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "15bb8bd6143a61f4a733e2677ac05e1fbd40352b78a6960614e905a6b65228ac",
+      "content_sha256": "8c3a8162584a369f055a96afa210936c77fa6dc6a4b8ef86a7d0aa20accd3024",
       "provenance": []
     },
     {
@@ -94,7 +94,7 @@
       "content_ref": "agents/roles/security.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "b685fb5125cd869a054891393fcc95ac09fed34b4e75186f6874ebdb3d67f857",
+      "content_sha256": "350cd5bf3336e6f2b5278e169d18f7cd208120aef9ab11e0472ac13bfbe47a86",
       "provenance": []
     },
     {
@@ -105,7 +105,20 @@
       "version": 1,
       "content_ref": "agents/knowledge/quy-trinh/quy-trinh-13-buoc-tdd.md",
       "owner_role": "architect",
-      "relations": [],
+      "relations": [
+        {
+          "type": "related_to",
+          "target": "Design:tdd-13-steps"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:baccm-and-cr"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:cmmi-l3-70-checks"
+        }
+      ],
       "content_sha256": "e8572f5bf5fa764334a1f9e112cb1a9d6d9dc3b175b087d8503f904e92a34c05",
       "provenance": []
     },
@@ -117,7 +130,20 @@
       "version": 1,
       "content_ref": "agents/knowledge/research/lauren-tan-talk.md",
       "owner_role": "ai-eng",
-      "relations": [],
+      "relations": [
+        {
+          "type": "related_to",
+          "target": "Design:prompt-as-code-registry"
+        },
+        {
+          "type": "related_to",
+          "target": "EvalSuite:eval-playbook-and-constraints"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:verification-skills-cdp"
+        }
+      ],
       "content_sha256": "d1285305b0ca35dca45eb6beb934df3eb773e5016aeb5ff05fefba113bf4d47e",
       "provenance": []
     },
@@ -137,6 +163,26 @@
         {
           "type": "owned_by",
           "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:srs-writing-standard"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:document-templates"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:technical-writing-and-doc-standards"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:spec-writing"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:cmmi-l3-70-checks"
         }
       ],
       "content_sha256": "9147e5ab113e3acb561d0f11ab049c2aaf026a149394b0c6fecc171a78a35179",
@@ -160,12 +206,25 @@
         {
           "type": "owned_by",
           "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:document-templates"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:technical-writing-and-doc-standards"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:spec-writing"
         }
       ],
       "content_sha256": "d842b7ae069604d24f9d1c8e6240e2d6355d9260b93f381343cfbcf805a660ac",
       "provenance": [
         "Source:notebook1-agile-sdlc"
-      ]
+      ],
+      "keywords": "srs đặc tả viết tài liệu fdd yêu cầu specification"
     },
     {
       "id": "Design:tdd-13-steps",
@@ -183,12 +242,53 @@
         {
           "type": "owned_by",
           "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:test-value"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:subagent-driven-development"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:systematic-debugging"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:plan-critique"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:pair-review"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:ticket-status"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:lesson-learned"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:release-note"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:baccm-and-cr"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:cmmi-l3-70-checks"
         }
       ],
       "content_sha256": "e8572f5bf5fa764334a1f9e112cb1a9d6d9dc3b175b087d8503f904e92a34c05",
       "provenance": [
         "Source:notebook1-agile-sdlc"
-      ]
+      ],
+      "keywords": "tdd test trước 13 bước dod definition of done rtm"
     },
     {
       "id": "Design:cmmi-l3-70-checks",
@@ -206,6 +306,14 @@
         {
           "type": "owned_by",
           "target": "Role:qa"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:qa-web"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:junit5-mockito-testcontainers-and-jest"
         }
       ],
       "content_sha256": "1a2c3f2e773bec430c1ed17f5141255a7c04b25b64178879a2e75074290b7f60",
@@ -225,10 +333,39 @@
         {
           "type": "owned_by",
           "target": "Role:security"
+        },
+        {
+          "type": "related_to",
+          "target": "EvalSuite:llm-redteam-taxonomy"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:security-scan"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:careful"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:cso"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:mcp-policy"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:kubernetes-architecture-and-manifests"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:cloud-recipes"
         }
       ],
       "content_sha256": "14c186992e0f81e3fe719b4d5e99c9288859a002d2c5102f0f92d914fd0ac1fd",
-      "provenance": []
+      "provenance": [],
+      "keywords": "bảo mật audit lỗ hổng security vulnerability"
     },
     {
       "id": "Design:bug-handling-pipeline",
@@ -246,12 +383,25 @@
         {
           "type": "owned_by",
           "target": "Role:qa"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:bug-repro"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:investigate"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:systematic-debugging"
         }
       ],
       "content_sha256": "5057b7a47c39ca339609781c5f6648708d5b045693ee9ddd0f23db8509827cb8",
       "provenance": [
         "Source:notebook1-agile-sdlc"
-      ]
+      ],
+      "keywords": "bug lỗi hàng loạt gom nhóm mantis tái hiện reproduce"
     },
     {
       "id": "Design:tech-radar-policy",
@@ -265,6 +415,22 @@
         {
           "type": "owned_by",
           "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:research-brief"
+        },
+        {
+          "type": "related_to",
+          "target": "Source:graphify"
+        },
+        {
+          "type": "related_to",
+          "target": "Source:lauren-tan-primary-sources"
+        },
+        {
+          "type": "related_to",
+          "target": "Source:harness2-recursive-harnessing"
         }
       ],
       "content_sha256": "ebc6785421476c706a3ddf09cc8dc13a06d22126d6f37a91cabac756982e363c",
@@ -286,6 +452,18 @@
         {
           "type": "owned_by",
           "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Source:harness2-recursive-harnessing"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:hard-rules"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:tdd-13-steps"
         }
       ],
       "content_sha256": "b6f6fdaaa5a94c43fc867b915962a794a91564fd347052822371bbfbb81bc0ba",
@@ -326,6 +504,18 @@
         {
           "type": "owned_by",
           "target": "Role:ai-eng"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:verification-skills-cdp"
+        },
+        {
+          "type": "related_to",
+          "target": "Source:harness2-recursive-harnessing"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:hard-rules"
         }
       ],
       "content_sha256": "3bcabb6970983f7c44e1dd6aa33dc7b444104b5e25c133c282f140fefcf46f89",
@@ -353,6 +543,22 @@
         {
           "type": "owned_by",
           "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "EvalSuite:eval-playbook-and-constraints"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:verification-skills-cdp"
+        },
+        {
+          "type": "related_to",
+          "target": "Source:harness2-recursive-harnessing"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:hard-rules"
         }
       ],
       "content_sha256": "0940074ac3f87c5a22f4845d91ffe68f9baa42cd49a9472f9d65c99f72e5f17c",
@@ -372,6 +578,14 @@
         {
           "type": "owned_by",
           "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:ui-ux-pro-max"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:playwright-and-k6-testing"
         }
       ],
       "content_sha256": "f3097fa6876d5f45fcc5837e9816b2223bc5d2aa2701f09bcd5c7552c53022f2",
@@ -389,10 +603,23 @@
         {
           "type": "owned_by",
           "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-diagrams-cheatsheet-and-decision-matrix"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:diagram-design"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:archify"
         }
       ],
-      "content_sha256": "ce9b21cad66e446462977ac7615e56e31ec5e4390ede62eff4dec4f14663abb5",
-      "provenance": []
+      "content_sha256": "b4cc222cb2edfa0db77e25a98b9a3181cc25fbaa7c8d82491aef943e96de324b",
+      "provenance": [],
+      "keywords": "vẽ sơ đồ erd sequence activity use case state checklist diagram"
     },
     {
       "id": "Source:company-process",
@@ -406,6 +633,18 @@
         {
           "type": "owned_by",
           "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:change-request"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:git-rules"
         }
       ],
       "content_sha256": "c5980e28e1ad0afa7e6d27c19606726d6d100b2b9d1dfdbdcaeae667ec5b6c6f",
@@ -423,6 +662,38 @@
         {
           "type": "owned_by",
           "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:definition-of-done"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:tdd-13-steps"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:plan-critique"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:pair-review"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:ticket-status"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:lesson-learned"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:release-note"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:git-rules"
         }
       ],
       "content_sha256": "c10871ad9d7fde23270bf4d12c4af553f2b3c5169104da6b570bbc84644da192",
@@ -440,9 +711,33 @@
         {
           "type": "owned_by",
           "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:tdd-13-steps"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:plan-critique"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:pair-review"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:ticket-status"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:lesson-learned"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:release-note"
         }
       ],
-      "content_sha256": "61bb46fe8331c9f0c6707c99d6e62c21ca56c5a36848eed71dd8b4ddc12fb764",
+      "content_sha256": "2838e00aed6a0b76d9704eb92f8b65bade5d4ba8c46e7a362e39cb1bc5706010",
       "provenance": []
     },
     {
@@ -457,10 +752,27 @@
         {
           "type": "owned_by",
           "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:openapi-commits-and-backstage"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:commit-plan"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:task-branch"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:worktree-lifecycle"
         }
       ],
-      "content_sha256": "629c2f257bfe5241f1f2820078a6574b350348655f43c0b1c49be254fa5078a8",
-      "provenance": []
+      "content_sha256": "65ef45383122910eb5a2f03db08e3c97969769f162a133443eae077342a91b83",
+      "provenance": [],
+      "keywords": "git commit nhánh branch merge request tag release gitflow message"
     },
     {
       "id": "Requirement:change-request",
@@ -478,12 +790,41 @@
         {
           "type": "owned_by",
           "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:baccm-and-cr"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:srs-writing-standard"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:document-templates"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:technical-writing-and-doc-standards"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:spec-writing"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:git-rules"
         }
       ],
       "content_sha256": "e300d9e36b669756e3441af380c21efc275da530ca77f7c511adef4621152b21",
       "provenance": [
         "Source:company-process"
-      ]
+      ],
+      "keywords": "thay đổi yêu cầu cr ccb change request"
     },
     {
       "id": "Requirement:ai-provenance",
@@ -501,12 +842,33 @@
         {
           "type": "owned_by",
           "target": "Role:ai-eng"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:prompt-as-code-registry"
+        },
+        {
+          "type": "related_to",
+          "target": "EvalSuite:eval-playbook-and-constraints"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:verification-skills-cdp"
+        },
+        {
+          "type": "related_to",
+          "target": "Source:harness2-recursive-harnessing"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:hard-rules"
         }
       ],
       "content_sha256": "60c678ab608563472de0e6252066207d0033e236ab5f1305a897b603d9c93161",
       "provenance": [
         "Source:company-process"
-      ]
+      ],
+      "keywords": "ai sinh code prompt registry aiignore nguồn gốc ai-generated"
     },
     {
       "id": "Requirement:plan-critique",
@@ -524,12 +886,29 @@
         {
           "type": "owned_by",
           "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:pair-review"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:ticket-status"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:lesson-learned"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:release-note"
         }
       ],
       "content_sha256": "d0ec1fd515c15ede7cf29c570145042faf0f0eda6cb34658d4637efb4fa66c37",
       "provenance": [
         "Source:company-process"
-      ]
+      ],
+      "keywords": "kế hoạch phản biện pseudo-code trước khi code probe"
     },
     {
       "id": "Requirement:pair-review",
@@ -547,12 +926,25 @@
         {
           "type": "owned_by",
           "target": "Role:reviewer"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:ticket-status"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:lesson-learned"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:release-note"
         }
       ],
       "content_sha256": "a6a6344b01bc0059deec1419ef70a4d225b55992e2634e28a002108f58dfe500",
       "provenance": [
         "Source:company-process"
-      ]
+      ],
+      "keywords": "review cặp solution pair soát chéo"
     },
     {
       "id": "Requirement:release-note",
@@ -575,7 +967,8 @@
       "content_sha256": "514e6c0c81425ed0eab03b5ead951df54f369a1f3ed1d2aaf8ff79fc2626c349",
       "provenance": [
         "Source:company-process"
-      ]
+      ],
+      "keywords": "phát hành release note changelog"
     },
     {
       "id": "Requirement:lesson-learned",
@@ -593,12 +986,17 @@
         {
           "type": "owned_by",
           "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:release-note"
         }
       ],
       "content_sha256": "6ce6f7808e161b284d934018c1289b60c0327dc673b42d4505afb6d20d94a001",
       "provenance": [
         "Source:company-process"
-      ]
+      ],
+      "keywords": "bài học retro retrospective kinh nghiệm"
     },
     {
       "id": "Requirement:ticket-status",
@@ -616,12 +1014,21 @@
         {
           "type": "owned_by",
           "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:lesson-learned"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:release-note"
         }
       ],
       "content_sha256": "483d703d3fb87bb85520ccba760445a41697b7dfe0b5e927e9350f2c60a24548",
       "provenance": [
         "Source:company-process"
-      ]
+      ],
+      "keywords": "trạng thái ticket status board"
     },
     {
       "id": "Design:chuan-code-va-review",
@@ -635,10 +1042,27 @@
         {
           "type": "owned_by",
           "target": "Role:reviewer"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:atomic-changes"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:open-code-review"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:pair-review"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:gof-design-patterns-and-solid"
         }
       ],
       "content_sha256": "31b976acec67f335f848677eeeac4112f378bbbfa6b1903edf8c5da7772bdb83",
-      "provenance": []
+      "provenance": [],
+      "keywords": "review code checklist soát code reviewer"
     },
     {
       "id": "Design:chuan-sql-va-loi",
@@ -652,10 +1076,31 @@
         {
           "type": "owned_by",
           "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:sql-postgresql-and-jpa-hibernate"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:postgresql-partitioning-and-performance"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:zero-downtime-migrations"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:postgres-patterns"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:jpa-patterns"
         }
       ],
       "content_sha256": "6b008de58b8e95d2f1f42bd477ca3fcc07834c7c07927fc4c8984f22ad29f910",
-      "provenance": []
+      "provenance": [],
+      "keywords": "sql lỗi cơ sở dữ liệu database deadlock unique violation giao dịch transaction liquibase"
     },
     {
       "id": "Design:zero-downtime-migrations",
@@ -669,10 +1114,19 @@
         {
           "type": "owned_by",
           "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:postgres-patterns"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:jpa-patterns"
         }
       ],
       "content_sha256": "c32b04ca7c24e0e95057e035cb70e7fe5f097cc20a72bf0984bc0f1b038816cf",
-      "provenance": []
+      "provenance": [],
+      "keywords": "migration đổi schema không dừng hệ thống expand contract đổi cột đổi tên bảng"
     },
     {
       "id": "Design:cloud-recipes",
@@ -703,6 +1157,22 @@
         {
           "type": "owned_by",
           "target": "Role:security"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:security-scan"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:careful"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:cso"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:mcp-policy"
         }
       ],
       "content_sha256": "e8a9b72073f8fcf208f2ad156a736a9f3ccf93663a51a2752b58dbba3dbf55ef",
@@ -720,6 +1190,14 @@
         {
           "type": "owned_by",
           "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:technical-writing-and-doc-standards"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:spec-writing"
         }
       ],
       "content_sha256": "e4e7263759dcc547499dbda53797c0a37a69ad7661bfd032b1557a158452ba6d",
@@ -737,9 +1215,2729 @@
         {
           "type": "owned_by",
           "target": "Role:ai-eng"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:hard-rules"
         }
       ],
       "content_sha256": "2865970f6c807533f979881d50e01823a123c9edc4dd193904e7cbb1b7613556",
+      "provenance": []
+    },
+    {
+      "id": "Role:designer",
+      "kind": "Role",
+      "title": "Designer Role",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/roles/designer.md",
+      "owner_role": "catalog",
+      "relations": [],
+      "content_sha256": "cea2fc554a283c07a27325114fecb3317e08984a9e8d170076c68642bcb91ae8",
+      "provenance": []
+    },
+    {
+      "id": "Design:diagram-aws-architecture-icons-guide",
+      "kind": "Design",
+      "title": "Icon và bố cục hạ tầng AWS",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/aws-architecture-icons-guide.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        }
+      ],
+      "content_sha256": "e87dd0cd289850508948d4685c25b263c99f0e591936bd8ed1c1576f0f3ddcb1",
+      "provenance": []
+    },
+    {
+      "id": "Design:diagram-bpmn-20-camunda-guide",
+      "kind": "Design",
+      "title": "BPMN 2.0 Camunda",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/bpmn-20-camunda-guide.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        }
+      ],
+      "content_sha256": "39608d3bb35a417136dfa10f55e00ae1483a4e6e8ba5e6560ce4de4462dbfa87",
+      "provenance": []
+    },
+    {
+      "id": "Design:diagram-c4-plantuml-guide",
+      "kind": "Design",
+      "title": "C4-PlantUML",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/c4-plantuml-guide.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        }
+      ],
+      "content_sha256": "133a6a468f885dfc63e3c7e414976f7c299096cb9e796f2b959d120ff45d445d",
+      "provenance": []
+    },
+    {
+      "id": "Design:diagram-dbml-and-d2-guide",
+      "kind": "Design",
+      "title": "DBML và D2",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/dbml-and-d2-guide.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        }
+      ],
+      "content_sha256": "f6cef6ef94aaccbd74e8c2a94cae143b5fe662b033186aec3be9595199dd6fa2",
+      "provenance": []
+    },
+    {
+      "id": "Design:diagram-diagrams-cheatsheet-and-decision-matrix",
+      "kind": "Design",
+      "title": "Ma trận chọn công cụ vẽ sơ đồ",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/diagrams-cheatsheet-and-decision-matrix.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:diagram-design"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:archify"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-drawio-csv-autolayout"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-drawio-icons-index"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-python-diagrams-and-drawpyo"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-mermaid-syntax-guide"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-c4-plantuml-guide"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-structurizr-dsl-guide"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-dbml-and-d2-guide"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-uml-25-guide"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-bpmn-20-camunda-guide"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-aws-architecture-icons-guide"
+        }
+      ],
+      "content_sha256": "a397d1692fe885b1a23423d3e8da922c8585f767895a6dcaabdab7f55e856465",
+      "provenance": []
+    },
+    {
+      "id": "Design:diagram-drawio-csv-autolayout",
+      "kind": "Design",
+      "title": "Draw.io CSV Auto-Layout",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/drawio-csv-autolayout.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        }
+      ],
+      "content_sha256": "1d48b6f1e92fcb7821a1a19ad024b8969be0b3b45fce013f67f09fbedcc462bd",
+      "provenance": []
+    },
+    {
+      "id": "Design:diagram-drawio-icons-index",
+      "kind": "Design",
+      "title": "Danh mục icon Draw.io",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/drawio-icons-index.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        }
+      ],
+      "content_sha256": "e31da55ae099ef99943398aedf1b7c6c5af6b6bd0646c60f5f43253acc51e6c1",
+      "provenance": []
+    },
+    {
+      "id": "Design:diagram-mermaid-syntax-guide",
+      "kind": "Design",
+      "title": "Cú pháp Mermaid",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/mermaid-syntax-guide.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        }
+      ],
+      "content_sha256": "585c089e732724e1a4333e2f250d6ee8f822466f69ab8b55fdc4c257ef7b7c51",
+      "provenance": []
+    },
+    {
+      "id": "Design:diagram-mo-ta-hoat-dong-so-do",
+      "kind": "Design",
+      "title": "Mô tả hoạt động đi kèm sơ đồ",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/mo-ta-hoat-dong-so-do.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-quy-uoc-draw-io-va-archify"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-diagrams-cheatsheet-and-decision-matrix"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:diagram-design"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:archify"
+        }
+      ],
+      "content_sha256": "ce268626b5ab7e9173a4e06e87cf62b36d225e8a1f4a0a9f5f0980015890089b",
+      "provenance": [],
+      "keywords": "mô tả sơ đồ hoạt động bước nhánh activity diagram description đọc sơ đồ"
+    },
+    {
+      "id": "Design:diagram-python-diagrams-and-drawpyo",
+      "kind": "Design",
+      "title": "Vẽ sơ đồ bằng Python diagrams và drawpyo",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/python-diagrams-and-drawpyo.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        }
+      ],
+      "content_sha256": "9479717241ed9bd00a0274a4fac58e664122b7b6170de295d46a33635fd84ba6",
+      "provenance": []
+    },
+    {
+      "id": "Design:diagram-quy-uoc-draw-io-va-archify",
+      "kind": "Design",
+      "title": "Quy ước vẽ và sửa sơ đồ bằng draw.io và archify",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/quy-uoc-draw-io-va-archify.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-diagrams-cheatsheet-and-decision-matrix"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:diagram-design"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:archify"
+        }
+      ],
+      "content_sha256": "e8c8bd62d9e0b4a52cd23e116789ec62071141de378813740421e86e1c54b5a3",
+      "provenance": []
+    },
+    {
+      "id": "Design:diagram-structurizr-dsl-guide",
+      "kind": "Design",
+      "title": "Structurizr DSL",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/structurizr-dsl-guide.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        }
+      ],
+      "content_sha256": "de4b8da92b505c11a50c53ac981fd6a786c1393482a227a7c3e192ade7fa56bf",
+      "provenance": []
+    },
+    {
+      "id": "Design:diagram-uml-25-guide",
+      "kind": "Design",
+      "title": "Tra cứu UML 2.5.1",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/uml-25-guide.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        }
+      ],
+      "content_sha256": "357279f36f72031123e0ee6412c87932caf172d4e2c069110e9887bbf6b5e46d",
+      "provenance": []
+    },
+    {
+      "id": "Design:playwright-and-k6-testing",
+      "kind": "Design",
+      "title": "Playwright E2E & Grafana K6 Load Testing Standards",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/playwright-and-k6-testing.md",
+      "owner_role": "qa",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:mcp-and-bdd-testing"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:junit5-mockito-testcontainers-and-jest"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:test-cases"
+        }
+      ],
+      "content_sha256": "15d17baf70a460f4346f11d6a31dfbfec9375d43cdae52e70f7fe954ee0bba59",
+      "provenance": []
+    },
+    {
+      "id": "Design:openapi-commits-and-backstage",
+      "kind": "Design",
+      "title": "Conventional Commits, OpenAPI 3.0 & Backstage Software Catalog",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/openapi-commits-and-backstage.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:commit-plan"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:task-branch"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:worktree-lifecycle"
+        }
+      ],
+      "content_sha256": "79829f2d7a036fa7678263eccf190ee2f7a7c8943b8fe26352730bb111393778",
+      "provenance": []
+    },
+    {
+      "id": "Design:clean-architecture-and-ddd",
+      "kind": "Design",
+      "title": "Clean Architecture, DDD và mẫu thiết kế",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/clean-architecture-and-ddd.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:gof-design-patterns-and-solid"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:enterprise-integration-and-microservices-patterns"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:distributed-systems-and-ddia"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:redis-patterns-and-enterprise-architecture"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:codebase-design"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:domain-modeling"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:architecture-decision-records"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:kafka-spark-and-iceberg-lakehouse"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:kubernetes-architecture-and-manifests"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:cloud-recipes"
+        }
+      ],
+      "content_sha256": "552c2e40c692da4fc614ca756e28db55ed03816dd1294442e909b826a1ede164",
+      "provenance": [],
+      "keywords": "kiến trúc sạch clean architecture ddd tầng domain hexagonal"
+    },
+    {
+      "id": "Design:kubernetes-architecture-and-manifests",
+      "kind": "Design",
+      "title": "Kiến trúc Kubernetes và manifest production",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/kubernetes-architecture-and-manifests.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:cloud-recipes"
+        }
+      ],
+      "content_sha256": "84b4e7a03101f11965f4e87fa8bb5187f3f29d8f28a3fb03f761ac20feddf9c3",
+      "provenance": [],
+      "keywords": "k8s kubernetes triển khai pod deployment manifest"
+    },
+    {
+      "id": "Design:sql-postgresql-and-jpa-hibernate",
+      "kind": "Design",
+      "title": "Tối ưu PostgreSQL và JPA/Hibernate",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/sql-postgresql-and-jpa-hibernate.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:postgresql-partitioning-and-performance"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:zero-downtime-migrations"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:postgres-patterns"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:jpa-patterns"
+        }
+      ],
+      "content_sha256": "a16b2d79140d90065e02c1e9605464f34bff844e0a5ba8d15924e3378227eae7",
+      "provenance": [],
+      "keywords": "sql chậm slow query chỉ mục index explain n+1 jpa hibernate postgres tối ưu truy vấn"
+    },
+    {
+      "id": "Design:technical-writing-and-doc-standards",
+      "kind": "Design",
+      "title": "Technical Documentation Standards (Google, Microsoft & The Good Docs Project)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/technical-writing-and-doc-standards.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:spec-writing"
+        }
+      ],
+      "content_sha256": "f4b12dba02822b36ba7815e84c72931ea6916b796b5a5561781bad09fd2fcc2a",
+      "provenance": []
+    },
+    {
+      "id": "Design:postgresql-partitioning-and-performance",
+      "kind": "Design",
+      "title": "PostgreSQL Declarative Partitioning & Keyset Pagination (Use The Index Luke)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/postgresql-partitioning-and-performance.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:zero-downtime-migrations"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:postgres-patterns"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:jpa-patterns"
+        }
+      ],
+      "content_sha256": "413476933a0b24dc7208e19da49e4ceac4ab32accf0c1bafb39f231d04a0653e",
+      "provenance": []
+    },
+    {
+      "id": "Design:redis-patterns-and-enterprise-architecture",
+      "kind": "Design",
+      "title": "Redis Architecture Patterns & Enterprise Application Patterns (Martin Fowler)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/redis-patterns-and-enterprise-architecture.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        }
+      ],
+      "content_sha256": "e589091ebe83fefc06b3e5d543077dfa7de59f561dcb90d46f649a0a294232c6",
+      "provenance": [],
+      "keywords": "redis cache khóa phân tán distributed lock"
+    },
+    {
+      "id": "Design:clean-code-and-refactoring-guide",
+      "kind": "Design",
+      "title": "Clean Code, Martin Fowler Refactoring Catalog & Google Engineering Practices",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/clean-code-and-refactoring-guide.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:big-o-and-jvm-performance-tuning"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-code-va-review"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:gof-design-patterns-and-solid"
+        }
+      ],
+      "content_sha256": "dacd88b3622b405a8d9957897df7d08043736224425a7ba3d1a380bd0b043a33",
+      "provenance": []
+    },
+    {
+      "id": "Design:gof-design-patterns-and-solid",
+      "kind": "Design",
+      "title": "Detailed 23 GoF Design Patterns, SOLID & GRASP Principles",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/gof-design-patterns-and-solid.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        }
+      ],
+      "content_sha256": "bc5ce172c9cb2f4904d683fb3a1a42d0319a2beaaa0b511718b149f77b76cda0",
+      "provenance": []
+    },
+    {
+      "id": "Design:big-o-and-jvm-performance-tuning",
+      "kind": "Design",
+      "title": "Big-O Algorithmic Complexity & JVM Performance Tuning (Java 21 LTS)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/big-o-and-jvm-performance-tuning.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-code-va-review"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:gof-design-patterns-and-solid"
+        }
+      ],
+      "content_sha256": "a0656b488424fdf7ad97e8599994f9242c4f2db14a05a799e1a47d1dc626b5a3",
+      "provenance": []
+    },
+    {
+      "id": "Design:enterprise-integration-and-microservices-patterns",
+      "kind": "Design",
+      "title": "Enterprise Integration Patterns (EIP) & Microservices Patterns (Saga, Outbox)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/enterprise-integration-and-microservices-patterns.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        }
+      ],
+      "content_sha256": "9bb3fe3e4592d6c9429958f5d2c183e3c8fd88ee02c73cc1e3c09f8ffe65d6eb",
+      "provenance": []
+    },
+    {
+      "id": "Design:sonarqube-vault-and-terraform",
+      "kind": "Design",
+      "title": "SonarQube Quality Gates, HashiCorp Vault & Terraform (IaC)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/sonarqube-vault-and-terraform.md",
+      "owner_role": "security",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:security"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:cso-security"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:kubernetes-architecture-and-manifests"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:cloud-recipes"
+        }
+      ],
+      "content_sha256": "05394f0fec53dc18290948287ed69b032421dfac15f04a8e1b8d30ad40d026c7",
+      "provenance": []
+    },
+    {
+      "id": "Design:distributed-systems-and-ddia",
+      "kind": "Design",
+      "title": "Designing Data-Intensive Applications (DDIA - Martin Kleppmann)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/distributed-systems-and-ddia.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        }
+      ],
+      "content_sha256": "006417f1f569cefdf7043584bc919a1da5b166f06a5a1a49698961f5367743ad",
+      "provenance": []
+    },
+    {
+      "id": "Design:kafka-spark-and-iceberg-lakehouse",
+      "kind": "Design",
+      "title": "Apache Kafka, Apache Spark & Apache Iceberg Data Lakehouse Standards",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/kafka-spark-and-iceberg-lakehouse.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ai-eng"
+        }
+      ],
+      "content_sha256": "b7b237611a68163a3205258ef3305f41977986c98aa8c090cbef9af5240ac30f",
+      "provenance": []
+    },
+    {
+      "id": "Design:mcp-and-bdd-testing",
+      "kind": "Design",
+      "title": "Model Context Protocol (MCP) & Cucumber BDD Testing Standards",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/mcp-and-bdd-testing.md",
+      "owner_role": "ai-eng",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ai-eng"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:junit5-mockito-testcontainers-and-jest"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:test-cases"
+        }
+      ],
+      "content_sha256": "1a367722e378371a0b9869631f3e71ef684e9569608744f3b32aa71922735b7b",
+      "provenance": []
+    },
+    {
+      "id": "Design:junit5-mockito-testcontainers-and-jest",
+      "kind": "Design",
+      "title": "JUnit 5, Mockito, Testcontainers Real Database & Jest Frontend TDD",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/junit5-mockito-testcontainers-and-jest.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:springboot-tdd"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:springboot-patterns"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:tdd-13-steps"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:test-value"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:subagent-driven-development"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:systematic-debugging"
+        }
+      ],
+      "content_sha256": "1f9ebfb00aabee878719b853e961034897cc22100c75a7462138053318f55210",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:agent-base-sync",
+      "kind": "Requirement",
+      "title": "Cài agent-base vào dự án và đồng bộ ngược",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/agent-base-sync.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "4977c81ad214b40803478c86cc9619ddb4b791f219b4a56f5eea3d0e489112bb",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:approval",
+      "kind": "Requirement",
+      "title": "Giao thức duyệt bằng file bởi con người (File-Based Approval Protocol)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/approval.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:risk-gate"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:source-precedence"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:change-request"
+        }
+      ],
+      "content_sha256": "8a39a35d72cc6ba83af4a47623b92a09aed97675d3c9f84b916368015aa0dedb",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:atomic-changes",
+      "kind": "Requirement",
+      "title": "Thay đổi nguyên tử (PR nhỏ, một ý)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/atomic-changes.md",
+      "owner_role": "reviewer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:open-code-review"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:pair-review"
+        }
+      ],
+      "content_sha256": "7e9b1906296efabd90ef014ad88daadca473f1b2b35c14d952ee13e14ba882da",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:bug-repro",
+      "kind": "Requirement",
+      "title": "Tái hiện lỗi: nhận báo lỗi, tái hiện trên `main`, rồi mới sửa hoặc đóng",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/bug-repro.md",
+      "owner_role": "qa",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:investigate"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:systematic-debugging"
+        }
+      ],
+      "content_sha256": "f21195af0ab577cdc5ddb7bae933dab8c966ad59864144df1987293404ff362b",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:challenger",
+      "kind": "Requirement",
+      "title": "The Stakeholder Challenger Protocol (Giao Thức Phản Biện Đề Bài)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/challenger.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        }
+      ],
+      "content_sha256": "789d26b783494424f7f3ad9c71bf677d9de7e2b2f9b33035209898d7e7ab8879",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:commit-plan",
+      "kind": "Requirement",
+      "title": "Kế hoạch commit (AI viết; người dùng chạy hoặc nhờ AI chạy)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/commit-plan.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:task-branch"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:worktree-lifecycle"
+        }
+      ],
+      "content_sha256": "980b84563b1b64a9136b282ef2d27e6f2986623140d46452aecbb217fb1d8d2f",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:delegation-prompt",
+      "kind": "Requirement",
+      "title": "Khuôn mẫu prompt ủy thác và giao việc cho mô hình (Delegation Prompt Protocol)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/delegation-prompt.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "c8d3fdf6815198a06674549868b9e123937775999d7ac28c589d6494021f9cb3",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:deploy",
+      "kind": "Requirement",
+      "title": "Deploy: commit và đẩy code để hệ thống tự build",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/deploy.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "a656bef5b6bed78f92983c71d64c50d5112d254e36fd0ba46496ad200f6ca0b3",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:feature-map",
+      "kind": "Requirement",
+      "title": "Feature Map: bản đồ giao diện cho agent",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/feature-map.md",
+      "owner_role": "qa",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "166ee834cadbffe13e29d82eab0368814de0cb7a7aefed4378d12e000eaa4b29",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:full-workflow",
+      "kind": "Requirement",
+      "title": "Full workflow — toàn văn §§3, 15–17 (nguyên bản AGENTS.md trước 2026-10-27)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/full-workflow.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "e5c15f7795a554210f3c0e16dd26f56905e03215f5cb1fd1941681374bbd0ba5",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:handoff-note",
+      "kind": "Requirement",
+      "title": "Ghi chú cho agent sau (handoff note)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/handoff-note.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "73597b04b1db09604417107233d90daf1f4a497aedd2f06c43159c4d27e01027",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:hard-rules",
+      "kind": "Requirement",
+      "title": "Luật cứng: biến góp ý lặp lại thành kiểm tra tự động",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/hard-rules.md",
+      "owner_role": "reviewer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        }
+      ],
+      "content_sha256": "4fa3d237087672cd922889b0cc0cff0b17a2cd15c98a9f4155c6f18d51149943",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:harness-recursion",
+      "kind": "Requirement",
+      "title": "Giao thức Tối ưu hóa Đệ quy Agent (Harness² Recursion Protocol)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/harness-recursion.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "a779372250cfb7248c36631fde73352af908c53ac6bfd674de494b54088e475e",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:intake",
+      "kind": "Requirement",
+      "title": "Quy trình nhập tài liệu (doc, xlsx, pdf, ảnh)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/intake.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "80635c39456790fc0f5960b1410029e8da4aa09debc05c225abd9eaa2c7200b0",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:mcp-policy",
+      "kind": "Requirement",
+      "title": "Chính sách MCP",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/mcp-policy.md",
+      "owner_role": "security",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:security"
+        }
+      ],
+      "content_sha256": "adc58873af7a820f58fd18b858e69da5f478141d51d05599a87b711a66dfa371",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:message",
+      "kind": "Requirement",
+      "title": "Mẫu tin nhắn giữa các agent",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/message.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "e5ac5b74e12e1ba1d284f61fbfc194cb7586073ac5bdddc157a0ec7058e6cae4",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:model-policy",
+      "kind": "Requirement",
+      "title": "Chính sách model: khi nào dùng model nào",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/model-policy.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "afdabaab0ee70b07b508508489ec82d5048a2ead263eac0707bd8d465862672b",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:onboarding",
+      "kind": "Requirement",
+      "title": "Giao thức khởi tạo và tiếp nhận dự án (Project Onboarding Protocol)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/onboarding.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "f1f6abf31f7a3e7a276a8bb7d87a5ea9250f01a43c8bfed9cdd7d41ad2ff9f1a",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:research-brief",
+      "kind": "Requirement",
+      "title": "Mẫu brief nghiên cứu",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/research-brief.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Source:graphify"
+        },
+        {
+          "type": "related_to",
+          "target": "Source:lauren-tan-primary-sources"
+        },
+        {
+          "type": "related_to",
+          "target": "Source:harness2-recursive-harnessing"
+        }
+      ],
+      "content_sha256": "51a2b46e5f79c27f35cc8ddaa08446e70e81740caa67302f9e52eb6b11110e32",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:risk-gate",
+      "kind": "Requirement",
+      "title": "Cổng rủi ro và quy trình hoàn tác",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/risk-gate.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:source-precedence"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:change-request"
+        }
+      ],
+      "content_sha256": "c8a2f95c8289b01a63e05e5add6548dfdc2cddfcab32f61684ec72e271d8c5eb",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:skill-eval",
+      "kind": "Requirement",
+      "title": "Eval cho skill: kiểm thử đơn vị cho `SKILL.md`",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/skill-eval.md",
+      "owner_role": "ai-eng",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ai-eng"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "b688412c989717392b91ab7a5587225324da752fd3e02bac1fb36ee6cf91b665",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:skills-policy",
+      "kind": "Requirement",
+      "title": "Skill: lưu ở đâu, cài thế nào, vai nào được dùng",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/skills-policy.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "b8f601be6d61ffb06cd32bc6374945d098e752923f09feed298ff2dcd0a23d4b",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:source-precedence",
+      "kind": "Requirement",
+      "title": "Thứ tự ưu tiên nguồn tài liệu khi có mâu thuẫn (Source Precedence Protocol)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/source-precedence.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:change-request"
+        }
+      ],
+      "content_sha256": "a288b37030a8ac05559827b220c0afbf572ac00726c08d8db29beca7e32fd617",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:spec-writing",
+      "kind": "Requirement",
+      "title": "Tiêu chuẩn viết tài liệu đặc tả (Specification Writing Protocol)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/spec-writing.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        }
+      ],
+      "content_sha256": "f006ce77be2d02c14d682f37b2a1f7aae9f070c013b9131f0cd8726b1027fcae",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:task-branch",
+      "kind": "Requirement",
+      "title": "Nhánh theo card: agent tự tạo nhánh và tự gộp về main khi đạt",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/task-branch.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:worktree-lifecycle"
+        }
+      ],
+      "content_sha256": "c97679a2f8ec499d50b4c95c59326e1b93d81d08a45d93ffc81783d74001cf1a",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:task-card",
+      "kind": "Requirement",
+      "title": "Mẫu task card",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/task-card.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "08ed5bdced248f7734df89ef9a16d9803abe85eb12107ea36555a7cd43bfa8c0",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:test-cases",
+      "kind": "Requirement",
+      "title": "Tiêu chuẩn thiết kế kịch bản kiểm thử (Test Cases Design Protocol)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/test-cases.md",
+      "owner_role": "qa",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:cmmi-l3-70-checks"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:qa-web"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:junit5-mockito-testcontainers-and-jest"
+        }
+      ],
+      "content_sha256": "cc73bf77caa6633a1d5c6bf0e89b994329cc4c32e808e027897eab14cd8d1238",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:ui-fidelity",
+      "kind": "Requirement",
+      "title": "Giao thức giao diện: làm đúng mẫu và kiểm bằng mắt",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/ui-fidelity.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "2b2a9dc0fb6e63b55a221d0b905416c08458020fd73154bfcd4d449670127d29",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:worktree-lifecycle",
+      "kind": "Requirement",
+      "title": "Vòng đời worktree: tạo, làm, đưa về nhánh hiện tại, dọn",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/worktree-lifecycle.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        }
+      ],
+      "content_sha256": "183dcbcfef32d09c8f83e46ade5761faf9ce8ac8272b707ac2604cc1d301821e",
+      "provenance": []
+    },
+    {
+      "id": "Design:glossary",
+      "kind": "Design",
+      "title": "Từ điển thuật ngữ miền dự án (Domain Glossary)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/glossary.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:definition-of-done"
+        }
+      ],
+      "content_sha256": "9d328247cc4b111dca1e3bcd783f97b831f796cf6316d6ff9c694f88e8e8573e",
+      "provenance": []
+    },
+    {
+      "id": "Source:graphify",
+      "kind": "Source",
+      "title": "Brief: Graphify (đồ thị tri thức mã nguồn)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/research/graphify.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Source:lauren-tan-primary-sources"
+        },
+        {
+          "type": "related_to",
+          "target": "Source:harness2-recursive-harnessing"
+        }
+      ],
+      "content_sha256": "66be5f56b2acfc2faf7dce2cd296d0847224cf6475aa6cfa9a43b18bc5405e3e",
+      "provenance": []
+    },
+    {
+      "id": "Source:lauren-tan-primary-sources",
+      "kind": "Source",
+      "title": "PStack & High-Velocity Engineering: nguồn chính thức và áp dụng vào agent-base",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/research/lauren-tan-primary-sources.md",
+      "owner_role": "ai-eng",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ai-eng"
+        },
+        {
+          "type": "related_to",
+          "target": "Source:harness2-recursive-harnessing"
+        }
+      ],
+      "content_sha256": "66398cdba403f63a26b352b63fb3c196c230a48039e635467569841baf193fc6",
+      "provenance": []
+    },
+    {
+      "id": "Design:verification-cli-runbook",
+      "kind": "Design",
+      "title": "Sổ tay vận hành (Runbook): CLI Kiểm chứng Thực thi & Tái hiện lỗi",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/verification-cli-runbook.md",
+      "owner_role": "qa",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:verification-skills-cdp"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:tdd-13-steps"
+        }
+      ],
+      "content_sha256": "4affe8d20a81aea831f951d50888948f4156b49d867cda7ea768630a10e4c466",
+      "provenance": []
+    },
+    {
+      "id": "Skill:api-design",
+      "kind": "Skill",
+      "title": "api-design: REST API design patterns including resource naming, status codes, pagination, filtering, e",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/api-design/SKILL.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "250e464413a13c0eb93cc73447b423df1f9aa8e4f80e5e68c41f895b2c33e352",
+      "provenance": []
+    },
+    {
+      "id": "Skill:archify",
+      "kind": "Skill",
+      "title": "archify: Generate polished, interactive HTML and SVG architecture, workflow, sequence, data-flow, a",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/archify/SKILL.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        }
+      ],
+      "content_sha256": "9cc11878e6275e94cc04c2b4d2ae6a3c2b1b9f8a9f3f3e85085a46f8d6c15492",
+      "provenance": []
+    },
+    {
+      "id": "Skill:archify-review",
+      "kind": "Skill",
+      "title": "archify-review: Review issues, PRs, and architectural changes through Value, Cost, and Impact to support e",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/archify-review/SKILL.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "cbc477ed63a0edbe6cc85ec4075f6d231892212466f96f6232418cdba001a50b",
+      "provenance": []
+    },
+    {
+      "id": "Skill:architecture-decision-records",
+      "kind": "Skill",
+      "title": "architecture-decision-records: Capture architectural decisions made during Claude Code sessions as structured ADRs. Auto-",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/architecture-decision-records/SKILL.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        }
+      ],
+      "content_sha256": "525e51b4ed98222cd49ea7d2e42b51a010ecab391b25022a86164258c14b8bb0",
+      "provenance": []
+    },
+    {
+      "id": "Skill:browse",
+      "kind": "Skill",
+      "title": "browse: Drive a browser to navigate pages, inspect the interactive accessibility tree, click user ",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/browse/SKILL.md",
+      "owner_role": "qa",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "142846f91637e4eb1c79c4e877b7dd80c2b2c0e5de6f2446f72a2a2f09169d9e",
+      "provenance": []
+    },
+    {
+      "id": "Skill:careful",
+      "kind": "Skill",
+      "title": "careful: Safety guardrails for destructive commands. Warns and halts before rm -rf, DROP TABLE, for",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/careful/SKILL.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:cso"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:mcp-policy"
+        }
+      ],
+      "content_sha256": "566508590536f9e51eb553412de3e42e77c0356ae9cba30eae68360936eac9f2",
+      "provenance": []
+    },
+    {
+      "id": "Skill:codebase-design",
+      "kind": "Skill",
+      "title": "codebase-design: Shared vocabulary for designing deep modules. Use when the user wants to design or improve",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/codebase-design/SKILL.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        }
+      ],
+      "content_sha256": "2c20617f87ec8af6a434859f381b2f061a69b530444e74eb39e78bb016a6d1e2",
+      "provenance": []
+    },
+    {
+      "id": "Skill:codebase-map",
+      "kind": "Skill",
+      "title": "codebase-map: Orient an agent in an unfamiliar codebase before touching it. Level 0 is a hand-written fo",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/codebase-map/SKILL.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "27af921f501b42e4c04b37bfa3531e6acee85dcd9de5c1745785de5967db06df",
+      "provenance": []
+    },
+    {
+      "id": "Skill:cso",
+      "kind": "Skill",
+      "title": "cso: Chief Security Officer audit. Enforces evidence before assurance, finds exploitable vulner",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/cso/SKILL.md",
+      "owner_role": "security",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:security"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:mcp-policy"
+        }
+      ],
+      "content_sha256": "4783744378863aa022919e829c97f4ff802e9322954b7dcb4b816eede0f8d703",
+      "provenance": []
+    },
+    {
+      "id": "Skill:devex-review",
+      "kind": "Skill",
+      "title": "devex-review: Developer experience audit. Tests onboarding ergonomics, times time-to-hello-world (TTHW),",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/devex-review/SKILL.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "e7cd8cde1b5f87fb2673efa4ed988879f522e6998389341672dca41b8d4ea137",
+      "provenance": []
+    },
+    {
+      "id": "Skill:diagram-design",
+      "kind": "Skill",
+      "title": "diagram-design: Create professional architecture, flowchart, sequence, ER/data model, state, and timeline ",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/diagram-design/SKILL.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:archify"
+        }
+      ],
+      "content_sha256": "749696817a874a98bc83047904452b4b0529cf9d9c67ca60d5f4559aaeeb9dd4",
+      "provenance": []
+    },
+    {
+      "id": "Skill:domain-modeling",
+      "kind": "Skill",
+      "title": "domain-modeling: Build and sharpen a project's domain model. Use when discussing codebase terminology, writ",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/domain-modeling/SKILL.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        }
+      ],
+      "content_sha256": "327a2b50620e2fd70abc6893cd6965e76b20f8d0adb0dc2c8d5eb3845efb643e",
+      "provenance": []
+    },
+    {
+      "id": "Skill:feature-map",
+      "kind": "Skill",
+      "title": "feature-map: Create and maintain a Feature Map (docs/design/feature-map.md) so agents can find any UI f",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/feature-map/SKILL.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "74eda678c7aebedd66809ec42271ef8ceb17da3923da10c11481c262c5c4c551",
+      "provenance": []
+    },
+    {
+      "id": "Skill:grilling",
+      "kind": "Skill",
+      "title": "grilling: Grill the user relentlessly about a plan, decision, or idea. Use when stress-testing archi",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/grilling/SKILL.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:to-spec"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:to-tickets"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:wayfinder"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:challenger"
+        }
+      ],
+      "content_sha256": "8689a03b55e47fcccf91f6b486327e3e139646e24f46a7e02a54ea5df281078b",
+      "provenance": []
+    },
+    {
+      "id": "Skill:i-have-adhd",
+      "kind": "Skill",
+      "title": "i-have-adhd: Shape output for a reader with ADHD: lead with the next action, number multi-step work, re",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/i-have-adhd/SKILL.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "3170b16ace00aecb0dd7feb54c0b5aa642e7502acda06ecd24fd89a11c7127e9",
+      "provenance": []
+    },
+    {
+      "id": "Skill:investigate",
+      "kind": "Skill",
+      "title": "investigate: Systematic root cause debugging. Reproduces issues with minimal tests, isolates single var",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/investigate/SKILL.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:systematic-debugging"
+        }
+      ],
+      "content_sha256": "75c5fd23b207b8751a54a5dd53a07e1e862263dfe7e691d55d9e34bdd5b4a17c",
+      "provenance": []
+    },
+    {
+      "id": "Skill:jpa-patterns",
+      "kind": "Skill",
+      "title": "jpa-patterns: JPA/Hibernate patterns for entity design, relationships, query optimization, transactions,",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/jpa-patterns/SKILL.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        }
+      ],
+      "content_sha256": "bcdd45c5e435df259856b20aae47182209b0467b542eacfc7e32bcf452326839",
+      "provenance": []
+    },
+    {
+      "id": "Skill:office-hours",
+      "kind": "Skill",
+      "title": "office-hours: YC Office Hours mentoring. Brainstorms ideas, stresses demand reality, forces narrow wedge",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/office-hours/SKILL.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "948842ddf597206837bf322ffdcfa8b9c7d92bd4992189c4a6905c54843ec822",
+      "provenance": []
+    },
+    {
+      "id": "Skill:open-code-review",
+      "kind": "Skill",
+      "title": "open-code-review: >",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/open-code-review/SKILL.md",
+      "owner_role": "reviewer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:pair-review"
+        }
+      ],
+      "content_sha256": "046b4be52cfa3b24ea6bf93c9f2ffec45c9d37a4aabdae1a438982be313bef2f",
+      "provenance": []
+    },
+    {
+      "id": "Skill:plan-ceo-review",
+      "kind": "Skill",
+      "title": "plan-ceo-review: CEO & Founder-mode plan review. Challenges premises, uncovers 10-star product potential, i",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/plan-ceo-review/SKILL.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:plan-eng-review"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:grilling"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:to-spec"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:to-tickets"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:wayfinder"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:challenger"
+        }
+      ],
+      "content_sha256": "011ea0f86f8cbccf575642d04f0a0071efdac931bd535386e22254f96179ad7d",
+      "provenance": []
+    },
+    {
+      "id": "Skill:plan-eng-review",
+      "kind": "Skill",
+      "title": "plan-eng-review: Engineering manager plan review. Evaluates 10x scale, database table locks, race condition",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/plan-eng-review/SKILL.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:grilling"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:to-spec"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:to-tickets"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:wayfinder"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:challenger"
+        }
+      ],
+      "content_sha256": "8872de04b1b1426b1accbbc087ad3ca62a8e2bf0d9ef7b580973199c093f9d92",
+      "provenance": []
+    },
+    {
+      "id": "Skill:ponytail-debt",
+      "kind": "Skill",
+      "title": "ponytail-debt: >",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/ponytail-debt/SKILL.md",
+      "owner_role": "reviewer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "c84fba75f0ca12bfe83f9a78ea02fd125c5dd3f1fbb18124105a489937f284e6",
+      "provenance": []
+    },
+    {
+      "id": "Skill:postgres-patterns",
+      "kind": "Skill",
+      "title": "postgres-patterns: PostgreSQL database patterns for query optimization, schema design, indexing, and security",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/postgres-patterns/SKILL.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:jpa-patterns"
+        }
+      ],
+      "content_sha256": "9c8c391ae9e9aa87faa7ca091e1d395c97766df14080d0bfbea8a97721776163",
+      "provenance": []
+    },
+    {
+      "id": "Skill:qa-web",
+      "kind": "Skill",
+      "title": "qa-web: Systematically QA test a web application, discover bugs, and verify fixes. Produces health",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/qa-web/SKILL.md",
+      "owner_role": "qa",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:junit5-mockito-testcontainers-and-jest"
+        }
+      ],
+      "content_sha256": "f61c56c162898946d7ea95de3eaca022579b376afbee3ebfd6f57c8b54451f54",
+      "provenance": []
+    },
+    {
+      "id": "Skill:retro",
+      "kind": "Skill",
+      "title": "retro: Conduct a retrospective on a coding session.",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/retro/SKILL.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "33fbc28568e3146f20fd908b12998bc0ab30aa4f4c87288199a40793efa94696",
+      "provenance": []
+    },
+    {
+      "id": "Skill:security-scan",
+      "kind": "Skill",
+      "title": "security-scan: Scan your Claude Code configuration (.claude/ directory) for security vulnerabilities, mis",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/security-scan/SKILL.md",
+      "owner_role": "security",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:security"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:careful"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:cso"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:mcp-policy"
+        }
+      ],
+      "content_sha256": "74bc3006fb15eef9cea6bf70a4e9cc45ec118ef00733d1c8226c9dc428f8d658",
+      "provenance": []
+    },
+    {
+      "id": "Skill:ship",
+      "kind": "Skill",
+      "title": "ship: Production release workflow. Enforces pre-flight checks, automated test suites, version bu",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/ship/SKILL.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "0c69d9fcadbccfd85aae096bd7f8109c62c10d55c9a80c036b5b7eece203db29",
+      "provenance": []
+    },
+    {
+      "id": "Skill:skilltester",
+      "kind": "Skill",
+      "title": "skilltester: Before installing or using a skill, check its independent benchmark report on SkillTester.",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/skilltester/SKILL.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:security"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "4143aae36110019233b77419f0f6540bf1805a8e13470663c27c341fd2b7b927",
+      "provenance": []
+    },
+    {
+      "id": "Skill:sparc-methodology",
+      "kind": "Skill",
+      "title": "sparc-methodology: Systematic SPARC development cycle: Specification, Pseudocode, Architecture, Refinement, a",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/sparc-methodology/SKILL.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "efb2a1dc9f46bc7ffc75043a0e3e3ddbb43e9f328c7f881dbe80313993f4dcca",
+      "provenance": []
+    },
+    {
+      "id": "Skill:springboot-patterns",
+      "kind": "Skill",
+      "title": "springboot-patterns: Spring Boot architecture patterns, REST API design, layered services, data access, caching",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/springboot-patterns/SKILL.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:tdd-13-steps"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:test-value"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:subagent-driven-development"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:systematic-debugging"
+        }
+      ],
+      "content_sha256": "ff1884a8492d078d1bbb35f3ce0a8ae25f1ad95dab8596f4944a7c3110680946",
+      "provenance": []
+    },
+    {
+      "id": "Skill:springboot-tdd",
+      "kind": "Skill",
+      "title": "springboot-tdd: Test-driven development for Spring Boot using JUnit 5, Mockito, MockMvc, Testcontainers, a",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/springboot-tdd/SKILL.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:springboot-patterns"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:tdd-13-steps"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:test-value"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:subagent-driven-development"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:systematic-debugging"
+        }
+      ],
+      "content_sha256": "e4bd145484d93fb569eb0e1a09ffeb5cca68533d63c83805146b111c48bba172",
+      "provenance": []
+    },
+    {
+      "id": "Skill:subagent-driven-development",
+      "kind": "Skill",
+      "title": "subagent-driven-development: Use when executing implementation plans with independent tasks in the current session",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/subagent-driven-development/SKILL.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:systematic-debugging"
+        }
+      ],
+      "content_sha256": "a12d615f309a5f8708951a5ae99488e05e308a746ab9cfc3dbe94ef5da8f2f4e",
+      "provenance": []
+    },
+    {
+      "id": "Skill:swarm-orchestration",
+      "kind": "Skill",
+      "title": "swarm-orchestration: Coordinate multi-agent swarms using hierarchical topologies, clean context isolation, atom",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/swarm-orchestration/SKILL.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "65fe5fd05912507b5f8c9c196c0873ffa18942b281d6b648a862c0a0de4b7e61",
+      "provenance": []
+    },
+    {
+      "id": "Skill:systematic-debugging",
+      "kind": "Skill",
+      "title": "systematic-debugging: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixe",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/systematic-debugging/SKILL.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        }
+      ],
+      "content_sha256": "808fc5717aa88ad65efff312b11c186294d3e6ee301afb584e2f86599b137787",
+      "provenance": []
+    },
+    {
+      "id": "Skill:test-value",
+      "kind": "Skill",
+      "title": "test-value: Improve test value and feedback cost when auditing slow, flaky, redundant or brittle tests",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/test-value/SKILL.md",
+      "owner_role": "qa",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:subagent-driven-development"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:systematic-debugging"
+        }
+      ],
+      "content_sha256": "a47f7d9c739c726f16a59e669e384869b6ea6f2a0c47b49c6614e50539969c7b",
+      "provenance": []
+    },
+    {
+      "id": "Skill:to-spec",
+      "kind": "Skill",
+      "title": "to-spec: Turn the current conversation into a technical spec and save it to docs/spec/: no intervie",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/to-spec/SKILL.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:to-tickets"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:wayfinder"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:challenger"
+        }
+      ],
+      "content_sha256": "7d21c4430cf018b8ed16684323b0de00536a1a8dc293bfac159b2022a29c5a7e",
+      "provenance": []
+    },
+    {
+      "id": "Skill:to-tickets",
+      "kind": "Skill",
+      "title": "to-tickets: Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each ",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/to-tickets/SKILL.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:wayfinder"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:challenger"
+        }
+      ],
+      "content_sha256": "9e43824b33b4102e396bdf892c17feeca18b53a0a904bf857b38fc30f464e7d7",
+      "provenance": []
+    },
+    {
+      "id": "Skill:ui-ux-pro-max",
+      "kind": "Skill",
+      "title": "ui-ux-pro-max: UI/UX design intelligence for web, mobile, and desktop. This skill should be used when des",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/ui-ux-pro-max/SKILL.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:playwright-and-k6-testing"
+        }
+      ],
+      "content_sha256": "ea087c341bfb5b23195c7302027268ede86da802554c18a5c4896a6017b439f9",
+      "provenance": []
+    },
+    {
+      "id": "Skill:wayfinder",
+      "kind": "Skill",
+      "title": "wayfinder: Plan a huge chunk of work (more than one agent session can hold) as a shared map of decisi",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/wayfinder/SKILL.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:challenger"
+        }
+      ],
+      "content_sha256": "9be7b478c389605a24517d27752f278933588da97a1b5921b165f455edf4c5b7",
+      "provenance": []
+    },
+    {
+      "id": "Skill:writing-for-agents",
+      "kind": "Skill",
+      "title": "writing-for-agents: Writing documents for agents. Use when creating or editing skills, or modifying AGENTS.md ",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/writing-for-agents/SKILL.md",
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "551adca942227b44192edba88acd4e8db911f0121ce58ad16944ccf6a896a74a",
       "provenance": []
     }
   ]

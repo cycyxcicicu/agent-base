@@ -1,0 +1,17 @@
+[
+  ["tối ưu chỉ mục postgres", ["Design:sql-postgresql-and-jpa-hibernate", "Design:postgresql-partitioning-and-performance", "Skill:postgres-patterns"]],
+  ["điều kiện sẵn sàng trước khi nhận task", ["Rule:task-loop", "Requirement:baccm-and-cr"]],
+  ["bảo vệ khóa bí mật", ["Requirement:ai-provenance", "Design:cso-security", "Skill:security-scan", "Skill:careful"]],
+  ["triển khai lên kubernetes", ["Design:kubernetes-architecture-and-manifests"]],
+  ["thiết kế cache", ["Design:redis-patterns-and-enterprise-architecture"]],
+  ["gộp nhánh vào main", ["Design:git-rules", "Requirement:worktree-lifecycle", "Requirement:task-branch"]],
+  ["người dùng đổi ý giữa chừng", ["Requirement:change-request", "Requirement:baccm-and-cr"]],
+  ["đọc yêu cầu từ file excel", ["Requirement:intake"]],
+  ["viết test case happy path", ["Requirement:test-cases", "Design:cmmi-l3-70-checks"]],
+  ["ai viết code cần ghi gì", ["Requirement:ai-provenance"]],
+  ["dựng mô hình c4", ["Design:diagram-c4-plantuml-guide", "Design:diagram-structurizr-dsl-guide"]],
+  ["tiêu chí hoàn thành task", ["Rule:definition-of-done", "Design:tdd-13-steps"]],
+  ["thiết kế cơ sở dữ liệu", ["Design:diagram-dbml-and-d2-guide", "Design:sql-postgresql-and-jpa-hibernate", "Design:chuan-sql-va-loi"]],
+  ["ghi lại bài học sau khi xong việc", ["Requirement:lesson-learned", "Skill:retro", "Requirement:handoff-note"]],
+  ["kiểm duyệt skill bên ngoài", ["Requirement:skills-policy", "Skill:skilltester", "Skill:skills-registry"]]
+]

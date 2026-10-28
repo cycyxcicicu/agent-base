@@ -3,6 +3,32 @@
 Agent không đọc cả thư mục này. Tra bảng, mở đúng file khớp việc đang làm (tối đa vài file), hoặc dùng lệnh trích xuất tự động:
 `python scripts/knowledge.py context --root . --manifest agents/knowledge/knowledge-manifest.json --role <vai>`
 
+
+## Gặp việc này thì tra từ khóa này
+
+Không nạp sẵn. Gặp việc thuộc dòng nào thì chạy `python scripts/knowledge.py query -q "<từ khóa>" --role <vai>`; kết quả kèm tóm tắt, mục, và các nút liên quan nối bằng cạnh.
+
+| Việc đang làm | Từ khóa gợi ý |
+|---|---|
+| Viết hoặc tối ưu SQL, JPA, chỉ mục | `sql chậm`, `jpa n+1`, `chỉ mục` |
+| Đổi schema, migration | `migration không dừng hệ thống` |
+| Vẽ hoặc mô tả sơ đồ | `sơ đồ hoạt động`, `mô tả sơ đồ`, `drawio` |
+| Viết đặc tả, tài liệu thiết kế | `srs đặc tả`, `mẫu tài liệu` |
+| Đổi yêu cầu đã duyệt | `thay đổi yêu cầu ccb` |
+| Xử lý nhiều bug | `bug hàng loạt` |
+| Viết test, TDD | `tdd spring boot`, `testcontainers` |
+| Review code | `review code checklist` |
+| Commit, nhánh, MR | `git commit nhánh` |
+| Phát hành, bài học | `release note`, `bài học` |
+| Kiến trúc, mẫu thiết kế | `clean architecture`, `ddd`, `saga outbox` |
+| Bảo mật | `bảo mật audit`, `security` |
+| Dùng AI, prompt | `prompt registry`, `ai sinh code` |
+| Chia việc lớn | `wayfinder`, `chia task` |
+
+Tra mà ra rỗng: thử từ đồng nghĩa (tiếng Anh hoặc Việt). Thêm cặp đồng nghĩa vào `agents/knowledge/synonyms.json` (sửa tay được). Tra không cần gõ dấu.
+
+**Hook gợi ý tự động (tùy chọn, chỉ Claude Code):** `scripts/knowledge-hook.py` chèn 1–3 dòng gợi ý khi lời người dùng khớp rõ một chủ đề, im lặng nếu không. Mặc định tắt vì điểm khớp từ khóa không tách sạch lời thường khỏi lời có chủ đề; cổng đặt chặt (0/15 lời thường lọt, bắt khoảng 43% lời có chủ đề). Cách bật: xem đầu file `scripts/knowledge-hook.py`. Nhật ký tra cứu nằm ở `.local/knowledge-usage.jsonl` (cục bộ) để biết từ khóa nào cần bổ sung.
+
 ## 1. Tinh hoa từ 2 Notebook Tri thức (AI-Augmented SDLC & High-Velocity Agent)
 
 Tổng hợp từ:
@@ -17,6 +43,9 @@ Tổng hợp từ:
 | **Tự xác minh & Giao diện:** Kỹ năng tự chứng minh qua Chrome DevTools Protocol (`CDP`), CPU/Heap traces, lập Feature Map UI và chia PR nguyên tử | `ky-thuat/verification-skills-cdp.md` |
 | **Đánh giá Agent & Rào chắn:** Eval Playbook (chấm điểm bằng Judge Agent độc lập, tối ưu leo dốc `/loop` 10/10), Benny tự tái hiện bug và 5 tầng ràng buộc cứng | `ky-thuat/eval-playbook-va-hard-constraints.md` |
 | **Quản trị Prompt & Tối ưu chi phí:** Prompt as Code, quy trình nghiệm thu Golden Prompts 3 bước, bảng chi phí sửa lỗi Shift-Left ($1\times \rightarrow 30\times$) và GitFlow Release Train | `ky-thuat/prompt-as-code-registry.md` |
+| **Kiến trúc Clean & DDD:** Clean Architecture 4 tầng, Domain-Driven Design (Aggregate Root, Entity, Value Object, CQRS) và GoF Patterns |  |
+| **Cơ sở dữ liệu & JPA:** Tối ưu hóa PostgreSQL (B-Tree, Covering Index), xử lý N+1, Dirty Checking và khóa Pessimistic/Optimistic |  |
+| **Hạ tầng Kubernetes:** Cụm K8s Control Plane/Worker, chuẩn Manifests Production (RollingUpdate, Resource Limits, Probes) |  |
 
 ## 2. Từ dự án gdt-workspace (bổ sung phần khung còn thiếu)
 
@@ -30,12 +59,49 @@ Nguồn: dự án gdt-workspace, đã dùng thật. Còn nhắc Mantis, TestLink
 | Viết SQL, xử lý lỗi cơ sở dữ liệu, giao dịch, migration | `ky-thuat/chuan-sql-va-loi.md` |
 | Vẽ sơ đồ: quy tắc theo loại (sequence, ERD, state, activity), checklist nộp sơ đồ (bổ sung cho `docs/design/diagram-guide.md`, vốn lo thẩm mỹ) | `srs/chuan-ve-so-do.md` |
 | Viết tài liệu đặc tả theo mẫu SRS_FDD: văn phong, checklist, NFR, ba file mỗi chức năng | `srs/srs-fdd-writing-standard.md` |
+| Chuẩn viết tài liệu kỹ thuật: Google Style, Microsoft Guide và The Good Docs Project (Diátaxis) | `srs/technical-writing-and-doc-standards.md` |
 | Mẫu để viết (đặc tả, thiết kế kỹ thuật, Excel SRS_FDD, test report, TestLink) | thư mục `agents/templates/`, xem `agents/templates/README.md` |
+
+## Sơ đồ (`diagrams/`)
+
+Bắt đầu từ ba file đầu: chuẩn dự án đi trước, công cụ bổ sung chỉ khi dự án chọn.
+
+| Khi nào | Đọc |
+|---|---|
+| Viết phần chữ mô tả hoạt động đi kèm sơ đồ (bước, nhánh, dữ liệu) để agent hiểu hết sơ đồ; đọc nhanh `.drawio` bằng `scripts/diagram-describe.py` | `diagrams/mo-ta-hoat-dong-so-do.md` |
+| Chọn công cụ nguồn cho từng loại sơ đồ, viết và sửa `.drawio`, xuất ảnh, bài học vẽ bơi làn | `diagrams/quy-uoc-draw-io-va-archify.md` |
+| Ma trận chọn công cụ vẽ sơ đồ; thứ tự áp dụng chuẩn dự án đi trước | `diagrams/diagrams-cheatsheet-and-decision-matrix.md` |
+| Icon và bố cục hạ tầng AWS | `diagrams/aws-architecture-icons-guide.md` |
+| Quy trình nghiệp vụ theo BPMN 2.0 (Camunda) | `diagrams/bpmn-20-camunda-guide.md` |
+| Mô hình C4 bằng C4-PlantUML | `diagrams/c4-plantuml-guide.md` |
+| Thiết kế schema bằng DBML; kiến trúc bằng D2 | `diagrams/dbml-and-d2-guide.md` |
+| Sinh bản nháp `.drawio` có icon bằng CSV auto-layout | `diagrams/drawio-csv-autolayout.md` |
+| Tra tên shape và icon khi viết `style` của draw.io | `diagrams/drawio-icons-index.md` |
+| Cú pháp Mermaid cho sơ đồ nhỏ trong md | `diagrams/mermaid-syntax-guide.md` |
+| Sinh sơ đồ bằng Python (cần cài gói, hỏi trước) | `diagrams/python-diagrams-and-drawpyo.md` |
+| Mô hình C4 bằng Structurizr DSL | `diagrams/structurizr-dsl-guide.md` |
+| Tra cứu cú pháp UML 2.5.1 | `diagrams/uml-25-guide.md` |
 
 ## Chuyên đề kỹ thuật và an ninh
 
 | Khi nào | Đọc |
 |---|---|
+| Clean Architecture, DDD, mẫu thiết kế GoF | `ky-thuat/clean-architecture-and-ddd.md` |
+| Kubernetes: kiến trúc, manifest production (chưa xác nhận dự án dùng) | `ky-thuat/kubernetes-architecture-and-manifests.md` |
+| Kiểm thử E2E & Load Testing: Playwright và Grafana K6 | `ky-thuat/playwright-and-k6-testing.md` |
+| Chuẩn Commit, API & Backstage: Conventional Commits, OpenAPI 3.0, Backstage | `ky-thuat/openapi-commits-and-backstage.md` |
+| Tối ưu PostgreSQL, chỉ mục, JPA/Hibernate thực hành | `ky-thuat/sql-postgresql-and-jpa-hibernate.md` |
+| PostgreSQL Partitioning, tối ưu hóa hiệu năng & Keyset Pagination | `ky-thuat/postgresql-partitioning-and-performance.md` |
+| Redis Architecture Patterns & Enterprise Application Patterns (Martin Fowler) | `ky-thuat/redis-patterns-and-enterprise-architecture.md` |
+| Clean Code, Refactoring & Google Engineering Practices | `ky-thuat/clean-code-and-refactoring-guide.md` |
+| Chi tiết 23 GoF Design Patterns & Nguyên lý SOLID / GRASP | `ky-thuat/gof-design-patterns-and-solid.md` |
+| Tối ưu Big-O, cấu trúc dữ liệu & Quản trị bộ nhớ JVM (Java 21) | `ky-thuat/big-o-and-jvm-performance-tuning.md` |
+| Enterprise Integration Patterns (EIP) & Microservices Patterns (Saga, Outbox) | `ky-thuat/enterprise-integration-and-microservices-patterns.md` |
+| SonarQube Quality Gates, HashiCorp Vault & Terraform (IaC) | `ky-thuat/sonarqube-vault-and-terraform.md` |
+| Hệ thống phân tán, mô hình lưu trữ & Quorum Consensus (DDIA) | `ky-thuat/distributed-systems-and-ddia.md` |
+| Apache Kafka, Apache Spark & Apache Iceberg Data Lakehouse | `ky-thuat/kafka-spark-and-iceberg-lakehouse.md` |
+| Model Context Protocol (MCP) & BDD Testing với Cucumber | `ky-thuat/mcp-and-bdd-testing.md` |
+| JUnit 5, Mockito, Testcontainers & Frontend Jest TDD | `ky-thuat/junit5-mockito-testcontainers-and-jest.md` |
 | Chọn công nghệ, xem công nghệ đã duyệt | `tech-radar.md` |
 | Đổi schema không gián đoạn (expand-contract) | `zero-downtime-migrations.md` |
 | Frontend: RSC, store, compound component | `frontend-patterns.md` |

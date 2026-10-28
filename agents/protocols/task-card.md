@@ -65,7 +65,7 @@ scope_deny:
 ## Kết quả test
 (lệnh đã chạy và kết quả)
 
-## Kế hoạch commit (người dùng chạy)
+## Kế hoạch commit (người dùng chạy hoặc nhờ AI chạy)
 (agent viết theo `agents/protocols/commit-plan.md`; agent KHÔNG tự chạy)
 
 ## Chấp thuận rủi ro

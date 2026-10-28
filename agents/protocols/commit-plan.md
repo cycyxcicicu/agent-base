@@ -30,7 +30,7 @@ AI **không bao giờ** chạy `git add -A`/`.`/`-f`, `commit --amend`, `--no-ve
 ## Mẫu (dán vào task card)
 
 ````markdown
-## Kế hoạch commit (người dùng chạy)
+## Kế hoạch commit (người dùng chạy hoặc nhờ AI chạy)
 
 Nhánh: feature/12-token-check    Gốc: develop
 

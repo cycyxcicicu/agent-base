@@ -1,7 +1,7 @@
 # Chuẩn vẽ sơ đồ
 
 > **Loại: tham khảo.** Chép từ dự án gdt-workspace để làm tri thức cho agent, không phải nguồn luật. Khi khác `AGENTS.md`, vai trò hoặc `agents/protocols/` thì theo các nơi đó (`agents/protocols/source-precedence.md`).
-> **Khác với chuẩn:** Bổ sung cho `docs/design/diagram-guide.md`; còn nhắc công cụ và đường dẫn của gdt.
+> **Khác với chuẩn:** Bổ sung cho `docs/design/diagram-guide.md`; còn nhắc công cụ và đường dẫn của gdt. Viết phần chữ đi kèm sơ đồ: `../diagrams/mo-ta-hoat-dong-so-do.md`. Công cụ nguồn và cách vẽ `.drawio`: `../diagrams/quy-uoc-draw-io-va-archify.md`. Đọc nhanh `.drawio`: `python scripts/diagram-describe.py`.
 
 **Công cụ, lệnh, file nguồn của từng loại sơ đồ (draw.io, archify): xem `huong-dan-ve-so-do.md`.** Nếu mục 5, 8, 9 dưới đây mâu thuẫn với file đó thì theo file đó.
 

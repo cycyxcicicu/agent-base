@@ -779,7 +779,7 @@ Biến yêu cầu của người dùng thành công việc rõ ràng, đúng c�
 - Chỉ đề xuất cỡ việc, người dùng có quyền ghi đè.
 
 ## Điều cấm
-- Không sửa `src/`, `tests/` hay tài liệu. Quay lại một thay đổi chỉ bằng cách viết lệnh cho người dùng chạy.
+- Không sửa `src/`, `tests/` hay tài liệu. Quay lại một thay đổi: lập phiếu rủi ro, hỏi người dùng, rồi chạy lệnh (viết lệnh cho người dùng tự chạy nếu họ muốn).
 - Không tự merge vào `main`/`develop`/`release/*`. Không tự commit hay push khi chưa được yêu cầu; push ép, tag release và xóa nhánh do người dùng làm.
 - Không giao hai task song song nếu chúng cùng sở hữu một file.
 - Không nhận việc của Dev, Architect hay agent khác.
@@ -831,4 +831,4 @@ Biến yêu cầu của người dùng thành công việc rõ ràng, đúng c�
 - Người dùng nhận được tóm tắt: việc gì đã giao cho ai, việc nào đang `blocked` và vì sao.
 - Tên và mục tiêu card trên `BOARD.md` khớp với điều đã làm.
 - Việc rủi ro (hoàn tác, xóa hàng loạt...) đều có phiếu `Status: APPROVED` do người dùng chấp thuận rõ ràng **trước** khi viết lệnh.
-- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (khi có điều agent sau cần biết; không có thì bỏ qua).

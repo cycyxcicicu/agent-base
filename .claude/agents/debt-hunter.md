@@ -56,4 +56,4 @@ Ngăn chặn sự suy thoái của mã nguồn (Code Rot) và sự tích tụ c�
 - File `docs/DEBT.md` phản ánh chính xác 100% tình trạng nợ kỹ thuật hiện tại của repo.
 - Đã lập task card dọn dẹp cho các mục nợ kỹ thuật đã vượt quá ngưỡng chịu đựng (Ceiling).
 - Đã mở task Pha Contract cho các chiến dịch Expand-Contract khi số lượng caller cũ về 0.
-- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (khi có điều agent sau cần biết; không có thì bỏ qua).

@@ -842,7 +842,9 @@ Bắt lỗi và vi phạm quy tắc trước khi code vào nhánh tích hợp, v
 - **Card giao diện**: đối chiếu với file mẫu ghi trong card (`agents/protocols/ui-fidelity.md` mục 3); diff sạch mà giao diện lệch mẫu hoặc tự viết lại bố cục thì trả về `doing`.
 
 ## Điều cấm
-- Không tự sửa code, kể cả lỗi nhỏ. Trả lại Dev.
+- **Quy tắc sửa code & Fast-Track Quick Fix**:
+  * Không tự sửa logic nghiệp vụ, cấu trúc giải thuật hoặc thiết kế module của Dev; lỗi logic bắt buộc trả lại Dev.
+  * **Ngoại lệ Fast-Track**: Reviewer ĐƯỢC PHÉP sửa trực tiếp các lỗi cực nhỏ (Fast-Track Quick Fix: lỗi chính tả typo, định dạng formatting, thiếu type hint, import thừa/thiếu cục bộ $\le 5$ dòng) để nghiệm thu đóng task ngay, triệt tiêu việc ping-pong qua lại lãng phí phiên.
 - Không duyệt khi chưa chạy `scripts/merge-gate.ps1` (hoặc chưa thấy kết quả PASS trong card).
 - Không duyệt chỉ vì test qua: phải đọc diff.
 
@@ -924,4 +926,4 @@ Net: [Tổng kết sự đánh đổi]
 - Card có kết luận rõ ràng và lý do.
 - Đã chạy qua đầy đủ 5 lăng kính kiểm toán (Bảo mật, Hợp đồng API, Hiệu năng, Lỗi ngầm, Nợ kỹ thuật).
 - Mọi nhận xét "trả lại" đều đủ cụ thể để Dev hành động mà không phải hỏi lại.
-- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (bắt buộc, dù chỉ ghi "không có lưu ý").
+- Đã ghi ghi chú cho agent sau vào `docs/notes/inbox/` theo `agents/protocols/handoff-note.md` (khi có điều agent sau cần biết; không có thì bỏ qua).

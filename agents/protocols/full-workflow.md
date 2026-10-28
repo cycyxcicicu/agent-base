@@ -62,4 +62,4 @@ Luồng việc lớn: Người dùng → Lead ↔ Product → BA / Analyst (nế
 
 - **Bắt buộc**: Mọi Agent/Subagent trước khi thực thi task phải tự đối chiếu với danh mục Skills tại `agents/knowledge/skills.md` và đọc tệp `SKILL.md` tương ứng trước khi code.
 - **Ánh xạ chính**: Debug/lỗi $\rightarrow$ `systematic-debugging`; Code/refactor $\rightarrow$ `codebase-design`; Review $\rightarrow$ `open-code-review`; UI/CSS $\rightarrow$ `ui-ux-pro-max`; Bảo mật $\rightarrow$ `cso`; Docker/Release $\rightarrow$ `careful` + `ship`; Sơ đồ $\rightarrow$ `archify` / `diagram-design`.
-- **Bằng chứng**: Handoff note (`docs/notes/inbox/`) bắt buộc có 2 dòng: (1) `Skill đã chọn & áp dụng: <tên>`, (2) `Checklist đã tuân thủ: <2-3 điểm cụ thể>`. Thiếu dòng này Lead/Reviewer từ chối nghiệm thu ngay.
+- **Bằng chứng**: Khi có dùng skill, handoff note (`docs/notes/inbox/`) ghi 2 dòng: (1) `Skill đã chọn & áp dụng: <tên>`, (2) `Checklist đã tuân thủ: <2-3 điểm cụ thể>`. Không dùng skill thì không cần.

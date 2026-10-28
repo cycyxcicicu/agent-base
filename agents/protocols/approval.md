@@ -2,7 +2,7 @@
 
 # Giao thức duyệt bằng file bởi con người (File-Based Approval Protocol)
 
-Quy tắc nền tảng: **Xác nhận chỉ có hiệu lực pháp lý và quy trình khi con người ghi nhận bằng dấu trong file. Xác nhận qua chat ("ok", "đồng ý", "làm đi"), trạng thái Draft hoặc ô để trống đều tính là CHƯA DUYỆT.** Mọi đánh giá, nhận xét (verdict) của các tác tử AI chỉ mang tính chất tư vấn kỹ thuật.
+Quy tắc nền tảng: **AI không bao giờ tự quyết định duyệt; con người quyết định.** Người dùng nói đồng ý rõ ràng trong chat thì có hiệu lực: agent ghi dấu vào file thay họ, kèm trích nguyên văn câu họ nói (mục 2b). Trạng thái Draft, ô để trống, hoặc câu chung chung không nêu rõ việc gì ("ok", "làm đi" khi chưa có đề nghị cụ thể) thì CHƯA DUYỆT: hỏi lại một câu. Mọi đánh giá, nhận xét (verdict) của các tác tử AI chỉ mang tính chất tư vấn kỹ thuật.
 
 ---
 
@@ -18,7 +18,7 @@ Tài liệu đặc tả (SRS/FDD), thiết kế (Architecture/ADR), kế hoạch
 
 - **Draft (Soạn thảo)**: Trạng thái khởi tạo mặc định của mọi tài liệu do AI hoặc con người soạn thảo.
 - **Đã soát (Reviewed)**: Trạng thái sau khi chuyên viên phản biện / Reviewer / QA rà soát diff, kiểm tra checklist và ghi nhận nhận xét tư vấn (verdict). AI chỉ được phép đưa tài liệu tới trạng thái này.
-- **Approved (Đã duyệt)**: **CHỈ CON NGƯỜI ĐƯỢC PHÉP ĐỔI SANG TRẠNG THÁI NÀY.** Tuyệt đối cấm mọi tác tử AI tự đóng dấu hoặc tự chuyển trạng thái sang Approved.
+- **Approved (Đã duyệt)**: chỉ đổi sang trạng thái này khi **con người đã đồng ý** (sửa file hoặc nói rõ trong chat, mục 2b). Cấm tác tử AI tự đóng dấu khi người dùng chưa nói đồng ý.
 
 ---
 
@@ -36,6 +36,16 @@ Ví dụ hợp lệ (dữ liệu mẫu):
 - [x] **Người dùng duyệt thiết kế**: Sarah Tran · 2026-10-28 [digest: 4a8b1c9d]
 ```
 
+### 2b. Người dùng đồng ý trong chat: agent ghi hộ
+
+Điều kiện: câu của người dùng (1) nêu rõ hạng mục, hoặc (2) trả lời thẳng một đề nghị cụ thể mà agent vừa nêu (ví dụ "Duyệt cả 40 nút", "đồng ý phương án A"). Agent ghi dấu kèm trích nguyên văn, ngày, và ghi rõ là ghi hộ:
+
+```markdown
+- [x] **Người dùng duyệt <hạng mục>**: <Tên> (xác nhận qua chat, AI ghi hộ) · <YYYY-MM-DD> · "<câu nguyên văn của người dùng>"
+```
+
+Định dạng này vẫn khớp `claim_check` (tên, dấu `·`, ngày). Câu mập mờ thì hỏi lại một câu, không đoán.
+
 ---
 
 ## 3. Cơ chế vô hiệu hóa dấu duyệt khi nội dung thay đổi (Stale Invalidation)
@@ -48,14 +58,14 @@ Ví dụ hợp lệ (dữ liệu mẫu):
 
 ---
 
-## 4. Danh mục các ô phê duyệt "CHỈ DÀNH CHO CON NGƯỜI"
+## 4. Danh mục các ô phê duyệt cần con người đồng ý
 
-Các hạng mục kiểm soát then chốt mà AI không bao giờ được phép tự ký:
+Các hạng mục kiểm soát then chốt mà AI không được tự quyết; chỉ ký khi người dùng đã đồng ý (sửa file hoặc nói rõ trong chat, mục 2b):
 
 1. **Duyệt phạm vi task card (`scope_edit`)**: Dòng `Người dùng duyệt phạm vi bằng file` trong task card hoặc bảng duyệt hàng loạt.
 2. **Duyệt tài liệu thiết kế, đặc tả và kiến trúc**: Chấp thuận đặc tả SRS/FDD, sơ đồ module, tài liệu ADR.
 3. **Duyệt phiếu rủi ro (Risk Gate)**: Chuyển trạng thái phiếu `docs/risk/RK-*.md` từ `PENDING` sang `APPROVED`.
-4. **Nghiệm thu đóng task (Sign-off & Done)**: Chuyển trạng thái card từ `review` sang `done`. Chỉ con người mới có quyền xác nhận hoàn thành và đóng task.
+4. **Nghiệm thu đóng task (Sign-off & Done)**: Chuyển trạng thái card từ `review` sang `done`. Chỉ con người quyết định hoàn thành và đóng task.
 
 ---
 

@@ -1,6 +1,6 @@
 # Cổng rủi ro và quy trình hoàn tác
 
-Áp dụng cho **mọi việc có thể làm mất code, dữ liệu hoặc công việc đang làm**. AI không bao giờ tự quyết những việc này. Thứ tự luôn là: **đánh giá → trình bày rủi ro → người dùng chấp thuận rõ ràng → mới thực hiện**. Việc git thì AI chỉ *viết lệnh*, người dùng chạy (`agents/protocols/git-rules.md`).
+Áp dụng cho **mọi việc có thể làm mất code, dữ liệu hoặc công việc đang làm**. AI không bao giờ tự quyết những việc này. Thứ tự luôn là: **đánh giá → trình bày rủi ro → người dùng chấp thuận rõ ràng (nói trong chat được, `approval.md` mục 2b) → mới thực hiện**. Việc git thì AI chạy được sau khi người dùng chấp thuận phiếu, hoặc viết lệnh nếu người dùng muốn tự chạy (`agents/protocols/git-rules.md`).
 
 ## 1. Việc nào phải qua cổng
 
@@ -22,7 +22,7 @@ Nghi ngờ việc nào đó có thuộc nhóm này không thì **coi là có** v
 1. **Đánh giá** (mục 3): xác minh bằng lệnh chỉ đọc chính xác thứ cần đổi, và liệt kê cái sẽ mất.
 2. **Lập phiếu rủi ro** `docs/risk/RK-<số>.md` theo mẫu (mục 4), trạng thái `Status: PENDING`. Trình bày cho người dùng bằng chữ dễ hiểu.
 3. **Chờ chấp thuận** (mục 5). Chưa có thì **không viết lệnh** và không sửa gì.
-4. **Thực hiện**: việc sửa file thì làm đúng trong phạm vi phiếu; việc git thì viết lệnh (mục 6) cho người dùng chạy. Commit dạng này phải có dòng `Risk-Approved: RK-<số>`.
+4. **Thực hiện**: việc sửa file thì làm đúng trong phạm vi phiếu; việc git thì chạy lệnh (mục 6) sau khi người dùng chấp thuận phiếu, hoặc viết ra cho họ tự chạy. Commit dạng này phải có dòng `Risk-Approved: RK-<số>`.
 5. **Kiểm tra sau**: chạy test (nhờ `runner`), ghi kết quả vào phiếu và task card, viết ghi chú cho agent sau.
 
 ## 3. Đánh giá hoàn tác: phải xác minh, không được đoán
@@ -98,7 +98,7 @@ Giá trị `Status`: `PENDING`, `APPROVED`, `REJECTED`, `EXPIRED`. Chỉ đổi 
 
 ## 6. Lệnh hoàn tác mẫu (chỉ viết sau khi phiếu `APPROVED`)
 
-AI ghi các lệnh này vào mục "Kế hoạch commit" của task card, người dùng chạy từng dòng:
+AI ghi các lệnh này vào mục "Kế hoạch commit" của task card; người dùng chạy từng dòng hoặc nói "chạy" để AI chạy:
 
 ```
 git status
