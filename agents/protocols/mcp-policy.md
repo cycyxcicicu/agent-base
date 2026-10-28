@@ -20,8 +20,8 @@ Nguồn: docker.com "MCP Horror Stories", noma.security "ContextCrush", snyk lab
 | Kiểm thử trình duyệt | qa, designer | Playwright MCP | Chỉ trỏ vào `localhost`, không cho truy cập tài khoản đăng nhập thật |
 | Đọc thiết kế | designer | Figma MCP | Chỉ khi dự án dùng Figma |
 | Chuyển tài liệu sang md | ba | MarkItDown / Docling (chạy bằng dòng lệnh, **không cần MCP**) | Không cần MCP, tránh rủi ro SSRF |
-| Nhắn tin giữa nhiều công cụ | orchestrator | MCP Agent Mail | Chỉ khi thật sự cần agent của công cụ khác nhau nói chuyện |
-| Thao tác GitHub (PR, issue) | orchestrator | GitHub MCP | **Không nên**: dùng `git` và để người dùng tạo PR. Nếu buộc phải dùng: token chi tiết, chỉ một repo, quyền tối thiểu |
+| Nhắn tin giữa nhiều công cụ | lead | MCP Agent Mail | Chỉ khi thật sự cần agent của công cụ khác nhau nói chuyện |
+| Thao tác GitHub (PR, issue) | lead | GitHub MCP | **Không nên**: dùng `git` và để người dùng tạo PR. Nếu buộc phải dùng: token chi tiết, chỉ một repo, quyền tối thiểu |
 
 ## Quy tắc khi thêm một MCP
 

@@ -1,0 +1,58 @@
+{
+  "rules": [
+    {
+      "id": "core-must-not-import-api",
+      "type": "forbid_regex",
+      "description": "Ranh giới module: lớp nghiệp vụ không được import lớp HTTP",
+      "include": ["src/core/**"],
+      "pattern": "from\\s+['\"].*\\bapi\\b.*['\"]|require\\(['\"].*\\bapi\\b",
+      "message": "src/core không được import src/api (ranh giới module, xem docs/CODEMAP.md)"
+    },
+    {
+      "id": "no-debug-output",
+      "type": "forbid_regex",
+      "description": "Không để lại in gỡ lỗi",
+      "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js"],
+      "exclude": ["**/*.test.*", "**/*.spec.*"],
+      "pattern": "console\\.(log|debug)\\(",
+      "message": "Không để console.log/debug trong mã chính; dùng logger của dự án",
+      "severity": "warn"
+    },
+    {
+      "id": "features-in-place",
+      "type": "path_must_match",
+      "description": "Cấu trúc quy ước: mã của một tính năng gom trong MỘT thư mục (colocation) để agent chỉ cần làm việc trong thư mục đó. Agent hay sao chép mẫu có sẵn nên đây là lớp ràng buộc mạnh nhất",
+      "include": ["src/**/*.tsx", "src/**/*.ts"],
+      "exclude": ["src/shared/**", "src/app.ts", "**/*.test.*"],
+      "allow": ["src/features/*/**"],
+      "message": "Mã tính năng mới phải nằm trong src/features/<tên-tính-năng>/"
+    },
+    {
+      "id": "no-conversation-comments",
+      "type": "forbid_regex",
+      "description": "Agent hay ghi chú thích kể lại cuộc trò chuyện hay lịch sử review ('theo yêu cầu của...', 'như reviewer nói...'), không liên quan tới mã. Đây là phiên bản HẸP của việc cấm comment, giữ lại comment có giá trị",
+      "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js", "src/**/*.py"],
+      "pattern": "(?i)(//|#)\\s*.*\\b(as (the )?(user|reviewer|lauren) (said|asked|requested)|người dùng (bảo|nói|yêu cầu)|theo yêu cầu của)",
+      "message": "Không ghi chú thích kể lại cuộc trò chuyện hay lịch sử review; ghi lý do kỹ thuật bền vững hoặc xóa",
+      "severity": "warn"
+    },
+    {
+      "id": "max-300-lines",
+      "type": "max_file_lines",
+      "description": "File quá dài là dấu hiệu cần tách module",
+      "include": ["src/**"],
+      "exclude": ["**/*.generated.*", "**/migrations/**"],
+      "max": 300,
+      "message": "Tách file thành module nhỏ hơn"
+    },
+    {
+      "id": "no-use-effect",
+      "type": "forbid_regex",
+      "description": "VÍ DỤ riêng của một đội dùng React: cấm useEffect. Chỉ giữ nếu đội bạn cũng chọn thế, đừng sao chép mù quáng",
+      "include": ["src/**/*.tsx"],
+      "exclude": ["**/*.test.tsx"],
+      "pattern": "\\buseEffect\\(",
+      "message": "Không dùng useEffect; dùng cách được dự án chấp nhận (xem ADR)"
+    }
+  ]
+}

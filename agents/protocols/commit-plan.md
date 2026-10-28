@@ -3,7 +3,7 @@
 AI viết kế hoạch này vào mục "Kế hoạch commit" của task card. Sau đó có hai đường:
 
 - **Người dùng tự chạy** từng lệnh (như trước).
-- **Người dùng nhờ AI chạy** ("commit hộ tôi"): AI chạy đúng các lệnh `git add <đường dẫn>`, `git commit`, `git push` trong kế hoạch. Công cụ hỏi người dùng duyệt **từng lệnh**; commit dùng danh tính git của người dùng và có dòng cuối `Co-Authored-By: Claude <noreply@anthropic.com>`.
+- **Người dùng nhờ AI chạy** ("commit hộ tôi"): AI chạy đúng các lệnh `git add <đường dẫn>`, `git commit`, `git push` trong kế hoạch. Công cụ hỏi người dùng duyệt **từng lệnh**; commit dùng danh tính git của người dùng. Việc thêm dòng trailer `Co-Authored-By:` được quyết định theo cấu hình mục **Attribution commit** trong `PROJECT.md` (mặc định là `co-authored-by`; nếu dự án đặt `none` thì không thêm trailer này).
 
 AI **không bao giờ** chạy `git add -A`/`.`/`-f`, `commit --amend`, `--no-verify`, push ép hoặc push vào `main`/`develop`/`release/*`, `rebase`, `reset`, `merge`, `tag` (những việc này người dùng làm). Quy tắc gốc: `agents/protocols/git-rules.md`.
 
@@ -11,7 +11,7 @@ AI **không bao giờ** chạy `git add -A`/`.`/`-f`, `commit --amend`, `--no-ve
 
 1. `git status` và `git diff --stat` (chỉ đọc); xác nhận đang ở nhánh cá nhân đúng tên (`<type>/<ticket>-<mô-tả>`), không phải `main`/`develop`/`release/*`.
 2. Với mỗi commit: `git add` **từng đường dẫn** (không dùng `-A`, `.`), rồi `git diff --cached --stat` để người dùng thấy đúng file sắp vào commit; có file lạ, file bí mật hoặc file quá lớn thì dừng và báo.
-3. `git commit -m "<type>(scope): <tóm tắt>" -m "Co-Authored-By: Claude <noreply@anthropic.com>"`. Hook sẽ chặn tiêu đề sai dạng hoặc dòng giống bí mật: sửa nội dung rồi commit lại, **không** dùng `--no-verify`.
+3. `git commit -m "<type>(scope): <tóm tắt>"` (nếu `PROJECT.md` cấu hình attribution là `co-authored-by`, thêm `-m "Co-Authored-By: Claude <noreply@anthropic.com>"`; nếu là `none` thì bỏ qua). Hook sẽ chặn tiêu đề sai dạng hoặc dòng giống bí mật: sửa nội dung rồi commit lại, **không** dùng `--no-verify`.
 4. Chỉ `git push -u origin <nhánh-cá-nhân>` nếu người dùng nói rõ là cần đẩy. Bị hook hoặc công cụ chặn thì báo người dùng, không tìm cách né.
 
 ## Cách AI lập kế hoạch

@@ -1,0 +1,74 @@
+# agents/manifest.txt
+# Danh sách CHÍNH THỨC phần "khung" của agent-base mang sang dự án khác.
+# Được đọc bởi scripts/bootstrap-project.py (cài sang dự án) và scripts/agent-base-diff.py (so sánh, đồng bộ ngược).
+# Thứ không có trong file này (cookies/, tools/ trừ tools/viewer/, src/, tests/, tasks/T-*, nội dung docs/...) là của riêng repo agent-base, KHÔNG mang sang.
+#
+# Cú pháp: <loại> <đường dẫn>   (thư mục kết thúc bằng /, luôn bỏ qua __pycache__)
+#   copy       copy sang dự án; là nguồn dùng chung, sửa ở dự án thì phải đưa ngược về agent-base
+#   template   copy sang dự án làm mẫu, dự án tự điền nội dung riêng; không so sánh (được đặt trước copy để thắng)
+#   generated  copy sang dự án nhưng là file SINH RA bởi scripts/sync-adapters.py; không so sánh, không đưa ngược
+#   gitonly    chỉ copy khi --mode git (dễ trùng file thật của dự án); không bao giờ ghi đè
+#   fresh      tạo mới từ mẫu trống trong bootstrap-project.py (không mang nội dung của agent-base)
+#   mkdir      tạo thư mục trống
+#
+# Thêm file hoặc thư mục dùng chung mới vào agent-base thì PHẢI thêm vào đây, nếu không dự án sau sẽ không có.
+
+template   skills.config.json
+template   PROJECT.md
+template   tasks/EPICS.md
+template   agents/models.txt
+template   agents/knowledge/knowledge-manifest.json
+
+copy       AGENTS.md
+copy       CLAUDE.md
+copy       agents/
+copy       scripts/
+copy       agent_core/
+copy       examples/
+copy       schemas/
+copy       tools/viewer/
+copy       archify.cmd
+copy       archify
+copy       setup.ps1
+copy       setup.bat
+copy       setup.sh
+copy       .agents/skills/
+copy       .githooks/
+copy       tasks/_template.md
+
+generated  GEMINI.md
+generated  CODEX.md
+generated  .kilo/agents/
+generated  .agents/rules/
+generated  .claude/agents/
+generated  .codex/agents/
+generated  .qoder/agents/
+generated  .qoder/rules/
+generated  .claude/settings.json
+generated  .github/copilot-instructions.md
+
+gitonly    .github/pull_request_template.md
+gitonly    .github/workflows/check.yml
+gitonly    .github/CODEOWNERS
+gitonly    infra/
+gitonly    .gitignore
+gitonly    .gitattributes
+gitonly    .env.example
+
+fresh      tasks/quick-log.md
+fresh      docs/PROJECT-NOTES.md
+fresh      docs/DEBT.md
+
+mkdir      docs/notes/inbox/
+mkdir      docs/source/
+mkdir      docs/converted/
+mkdir      docs/requirements/
+mkdir      docs/analysis/
+mkdir      docs/research/
+mkdir      docs/spec/
+mkdir      docs/adr/
+mkdir      docs/design/
+mkdir      docs/security/
+mkdir      docs/db/
+mkdir      docs/runbooks/
+mkdir      docs/risk/
