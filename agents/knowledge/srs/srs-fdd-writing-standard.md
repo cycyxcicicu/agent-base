@@ -1,5 +1,8 @@
 # Chuẩn viết tài liệu thiết kế theo mẫu SRS_FDD (cho AI)
 
+> **Loại: tham khảo.** Chép từ dự án gdt-workspace để làm tri thức cho agent, không phải nguồn luật. Khi khác `AGENTS.md`, vai trò hoặc `agents/protocols/` thì theo các nơi đó (`agents/protocols/source-precedence.md`).
+> **Khác với chuẩn:** Bổ sung cho `protocols/spec-writing.md`; gắn với mẫu SRS_FDD và đường dẫn `doc/` của gdt.
+
 Áp dụng khi người dùng bảo **viết tài liệu cho chức năng cần làm** theo mẫu `SRS_FDD_Template-v3.0.xlsx`.
 Giải thích đầy đủ từng sheet/ cột + ví dụ thật: `doc/quy-trinh/template/03-srs-fdd-template-v3/md/huong-dan-tung-sheet.md` (đọc mục cần dùng, không đọc cả file).
 Nguồn quy tắc: mẫu v3.0 + file đã điền thật `doc/quy-trinh/template/04-srs-fdd-copilot-da-dien/goc/_SRS_FDD_AI-Agent-Copilot.xlsx`. Mục đánh dấu **[ĐỀ XUẤT]** là suy ra từ file Copilot, chưa được team GDT chốt — hỏi người dùng nếu ảnh hưởng kết quả.

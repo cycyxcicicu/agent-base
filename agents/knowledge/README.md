@@ -1,13 +1,30 @@
 # Chỉ mục tri thức dùng chung
 
-Agent không đọc cả thư mục này. Tra bảng, mở đúng file khớp việc đang làm (tối đa vài file).
+Agent không đọc cả thư mục này. Tra bảng, mở đúng file khớp việc đang làm (tối đa vài file), hoặc dùng lệnh trích xuất tự động:
+`python scripts/knowledge.py context --root . --manifest agents/knowledge/knowledge-manifest.json --role <vai>`
 
-## Từ dự án gdt-workspace (bổ sung phần khung còn thiếu)
+## 1. Tinh hoa từ 2 Notebook Tri thức (AI-Augmented SDLC & High-Velocity Agent)
+
+Tổng hợp từ:
+- **Notebook 1:** *Agile SDLC & Scrum Release Management* (CMMI Level 3, 13 Bước TDD, BACCM, RTM).
+- **Notebook 2:** *Xây dựng niềm tin với kỹ sư AI* (Lauren Tan - SpaceX / Cursor: Verification Skills, Feature Map, Eval Playbook).
+
+| Khi nào | Đọc |
+|---|---|
+| **Thực thi lập trình:** Chu trình 13 bước TDD/ATDD, dừng ở Bước 11 (Chờ xác nhận), quy ước thẻ `@rtm-ref` và 11 tiêu chí Definition of Done (DoD) | `quy-trinh/quy-trinh-13-buoc-tdd.md` |
+| **Kiểm định chất lượng & Review:** Bộ 70 mục kiểm CMMI Level 3 phủ 8 nhóm chỉ số (CM, PPQA, TS, DAR, RSKM, VER/VAL, KG, REQM) và mẫu báo cáo nghiệm thu | `quy-trinh/cmmi-l3-70-muc-kiem.md` |
+| **Phân tích nghiệp vụ & Sẵn sàng:** Mô hình 6 khái niệm lõi BACCM, quy trình Quản lý Yêu cầu (RD), Quản lý Thay đổi (CR) qua CCB và 7 tiêu chí Definition of Ready (DoR) | `quy-trinh/baccm-yeu-cau-va-cr.md` |
+| **Tự xác minh & Giao diện:** Kỹ năng tự chứng minh qua Chrome DevTools Protocol (`CDP`), CPU/Heap traces, lập Feature Map UI và chia PR nguyên tử | `ky-thuat/verification-skills-cdp.md` |
+| **Đánh giá Agent & Rào chắn:** Eval Playbook (chấm điểm bằng Judge Agent độc lập, tối ưu leo dốc `/loop` 10/10), Benny tự tái hiện bug và 5 tầng ràng buộc cứng | `ky-thuat/eval-playbook-va-hard-constraints.md` |
+| **Quản trị Prompt & Tối ưu chi phí:** Prompt as Code, quy trình nghiệm thu Golden Prompts 3 bước, bảng chi phí sửa lỗi Shift-Left ($1\times \rightarrow 30\times$) và GitFlow Release Train | `ky-thuat/prompt-as-code-registry.md` |
+
+## 2. Từ dự án gdt-workspace (bổ sung phần khung còn thiếu)
 
 Nguồn: dự án gdt-workspace, đã dùng thật. Còn nhắc Mantis, TestLink, thư mục `doc/` là quy ước của gdt; dự án khác thay bằng công cụ của mình.
 
 | Khi nào | Đọc |
 |---|---|
+| Biết quy trình công ty yêu cầu gì (vòng SDLC, DoR/DoD, CR, kiểm thử, dùng AI, Git/CI-CD) và khung còn thiếu gì | `quy-trinh/quy-trinh-cong-ty.md` |
 | Nhận một danh sách bug: lọc, gom nhóm, xếp ưu tiên, tái hiện từng nhóm trước khi sửa (bổ sung cho `protocols/bug-repro.md`, vốn xử lý từng bug) | `quy-trinh/xu-ly-bug-hang-loat.md` |
 | Review code: checklist dữ liệu/SQL, giao dịch và đồng thời, lỗi và log | `ky-thuat/chuan-code-va-review.md` |
 | Viết SQL, xử lý lỗi cơ sở dữ liệu, giao dịch, migration | `ky-thuat/chuan-sql-va-loi.md` |

@@ -1,5 +1,8 @@
 # Chuẩn vẽ sơ đồ
 
+> **Loại: tham khảo.** Chép từ dự án gdt-workspace để làm tri thức cho agent, không phải nguồn luật. Khi khác `AGENTS.md`, vai trò hoặc `agents/protocols/` thì theo các nơi đó (`agents/protocols/source-precedence.md`).
+> **Khác với chuẩn:** Bổ sung cho `docs/design/diagram-guide.md`; còn nhắc công cụ và đường dẫn của gdt.
+
 **Công cụ, lệnh, file nguồn của từng loại sơ đồ (draw.io, archify): xem `huong-dan-ve-so-do.md`.** Nếu mục 5, 8, 9 dưới đây mâu thuẫn với file đó thì theo file đó.
 
 Nguồn: phân tích các sơ đồ trong mẫu SRS_FDD v3.0 và file Copilot (`doc/quy-trinh/template/03-srs-fdd-template-v3/md/so-do-trong-mau.md`) và tài liệu Detail Design (`doc/quy-trinh/huong-dan/tong-hop/02-viet-detail-design-document.md`). Mục "Đề xuất" là chưa có quy định chính thức của công ty.

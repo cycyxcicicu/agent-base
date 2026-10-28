@@ -1,5 +1,8 @@
 # Chuẩn SQL và xử lý lỗi cơ sở dữ liệu
 
+> **Loại: tham khảo.** Chép từ dự án gdt-workspace để làm tri thức cho agent, không phải nguồn luật. Khi khác `AGENTS.md`, vai trò hoặc `agents/protocols/` thì theo các nơi đó (`agents/protocols/source-precedence.md`).
+> **Khác với chuẩn:** Còn nhắc Liquibase theo cấu hình của gdt.
+
 Bổ sung cho `doc/ky-thuat/engineering/persistence-conventions.md` và `liquibase-conventions.md`. Khi khác nhau, các file đó thắng. Các mục "Đề xuất" là chưa có quy định chính thức.
 
 ## 1. Nguyên tắc

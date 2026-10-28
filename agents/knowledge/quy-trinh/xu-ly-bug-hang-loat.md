@@ -1,5 +1,8 @@
 # Xử lý bug: nhận danh sách, gom nhóm, tái hiện, sửa
 
+> **Loại: tham khảo.** Chép từ dự án gdt-workspace để làm tri thức cho agent, không phải nguồn luật. Khi khác `AGENTS.md`, vai trò hoặc `agents/protocols/` thì theo các nơi đó (`agents/protocols/source-precedence.md`).
+> **Khác với chuẩn:** Bổ sung cho `protocols/bug-repro.md` (xử lý từng bug). Còn nhắc TestLink, Mantis và `doc/` là quy ước của gdt.
+
 Áp dụng khi người dùng đưa danh sách bug (CSV hoặc ảnh chụp Mantis) hoặc nhiều mã bug cùng lúc. Một bug lẻ đi từ mục 6.
 Cách làm sửa bug (tái hiện lỗi, viết case bao phủ lỗi trước, rồi mới sửa) là cách người dùng đã học từ Lauren Tan. Nội dung dưới đây theo mô tả của người dùng; workspace chưa có tài liệu gốc để đối chiếu.
 Tên branch, commit, MR theo `git-workflow.md` mục 2, 3, 5. Không chép lại ở đây.

@@ -1,5 +1,8 @@
 # Chuẩn code, cấu trúc và review code
 
+> **Loại: tham khảo.** Chép từ dự án gdt-workspace để làm tri thức cho agent, không phải nguồn luật. Khi khác `AGENTS.md`, vai trò hoặc `agents/protocols/` thì theo các nơi đó (`agents/protocols/source-precedence.md`).
+> **Khác với chuẩn:** Checklist bổ sung cho vai `reviewer`; quy ước ngôn ngữ ở `agents/stacks/`.
+
 Áp dụng cho mọi service Java. Quy ước chi tiết đã có ở `doc/ky-thuat/engineering/` (api, architecture, persistence, liquibase, event, testing). File này không chép lại mà bổ sung phần chung và checklist review. Khi khác nhau, quy ước trong `doc/ky-thuat/engineering/` thắng; service có quy định chặt hơn thì theo đó.
 
 ## 1. Cấu trúc code
