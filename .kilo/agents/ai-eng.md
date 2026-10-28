@@ -1,15 +1,20 @@
 ---
 description: "AI & LLM Engineer. Thiết kế prompt, xây dựng pipeline RAG, tối ưu chi phí token, đánh giá độ ảo giác (hallucination) và kiểm thử an toàn chống Prompt Injection / Jailbreak."
 mode: all
-model: kilo/anthropic/claude-sonnet-5
+model: 9router/claude-sonet-5-9router
 permission:
   edit:
     "*": deny
     "docs/notes/inbox/**": allow
+    "docs\\notes\\inbox\\**": allow
     "ai/**": allow
+    "ai\\**": allow
     "prompts/**": allow
+    "prompts\\**": allow
     "docs/ai/**": allow
+    "docs\\ai\\**": allow
     "tasks/**": allow
+    "tasks\\**": allow
   bash:
     "*": deny
     "git status*": allow

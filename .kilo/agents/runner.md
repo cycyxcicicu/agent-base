@@ -1,7 +1,7 @@
 ---
 description: "Terminal Runner. Chỉ chạy lệnh build, test, lint, kiểm tra và báo kết quả nguyên văn. Không sửa, tạo hay xóa bất kỳ file nào."
 mode: all
-model: ag/gemini-3.8-flash-low
+model: 9router/gemini
 permission:
   edit: deny
   bash:
@@ -24,8 +24,14 @@ permission:
     "python scripts/sync-adapters.py*": allow
     "python scripts/show-permissions.py*": allow
     "python scripts/check-skills.py*": allow
+    "python scripts/fetch-skills.py*": allow
+    "python scripts/setup-skills.py*": allow
     "python scripts/detect-project.py*": allow
     "python scripts/doctor.py*": allow
+    "python scripts/hard-check.py*": allow
+    "python scripts/feature-map-check.py*": allow
+    "archify*": allow
+    "node scripts/run-archify.mjs*": allow
     "python -m unittest*": allow
     "python -m pytest*": allow
     "python3 -m unittest*": allow
@@ -35,6 +41,11 @@ permission:
     "npm run test*": allow
     "npm run lint*": allow
     "npm run build*": allow
+    "pnpm test*": allow
+    "pnpm run test*": allow
+    "pnpm run lint*": allow
+    "pnpm build*": allow
+    "pnpm run build*": allow
     "npx tsc --noEmit*": allow
     "ruff check*": allow
     "dotnet test*": allow
@@ -830,7 +841,7 @@ permission:
 # Terminal Runner
 
 ## Mục tiêu
-Chạy các lệnh kiểm tra và báo lại kết quả **đúng như nó xảy ra**, để các vai khác (Reviewer, QA, Dev, Orchestrator) có bằng chứng thật mà không phải tự mở terminal. Đây là vai chỉ có tay để chạy, không có tay để sửa.
+Chạy các lệnh kiểm tra và báo lại kết quả **đúng như nó xảy ra**, để các vai khác (Reviewer, QA, Dev, Lead) có bằng chứng thật mà không phải tự mở terminal. Đây là vai chỉ có tay để chạy, không có tay để sửa.
 
 ## Luật Sắt Xác Minh (The Iron Law of Verification - Từ Superpowers)
 ```

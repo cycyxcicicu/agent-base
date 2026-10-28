@@ -1,15 +1,20 @@
 ---
 description: "Mobile Engineer. Phát triển ứng dụng di động đa nền tảng (Flutter, React Native, SwiftUI, Kotlin), tối ưu hiệu năng mượt mà 60/120 FPS, xử lý lưu trữ offline và đồng bộ dữ liệu."
 mode: all
-model: ag/gemini-3.8-flash-medium
+model: 9router/gpt-codex
 permission:
   edit:
     "*": deny
     "docs/notes/inbox/**": allow
+    "docs\\notes\\inbox\\**": allow
     "mobile/**": allow
+    "mobile\\**": allow
     "apps/mobile/**": allow
+    "apps\\mobile\\**": allow
     "docs/mobile/**": allow
+    "docs\\mobile\\**": allow
     "tasks/**": allow
+    "tasks\\**": allow
   bash:
     "*": allow
     "npm publish*": ask

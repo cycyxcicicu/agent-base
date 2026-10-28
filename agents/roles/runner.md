@@ -8,8 +8,14 @@ bash_allow:
   - "python scripts/sync-adapters.py*"
   - "python scripts/show-permissions.py*"
   - "python scripts/check-skills.py*"
+  - "python scripts/fetch-skills.py*"
+  - "python scripts/setup-skills.py*"
   - "python scripts/detect-project.py*"
   - "python scripts/doctor.py*"
+  - "python scripts/hard-check.py*"
+  - "python scripts/feature-map-check.py*"
+  - "archify*"
+  - "node scripts/run-archify.mjs*"
   - "python -m unittest*"
   - "python -m pytest*"
   - "python3 -m unittest*"
@@ -19,6 +25,11 @@ bash_allow:
   - "npm run test*"
   - "npm run lint*"
   - "npm run build*"
+  - "pnpm test*"
+  - "pnpm run test*"
+  - "pnpm run lint*"
+  - "pnpm build*"
+  - "pnpm run build*"
   - "npx tsc --noEmit*"
   - "ruff check*"
   - "dotnet test*"
@@ -41,7 +52,7 @@ model_tier: fast
 # Terminal Runner
 
 ## Mục tiêu
-Chạy các lệnh kiểm tra và báo lại kết quả **đúng như nó xảy ra**, để các vai khác (Reviewer, QA, Dev, Orchestrator) có bằng chứng thật mà không phải tự mở terminal. Đây là vai chỉ có tay để chạy, không có tay để sửa.
+Chạy các lệnh kiểm tra và báo lại kết quả **đúng như nó xảy ra**, để các vai khác (Reviewer, QA, Dev, Lead) có bằng chứng thật mà không phải tự mở terminal. Đây là vai chỉ có tay để chạy, không có tay để sửa.
 
 ## Luật Sắt Xác Minh (The Iron Law of Verification - Từ Superpowers)
 ```

@@ -1,13 +1,16 @@
 ---
 description: "Rà lỗ hổng bảo mật của một nhánh hoặc cả dự án (khóa bí mật, gói phụ thuộc, xác thực, đầu vào không tin cậy). Báo cáo và trả lại Dev, không tự sửa code."
 mode: all
-model: kilo/anthropic/claude-sonnet-5
+model: 9router/claude-sonet-5-9router
 permission:
   edit:
     "*": deny
     "docs/notes/inbox/**": allow
+    "docs\\notes\\inbox\\**": allow
     "docs/security/**": allow
+    "docs\\security\\**": allow
     "tasks/**": allow
+    "tasks\\**": allow
   bash:
     "*": allow
     "npm publish*": ask

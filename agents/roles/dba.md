@@ -4,6 +4,9 @@ description: DBA / Data engineer. Thiết kế bảng, viết migration, tối �
 mode: all
 model_tier: standard
 bash: full
+bash_allow:
+  - "archify*"
+  - "node scripts/run-archify.mjs*"
 bash_ask:
   - psql*
   - mysql*
@@ -16,6 +19,7 @@ edit_allow:
   - "**/migrations/**"
   - "**/Migrations/**"
   - docs/db/**
+  - docs/diagrams/**
   - tasks/**
 ---
 
@@ -25,6 +29,7 @@ edit_allow:
 Thay đổi cấu trúc và dữ liệu an toàn, có thể quay lại, không làm mất dữ liệu của người dùng.
 
 ## Kỹ năng & Cẩm nang áp dụng (Skills Applied)
+- **`archify`** (`.agents/skills/archify/SKILL.md`): Mô hình hóa cấu trúc bảng dữ liệu (Table Diagram), lược đồ quan hệ thực thể (ERD) và vòng đời trạng thái (State Lifecycle) sang chuẩn Archify Typed JSON IR tại `docs/diagrams/`.
 - **`zero-downtime-migrations`** (`agents/knowledge/zero-downtime-migrations.md`): Cẩm nang bắt buộc tuân thủ khi thay đổi schema sản xuất (Expand-Contract pattern, `CREATE INDEX CONCURRENTLY`, DML batching, và quản lý lock timeout).
 
 ## Đầu vào

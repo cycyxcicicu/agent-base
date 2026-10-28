@@ -1,22 +1,45 @@
-# Ánh xạ tầng model (model_tier trong agents/roles/*.md) sang model cụ thể của Kilo.
+# Ánh xạ model cho từng vai (đọc bởi scripts/sync-adapters.py). Sửa xong chạy: python scripts/sync-adapters.py
 #
-# Cách dùng:
-#   - Để trống một tầng = các vai của tầng đó KHÔNG bị ghim model, dùng model bạn chọn trong giao diện.
-#   - Điền id model đúng như lệnh `kilo models` in ra, rồi chạy scripts/sync-adapters.ps1.
-#   - Chỉ điền model bạn thật sự có quyền dùng. Ghim model chưa cấu hình sẽ làm vai đó lỗi.
-#   - Đổi model cho cả dự án chỉ cần sửa file này. Mang sang dự án khác thì copy cùng bộ khung.
+# Id = <provider trong ~/.config/kilo/kilo.jsonc>/<tên model hoặc COMBO của 9router>.
+# Luôn trỏ vào COMBO của 9router (Fallback — try in order): hết quota model đầu thì 9router tự chuyển.
+# Kilo không tự fallback giữa các model/combo. Model chọn ở khung chat thắng model ghim;
+# model ghim chỉ có hiệu lực khi Lead gọi agent con (task).
+# Chỉ ghi MỘT id mỗi dòng.
 #
-# Khi nào dùng tầng nào: xem agents/protocols/model-policy.md
+# Nguyên tắc chia (xem agents/protocols/model-policy.md):
+#   - Viết/sửa code, test, hạ tầng  -> gpt-codex (mạnh về code)
+#   - Suy luận, lập kế hoạch, rà soát -> Claude. Reviewer cố ý KHÁC họ model với Dev để có "mắt thứ hai" độc lập
+#   - Tài liệu, việc nhẹ, chạy lệnh   -> gemini (nhanh, rẻ, ngữ cảnh 1M)
+#   - Phán quyết kiến trúc/bảo mật   -> hội đồng nhiều AI (combo Fusion), xem cuối file
 #
-# Ví dụ (id lấy từ `kilo models` ngày 2026-09-19, CHƯA kiểm tra quyền dùng hay chi phí trên máy bạn):
-#   strong=kilo/anthropic/claude-opus-5
-#   standard=kilo/anthropic/claude-sonnet-5
-#   fast=kilo/anthropic/claude-haiku-4.5
-# hoặc để Kilo tự chọn theo tầng:
-#   strong=kilo/kilo-auto/frontier
-#   standard=kilo/kilo-auto/balanced
-#   fast=kilo/kilo-auto/efficient
+# Dự phòng khi hết quota (cấu hình trên 9router, mỗi combo Fallback — try in order, thêm model vào CUỐI combo):
+#   gpt-codex               : GPT    -> Claude -> Gemini
+#   claude-sonet-5-9router  : Claude -> GPT    -> Gemini
+#   gemini                  : Gemini -> GPT    -> Claude
+# Gemini luôn ở cuối hai combo đầu (ngữ cảnh 1M, lớn nhất) để công việc không dừng khi hai model kia cùng hết.
+# Đổi tên combo hoặc thứ tự trên 9router thì sửa chú thích này cho khớp.
+#
+# Khi 9router đã chuyển sang dự phòng (xem tên model của request gần nhất trên 9router):
+#   - Dev và Reviewer có thể thành cùng một model: chạy Reviewer trước khi người dùng duyệt merge.
+#   - Việc cần phán quyết (ADR kiến trúc, bảo mật) nên chờ Claude có quota lại; card và ghi chú giữ nguyên tiến độ.
+#   - Ngữ cảnh mỗi model khác nhau (Claude 200k, GPT 128k, Gemini 1M): mỗi task một phiên để ít bị cắt hoặc tóm tắt.
 
-strong=kilo/anthropic/claude-sonnet-5 | ag/gpt-oss-120b-medium | ag/gemini-3.8-flash-high
-standard=ag/gemini-3.8-flash-medium | ag/gpt-oss-120b-medium
-fast=ag/gemini-3.8-flash-low | ag/gemini-3.8-flash-medium
+# Mặc định theo tầng (model_tier trong agents/roles/*.md)
+strong=9router/claude-sonet-5-9router
+standard=9router/gemini
+fast=9router/gemini
+
+# Vai viết code -> gpt-codex
+dev=9router/gpt-codex
+qa=9router/gpt-codex
+mobile=9router/gpt-codex
+devops=9router/gpt-codex
+dba=9router/gpt-codex
+data-eng=9router/gpt-codex
+debt-hunter=9router/gpt-codex
+
+# Hội đồng 3 AI (combo Fusion trong 9router: Claude + GPT + Gemini, 1 AI tổng hợp).
+# CHƯA BẬT: tạo combo "hoi-dong" trên 9router, khai báo trong kilo.jsonc, thử một việc có đọc/ghi file
+# (Fusion có thể không hỗ trợ tool call), rồi mới bỏ dấu # hai dòng dưới.
+# architect=9router/hoi-dong
+# security=9router/hoi-dong

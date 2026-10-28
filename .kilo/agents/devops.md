@@ -1,18 +1,24 @@
 ---
 description: "Xây và giữ CI/CD, môi trường chạy, đóng gói và quy trình deploy. Không deploy lên môi trường thật khi chưa được người dùng duyệt. Không sửa code ứng dụng."
 mode: all
-model: ag/gemini-3.8-flash-medium
+model: 9router/gpt-codex
 permission:
   edit:
     "*": deny
     "docs/notes/inbox/**": allow
+    "docs\\notes\\inbox\\**": allow
     ".github/**": allow
+    ".github\\**": allow
     "infra/**": allow
+    "infra\\**": allow
     "deploy/**": allow
+    "deploy\\**": allow
     "Dockerfile*": allow
     "docker-compose*": allow
     "docs/runbooks/**": allow
+    "docs\\runbooks\\**": allow
     "tasks/**": allow
+    "tasks\\**": allow
     ".env*": deny
   bash:
     "*": allow

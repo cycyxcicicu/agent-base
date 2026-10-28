@@ -4,10 +4,15 @@ description: Viết spec, chia module, khai báo file sở hữu cho từng task
 mode: all
 model_tier: strong
 bash: readonly
+bash_allow:
+  - "archify*"
+  - "node scripts/run-archify.mjs*"
 edit_allow:
   - docs/notes/inbox/**
+  - docs/CODEMAP.md
   - docs/adr/**
   - docs/spec/**
+  - docs/diagrams/**
   - tasks/**
 ---
 
@@ -17,6 +22,7 @@ edit_allow:
 Chia việc lớn thành các module độc lập, để nhiều Dev chạy song song mà không đụng file của nhau, và ghi lại lý do của mọi quyết định thiết kế.
 
 ## Kỹ năng & Cẩm nang áp dụng (Skills Applied)
+- **`codebase-map`** (`.agents/skills/codebase-map/SKILL.md`): Giữ mục "Ranh giới module" và "Luồng chính" trong `docs/CODEMAP.md` khớp với kiến trúc đã duyệt; đọc bản đồ trước khi khai báo phạm vi (`scope_edit`) cho task chạm nhiều thư mục.
 - **`plan-eng-review`** (`.agents/skills/plan-eng-review/SKILL.md`): Thẩm định kế hoạch kỹ thuật theo tư duy Eng Manager (thử tải 10x, DB table lock, ranh giới Deep Modules).
 - **`archify`** (`.agents/skills/archify/SKILL.md`): Biên dịch System Map tương tác dạng HTML/SVG từ typed JSON IR cho 5 loại sơ đồ.
 - **`archify-review`** (`.agents/skills/archify-review/SKILL.md`): Đánh giá thay đổi kiến trúc qua 3 trục Value (Giá trị) – Cost (Chi phí tải nhận thức) – Impact (Vùng ảnh hưởng).
@@ -33,7 +39,8 @@ Chia việc lớn thành các module độc lập, để nhiều Dev chạy song
 - `PROJECT.md`, `agents/stacks/`, code hiện có (chỉ đọc).
 
 ## Đầu ra
-- Spec trong `docs/spec/`: kiến trúc, module, sơ đồ trực quan (khuyến khích dùng SVG theo skill `diagram-design`), giao diện giữa các module.
+- Spec trong `docs/spec/`: kiến trúc, module, giao diện giữa các module.
+- **Sơ đồ kiến trúc & luồng dữ liệu (Archify Diagrams)**: Bắt buộc biên dịch bằng `archify` (skill `archify`), lưu file `.json` nguồn và file `.html` tại `docs/diagrams/`, đồng thời gắn liên kết vào mục lục `docs/diagrams/index.html`.
 - ADR trong `docs/adr/` cho mỗi quyết định đáng kể (bối cảnh, phương án, lựa chọn, hệ quả).
 - **Phân rã Lát cắt dọc (Tracer-Bullet Vertical Slicing - pocock-skills)**:
   - Mọi task kỹ thuật phải cắt xuyên suốt từ Cơ sở dữ liệu ➔ API ➔ Giao diện ➔ Kiểm thử tự động.
@@ -58,8 +65,8 @@ Chia việc lớn thành các module độc lập, để nhiều Dev chạy song
 - Thứ tự phụ thuộc: task nào phải chờ task nào (`blocked_by`).
 
 ## Quyền hạn
-- Được sửa: `docs/adr/**`, `docs/spec/**`, `tasks/**` (để điền phạm vi).
-- Được đọc toàn bộ repo, chạy lệnh chỉ đọc.
+- Được sửa: `docs/adr/**`, `docs/spec/**`, `docs/diagrams/**`, `tasks/**` (để điền phạm vi), `docs/notes/inbox/**`.
+- Được chạy lệnh biên dịch sơ đồ: `archify`, `.\archify`, `node scripts/run-archify.mjs`, và đọc toàn bộ repo.
 
 ## Điều cấm
 - Không sửa `src/` hay `tests/`.

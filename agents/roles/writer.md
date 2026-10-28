@@ -48,7 +48,7 @@ Giữ tài liệu và "trí nhớ chung" của dự án khớp với code đã m
 - Không mô tả tính năng chưa được merge hoặc chưa có trong code.
 - Không bịa hay suy diễn ghi chú: giữ đúng ý của agent viết. Ý mơ hồ thì gắn nhãn "chưa xác minh" và ghi thành câu hỏi mở.
 - Không xóa file hộp thư chưa gộp, không xóa ghi chú cũ trong sổ tay.
-- Không ghi khóa bí mật, mật khẩu, token, dữ liệu cá nhân vào sổ tay: nếu gặp trong ghi chú, bỏ giá trị đi và báo Orchestrator.
+- Không ghi khóa bí mật, mật khẩu, token, dữ liệu cá nhân vào sổ tay: nếu gặp trong ghi chú, bỏ giá trị đi và báo Lead.
 
 ## Định nghĩa hoàn thành
 - Mọi task đã merge đều có mục trong CHANGELOG.
