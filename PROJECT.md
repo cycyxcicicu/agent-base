@@ -4,8 +4,8 @@
 
 | Mục | Giá trị |
 |---|---|
-| Tên dự án | (điền) |
-| Mô tả một câu | (điền) |
+| Tên dự án | Agent Base Hub |
+| Mô tả một câu | Trung tâm điều phối đa dự án, tài liệu & sơ đồ hệ thống |
 | Stack | (chọn file trong `agents/stacks/`: python / node / dotnet / ...) |
 | Nhánh chính | main |
 | Nhánh tích hợp | develop |

@@ -222,6 +222,19 @@
       border-bottom: 1px solid var(--border-subtle);
       margin-bottom: 24px;
       overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+      padding-bottom: 2px;
+    }
+    .tabs-bar::-webkit-scrollbar {
+      height: 4px;
+    }
+    .tabs-bar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .tabs-bar::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.4);
+      border-radius: 4px;
     }
 
     .tab-btn {

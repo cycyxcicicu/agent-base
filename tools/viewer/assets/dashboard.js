@@ -52,6 +52,22 @@
     let currentViewMode = 'cards';
     let currentDocCategoryFilter = 'ALL';
 
+    function updateProjectHeader(proj) {
+      if (!proj) return;
+      const titleElem = document.querySelector('.brand-text h1');
+      if (titleElem) {
+        titleElem.innerHTML = `${proj.name} <span class="badge-phase">Cockpit & Roadmap</span>`;
+      }
+      const descElem = document.querySelector('.brand-text p');
+      if (descElem) {
+        descElem.innerHTML = `${proj.desc || 'Hệ thống Quản trị & Điều phối'} • Cập nhật: ${new Date().toLocaleDateString('vi-VN')} ${new Date().toLocaleTimeString('vi-VN')}`;
+      }
+      const iconElem = document.querySelector('.brand-icon');
+      if (iconElem && proj.name) {
+        iconElem.textContent = proj.name.charAt(0).toUpperCase();
+      }
+    }
+
     function init() {
       // Khởi tạo dự án mặc định từ MULTI_PROJECTS nếu có
       if (CURRENT_PROJECT_ID && MULTI_PROJECTS[CURRENT_PROJECT_ID]) {
@@ -59,6 +75,7 @@
         if (p.docs && p.docs.length > 0) SYSTEM_DOCS = p.docs;
         CURRENT_MANTIS = p.mantis || { total: 0, bugs: [] };
         CURRENT_DIAGRAMS = p.diagrams || [];
+        updateProjectHeader(p);
       } else {
         // Dự án hiện tại
         CURRENT_MANTIS = (DASH.mantis) || { total: 0, bugs: [] };
@@ -94,6 +111,7 @@
         SYSTEM_DOCS = p.docs || [];
         CURRENT_MANTIS = p.mantis || { total: 0, bugs: [] };
         CURRENT_DIAGRAMS = p.diagrams || [];
+        updateProjectHeader(p);
       }
       updateBadges();
       currentDocCategoryFilter = 'ALL';
