@@ -45,6 +45,20 @@ Một task triển khai phải tuân thủ nghiêm ngặt 13 bước tuần tự
 
 ---
 
+## 2b. Bảy tiêu chí sẵn sàng (DoR #1–#7)
+
+Bước 4 chỉ cho nhận task khi đủ bảy tiêu chí (nguồn chi tiết: `agents/knowledge/quy-trinh/baccm-yeu-cau-va-cr.md` mục II):
+
+1. **UI/UX:** có wireframe hoặc mockup, thể hiện trạng thái Normal, Loading, Error, Empty.
+2. **Hợp đồng kỹ thuật / API:** endpoint, schema vào và ra, mã lỗi, kiểu dữ liệu.
+3. **Prompt (module AI):** prompt mẫu đã thử độc lập trên dữ liệu thật và đạt độ chính xác kỳ vọng. Task không có AI thì ghi "không áp dụng".
+4. **Phụ thuộc và hạ tầng:** DB, dịch vụ bên thứ ba, môi trường chạy sẵn sàng kết nối.
+5. **Yêu cầu chi tiết:** mục tiêu nghiệp vụ, in-scope và out-of-scope, nguyên nhân gốc (nếu là lỗi).
+6. **Giải pháp:** `architect` và `lead` đã thống nhất phương án kỹ thuật.
+7. **WBS:** đã bóc tách hạt mịn và có người duyệt (Cổng 5).
+
+Tiêu chí không áp dụng được thì ghi "không áp dụng" kèm lý do, không bỏ trống.
+
 ## 3. Quy tắc xử lý lỗi và thay đổi yêu cầu: Chạy lại đủ vòng
 
 - Khi phát sinh lỗi trong quá trình review hoặc người dùng thay đổi yêu cầu:
