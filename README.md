@@ -40,7 +40,7 @@ tests/               bộ kiểm thử tự động
 
 | Vai trò | Việc chính | Được sửa |
 |---|---|---|
-| `orchestrator` | phân cỡ, tách card, HARD-GATE, điều phối subagent, hoàn tác | `tasks/`, `docs/risk/` |
+| `lead` | phân cỡ, tách card, HARD-GATE, điều phối subagent, hoàn tác | `tasks/`, `docs/risk/` |
 | `product` | Plan CEO Review, phân tích người dùng, phạm vi MVP, viết spec | `docs/product/`, `docs/roadmap/`, `docs/spec/`, `tasks/` |
 | `ba` | nhập tài liệu, rút yêu cầu R-xxx, Domain Glossary | `docs/converted/`, `docs/requirements/`, `tasks/` |
 | `analyst` | phân tích lại tài liệu, đối chiếu tài liệu với code, Gap Report | `docs/analysis/`, `tasks/` |
@@ -58,7 +58,7 @@ tests/               bộ kiểm thử tự động
 | `reviewer` | đọc diff, duyệt/trả lại theo 5 Rubrics, kiểm tra cờ `# debt:` | chỉ ghi kết quả vào card |
 | `qa` | Happy Path trước, 4 kỹ thuật test ISTQB, đóng lỗi độc quyền | `tests/`, `tasks/` |
 | `runner` | **chỉ chạy lệnh** (The Iron Law of Verification) và báo kết quả nguyên văn | không sửa được file nào |
-| `debt-hunter` | quét comment nợ `# debt:`, duy trì sổ nợ [`docs/DEBT.md`](file:///d:/OneDrive%20-%20concutobu/tiktok/fteck/agent-base/docs/DEBT.md), đề xuất refactor | `docs/DEBT.md`, `tasks/` |
+| `debt-hunter` | quét comment nợ `# debt:`, duy trì sổ nợ `docs/DEBT.md`, đề xuất refactor | `docs/DEBT.md`, `tasks/` |
 | `writer` | CHANGELOG, Progressive Disclosure, **gộp ghi chú vào sổ tay** | `docs/`, `README.md`, `CHANGELOG.md`, `tasks/` |
 
 Mọi vai đều được ghi ghi chú vào `docs/notes/inbox/`.
@@ -100,9 +100,9 @@ Theo bài giảng GitFlow (chi tiết `agents/protocols/git-rules.md`):
 - **Cổng rủi ro** (`agents/protocols/risk-gate.md`): hoàn tác hoặc bất cứ việc gì có thể làm mất code, dữ liệu, công việc phải có đánh giá, phiếu `docs/risk/RK-<số>.md` và **người dùng chấp thuận rõ ràng** trước khi AI viết lệnh. Commit hoàn tác hoặc xóa từ 10 file trở lên phải có dòng `Risk-Approved: RK-<số>`; hook và CI kiểm.
 - **Worktree** (`agents/protocols/worktree-lifecycle.md`): người dùng tạo bằng `scripts/new-worktree.ps1` (`-Root` để đặt ngoài OneDrive); bản cuối là kết quả đã merge vào `develop`, người dùng tự cập nhật nhánh hiện tại.
 
-## Kỹ năng (29 Skills Tích Hợp)
+## Kỹ năng (31 Skills Tích Hợp)
 
-Hệ thống đã tích hợp sẵn 29 kỹ năng chuẩn hóa (đặc tả Markdown quy chuẩn đặt tại `.agents/skills/<tên>/SKILL.md` kèm các script tiện ích an toàn đã kiểm duyệt được đăng ký tại `agents/knowledge/skills.md`):
+Hệ thống đã tích hợp sẵn 31 kỹ năng chuẩn hóa, danh sách đầy đủ ở `agents/knowledge/skills.md` (bên dưới là phần nổi bật; đặc tả Markdown quy chuẩn đặt tại `.agents/skills/<tên>/SKILL.md` kèm các script tiện ích an toàn đã kiểm duyệt được đăng ký tại `agents/knowledge/skills.md`):
 
 ### 1. Phương pháp luận & Quy trình Cốt lõi
 - `subagent-driven-development`: Điều phối subagents độc lập, dọn sạch context window, cơ chế Rulings.
@@ -129,11 +129,37 @@ Hệ thống đã tích hợp sẵn 29 kỹ năng chuẩn hóa (đặc tả Mark
 - `devex-review`: Đánh giá trải nghiệm nhà phát triển và tính công thái học của API/SDK.
 - `ui-ux-pro-max`: Hệ thống quy tắc thiết kế UI/UX, bảng màu, typography và micro-interactions.
 
+### 3. Bản đồ mã nguồn và xác minh (tự viết)
+- `codebase-map`: bản đồ thư mục `docs/CODEMAP.md` để agent không lạc đường trong codebase lạ; tùy chọn chỉ đọc đồ thị Graphify do người dùng tự cài.
+- `feature-map`: tạo và duy trì `docs/design/feature-map.md` (khu vực, đường vào, thao tác, selector, file nguồn); `python scripts/feature-map-check.py` bắt bản đồ lệch mã.
+
+## Chất lượng: luật cứng, eval, tái hiện lỗi
+
+- **Luật cứng** (`agents/protocols/hard-rules.md`): góp ý review lặp lại thì biến thành luật máy chặn, khai báo trong `docs/HARD-RULES.json`, chạy bằng `python scripts/hard-check.py` (mẫu: `examples/hard-rules/`). CI chạy trên file đổi của mỗi Pull Request.
+- **Thay đổi nguyên tử** (`agents/protocols/atomic-changes.md`): `merge-gate` cảnh báo khi PR quá lớn (chỉnh ngưỡng trong `PROJECT.md`).
+- **Eval cho skill** (`agents/protocols/skill-eval.md`): rubric, trọng tài khác họ, nhiều model; chạy thử không tốn token ở `examples/skill-eval/`.
+- **Tái hiện lỗi** (`agents/protocols/bug-repro.md`): nhận báo lỗi, tái hiện trên `main`, rồi mới sửa hoặc đóng; dẫn chứng bắt buộc (`definition-of-done.md`).
+
 Nếu bạn bổ sung skill mới: đặt ở **`.agents/skills/<tên>/SKILL.md`**, chạy `python scripts/check-skills.py`, ghi vào `agents/knowledge/skills.md`, rồi commit qua Merge Request. Hướng dẫn đầy đủ: `agents/protocols/skills-policy.md`.
 
 ## Dùng cho dự án mới
 
-1. Copy cả thư mục `agent-base` sang thư mục dự án mới (bỏ `.git`, rồi `git init -b main`). Dự án có `node_modules` hay `.venv` nặng thì đặt **ngoài OneDrive**.
+> **Dành cho AI được đưa đường dẫn agent-base:** đọc `agents/manifest.txt` (mang gì sang) và `agents/protocols/agent-base-sync.md` (cài và đồng bộ ngược), rồi `agents/protocols/onboarding.md` (sau khi cài). **Không copy cả thư mục**: repo này còn chứa đồ riêng (`cookies/`, `tools/`, `tasks/T-*`, `docs/*`).
+
+Cài bằng một lệnh, chạy từ thư mục agent-base:
+
+```
+python scripts/bootstrap-project.py --target <thư mục dự án> --mode hidden --dry-run
+python scripts/bootstrap-project.py --target <thư mục dự án> --mode hidden
+```
+
+- `--mode hidden`: agent-base chỉ nằm trên máy, tự ghi `.git/info/exclude` (cần `git init -b main` ở dự án trước). `--mode git`: agent-base lên git của dự án.
+- Không ghi đè file đã có; ghi `.agent-base.json` làm mốc để sau này biết phía nào đã sửa.
+- **Sửa phần khung ở dự án thì phải đưa ngược về đây**: chạy `python scripts/agent-base-diff.py` trong dự án (chi tiết `agents/protocols/agent-base-sync.md`).
+
+Các bước sau khi cài (cách cũ, làm tay, vẫn đúng):
+
+1. (Nếu không dùng script) copy các mục trong `agents/manifest.txt` sang thư mục dự án, `git init -b main`. Dự án có `node_modules` hay `.venv` nặng thì đặt **ngoài OneDrive**.
 2. **Khởi tạo và nhận diện dự án**:
    - **Cách 1 (Tự động nhận diện code có sẵn)**: Chạy lệnh dưới đây để tự quét stack, CSDL, lệnh test và tự điền `PROJECT.md`:
      ```
@@ -150,13 +176,29 @@ Nếu bạn bổ sung skill mới: đặt ở **`.agents/skills/<tên>/SKILL.md`
    powershell -File scripts/install-hooks.ps1
    ```
    Quy tắc nhánh, commit và bảo vệ nhánh nằm ở `agents/protocols/git-rules.md`. Bảo vệ nhánh phía GitHub bạn cài tay một lần (Settings → Branches).
-6. **Mở đúng thư mục chứa `.kilo/`** làm workspace trong Antigravity (Kilo chỉ tìm vai trò ở workspace, không tìm ở thư mục cha), cài extension Kilo Code, giao việc cho `orchestrator`.
+6. **Mở đúng thư mục chứa `.kilo/`** làm workspace trong Antigravity (Kilo chỉ tìm vai trò ở workspace, không tìm ở thư mục cha), cài extension Kilo Code, giao việc cho `lead`.
 
 Kiểm tra file sinh ra còn khớp nguồn không (dùng được trong CI hoặc trước khi commit):
 
 ```
 powershell -File scripts/sync-adapters.ps1 -Check
 ```
+
+## Xem dự án trên trình duyệt (bảng điều khiển)
+
+Lấy agent-base về dùng cho dự án nào cũng xem được tiến độ, tài liệu và sơ đồ của dự án đó. Không cần cài thêm, chỉ cần Python:
+
+```
+python scripts/generate-dashboard.py     # sinh build/viewer/ (thư mục sinh ra, đã .gitignore)
+```
+
+Rồi mở `build/viewer/index.html` trên trình duyệt: lộ trình epic, task card, thư viện tài liệu (`docs/**`), nút mở bản đồ sơ đồ nếu có `docs/diagrams/index.html`. Nội dung tự lấy từ `PROJECT.md`, `tasks/` và `docs/`, không gắn với dự án nào. Muốn xem trực tiếp trạng thái agent đang chạy:
+
+```
+python scripts/watch-swarm.py            # http://localhost:4200/ (giám sát) và /dashboard.html; chỉ nghe 127.0.0.1
+```
+
+Mã nằm ở `tools/viewer/` (thu thập dữ liệu, dựng site, giao diện tách riêng). Trang đầu rất nhẹ, nội dung từng tài liệu chỉ nạp khi bạn mở nó.
 
 ## Chạy song song
 

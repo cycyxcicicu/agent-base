@@ -1,0 +1,20 @@
+{
+  "rules": [
+    {
+      "id": "tests-unittest-only",
+      "type": "forbid_regex",
+      "description": "CI chạy `python -m unittest discover -s tests` và chỉ cài pyyaml, nên test không được phụ thuộc pytest (lỗi đã lặp 2 lần ngày 2026-10-18: test_viewer.py và test_skill_eval.py viết kiểu pytest, CI bỏ qua 12 test)",
+      "include": ["tests/**/*.py"],
+      "pattern": "^\\s*(import pytest|from pytest\\b)",
+      "message": "Viết test bằng unittest.TestCase + tempfile; CI không cài pytest"
+    },
+    {
+      "id": "tests-no-bare-test-functions",
+      "type": "forbid_regex",
+      "description": "Hàm test ở cấp module (def test_...) không được `unittest discover` thu thập nên CI âm thầm bỏ qua; cùng sự cố ngày 2026-10-18",
+      "include": ["tests/**/*.py"],
+      "pattern": "^def test_",
+      "message": "Đặt test trong một lớp kế thừa unittest.TestCase (hàm test_ cấp module bị CI bỏ qua)"
+    }
+  ]
+}

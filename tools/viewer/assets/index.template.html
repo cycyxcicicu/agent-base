@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@@NAME@@ — Project Cockpit & Task Roadmap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="header-inner">
+      <div class="brand-group">
+        <div class="brand-icon">@@BRAND_LETTER@@</div>
+        <div class="brand-text">
+          <h1>@@NAME@@ <span class="badge-phase">Cockpit & Roadmap</span></h1>
+          <p>@@DESC@@ • Cập nhật: @@NOW_STR@@</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        @@DIAGRAM_LINK@@
+        <a href="monitor.html" class="btn btn-ghost" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+          ⚡ Giám Sát Agent Swarm
+        </a>
+        <button class="btn btn-primary" onclick="window.location.reload()">
+          🔄 Làm mới dữ liệu
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- KPI Overview -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">🎯 Tổng tiến độ dự án</div>
+        <div class="kpi-val" style="color: #38bdf8;">@@PCT_COMPLETE@@% <span class="kpi-sub">(@@DONE_TASKS@@/@@TOTAL_TASKS@@ task)</span></div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" style="width: @@PCT_COMPLETE@@%;"></div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">✅ Đã hoàn thành (Done)</div>
+        <div class="kpi-val" style="color: var(--success);">@@DONE_TASKS@@ <span class="kpi-sub">tasks</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">🔄 Đang thực hiện (Doing)</div>
+        <div class="kpi-val" style="color: var(--info);">@@DOING_TASKS@@ <span class="kpi-sub">tasks</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">⬜ Chờ thực hiện (Todo)</div>
+        <div class="kpi-val" style="color: var(--text-muted);">@@TODO_TASKS@@ <span class="kpi-sub">tasks</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">💻 Task Code Ứng Dụng</div>
+        <div class="kpi-val" style="color: #a855f7;">@@CODE_TASKS_COUNT@@ <span class="kpi-sub">code tasks</span></div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchMainTab('roadmap')">
+        🗺️ Sơ Đồ Lộ Trình Task (Xem Task Đi Đến Đâu)
+      </button>
+      <button class="tab-btn" onclick="switchMainTab('tasks')">
+        📋 Quản Lý Task & Đọc Tài Liệu <span class="tab-badge">@@TOTAL_TASKS@@</span>
+      </button>
+      <button class="tab-btn" onclick="switchMainTab('docs')">
+        📚 Thư Viện Tài Liệu Hệ Thống <span class="tab-badge">@@LEN_DOCS@@ Mục</span>
+      </button>
+      <button class="tab-btn" onclick="switchMainTab('code')">
+        💻 Theo Dõi Code Thay Đổi <span class="tab-badge">@@CODE_TASKS_COUNT@@</span>
+      </button>
+      <button class="tab-btn" onclick="switchMainTab('gates')">
+        🚦 Cổng Chất Lượng <span class="tab-badge">@@LEN_GATES@@ Cổng</span>
+      </button>
+    </div>
+
+    <!-- TAB 1: Sơ Đồ Lộ Trình Task (Roadmap) -->
+    <div id="tab-roadmap" class="tab-content-pane">
+      <div class="roadmap-hero">
+        <div class="radar-current">
+          📍 TRẠNG THÁI TIẾN ĐỘ: Đã xong @@DONE_TASKS@@/@@TOTAL_TASKS@@ task (@@PCT_COMPLETE@@%) • Đang thực hiện @@DOING_TASKS@@ task
+        </div>
+        <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 8px;">Bản Đồ Tuyến Đường & Tiến Trình Triển Khai</h2>
+        <p style="color: var(--text-muted); font-size: 14px; max-width: 900px;">
+          Sơ đồ trực quan hóa tiến trình thực hiện toàn diện theo từng chặng, qua các cổng chất lượng và từng nhóm chức năng (Epic). Nhấp vào bất kỳ chặng nào để mở nhanh danh sách task tương ứng!
+        </p>
+      </div>
+
+      <div class="pipeline-container">
+        @@ROADMAP_STAGES_RENDERED_STR@@
+      </div>
+    </div>
+
+    <!-- TAB 2: Quản lý Task & Đọc Tài Liệu -->
+    <div id="tab-tasks" class="tab-content-pane" style="display: none;">
+      <div class="controls-panel">
+        <div class="filter-group">
+          <div class="search-box">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="searchInput" placeholder="Tìm kiếm mã task (T-45), tên chức năng, file code..." oninput="applyFilters()">
+          </div>
+
+          <select id="epicSelect" class="select-dropdown" onchange="applyFilters()">
+            @@EPIC_OPTIONS_STR@@
+          </select>
+
+          <div class="chip-group">
+            <button class="chip-btn active" data-status="ALL" onclick="setStatusFilter('ALL', this)">Tất cả</button>
+            <button class="chip-btn" data-status="done" onclick="setStatusFilter('done', this)">✅ Đã xong (@@DONE_TASKS@@)</button>
+            <button class="chip-btn" data-status="doing" onclick="setStatusFilter('doing', this)">🔄 Đang làm (@@DOING_TASKS@@)</button>
+            <button class="chip-btn" data-status="todo" onclick="setStatusFilter('todo', this)">⬜ Chờ làm (@@TODO_TASKS@@)</button>
+            <button class="chip-btn" data-status="code_only" onclick="setStatusFilter('code_only', this)">💻 Chỉ Task Code (@@CODE_TASKS_COUNT@@)</button>
+          </div>
+        </div>
+
+        <div class="view-toggle">
+          <button class="view-btn active" id="viewCardsBtn" onclick="setViewMode('cards')">🔲 Thẻ</button>
+          <button class="view-btn" id="viewTableBtn" onclick="setViewMode('table')">📋 Bảng</button>
+        </div>
+      </div>
+
+      <div id="tasksCardsContainer" class="task-grid"></div>
+      <div id="tasksTableContainer" class="task-table-wrap" style="display: none;"></div>
+    </div>
+
+    <!-- TAB 3: Thư Viện Tài Liệu Hệ Thống (Hiển Thị Render Trực Tiếp HTML) -->
+    <div id="tab-docs" class="tab-content-pane" style="display: none;">
+      <div class="roadmap-hero" style="margin-bottom: 24px;">
+        <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 6px;">📚 Thư Viện Tài Liệu Đặc Tả & Kiến Trúc Hệ Thống</h2>
+        <p style="color: var(--text-muted); font-size: 13px;">
+          Tự động thu thập và sinh giao diện trực quan cho toàn bộ <strong>@@LEN_DOCS@@</strong> tài liệu, hợp đồng API, cấu trúc cơ sở dữ liệu và quyết định kiến trúc.
+          <strong style="color: #38bdf8;">Nhấp vào bất kỳ tài liệu nào để đọc trực tiếp dưới định dạng HTML đầy đủ!</strong>
+        </p>
+      </div>
+
+      <!-- Controls Panel for Docs: Search + Category Filter -->
+      <div class="controls-panel">
+        <div class="filter-group">
+          <div class="search-box">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="docSearchInput" placeholder="Tìm tài liệu (API Contract, ADR, Spec, ERD, QA...)" oninput="applyDocFilters()">
+          </div>
+
+          <div class="chip-group" id="docCategoryChips">
+            <button class="chip-btn active" data-cat="ALL" onclick="setDocCategoryFilter('ALL', this)">Tất cả (@@LEN_DOCS@@)</button>
+            @@DOC_CATEGORY_CHIPS_STR@@
+          </div>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);" id="docFilteredCount">
+          Hiển thị <strong>@@LEN_DOCS@@</strong> tài liệu
+        </div>
+      </div>
+
+      <div class="docs-catalog-grid" id="docsCatalogGrid">
+        <!-- Rendered dynamically by renderDocs() in rich interactive HTML -->
+      </div>
+    </div>
+
+    <!-- TAB 4: Theo Dõi Code Thay Đổi -->
+    <div id="tab-code" class="tab-content-pane" style="display: none;">
+      <div class="drawer-section">
+        <h3 style="font-size: 16px; margin-bottom: 12px; color: #fff;">💡 Bộ Lọc Chuyên Biệt: Chỉ Xem Code Thay Đổi Của Ứng Dụng</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+          Khu vực này tách biệt hoàn toàn giữa tài liệu và code: Bạn có thể thấy rõ các task nào đã sửa mã nguồn ứng dụng, các file đã thay đổi và nhật ký commit git.
+        </p>
+        
+        <div style="margin-bottom: 24px;">
+          <h4 style="font-size: 14px; color: var(--primary-light); margin-bottom: 10px;">Các Task Code Đã Hoàn Thành & Đã Merge:</h4>
+          <div class="task-grid" id="codeTasksGrid"></div>
+        </div>
+
+        <h4 style="font-size: 14px; color: var(--primary-light); margin-bottom: 10px;">Lịch sử Commit Gần Nhất (Git Log Stat):</h4>
+        <div class="git-terminal">
+          <pre>@@GIT_STAT@@</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: Quality Gates -->
+    <div id="tab-gates" class="tab-content-pane" style="display: none;">
+      <div class="drawer-section">
+        <h3 style="font-size: 16px; margin-bottom: 16px; color: #fff;">🚦 Trạng Thái Cổng Kiểm Soát Chất Lượng (Quality Gates)</h3>
+        <div id="gatesListContainer" style="display: grid; gap: 14px;"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Slide-over Drawer (Document & Task Details Viewer) -->
+  <div id="drawerOverlay" class="drawer-overlay" onclick="closeDrawer()"></div>
+  <div id="drawerPanel" class="drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title-area">
+        <div class="drawer-meta-badges">
+          <span id="drawerTaskId" class="task-id-badge">T-00</span>
+          <span id="drawerStatusPill" class="status-pill">Trạng thái</span>
+          <span id="drawerEpicBadge" class="task-tag">Epic</span>
+          <span id="drawerPhaseBadge" class="task-tag">Phase</span>
+          <span id="drawerOwnerBadge" class="task-tag">Owner</span>
+        </div>
+        <h2 id="drawerTitle" class="drawer-title">Tiêu đề công việc</h2>
+      </div>
+      <button class="drawer-close-btn" onclick="closeDrawer()" title="Đóng (Esc)">✕</button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="drawer-section" id="drawerMetaSection" style="padding: 14px 18px; margin-bottom: 16px; background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.25);">
+        <div style="font-size: 13px; display: flex; flex-direction: column; gap: 6px;">
+          <div><strong style="color: var(--primary-light);">Nhánh Git / Thư mục:</strong> <code id="drawerBranch" class="inline-code">feat/..</code></div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div><strong style="color: var(--primary-light);">Đường dẫn File:</strong> <span id="drawerRelPath" style="font-family: var(--font-mono); font-size: 12px; color: #94a3b8;">tasks/..</span></div>
+            <a id="drawerRawLink" href="#" target="_blank" class="btn btn-ghost" style="padding: 3px 8px; font-size: 11px;">Mở file raw ↗</a>
+          </div>
+          <div id="drawerScopeWrap"><strong style="color: var(--primary-light);">Phạm vi sửa code (scope_edit):</strong> <span id="drawerScope" style="font-family: var(--font-mono); font-size: 12px; color: #38bdf8;"></span></div>
+          <div id="drawerBlockedWrap"><strong style="color: #ef4444;">Bị chặn bởi (blocked_by):</strong> <span id="drawerBlocked" style="font-family: var(--font-mono); font-size: 12px; color: #fca5a5;"></span></div>
+        </div>
+      </div>
+
+      <div class="drawer-section">
+        <div class="drawer-section-title" id="drawerBodyTitle">📄 Chi Tiết & Toàn Bộ Nội Dung Tài Liệu</div>
+        <div id="drawerMdContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Embedded Data & Scripts -->
+  <script src="data.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

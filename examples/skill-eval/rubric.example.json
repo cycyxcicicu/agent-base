@@ -1,0 +1,7 @@
+{
+  "skill": "investigate-example",
+  "items": [
+    {"id": "doc-file", "description": "Câu trả lời nói rõ đã đọc file nào trước khi kết luận nguyên nhân", "weight": 2},
+    {"id": "evidence", "description": "Có dẫn chứng dạng file:dòng cụ thể", "weight": 1}
+  ]
+}

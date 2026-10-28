@@ -25,7 +25,7 @@ Chỉ **người dùng** duyệt và ghi vào sổ này. Chưa có dòng nào ng
 | plan-eng-review | Tự viết (lấy ý từ https://github.com/garrytan/gstack) | local | 2026-09-21 | User | architect, dev, reviewer | Không | Tự viết (ý từ gstack). Thẩm định kỹ thuật: thử tải 10x, race condition, DB table lock, ranh giới module |
 | cso | Tự viết (lấy ý từ https://github.com/garrytan/gstack) | local | 2026-09-21 | User | security, reviewer, dev | Có (Python scripts/cso.py) | Tự viết (ý từ gstack). Quét bảo mật tĩnh OWASP, credentials rò rỉ, injection và traversal |
 | ship | Tự viết (lấy ý từ https://github.com/garrytan/gstack) | local | 2026-09-21 | User | devops, dev | Không | Tự viết (ý từ gstack). Chuẩn bị release: test/lint theo PROJECT.md, bump version, changelog, PR gate (cấm AI tự push/deploy) |
-| archify | Tự viết (lấy ý từ https://github.com/tt-a1i/archify) | local | 2026-09-21 | User | architect, designer, writer | Không | Tự viết (ý từ archify). Trình biên dịch Interactive System Map HTML/SVG từ typed JSON IR |
+| archify | Tự viết (lấy ý từ https://github.com/tt-a1i/archify) | local | 2026-09-21 | User | architect, designer, ba, dba, writer | Không | Tự viết (ý từ archify). Trình biên dịch Interactive System Map HTML/SVG từ typed JSON IR |
 | archify-review | Tự viết (lấy ý từ https://github.com/tt-a1i/archify) | local | 2026-09-21 | User | architect, reviewer, product | Không | Tự viết (ý từ archify). Đánh giá thay đổi kiến trúc qua 3 chiều: Value, Cost, Impact |
 | swarm-orchestration | Tự viết (lấy ý từ https://github.com/ruvnet/ruflo) | local | 2026-09-21 | User | architect, dev | Không | Tự viết (ý từ ruflo). Điều phối đàn đa Agent phân tầng, cách ly ngữ cảnh sạch và handoff protocol |
 | sparc-methodology | Tự viết (lấy ý từ https://github.com/ruvnet/ruflo) | local | 2026-09-21 | User | dev, architect, qa | Không | Tự viết (ý từ ruflo). Chu trình phát triển SPARC 5 pha: Spec, Pseudocode, Arch, Refinement, Completion |
@@ -35,6 +35,8 @@ Chỉ **người dùng** duyệt và ghi vào sổ này. Chưa có dòng nào ng
 | office-hours | Tự viết (lấy ý từ https://github.com/garrytan/gstack) | local | 2026-09-21 | User | product, ba | Không | Tự viết (ý từ gstack). Buổi phản biện và tư vấn Founder mode Y-Combinator (6 câu hỏi bóc trần nhu cầu) |
 | investigate | Tự viết (lấy ý từ https://github.com/garrytan/gstack) | local | 2026-09-21 | User | dev, sre, qa | Không | Tự viết (ý từ gstack). Điều tra nguyên nhân gốc rễ lỗi sâu (Root Cause Analysis - 5 Whys) |
 | devex-review | Tự viết (lấy ý từ https://github.com/garrytan/gstack) | local | 2026-09-21 | User | dev, reviewer, architect | Không | Tự viết (ý từ gstack). Thẩm định trải nghiệm lập trình viên (Developer Experience: TTHW, CLI clarity, error docs) |
+| codebase-map | Tự viết (lấy ý từ https://github.com/Graphify-Labs/graphify, xem mã bản 0.9.92 commit 86c57be) | local | 2026-10-18 | User | analyst, architect, dev | Không | Tự viết (ý từ Graphify). Cấp 0: bản đồ thư mục `docs/CODEMAP.md`; cấp 1 tùy chọn: chỉ đọc đồ thị Graphify do người dùng tự cài và build `--code-only`. Không chép skill gốc, cấm hook/install |
+| feature-map | Tự viết (lấy ý từ bài chia sẻ của Lauren Tan về create/maintain verification skill; chưa xác minh nguồn gốc) | local | 2026-10-19 | User | designer, qa, dev | Không | Tự viết. Tạo (create) và duy trì (maintain) `docs/design/feature-map.md`: khám phá mã, kiểm trên ứng dụng thật, chạy `scripts/feature-map-check.py` bắt bản đồ lệch mã |
 
 
 

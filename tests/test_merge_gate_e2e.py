@@ -224,7 +224,7 @@ class TestGateMustPass(GateRepoTestCase):
         self.assertGatePasses("l-note")
 
     def test_new_pending_risk_ticket(self):
-        """risk-gate.md: orchestrator lập phiếu PENDING trên nhánh, việc duyệt do người thực hiện trên nhánh gốc."""
+        """risk-gate.md: lead lập phiếu PENDING trên nhánh, việc duyệt do người thực hiện trên nhánh gốc."""
         self.branch("l-rk")
         self.write("docs/risk/RK-3.md", "Status: PENDING\n\n## Chấp thuận\n(để trống)\n")
         self.commit_all()
@@ -274,6 +274,62 @@ class TestGateMustPass(GateRepoTestCase):
         self.commit_all()
         self.git("checkout", "-q", "develop")
         self.assertGateFails("l-standing", text="AGENTS.md")
+
+
+class TestGateChangeSize(GateRepoTestCase):
+    """Cỡ thay đổi (PR nguyên tử): mặc định chỉ cảnh báo, --strict-size mới chặn; lockfile không tính."""
+
+    def run_gate_args(self, branch, *extra):
+        res = subprocess.run(
+            [sys.executable, str(GATE), "--branch", branch, "--card", "tasks/T-1.md", "--base", "develop", *extra],
+            cwd=self.repo, capture_output=True, text=True, encoding="utf-8",
+        )
+        return res.returncode, res.stdout + res.stderr
+
+    def big_branch(self, name, lines=30):
+        self.branch(name)
+        self.write("src/big.py", "".join(f"x{i} = {i}\n" for i in range(lines)))
+        self.commit_all()
+
+    def test_over_limit_warns_but_passes(self):
+        self.big_branch("s-warn")
+        code, out = self.run_gate_args("s-warn", "--max-lines", "10")
+        self.assertEqual(code, 0, out)
+        self.assertIn("WARN", out)
+        self.assertIn("src/big.py", out)
+
+    def test_over_limit_fails_when_strict(self):
+        self.big_branch("s-strict")
+        code, out = self.run_gate_args("s-strict", "--max-lines", "10", "--strict-size")
+        self.assertEqual(code, 1, out)
+        self.assertIn("FAIL", out)
+
+    def test_under_limit_is_silent(self):
+        self.big_branch("s-ok", lines=5)
+        code, out = self.run_gate_args("s-ok", "--max-lines", "10", "--strict-size")
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("WARN", out)
+
+    def test_limit_read_from_project_md(self):
+        self.branch("s-proj")
+        self.write("PROJECT.md", "| Giới hạn dòng thay đổi | 10 |\n")
+        self.commit_all()
+        self.git("checkout", "-q", "develop")
+        self.git("merge", "-q", "s-proj")
+        self.branch("s-proj2")
+        self.write("src/big.py", "".join(f"x{i} = {i}\n" for i in range(30)))
+        self.commit_all()
+        code, out = self.run_gate_args("s-proj2", "--strict-size")
+        self.assertEqual(code, 1, out)
+
+    def test_lockfile_not_counted(self):
+        self.branch("s-lock")
+        self.write("package-lock.json", "".join(f'"a{i}": {i},\n' for i in range(500)))
+        self.write("src/a.py", "print(2)\n")
+        self.commit_all()
+        code, out = self.run_gate_args("s-lock", "--max-lines", "10")
+        # package-lock.json nằm ngoài scope_edit nên vẫn bị chặn theo phạm vi, nhưng KHÔNG được báo vượt cỡ
+        self.assertNotIn("dòng thay đổi", out)
 
 
 if __name__ == "__main__":

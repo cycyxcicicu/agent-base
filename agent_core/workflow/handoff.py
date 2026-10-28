@@ -32,7 +32,7 @@ class HandoffRouter:
         "dev": ["qa", "reviewer", "devops", "security", "writer"],
         "mobile": ["qa", "reviewer", "devops", "security", "writer"],
         "qa": ["dev", "mobile", "devops", "sre", "reviewer"],
-        "reviewer": ["dev", "mobile", "devops", "writer", "orchestrator"],
+        "reviewer": ["dev", "mobile", "devops", "writer", "lead"],
         "security": ["dev", "mobile", "devops", "sre", "architect", "reviewer"],
         "devops": ["sre", "dev", "mobile", "security"],
         "sre": ["devops", "dev", "security"],
@@ -40,8 +40,8 @@ class HandoffRouter:
         "researcher": ["analyst", "architect", "ai-eng", "product"],
         "ai-eng": ["dev", "architect", "researcher", "qa"],
         "debt-hunter": ["dev", "architect", "reviewer"],
-        "writer": ["reviewer", "product", "orchestrator"],
-        "orchestrator": [
+        "writer": ["reviewer", "product", "lead"],
+        "lead": [
             "analyst", "product", "ba", "architect", "designer", "dev", "mobile",
             "qa", "reviewer", "security", "devops", "sre", "dba", "researcher",
             "ai-eng", "debt-hunter", "writer"
@@ -51,7 +51,7 @@ class HandoffRouter:
     @classmethod
     def can_transition(cls, from_role: str, to_role: str) -> bool:
         allowed = cls.VALID_TRANSITIONS.get(from_role.lower(), [])
-        return to_role.lower() in allowed or from_role.lower() == "orchestrator"
+        return to_role.lower() in allowed or from_role.lower() == "lead"
 
     @classmethod
     def create_note(

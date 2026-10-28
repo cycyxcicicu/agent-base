@@ -33,7 +33,7 @@ Nghi ngờ việc nào đó có thuộc nhóm này không thì **coi là có** v
 | Merge kiểu nào? | `git show --no-patch --format=%P <mã>`: hai mã cha là merge commit (dùng `-m 1`); một mã cha là squash hoặc rebase (dùng `git revert <mã>`, **không** `-m`) | Dừng, hỏi |
 | Sẽ mất gì? | `git diff --stat <mã>^1 <mã>` (merge) hoặc `git show --stat <mã>`; liệt kê file, hàm, hành vi cụ thể | Không kết luận |
 | Ai phụ thuộc vào nó? | `git log --oneline <mã>..HEAD -- <file>` (commit sau đã sửa cùng file); `git grep` các tên hàm hoặc lớp bị bỏ | Ghi vào "chưa xác minh" |
-| Việc đang chạy có dựa vào nó không? | `git worktree list`, `git branch -a --no-merged`, các card `doing` | Hỏi Orchestrator |
+| Việc đang chạy có dựa vào nó không? | `git worktree list`, `git branch -a --no-merged`, các card `doing` | Hỏi Lead |
 | Có thay đổi chưa commit ở worktree khác? | `git -C <đường-dẫn> status --short` cho từng worktree | Báo người dùng |
 | Đã phát hành chưa? | `git tag --contains <mã>` | Nếu đã lên production: đi đường `hotfix`, hỏi người dùng |
 | Có phần ngoài git không? | có file migration trong thay đổi? dữ liệu đã ghi? đã deploy? dịch vụ ngoài? card có "Kịch bản hoàn tác"? | Nêu rõ là **không hoàn tác được bằng git** |
@@ -48,7 +48,7 @@ Ghi lại **mã HEAD** tại lúc đánh giá vào phiếu. Đó là mốc để
 # RK-3: Hoàn tác T-12 (feature/12-token-check)
 
 Status: PENDING
-Ngày lập: YYYY-MM-DD        Người lập: orchestrator
+Ngày lập: YYYY-MM-DD        Người lập: lead
 Mốc kiểm tra: nhánh develop, HEAD <mã>
 Yêu cầu nguyên văn của người dùng: "..."
 

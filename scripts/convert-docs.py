@@ -204,7 +204,7 @@ def convert_single_file(file_path: Path, output_dir: Path, enable_ocr: bool = Fa
 1. Mở song song bản gốc trong `docs/source/` và bản `docs/converted/`.
 2. Kiểm tra các ô gộp, công thức tính toán và số liệu bảng biểu.
 3. Rút các dòng yêu cầu `R-xxx` đưa vào `docs/requirements/requirements.md`.
-4. Liệt kê các điểm mơ hồ hoặc mâu thuẫn vào mục "Không chắc" để Orchestrator/Người dùng duyệt.
+4. Liệt kê các điểm mơ hồ hoặc mâu thuẫn vào mục "Không chắc" để Lead/Người dùng duyệt.
 """
 
     out_report.write_text(report_content, encoding="utf-8")

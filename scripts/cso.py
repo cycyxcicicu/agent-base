@@ -47,6 +47,9 @@ def main():
     print("\n" + "=" * 60)
     print(f"CSO Security Audit Report - Verdict: {gate['verdict']}")
     print(f"Critical: {gate['critical']} | High: {gate['high']} | Medium: {gate['medium']}")
+    print(f"Miễn trừ có lý do (# cso: allow): {getattr(scanner, 'suppressed_count', 0)}")
+    for finding, reason in getattr(scanner, "suppressed", []):
+        print(f"  - {finding.file_path}:{finding.line_number} {finding.rule_id} — {reason}")
     print("=" * 60)
 
     if findings:

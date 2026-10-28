@@ -36,7 +36,7 @@ class TicketParser:
         # Bóc tách tiêu đề # T-01: ...
         for line in lines:
             if line.startswith("# "):
-                m = re.match(r"#\s+([A-Z0-9_\-]+)\s*:\s*(.*)", line)
+                m = re.match(r"#\s+([A-Za-z0-9_.-]+)\s*:\s*(.*)", line)
                 if m:
                     ticket_id = m.group(1).strip()
                     title = m.group(2).strip()
@@ -53,7 +53,7 @@ class TicketParser:
                         break
             if "Bị chặn bởi" in line or "blocked_by" in line.lower():
                 # Tìm các mã ticket dạng T-01, T-02
-                matches = re.findall(r"\b[A-Z]+-\d+\b", line)
+                matches = re.findall(r"\b[A-Za-z0-9_.-]+-\d+(?:\.\d+)?\b", line)
                 blocked_by.extend([m for m in matches if m != ticket_id])
 
         # Kiểm tra vertical slices

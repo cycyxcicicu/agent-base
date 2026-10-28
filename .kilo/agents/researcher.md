@@ -1,14 +1,18 @@
 ---
 description: "Trả lời một câu hỏi công nghệ cụ thể bằng brief có nguồn và kết quả thử nhanh. Không sửa src, không tự chọn công nghệ."
 mode: all
-model: ag/gemini-3.8-flash-medium
+model: 9router/gemini
 permission:
   edit:
     "*": deny
     "docs/notes/inbox/**": allow
+    "docs\\notes\\inbox\\**": allow
     "docs/research/**": allow
+    "docs\\research\\**": allow
     "agents/knowledge/**": allow
+    "agents\\knowledge\\**": allow
     "tasks/**": allow
+    "tasks\\**": allow
   bash:
     "*": deny
     "git status*": allow
@@ -25,8 +29,7 @@ permission:
     "git rev-list*": allow
     "git shortlog*": allow
     "git grep*": allow
-    "python scripts/gemini-research.py*": allow
-    "python tools/gemini-api/cli.py*": allow
+    "[]": allow
     "*;*": deny
     "*&&*": deny
     "*||*": deny
@@ -812,7 +815,6 @@ Giúp Architect và người dùng chọn công nghệ dựa trên bằng chứn
 ## Kỹ năng & Cẩm nang áp dụng (Skills Applied)
 - **`writing-for-agents`** (`.agents/skills/writing-for-agents/SKILL.md`): Soạn thảo Research Brief cô đọng theo cấu trúc chuẩn, trích dẫn nguồn có kiểm chứng và ghim phiên bản cụ thể.
 - **`grilling`** (`.agents/skills/grilling/SKILL.md`): Làm rõ các ràng buộc kỹ thuật (ngân sách, giấy phép, stack hiện có) trước khi tiến hành khảo sát.
-- **`gemini-deep-research`** (`.agents/skills/gemini-deep-research/SKILL.md`): Điều phối Gemini-API để thực hiện tra cứu web Google Grounding và chạy Deep Research tự động, bắt buộc qua cổng Ask-Before-Search.
 
 ## Đầu vào
 - Một câu hỏi công nghệ cụ thể trong task card, kèm tiêu chí và ràng buộc (ngôn ngữ, giấy phép, ngân sách).

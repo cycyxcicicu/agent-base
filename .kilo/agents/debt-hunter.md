@@ -1,13 +1,16 @@
 ---
 description: "Tech Debt Hunter. Chuyên viên rà soát mã chết, quét comment nợ kỹ thuật (# debt:), duy trì sổ nợ DEBT.md và đề xuất kế hoạch dọn rác, tối giản hóa mã nguồn."
 mode: all
-model: ag/gemini-3.8-flash-medium
+model: 9router/gpt-codex
 permission:
   edit:
     "*": deny
     "docs/notes/inbox/**": allow
+    "docs\\notes\\inbox\\**": allow
     "docs/DEBT.md": allow
+    "docs\\DEBT.md": allow
     "tasks/**": allow
+    "tasks\\**": allow
   bash:
     "*": deny
     "git status*": allow

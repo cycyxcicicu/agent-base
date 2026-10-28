@@ -50,10 +50,13 @@ Do not scrape raw messy HTML with thousands of script/style lines. Extract the s
 When driving clicks and form inputs:
 - Use explicit selectors or unique text labels.
 - **Condition-Based Waiting**: Wait for network idle or for target element visibility. Never use arbitrary hardcoded sleep timers.
-- Test across responsive viewports when requested:
-  * Mobile: 375x667
-  * Tablet: 768x1024
-  * Desktop: 1280x800
+- **Viewport & Window Rules**:
+  * **When Headed (visible to user)**: MUST launch with `--start-maximized` and `viewport: null` (or min Desktop 1440x900) so the window cleanly adapts to the user's monitor without rigid letterbox black bars.
+  * **Responsive Multi-Viewport Matrix**: When verifying responsiveness, test across breakpoints sequentially:
+    * Mobile: 375x812 or 390x844
+    * Tablet: 768x1024
+    * Desktop: 1440x900 or 1920x1080
+  * **Never open raw markdown files (`.md`) directly in Chrome**: Only browse actual running web applications (`http://localhost:3000`).
 
 ### Step 4: Capture Evidence & Generate Report
 Every browser session must produce concrete evidence:

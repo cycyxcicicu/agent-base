@@ -1,15 +1,20 @@
 ---
 description: "Data Engineer. Xây dựng pipeline ETL/ELT, xử lý hàng đợi dữ liệu lớn (Kafka, RabbitMQ), thiết kế kho dữ liệu phân tích (OLAP, ClickHouse, BigQuery) và tối ưu thông lượng dữ liệu."
 mode: all
-model: ag/gemini-3.8-flash-medium
+model: 9router/gpt-codex
 permission:
   edit:
     "*": deny
     "docs/notes/inbox/**": allow
+    "docs\\notes\\inbox\\**": allow
     "data/**": allow
+    "data\\**": allow
     "etl/**": allow
+    "etl\\**": allow
     "docs/data/**": allow
+    "docs\\data\\**": allow
     "tasks/**": allow
+    "tasks\\**": allow
   bash:
     "*": allow
     "npm publish*": ask

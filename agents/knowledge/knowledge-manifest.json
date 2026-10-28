@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "nodes": [
+    {
+      "id": "Source:skills-registry",
+      "kind": "Source",
+      "title": "Skills Registry Source",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/skills.md",
+      "content_sha256": "175d0741a5c094d078cdb7d7be3428cf9f387f54d0918089434b5e7f48fd6f37",
+      "provenance": [],
+      "owner_role": "architect",
+      "relations": []
+    },
+    {
+      "id": "Rule:tech-radar-policy",
+      "kind": "Rule",
+      "title": "Tech Radar Adoption Policy",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/tech-radar.md",
+      "content_sha256": "ebc6785421476c706a3ddf09cc8dc13a06d22126d6f37a91cabac756982e363c",
+      "provenance": [
+        "Source:skills-registry"
+      ],
+      "owner_role": "architect",
+      "relations": [
+        {
+          "type": "derived_from",
+          "target": "Source:skills-registry"
+        }
+      ]
+    }
+  ]
+}

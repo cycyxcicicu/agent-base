@@ -4,11 +4,7 @@
 !.env.example
 *.pem
 *.key
-cookies/*.json
-!cookies/*.example.json
-!cookies/all_accounts.example.json
-gemini_cookies.json
-!gemini_cookies.example.json
+
 
 # Phụ thuộc và build
 node_modules/
@@ -16,10 +12,12 @@ node_modules/
 venv/
 __pycache__/
 *.pyc
+*.egg-info/
 bin/
 obj/
 dist/
 build/
+graphify-out/
 .next/
 
 # Nhật ký, tạm, hệ điều hành
@@ -34,7 +32,16 @@ Thumbs.db
 # AI tools, IDE and local config (per the GitFlow lecture)
 .claude/*
 !.claude/settings.json
-.codex/
+!.claude/agents/
+!.claude/agents/**
+.codex/*
+!.codex/agents/
+!.codex/agents/**
+.qoder/*
+!.qoder/agents/
+!.qoder/agents/**
+!.qoder/rules/
+!.qoder/rules/**
 .cursor/
 .vscode/
 .idea/
@@ -42,7 +49,6 @@ Thumbs.db
 target/
 *.class
 
-# Third-party cloned repositories in tools/ (managed via scripts/fetch-skills.py)
-tools/gemini-api/
+
 
 

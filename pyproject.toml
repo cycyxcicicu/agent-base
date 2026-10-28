@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-base"
+version = "0.1.0"
+description = "Shared agent framework: roles, protocols, gates and engineering core."
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pyyaml>=6", "pytest>=8"]
+
+[project.scripts]
+agent-base = "agent_core.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["agent_core*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

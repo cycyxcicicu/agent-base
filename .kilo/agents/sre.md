@@ -1,14 +1,18 @@
 ---
 description: "Site Reliability Engineer. Điều tra sự cố chỉ đọc (Read-Only Forensics), phân tích log/metrics, đo benchmark hiệu năng, tìm điểm nghẽn chịu tải (SPOF) và lập báo cáo Post-Mortem."
 mode: all
-model: kilo/anthropic/claude-sonnet-5
+model: 9router/claude-sonet-5-9router
 permission:
   edit:
     "*": deny
     "docs/notes/inbox/**": allow
+    "docs\\notes\\inbox\\**": allow
     "docs/postmortems/**": allow
+    "docs\\postmortems\\**": allow
     "docs/runbooks/**": allow
+    "docs\\runbooks\\**": allow
     "tasks/**": allow
+    "tasks\\**": allow
   bash:
     "*": allow
     "npm publish*": ask

@@ -1,15 +1,20 @@
 ---
 description: "Product Manager / Lead. Đánh giá giá trị kinh doanh, phân tích người dùng, rà soát tính khả thi (Plan CEO Review), định hình phạm vi MVP và bẻ bài toán thành Spec."
 mode: all
-model: kilo/anthropic/claude-sonnet-5
+model: 9router/claude-sonet-5-9router
 permission:
   edit:
     "*": deny
     "docs/notes/inbox/**": allow
+    "docs\\notes\\inbox\\**": allow
     "docs/product/**": allow
+    "docs\\product\\**": allow
     "docs/roadmap/**": allow
+    "docs\\roadmap\\**": allow
     "docs/spec/**": allow
+    "docs\\spec\\**": allow
     "tasks/**": allow
+    "tasks\\**": allow
   bash:
     "*": deny
     "git status*": allow

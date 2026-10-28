@@ -37,6 +37,7 @@ def run_diagnostics():
     print("🩺 BÁC SĨ CHẨN ĐOÁN HỆ THỐNG AGENT-BASE (ONBOARDING & ENVIRONMENT DIAGNOSTIC)")
     print("=" * 80)
     print(f"📁 Thư mục gốc: {ROOT_DIR}\n")
+    errors = 0
 
     # --------------------------------------------------------------------------
     # MỤC 1: KIỂM TRA MÔI TRƯỜNG PYTHON CƠ BẢN
@@ -55,9 +56,7 @@ def run_diagnostics():
     print(f"  {check_mark(has_gitignore)} Tệp .gitignore: {'Tồn tại' if has_gitignore else 'Thiếu'}")
 
     env_example = ROOT_DIR / ".env.example"
-    cookie_example = ROOT_DIR / "cookies" / "all_accounts.example.json"
     print(f"  {check_mark(env_example.exists())} Mẫu cấu hình môi trường (.env.example): {'Có sẵn' if env_example.exists() else 'Thiếu'}")
-    print(f"  {check_mark(cookie_example.exists())} Mẫu cấu hình cookies (cookies/all_accounts.example.json): {'Có sẵn' if cookie_example.exists() else 'Thiếu'}")
 
     # Hook git chỉ có tác dụng khi core.hooksPath trỏ vào .githooks. Đây là cấu hình cục bộ, không đi kèm khi clone,
     # nên bản clone mới không có hook mà không ai biết. Chỉ cảnh báo (không tính là lỗi); bỏ qua trên CI.
@@ -81,12 +80,8 @@ def run_diagnostics():
     real_env = ROOT_DIR / ".env"
     user_home_env = Path.home() / ".gemini" / ".env"
     agent_home_env = Path.home() / ".agent-base" / ".env"
-    real_cookies = ROOT_DIR / "cookies" / "all_accounts.json"
-    user_home_cookies = Path.home() / ".gemini" / "cookies" / "all_accounts.json"
 
     has_env = real_env.exists() or user_home_env.exists() or agent_home_env.exists()
-    has_cookies = real_cookies.exists() or user_home_cookies.exists()
-
     is_onedrive = any(cloud in str(ROOT_DIR).lower() for cloud in ["onedrive", "dropbox", "google drive", "box sync"])
 
     if user_home_env.exists():
@@ -101,48 +96,74 @@ def run_diagnostics():
     else:
         print(f"  {info_mark(False)} Tệp môi trường (.env): CHƯA CÓ (Bình thường trên máy mới)")
 
-    if user_home_cookies.exists():
-        print(f"  {info_mark(True)} Tệp tài khoản cookies: ĐÃ CÓ AN TOÀN NGOÀI ONEDRIVE ({user_home_cookies})")
-    elif real_cookies.exists():
-        print(f"  {info_mark(True)} Tệp tài khoản (cookies/all_accounts.json): ĐÃ CÓ CỤC BỘ")
+    # --------------------------------------------------------------------------
+    # MỤC 4: KIỂM TRA KHO KỸ NĂNG & QUARANTINE (SKILLS & AGENT RUNTIME)
+    # --------------------------------------------------------------------------
+    print("\n4️⃣ KIỂM TRA KHO KỸ NĂNG & QUARANTINE (SKILLS & AGENT RUNTIME):")
+    config_file = ROOT_DIR / "skills.config.json"
+    skills_dir = ROOT_DIR / ".agents" / "skills"
+    has_config = config_file.exists()
+    quarantine_ok = False
+    quarantine_desc = "Chưa cấu hình"
+    skills_count = 0
+
+    if has_config:
+        try:
+            import json
+            cfg_data = json.loads(config_file.read_text(encoding="utf-8"))
+            q_dir = cfg_data.get("quarantine_dir", "")
+            if q_dir:
+                p_q = Path(q_dir).expanduser()
+                if p_q.exists():
+                    quarantine_ok = True
+                    quarantine_desc = str(p_q)
+                else:
+                    quarantine_desc = f"{p_q} (Thư mục không tồn tại trên máy này)"
+        except Exception:
+            pass
+
+    if skills_dir.exists():
+        skills_count = len([d for d in skills_dir.iterdir() if d.is_dir() and (d / "SKILL.md").exists()])
+
+    if quarantine_ok and skills_count >= 20:
+        print(f"  ✅ Kho kỹ năng: Đã sẵn sàng ({skills_count} skills tại {skills_dir.name}/, kho quarantine: {quarantine_desc})")
+    elif os.environ.get("CI") and skills_count >= 20:
+        # Máy chủ CI không có kho kiểm dịch (nó nằm trên máy người dùng) nên chỉ cảnh báo, không làm đỏ CI.
+        print(f"  ⚠️ Kho kỹ năng: có {skills_count} skills trong {skills_dir.name}/ nhưng không có kho quarantine ({quarantine_desc}); bỏ qua trong CI.")
     else:
-        print(f"  {info_mark(False)} Tệp tài khoản (cookies/all_accounts.json): CHƯA CÓ (Bình thường trên máy mới)")
+        errors += 1
+        print(f"  ❌ Kho kỹ năng: CHƯA SẴN SÀNG ({skills_count} skills trong .agents/skills, cần tối thiểu 20; quarantine: {quarantine_desc})")
+        print("     👉 BẮT BUỘC CHẠY THIẾT LẬP TRƯỚC KHI DÙNG AGENT:")
+        print("        - Windows (PowerShell): .\\setup.ps1 (hoặc: python scripts/setup-skills.py)")
+        print("        - macOS / Linux:        ./setup.sh  (hoặc: python3 scripts/setup-skills.py)")
 
     # --------------------------------------------------------------------------
-    # MỤC 4: HƯỚNG DẪN ĐIỀN HOẶC KHÔNG ĐIỀN (TÙY CHỌN NGƯỜI DÙNG)
+    # MỤC 5: HƯỚNG DẪN CẤU HÌNH DÀNH CHO NGƯỜI DÙNG MỚI
     # --------------------------------------------------------------------------
-    print("\n4️⃣ HƯỚNG DẪN CẤU HÌNH DÀNH CHO NGƯỜI DÙNG MỚI:")
-    if not has_env and not has_cookies:
-        print("  📌 TRƯỜNG HỢP A: BẠN MUỐN DÙNG TÍNH NĂNG LIVE GEMINI DEEP RESEARCH / MULTI-ACCOUNT")
-        print("     [KHUYẾN NGHỊ BẢO MẬT: LƯU TRỮ NGOÀI ONEDRIVE ĐỂ CHỐNG LỘ BÍ MẬT]")
-        print(f"     1. Tạo thư mục an toàn: mkdir \"{Path.home() / '.gemini'}\"")
-        print(f"     2. Sao chép mẫu cấu hình: copy .env.example \"{user_home_env}\"")
-        print("     3. Điền token của bạn vào file trên: GEMINI_SECURE_1PSID=... và GEMINI_SECURE_1PSIDTS=...")
-        print(f"     4. (Hoặc sao chép cookies): copy cookies\\all_accounts.example.json \"{user_home_cookies}\"")
-        print("     5. Kiểm tra tài khoản bằng lệnh: python tools/cookie_rotation/account_manager.py --status\n")
-        
-        print("  💡 TRƯỜNG HỢP B: BẠN KHÔNG MUỐN ĐIỀN BẤT KỲ THÔNG TIN NÀO (CHẾ ĐỘ TỰ DO / OFFLINE)")
-        print("     - BẠN KHÔNG CẦN LÀM GÌ CẢ! Hệ thống được thiết kế hoàn toàn tự chủ.")
-        print("     - Toàn bộ các chức năng kỹ nghệ cốt lõi dưới đây VẪN CHẠY 100% OFFLINE:")
+    print("\n5️⃣ HƯỚNG DẪN CẤU HÌNH & VẬN HÀNH:")
+    if not has_env:
+        print("  💡 CHẾ ĐỘ HOÀN TOÀN TỰ CHỦ (OFFLINE / ZERO CONFIG):")
+        print("     - Hệ thống agent-base sẵn sàng hoạt động 100% không bắt buộc token API bên ngoài.")
+        print("     - Toàn bộ các chức năng kỹ nghệ cốt lõi dưới đây VẪN CHẠY HOÀN TOÀN TỰ ĐỘNG:")
         print("       * Đồ thị phân rã Tracer-Bullet DAG & Tìm đường biên Frontier (`agent_core/workflow/`)")
         print("       * Quét phòng thủ Red-teaming 7 véc-tơ & Giải mã Deobfuscator (`agent_core/eval/`)")
         print("       * Hệ thống Design Tokens & Kiểm định độ tương phản WCAG 2.1 AA/AAA (`agent_core/design/`)")
         print("       * Sổ cái nợ kỹ thuật DebtLedger & Cổng chặn Pre-Commit Gate (`agent_core/debt/`)")
         print("       * Bóc tách bảng tính Excel (.xlsx nhị phân) và làm sạch Web rác (`agent_core/ingest/`)")
         print("       * Toàn bộ 20 vai trò Agent & các kịch bản mô phỏng đa tác tử (`agents/roles/`)")
+        print("     - Khi cần kết nối API LLM thật, sao chép `.env.example` thành `.env` để cấu hình key.")
     else:
         print("  🎉 Máy hiện tại đã có cấu hình thông tin xác thực cục bộ!")
 
-    errors = 0
     if not py_ok:
         errors += 1
     if not has_gitignore:
         errors += 1
 
     # --------------------------------------------------------------------------
-    # MỤC 5: CHẠY THỬ NGHIỆM CHỨNG THỰC LÕI NỘI BỘ (SANITY SELF-CHECK)
+    # MỤC 6: CHẠY THỬ NGHIỆM CHỨNG THỰC LÕI NỘI BỘ (SANITY SELF-CHECK)
     # --------------------------------------------------------------------------
-    print("\n5️⃣ KIỂM TRA SỨC KHỎE CÁC MÔ-ĐUN KỸ NGHỆ (CORE HEALTH CHECK):")
+    print("\n6️⃣ KIỂM TRA SỨC KHỎE CÁC MÔ-ĐUN KỸ NGHỆ (CORE HEALTH CHECK):")
     try:
         from agent_core.workflow.tracer_bullet import Ticket, DependencyGraph
         t_sample = Ticket("T-00", "Sample Test", status="DONE")

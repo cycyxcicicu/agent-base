@@ -113,5 +113,58 @@ h = hashlib.md5(b'test_data', usedforsecurity=False).hexdigest()
         self.assertFalse(self.scanner.should_skip(githook))
         self.assertTrue(self.scanner.should_skip(git_internal))
 
+    def test_allow_directive_suppresses_same_line(self):
+        code = "subprocess.run(cmd, shell=True)  # cso: allow INJ-02 lệnh literal cố định"
+        scanner = CsoScanner()
+        findings = scanner.scan_file_content(code, "allowed.py")
+        self.assertFalse(any(f.rule_id == "INJ-02" for f in findings))
+        self.assertEqual(scanner.suppressed_count, 1)
+
+    def test_allow_directive_on_previous_line(self):
+        code = "# cso: allow INJ-02 lệnh literal cố định\nsubprocess.run(cmd, shell=True)"
+        scanner = CsoScanner()
+        findings = scanner.scan_file_content(code, "allowed.py")
+        self.assertFalse(any(f.rule_id == "INJ-02" for f in findings))
+        self.assertEqual(scanner.suppressed_count, 1)
+
+    def test_allow_directive_wrong_rule_does_not_suppress(self):
+        code = "subprocess.run(cmd, shell=True)  # cso: allow SQLI-01 lý do khác"
+        scanner = CsoScanner()
+        findings = scanner.scan_file_content(code, "allowed.py")
+        self.assertTrue(any(f.rule_id == "INJ-02" for f in findings))
+        self.assertEqual(scanner.suppressed_count, 0)
+
+    def test_allow_directive_without_reason_does_not_suppress(self):
+        code = "subprocess.run(cmd, shell=True)  # cso: allow INJ-02"
+        scanner = CsoScanner()
+        findings = scanner.scan_file_content(code, "allowed.py")
+        self.assertTrue(any(f.rule_id == "INJ-02" for f in findings))
+        self.assertEqual(scanner.suppressed_count, 0)
+
+    def test_allow_directive_inside_string_does_not_suppress(self):
+        code = 'subprocess.run(cmd, shell=True); note = "# cso: allow INJ-02 lý do"\n'
+        scanner = CsoScanner()
+        findings = scanner.scan_file_content(code, "allowed.py")
+        self.assertTrue(any(f.rule_id == "INJ-02" for f in findings))
+        self.assertEqual(scanner.suppressed_count, 0)
+
+    def test_allow_directive_outside_python_is_not_honored(self):
+        code = "subprocess.run(cmd, shell=True)  # cso: allow INJ-02 lý do\n"
+        scanner = CsoScanner()
+        findings = scanner.scan_file_content(code, "allowed.sh")
+        self.assertTrue(any(f.rule_id == "INJ-02" for f in findings))
+        self.assertEqual(scanner.suppressed_count, 0)
+
+    def test_suppression_records_file_line_rule_and_reason(self):
+        code = "subprocess.run(cmd, shell=True)  # cso: allow INJ-02 lệnh literal cố định"
+        scanner = CsoScanner()
+        scanner.scan_file_content(code, "scripts/demo.py")
+        self.assertEqual(len(scanner.suppressed), 1)
+        finding, reason = scanner.suppressed[0]
+        self.assertEqual(finding.file_path, "scripts/demo.py")
+        self.assertEqual(finding.line_number, 1)
+        self.assertEqual(finding.rule_id, "INJ-02")
+        self.assertEqual(reason, "lệnh literal cố định")
+
 if __name__ == "__main__":
     unittest.main()

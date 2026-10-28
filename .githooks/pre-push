@@ -11,6 +11,13 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   esac
   branch=${remote_ref#refs/heads/}
 
+  # Chống lọt file khung (tasks/, docs/, agents/...) lên remote: nếu dự án có .deploy.json thì cây thư mục
+  # của commit đẩy lên chỉ được chứa phần trong "paths". Chỉ đẩy qua scripts/deploy.py (mode "filtered").
+  root=$(git rev-parse --show-toplevel)
+  if [ "$local_sha" != "$zero" ] && [ -f "$root/.deploy.json" ] && [ -f "$root/scripts/deploy.py" ]; then
+    python "$root/scripts/deploy.py" --check-tree "$local_sha" || fail "push blocked: commit has files outside the deploy paths. Use scripts/deploy.py."
+  fi
+
   if is_protected "$branch"; then
     if [ "${ALLOW_PROTECTED_PUSH:-}" != "1" ]; then
       fail "direct push to '$branch' is not allowed. Push a personal branch and open a Merge Request. One-off override: ALLOW_PROTECTED_PUSH=1."
