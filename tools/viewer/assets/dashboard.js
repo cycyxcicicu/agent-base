@@ -323,6 +323,13 @@
             btn.classList.add('active');
           }
         });
+        if (tab === 'knowledge') {
+          setTimeout(() => {
+            if (typeof initOrUpdate3DGraph === 'function' && currentKgViewMode === '3d') {
+              initOrUpdate3DGraph();
+            }
+          }, 80);
+        }
         try {
           sessionStorage.setItem('dash_active_tab', tab);
           localStorage.setItem('dash_last_tab', tab);
@@ -1321,8 +1328,25 @@
     }
 
     /* ==========================================================================
-       KNOWLEDGE GRAPH (ĐỒ THỊ TRI THỨC HỆ THỐNG)
+       KNOWLEDGE GRAPH (VŨ TRỤ TRI THỨC 3D & DANH SÁCH THẺ)
        ========================================================================== */
+    let currentKgViewMode = '3d'; // '3d' | 'cards'
+    let kg3DGraphInstance = null;
+    let selected3DNode = null;
+    let is3DAutoRotating = true;
+
+    function getNodeHexColor(kind) {
+      switch ((kind || '').toLowerCase()) {
+        case 'role': return '#38bdf8';
+        case 'skill': return '#c084fc';
+        case 'rule': return '#fb7185';
+        case 'design': return '#34d399';
+        case 'requirement': return '#fbbf24';
+        case 'source': return '#2dd4bf';
+        default: return '#818cf8';
+      }
+    }
+
     function getKindBadgeStyle(kind) {
       switch ((kind || '').toLowerCase()) {
         case 'role': return { bg: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', border: 'rgba(56, 189, 248, 0.3)' };
@@ -1332,6 +1356,25 @@
         case 'requirement': return { bg: 'rgba(245, 158, 11, 0.15)', color: '#fbbf24', border: 'rgba(245, 158, 11, 0.3)' };
         case 'source': return { bg: 'rgba(20, 184, 166, 0.15)', color: '#2dd4bf', border: 'rgba(20, 184, 166, 0.3)' };
         default: return { bg: 'rgba(99, 102, 241, 0.15)', color: '#818cf8', border: 'rgba(99, 102, 241, 0.3)' };
+      }
+    }
+
+    function setKnowledgeViewMode(mode) {
+      currentKgViewMode = mode;
+      const btn3D = document.getElementById('btnKgView3D');
+      const btnCards = document.getElementById('btnKgViewCards');
+      const wrap3D = document.getElementById('kg3DWrapper');
+      const gridCards = document.getElementById('kgGrid');
+
+      if (btn3D) btn3D.classList.toggle('active', mode === '3d');
+      if (btnCards) btnCards.classList.toggle('active', mode === 'cards');
+      if (wrap3D) wrap3D.style.display = mode === '3d' ? 'block' : 'none';
+      if (gridCards) gridCards.style.display = mode === 'cards' ? 'grid' : 'none';
+
+      if (mode === '3d') {
+        setTimeout(initOrUpdate3DGraph, 60);
+      } else {
+        renderKnowledgeCards();
       }
     }
 
@@ -1354,7 +1397,6 @@
           html += `<button class="chip-btn ${currentKgKindFilter === k ? 'active' : ''}" data-kind="${k}" onclick="setKnowledgeKindFilter('${k}', this)">${k} (${cats[k]})</button>`;
         }
       });
-      // Any remaining kinds
       Object.keys(cats).forEach(k => {
         if (!kindOrder.includes(k)) {
           html += `<button class="chip-btn ${currentKgKindFilter === k ? 'active' : ''}" data-kind="${k}" onclick="setKnowledgeKindFilter('${k}', this)">${k} (${cats[k]})</button>`;
@@ -1399,8 +1441,393 @@
       });
     }
 
-    function renderKnowledgeGraph() {
-      renderKgKindChips();
+    function prepareGraphData() {
+      const rawNodes = CURRENT_KNOWLEDGE.nodes || [];
+      const nodeMap = new Map();
+      const query = (document.getElementById('kgSearchInput')?.value || '').toLowerCase().trim();
+
+      const nodes = rawNodes.map(n => {
+        const relCount = (n.relations || []).length;
+        const color = getNodeHexColor(n.kind);
+        
+        let match = true;
+        if (currentKgKindFilter !== 'ALL' && n.kind !== currentKgKindFilter) {
+          match = false;
+        }
+        if (query) {
+          const matchId = (n.id || '').toLowerCase().includes(query);
+          const matchTitle = (n.title || '').toLowerCase().includes(query);
+          const matchRef = (n.content_ref || '').toLowerCase().includes(query);
+          const matchOwner = (n.owner_role || '').toLowerCase().includes(query);
+          const matchRel = (n.relations || []).some(r => (r.target || '').toLowerCase().includes(query) || (r.type || '').toLowerCase().includes(query));
+          if (!matchId && !matchTitle && !matchRef && !matchOwner && !matchRel) {
+            match = false;
+          }
+        }
+
+        const nodeObj = {
+          id: n.id,
+          name: n.title || n.id,
+          title: n.title || n.id,
+          kind: n.kind,
+          owner_role: n.owner_role,
+          content_ref: n.content_ref,
+          version: n.version,
+          state: n.state,
+          relations: n.relations || [],
+          relations_count: relCount,
+          val: Math.max(3.5, Math.min(22, 3.5 + relCount * 1.6)),
+          color: match ? color : 'rgba(51, 65, 85, 0.2)',
+          isDimmed: !match
+        };
+        nodeMap.set(n.id, nodeObj);
+        return nodeObj;
+      });
+
+      const links = [];
+      const linkSet = new Set();
+      rawNodes.forEach(n => {
+        (n.relations || []).forEach(r => {
+          if (r.target && nodeMap.has(r.target)) {
+            const key = n.id < r.target ? `${n.id}---${r.target}` : `${r.target}---${n.id}`;
+            if (!linkSet.has(key)) {
+              linkSet.add(key);
+              const sourceNode = nodeMap.get(n.id);
+              const targetNode = nodeMap.get(r.target);
+              const isLinkActive = (!sourceNode.isDimmed && !targetNode.isDimmed);
+              links.push({
+                source: n.id,
+                target: r.target,
+                type: r.type || 'related_to',
+                color: isLinkActive ? 'rgba(56, 189, 248, 0.4)' : 'rgba(30, 41, 59, 0.1)',
+                particles: isLinkActive ? 2 : 0
+              });
+            }
+          }
+        });
+      });
+
+      return { nodes, links };
+    }
+
+    function initOrUpdate3DGraph() {
+      const container = document.getElementById('kg3dContainer');
+      if (!container || typeof ForceGraph3D === 'undefined') return;
+
+      const gData = prepareGraphData();
+
+      if (kg3DGraphInstance) {
+        kg3DGraphInstance.graphData(gData);
+        return;
+      }
+
+      // Khởi tạo 3D Force-Directed Graph với Three.js
+      kg3DGraphInstance = ForceGraph3D({ controlType: 'orbit' })(container)
+        .graphData(gData)
+        .backgroundColor('rgba(0,0,0,0)')
+        .showNavInfo(false)
+        .enableNodeDrag(true)
+        .nodeId('id')
+        .nodeLabel(node => `
+          <div style="background: rgba(15,23,42,0.95); border: 1px solid rgba(56,189,248,0.5); border-radius: 8px; padding: 8px 12px; font-family: sans-serif; box-shadow: 0 4px 25px rgba(0,0,0,0.7); pointer-events: none;">
+            <div style="font-weight: 700; color: #fff; font-size: 13px; margin-bottom: 2px;">${node.title}</div>
+            <div style="color: #94a3b8; font-size: 11px;">[${node.kind}] ID: <code style="color: #818cf8;">${node.id}</code></div>
+            <div style="color: #38bdf8; font-size: 11px; margin-top: 3px;">🔗 ${node.relations_count} liên kết kiến trúc • Kéo để di chuyển</div>
+          </div>
+        `)
+        .nodeColor(node => node.color)
+        .nodeVal(node => node.val)
+        .nodeResolution(24)
+        .nodeOpacity(0.94)
+        .linkColor(link => link.color)
+        .linkWidth(link => link.particles > 0 ? 1.4 : 0.8)
+        .linkDirectionalParticles(link => link.particles)
+        .linkDirectionalParticleWidth(2.5)
+        .linkDirectionalParticleSpeed(0.005)
+        .linkDirectionalParticleColor(() => '#38bdf8')
+        .onNodeHover(node => {
+          container.style.cursor = node ? 'grab' : null;
+          // Tạm dừng tự xoay khi rê vào node để người dùng dễ dàng bấm và nắm kéo
+          if (kg3DGraphInstance && kg3DGraphInstance.controls()) {
+            kg3DGraphInstance.controls().autoRotate = (node || !is3DAutoRotating) ? false : true;
+          }
+        })
+        .onNodeDrag((node, translate) => {
+          container.style.cursor = 'grabbing';
+          if (kg3DGraphInstance && kg3DGraphInstance.controls()) {
+            kg3DGraphInstance.controls().autoRotate = false;
+          }
+        })
+        .onNodeDragEnd(node => {
+          container.style.cursor = 'grab';
+          // Khóa cố định vị trí node sau khi người dùng kéo thả
+          node.fx = node.x;
+          node.fy = node.y;
+          node.fz = node.z;
+          if (kg3DGraphInstance && kg3DGraphInstance.controls() && is3DAutoRotating) {
+            kg3DGraphInstance.controls().autoRotate = true;
+          }
+        })
+        .onNodeRightClick(node => {
+          // Bấm chuột phải lên node để giải phóng ghim vị trí (unpin)
+          delete node.fx;
+          delete node.fy;
+          delete node.fz;
+          if (kg3DGraphInstance) kg3DGraphInstance.d3ReheatSimulation();
+          showRealtimeToast('Đã nhả ghim tự do cho node: ' + node.id);
+        })
+        .onNodeClick(node => {
+          selected3DNode = node;
+          show3dNodeCard(node);
+          
+          // Hiệu ứng Fly-To camera bay tới áp sát quả cầu tri thức
+          const distance = 90;
+          const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+          kg3DGraphInstance.cameraPosition(
+            { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
+            node,
+            1200
+          );
+        })
+        .onBackgroundClick(() => {
+          const card = document.getElementById('kg3dNodeCard');
+          if (card) card.style.display = 'none';
+        });
+
+      // Cấu hình lực đẩy dãn rộng không gian để nhìn rõ vào bên trong lòng cụm
+      if (kg3DGraphInstance.d3Force('charge')) {
+        kg3DGraphInstance.d3Force('charge').strength(-320);
+      }
+      if (kg3DGraphInstance.d3Force('link')) {
+        kg3DGraphInstance.d3Force('link').distance(65);
+      }
+      kg3DGraphInstance.d3VelocityDecay(0.25);
+
+      // Bật chế độ tự động xoay thiên hà quanh trục
+      if (kg3DGraphInstance.controls()) {
+        kg3DGraphInstance.controls().autoRotate = is3DAutoRotating;
+        kg3DGraphInstance.controls().autoRotateSpeed = 0.6;
+      }
+
+      setup3DKeyboardNavigation();
+    }
+
+    function setup3DKeyboardNavigation() {
+      if (window.__kgKeyNavSetup) return;
+      window.__kgKeyNavSetup = true;
+      window.addEventListener('keydown', (e) => {
+        if (currentKgViewMode !== '3d' || !kg3DGraphInstance) return;
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+        const pos = kg3DGraphInstance.cameraPosition();
+        const step = 25;
+        let moved = false;
+
+        if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') {
+          const dist = Math.hypot(pos.x, pos.y, pos.z);
+          if (dist > 35) {
+            const factor = Math.max(0.2, (dist - step) / dist);
+            kg3DGraphInstance.cameraPosition({ x: pos.x * factor, y: pos.y * factor, z: pos.z * factor }, null, 150);
+            moved = true;
+          }
+        } else if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') {
+          const dist = Math.hypot(pos.x, pos.y, pos.z);
+          const factor = (dist + step) / dist;
+          kg3DGraphInstance.cameraPosition({ x: pos.x * factor, y: pos.y * factor, z: pos.z * factor }, null, 150);
+          moved = true;
+        }
+
+        if (moved) e.preventDefault();
+      });
+    }
+
+    function kg3DDiveInside() {
+      if (!kg3DGraphInstance) return;
+      kg3DGraphInstance.cameraPosition(
+        { x: 0, y: 0, z: 25 },
+        { x: 0, y: 0, z: -80 },
+        1400
+      );
+      showRealtimeToast('🚀 Đã bay vào lòng thiên hà! Dùng chuột trái để ngắm 360° từ bên trong.');
+    }
+
+    let isKgSpread = true;
+    function kg3DToggleSpread() {
+      if (!kg3DGraphInstance) return;
+      isKgSpread = !isKgSpread;
+      const charge = isKgSpread ? -320 : -130;
+      const dist = isKgSpread ? 65 : 35;
+      if (kg3DGraphInstance.d3Force('charge')) kg3DGraphInstance.d3Force('charge').strength(charge);
+      if (kg3DGraphInstance.d3Force('link')) kg3DGraphInstance.d3Force('link').distance(dist);
+      kg3DGraphInstance.d3ReheatSimulation();
+      const btn = document.getElementById('btnKg3DSpread');
+      if (btn) {
+        btn.innerHTML = isKgSpread ? '🌌 Cụm: DÃN RỘNG' : '📦 Cụm: THU GỌN';
+      }
+      showRealtimeToast(isKgSpread ? '🌌 Đã dãn rộng cụm để nhìn rõ bên trong!' : '📦 Đã thu gọn cụm.');
+    }
+    }
+
+    function kg3DZoom(ratio) {
+      if (!kg3DGraphInstance) return;
+      const currentPos = kg3DGraphInstance.cameraPosition();
+      kg3DGraphInstance.cameraPosition({
+        x: currentPos.x * ratio,
+        y: currentPos.y * ratio,
+        z: currentPos.z * ratio
+      }, null, 600);
+    }
+
+    function kg3DResetCamera() {
+      if (!kg3DGraphInstance) return;
+      kg3DGraphInstance.zoomToFit(1000, 50);
+    }
+
+    function kg3DToggleRotate() {
+      if (!kg3DGraphInstance || !kg3DGraphInstance.controls()) return;
+      is3DAutoRotating = !is3DAutoRotating;
+      kg3DGraphInstance.controls().autoRotate = is3DAutoRotating;
+      const btn = document.getElementById('btnKg3DAutoRotate');
+      if (btn) {
+        btn.innerHTML = is3DAutoRotating ? '🔄 Tự Xoay: BẬT' : '⏸️ Tự Xoay: TẮT';
+      }
+    }
+
+    function show3dNodeCard(node) {
+      const card = document.getElementById('kg3dNodeCard');
+      if (!card) return;
+      
+      const style = getKindBadgeStyle(node.kind);
+      const pill = document.getElementById('kg3dCardKind');
+      if (pill) {
+        pill.textContent = node.kind;
+        pill.style.background = style.bg;
+        pill.style.color = style.color;
+        pill.style.border = '1px solid ' + style.border;
+      }
+
+      document.getElementById('kg3dCardId').textContent = node.id;
+      document.getElementById('kg3dCardTitle').textContent = node.title;
+      
+      const refElem = document.getElementById('kg3dCardRef');
+      if (refElem) {
+        refElem.innerHTML = node.content_ref ? `📄 <code>${node.content_ref}</code>` : '';
+      }
+
+      const relsElem = document.getElementById('kg3dCardRelations');
+      if (relsElem) {
+        const rels = node.relations || [];
+        if (rels.length === 0) {
+          relsElem.innerHTML = '<span style="font-size: 11px; color: var(--text-subtle);">Không có liên kết quan hệ trực tiếp.</span>';
+        } else {
+          relsElem.innerHTML = `
+            <div style="font-size: 10px; color: var(--text-subtle); margin-bottom: 4px; font-weight: 600; text-transform: uppercase;">
+              Liên kết quan hệ (${rels.length}):
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+              ${rels.map(r => `
+                <span onclick="focus3dNode('${r.target}')" style="font-size: 10px; cursor: pointer; background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; color: #93c5fd; border: 1px solid rgba(255,255,255,0.08);" title="${r.type}: Click để bay tới node này">
+                  🔗 ${r.target}
+                </span>
+              `).join('')}
+            </div>
+          `;
+        }
+      }
+
+      card.style.display = 'block';
+    }
+
+    function focus3dNode(targetId) {
+      if (!kg3DGraphInstance) return;
+      const gData = kg3DGraphInstance.graphData();
+      const target = (gData.nodes || []).find(n => n.id === targetId);
+      if (target) {
+        selected3DNode = target;
+        show3dNodeCard(target);
+        const distance = 90;
+        const distRatio = 1 + distance / Math.hypot(target.x, target.y, target.z);
+        kg3DGraphInstance.cameraPosition(
+          { x: target.x * distRatio, y: target.y * distRatio, z: target.z * distRatio },
+          target,
+          1200
+        );
+      }
+    }
+
+    function readDocFrom3dCard() {
+      if (!selected3DNode) return;
+      const ref = selected3DNode.content_ref;
+      if (!ref) {
+        alert('Node này chưa có file tài liệu tham chiếu.');
+        return;
+      }
+      const doc = SYSTEM_DOCS.find(d => (d.path && (d.path.includes(ref) || ref.includes(d.path))));
+      if (doc) {
+        openDocDrawer(doc.id);
+      } else {
+        const virtualDoc = {
+          id: selected3DNode.id,
+          title: selected3DNode.title,
+          badge: selected3DNode.kind,
+          category: 'Tri thức: ' + selected3DNode.kind,
+          path: ref,
+          href: ref,
+          is_diagram: false
+        };
+        openDocDrawerDirect(virtualDoc);
+      }
+    }
+
+    function copy3dNodeId() {
+      if (!selected3DNode) return;
+      navigator.clipboard.writeText(selected3DNode.id).then(() => {
+        showRealtimeToast('✓ Đã sao chép ID: ' + selected3DNode.id);
+      });
+    }
+
+    function openDocDrawerDirect(doc) {
+      document.getElementById('drawerTaskId').textContent = doc.badge;
+      document.getElementById('drawerTitle').textContent = doc.title;
+      
+      const pill = document.getElementById('drawerStatusPill');
+      pill.textContent = '📚 ' + doc.category;
+      pill.style.background = 'rgba(99, 102, 241, 0.15)';
+      pill.style.color = '#818cf8';
+      pill.style.border = '1px solid rgba(99, 102, 241, 0.3)';
+
+      document.getElementById('drawerEpicBadge').textContent = 'Chuyên mục: ' + doc.category;
+      document.getElementById('drawerPhaseBadge').textContent = 'Tri thức Knowledge Graph';
+      document.getElementById('drawerOwnerBadge').textContent = 'Living Docs';
+
+      document.getElementById('drawerBranch').textContent = doc.category;
+      document.getElementById('drawerRelPath').textContent = doc.path;
+      document.getElementById('drawerRawLink').href = doc.href || doc.path;
+      document.getElementById('drawerRawLink').style.display = 'inline-flex';
+
+      document.getElementById('drawerScopeWrap').style.display = 'none';
+      document.getElementById('drawerBlockedWrap').style.display = 'none';
+
+      document.getElementById('drawerBodyTitle').textContent = '📄 NỘI DUNG TÀI LIỆU KỸ THUẬT';
+      const mdBox = document.getElementById('drawerMdContent');
+      mdBox.innerHTML = '<p style="color: var(--text-subtle);">Đang nạp tài liệu từ máy chủ…</p>';
+      
+      fetch('/' + doc.path + '?t=' + Date.now())
+        .then(res => res.ok ? res.text() : Promise.reject('Không thể đọc file: ' + doc.path))
+        .then(text => {
+          const escaped = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          mdBox.innerHTML = `<pre style="white-space: pre-wrap; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: #cbd5e1; background: var(--bg-card); padding: 18px; border-radius: 8px;">${escaped}</pre>`;
+        })
+        .catch(err => {
+          mdBox.innerHTML = `<p style="color: #f87171;">${err}</p>`;
+        });
+
+      document.getElementById('drawerOverlay').classList.add('open');
+      document.getElementById('drawerPanel').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function renderKnowledgeCards() {
       const container = document.getElementById('kgGrid');
       if (!container) return;
 
@@ -1478,6 +1905,15 @@
           </div>
         `;
       }).join('');
+    }
+
+    function renderKnowledgeGraph() {
+      renderKgKindChips();
+      if (currentKgViewMode === '3d') {
+        initOrUpdate3DGraph();
+      } else {
+        renderKnowledgeCards();
+      }
     }
 
     /* ==========================================================================

@@ -1086,7 +1086,10 @@ def attach_task_360_bundles(cards: list, docs: list, diagrams: list, mantis_data
         for d in docs:
             cat = d.get('category', '').lower()
             path = d.get('path', '').lower()
-            if ('tiến độ' in cat or 'tien-do' in path) and (is_match(d.get('path', '')) or is_match(d.get('title', ''))):
+            if d.get('is_diagram') or path.endswith('.html') or '/hinh/' in path:
+                continue
+            is_progress = ('tiến độ' in cat or 'tien-do' in path or '/tasks/' in path or '/delivery/' in path)
+            if is_progress and (is_match(d.get('path', '')) or is_match(d.get('title', ''))):
                 p_docs.append({
                     'id': d['id'],
                     'title': d['title'],
@@ -1100,10 +1103,17 @@ def attach_task_360_bundles(cards: list, docs: list, diagrams: list, mantis_data
         for d in docs:
             cat = d.get('category', '').lower()
             path = d.get('path', '').lower()
-            # Loại bỏ sơ đồ HTML/ảnh vì đã nằm ở Tab 3 (Sơ đồ & Mockup)
-            if d.get('is_diagram') or path.endswith('.html') or '/hinh/' in path:
+            title = d.get('title', '').lower()
+            # Loại bỏ sơ đồ HTML/ảnh vì đã nằm ở Tab 3 (Sơ đồ & Mockup), loại bỏ task cards con vì đã nằm ở Tab 1
+            if d.get('is_diagram') or path.endswith('.html') or '/hinh/' in path or '/tasks/' in path:
                 continue
-            if ('srs' in cat or 'thiết kế' in cat or 'srs' in path) and (is_match(d.get('path', '')) or is_match(d.get('title', ''))):
+            is_srs_type = (
+                '/features/' in path
+                or 'srs' in cat or 'thiết kế' in cat or 'đặc tả' in cat or 'features' in cat or 'spec' in cat or 'architecture' in cat or 'yeu-cau' in cat
+                or 'srs' in path or 'thiet-ke' in path or 'fdd' in path or 'spec' in path or 'architecture' in path
+                or 'srs' in title or 'thiết kế' in title or 'đặc tả' in title or 'fdd' in title
+            )
+            if is_srs_type and (is_match(d.get('path', '')) or is_match(d.get('title', ''))):
                 s_docs.append({
                     'id': d['id'],
                     'title': d['title'],

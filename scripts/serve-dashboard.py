@@ -29,6 +29,25 @@ MEDIA_EXTS = {".png", ".jpg", ".jpeg", ".svg", ".gif", ".webp", ".ico", ".drawio
 CURRENT_VERSION = int(time.time())
 
 
+SWARM_MODULE = None
+
+
+def get_swarm_module():
+    global SWARM_MODULE
+    if SWARM_MODULE is None:
+        try:
+            import importlib.util
+            script_path = ROOT / "scripts" / "watch-swarm.py"
+            if script_path.is_file():
+                spec = importlib.util.spec_from_file_location("watch_swarm", str(script_path))
+                mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
+                SWARM_MODULE = mod
+        except Exception as e:
+            print(f"⚠️ [Swarm] Không thể tải watch-swarm: {e}")
+    return SWARM_MODULE
+
+
 class RealtimeWatcher:
     """Theo dõi tự động các thư mục tài liệu để quét và cập nhật Dashboard Realtime."""
     def __init__(self, check_interval: float = 1.5):
@@ -169,6 +188,65 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.wfile.write(body)
             return
 
+        # API trạng thái Kilo Swarm thời gian thực cho monitor.html
+        if raw_path == "api/state":
+            swarm = get_swarm_module()
+            if swarm and hasattr(swarm, "get_current_swarm_state"):
+                state = swarm.get_current_swarm_state(force_refresh=True)
+                body = json.dumps(state, ensure_ascii=False).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+            else:
+                self.send_response(503)
+                self.end_headers()
+            return
+
+        # API thông tin vai trò agent
+        if raw_path == "api/role":
+            query = urllib.parse.parse_qs(parsed.query)
+            role_id = query.get('id', [''])[0]
+            roles_dir = ROOT / 'agents' / 'roles'
+            role_file = roles_dir / f"{role_id}.md"
+            content = "Không tìm thấy vai trò này."
+            if role_file.exists() and role_file.is_file():
+                content = role_file.read_text(encoding='utf-8')
+            body = json.dumps({'id': role_id, 'content': content}, ensure_ascii=False).encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+
+        # SSE Stream cho monitor.html đẩy sự kiện trực tiếp
+        if raw_path == "events":
+            swarm = get_swarm_module()
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/event-stream; charset=utf-8')
+            self.send_header('Cache-Control', 'no-cache')
+            self.send_header('Connection', 'keep-alive')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            try:
+                if swarm and hasattr(swarm, "get_current_swarm_state"):
+                    initial_state = swarm.get_current_swarm_state()
+                    self.wfile.write(f"data: {json.dumps(initial_state, ensure_ascii=False)}\n\n".encode('utf-8'))
+                    self.wfile.flush()
+                while True:
+                    time.sleep(1.5)
+                    if swarm and hasattr(swarm, "get_current_swarm_state"):
+                        cur_state = swarm.get_current_swarm_state()
+                        self.wfile.write(f"data: {json.dumps(cur_state, ensure_ascii=False)}\n\n".encode('utf-8'))
+                        self.wfile.flush()
+            except Exception:
+                pass
+            return
+
         # API quét và làm mới toàn bộ dữ liệu dự án tự động
         if raw_path == "api/refresh":
             try:
@@ -240,7 +318,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             return self._serve_real_file(FILE_INDEX.filename_map[filename_low])
 
         # Không tìm thấy
-        self.send_error(404, f"Không tìm thấy file: {raw_path}")
+        self.send_error(404, f"File not found: {raw_path}")
 
     def _serve_real_file(self, file_path: Path):
         try:

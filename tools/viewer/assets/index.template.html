@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="dashboard.css">
+  <script src="vendor/3d-force-graph.min.js"></script>
 </head>
 <body>
 
@@ -277,9 +278,73 @@
             <button class="chip-btn active" data-kind="ALL" onclick="setKnowledgeKindFilter('ALL', this)">Tất cả</button>
           </div>
         </div>
+        <div class="view-toggle">
+          <button id="btnKgView3D" class="view-btn active" onclick="setKnowledgeViewMode('3d')">
+            🌌 Vũ Trụ 3D (Galaxy View)
+          </button>
+          <button id="btnKgViewCards" class="view-btn" onclick="setKnowledgeViewMode('cards')">
+            📋 Danh Sách Thẻ (Cards View)
+          </button>
+        </div>
       </div>
 
-      <div class="task-grid" id="kgGrid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;"></div>
+      <!-- CHẾ ĐỘ 1: VŨ TRỤ TRI THỨC 3D (3D FORCE-DIRECTED GALAXY GRAPH) -->
+      <div id="kg3DWrapper" style="position: relative; width: 100%; height: 720px; background: radial-gradient(circle at center, #0f172a 0%, #030712 100%); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 24px; box-shadow: inset 0 0 80px rgba(0,0,0,0.8);">
+        <div id="kg3dContainer" style="width: 100%; height: 100%;"></div>
+
+        <!-- HUD Legend 3D (Góc trên trái) -->
+        <div style="position: absolute; top: 16px; left: 16px; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 12px 16px; font-size: 12px; z-index: 10; pointer-events: none; max-width: 480px;">
+          <div style="font-weight: 700; color: #fff; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 14px;">🌌</span> VŨ TRỤ TRI THỨC 3D (3D GALAXY VIEW)
+          </div>
+          <div style="color: var(--text-muted); font-size: 11px; margin-bottom: 8px; line-height: 1.5;">
+            • <strong style="color: #38bdf8;">Nắm kéo:</strong> Bấm giữ chuột trái vào quả cầu để kéo lôi đi<br/>
+            • <strong style="color: #cbd5e1;">Xoay 360°:</strong> Bấm giữ chuột trái vào nền đen • <strong style="color: #cbd5e1;">Trượt (Pan):</strong> Chuột phải<br/>
+            • <strong style="color: #34d399;">Bay vào trong:</strong> Cuộn chuột tiến tới hoặc bấm [🚀 Bay Vào Trong] • Phím W/S
+          </div>
+          <div style="display: flex; gap: 10px; font-size: 11px; flex-wrap: wrap;">
+            <span style="color: #38bdf8; font-weight: 600;">● Role</span>
+            <span style="color: #c084fc; font-weight: 600;">● Skill</span>
+            <span style="color: #fb7185; font-weight: 600;">● Rule</span>
+            <span style="color: #34d399; font-weight: 600;">● Design</span>
+            <span style="color: #fbbf24; font-weight: 600;">● Requirement</span>
+            <span style="color: #2dd4bf; font-weight: 600;">● Source</span>
+          </div>
+        </div>
+
+        <!-- Floating 3D Action Controls (Góc dưới phải) -->
+        <div style="position: absolute; bottom: 16px; right: 16px; display: flex; gap: 8px; z-index: 10; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(10px); padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12);">
+          <button class="btn btn-ghost" id="btnKg3DDive" onclick="kg3DDiveInside()" style="padding: 4px 10px; font-size: 13px;" title="Bay vào bên trong lòng thiên hà">🚀 Bay Vào Trong</button>
+          <button class="btn btn-ghost" id="btnKg3DSpread" onclick="kg3DToggleSpread()" style="padding: 4px 10px; font-size: 13px;" title="Dãn rộng khoảng cách giữa các node để nhìn rõ bên trong">🌌 Cụm: DÃN RỘNG</button>
+          <button class="btn btn-ghost" onclick="kg3DZoom(1.3)" style="padding: 4px 10px; font-size: 13px;" title="Phóng to gần hơn">➕ Zoom In</button>
+          <button class="btn btn-ghost" onclick="kg3DZoom(0.7)" style="padding: 4px 10px; font-size: 13px;" title="Thu nhỏ xa hơn">➖ Zoom Out</button>
+          <button class="btn btn-ghost" onclick="kg3DResetCamera()" style="padding: 4px 10px; font-size: 13px;" title="Căn giữa toàn màn hình">🎯 Căn Giữa</button>
+          <button class="btn btn-ghost" id="btnKg3DAutoRotate" onclick="kg3DToggleRotate()" style="padding: 4px 10px; font-size: 13px;" title="Tự động xoay thiên hà">🔄 Tự Xoay: BẬT</button>
+        </div>
+
+        <!-- Floating Node Preview Card on click (Góc trên phải) -->
+        <div id="kg3dNodeCard" style="position: absolute; top: 16px; right: 16px; width: 340px; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(16px); border: 1px solid #38bdf8; border-radius: 12px; padding: 18px; display: none; z-index: 20; box-shadow: 0 20px 40px rgba(0,0,0,0.8);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span id="kg3dCardKind" class="status-pill" style="font-weight: 700; text-transform: uppercase;">KIND</span>
+            <button onclick="document.getElementById('kg3dNodeCard').style.display='none'" style="background: none; border: none; color: #94a3b8; font-size: 16px; cursor: pointer;">✕</button>
+          </div>
+          <div id="kg3dCardId" style="font-size: 11px; font-family: var(--font-mono); color: #818cf8; margin-bottom: 4px; word-break: break-all;">Node:ID</div>
+          <h3 id="kg3dCardTitle" style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.4;">Node Title</h3>
+          <div id="kg3dCardRef" style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px; word-break: break-all;"></div>
+          <div id="kg3dCardRelations" style="margin-bottom: 14px; max-height: 120px; overflow-y: auto;"></div>
+          <div style="display: flex; gap: 8px; border-top: 1px solid var(--border-subtle); padding-top: 12px;">
+            <button id="btnKg3dReadDoc" class="btn btn-primary" style="flex: 1; padding: 7px 12px; font-size: 12px;" onclick="readDocFrom3dCard()">
+              📖 Đọc tài liệu
+            </button>
+            <button class="btn btn-ghost" style="padding: 7px 12px; font-size: 12px;" onclick="copy3dNodeId()">
+              📋 Copy ID
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHẾ ĐỘ 2: DANH SÁCH THẺ DẠNG LƯỚI (CARDS GRID VIEW) -->
+      <div class="task-grid" id="kgGrid" style="display: none; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;"></div>
     </div>
   </main>
 

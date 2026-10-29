@@ -279,6 +279,20 @@ git_read_allow = [
     'git config --get*', 'git config --list*'
 ]
 
+claude_read_allow = [
+    'git status', 'git status *',
+    'git diff', 'git diff *',
+    'git log', 'git log *',
+    'git show', 'git show *',
+    'git blame', 'git blame *',
+    'git branch', 'git branch *',
+    'git worktree list', 'git worktree list *',
+    'git tag', 'git tag *',
+    'git stash list', 'git stash list *',
+    'git config --get*', 'git config --list*', 'git config -l*',
+    'git rev-parse*', 'git merge-base*', 'git rev-list*', 'git shortlog*', 'git ls-files*', 'git grep*'
+]
+
 
 def yq(text) -> str:
     """Quote a string as a YAML/JSON-compatible double-quoted scalar.
@@ -628,11 +642,13 @@ def main():
 
     # Generate .claude/settings.json to enforce deny rules on Claude Code
     # Use tool specifiers Bash(...) and PowerShell(...) strictly; no bare strings
+    claude_allow = [f"Bash({c})" for c in claude_read_allow] + [f"PowerShell({c})" for c in claude_read_allow]
     claude_deny = [f"Bash({c})" for c in (git_hard_deny + danger_deny)] + [f"PowerShell({c})" for c in (git_hard_deny + danger_deny)]
     claude_ask = [f"Bash({c})" for c in (danger_ask + git_commit_ask)] + [f"PowerShell({c})" for c in (danger_ask + git_commit_ask)]
     claude_settings = {
         "$schema": "https://json.schemastore.org/claude-code-settings.json",
         "permissions": {
+            "allow": claude_allow,
             "deny": claude_deny,
             "ask": claude_ask
         }

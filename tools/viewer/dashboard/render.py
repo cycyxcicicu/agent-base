@@ -357,6 +357,14 @@ def write_site(ctx, out_dir: Path = OUTPUT_DIR) -> dict:
     for name in ('dashboard.css', 'dashboard.js', 'monitor.html'):
         shutil.copyfile(ASSETS_DIR / name, out_dir / name)
 
+    vendor_dir = ASSETS_DIR / 'vendor'
+    if vendor_dir.is_dir():
+        out_vendor = out_dir / 'vendor'
+        out_vendor.mkdir(exist_ok=True)
+        for vfile in vendor_dir.glob('*'):
+            if vfile.is_file():
+                shutil.copyfile(vfile, out_vendor / vfile.name)
+
     total = sum(p.stat().st_size for p in out_dir.rglob('*') if p.is_file())
     return {'files': sum(1 for p in out_dir.rglob('*') if p.is_file()), 'bytes': total,
             'index_bytes': (out_dir / 'index.html').stat().st_size, 'data_bytes': (out_dir / 'data.js').stat().st_size}
