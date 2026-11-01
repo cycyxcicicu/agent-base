@@ -69,11 +69,6 @@ docs/notes/inbox/*.md
 !docs/notes/inbox/.gitkeep
 docs/notes/archive/
 docs/proposals/PRP-*
-tasks/BOARD.md
-tasks/T-*.md
-tasks/e*
-tasks/EPICS.md
-!tasks/_template.md
 scratch/
 # Cấu hình máy cá nhân cục bộ (Tuyệt đối không commit lên Git để tránh ghi đè đồng nghiệp)
 projects.local.json
