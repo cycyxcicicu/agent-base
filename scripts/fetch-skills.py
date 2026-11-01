@@ -251,9 +251,11 @@ def load_skills_config() -> Tuple[Optional[Path], Path]:
     quarantine_path: Optional[Path] = None
     skills_path = ROOT_DIR / ".agents" / "skills"
 
-    if CONFIG_FILE.exists():
+    local_config = ROOT_DIR / "skills.config.local.json"
+    cfg_target = local_config if local_config.exists() else CONFIG_FILE
+    if cfg_target.exists():
         try:
-            data = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
+            data = json.loads(cfg_target.read_text(encoding="utf-8"))
             if "quarantine_dir" in data and data["quarantine_dir"]:
                 cand = Path(data["quarantine_dir"]).expanduser()
                 is_bad, reason = check_forbidden_system_path(cand)
@@ -308,8 +310,10 @@ def save_skills_config(quarantine_dir: Path, skills_dir: Optional[Path] = None) 
     elif "skills_dir" not in data:
         data["skills_dir"] = ".agents/skills"
 
-    CONFIG_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"💾 Đã lưu cấu hình vào: {CONFIG_FILE.relative_to(ROOT_DIR)}")
+    local_cfg = ROOT_DIR / "skills.config.local.json"
+    target_file = local_cfg if local_cfg.exists() else CONFIG_FILE
+    target_file.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"💾 Đã lưu cấu hình vào: {target_file.relative_to(ROOT_DIR)}")
 
 
 def get_quarantine_map(quarantine_dir: Path) -> Dict[str, Path]:

@@ -47,7 +47,7 @@ def run(content, *args):
     with tempfile.TemporaryDirectory() as tmp:
         f = Path(tmp) / "t.drawio"
         f.write_text(content, encoding="utf-8")
-        return subprocess.run([sys.executable, str(SCRIPT), str(f), *args], capture_output=True, text=True)
+        return subprocess.run([sys.executable, str(SCRIPT), str(f), *args], capture_output=True, text=True, encoding="utf-8")
 
 
 def mxfile(*pages):

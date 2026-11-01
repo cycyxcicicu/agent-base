@@ -24,6 +24,15 @@ Không nạp sẵn. Gặp việc thuộc dòng nào thì chạy `python scripts/
 | Bảo mật | `bảo mật audit`, `security` |
 | Dùng AI, prompt | `prompt registry`, `ai sinh code` |
 | Chia việc lớn | `wayfinder`, `chia task` |
+| Phân tích Use Case, User Story, luồng thanh toán | `use case user story`, `thanh toan qr momo` |
+| Tra cứu ảnh mẫu sơ đồ chuẩn UML 2.5 & Case Study sân bay | `sổ bộ ảnh`, `diagram image`, `airport`, `use case include` |
+| Kiến trúc sạch, nén diff, nén repo map AST | `kiến trúc sạch`, `nén diff`, `repo map` |
+| Bảo mật thanh toán, PCI-DSS, Rate limit Token Bucket, OAuth2 Bloom Filter | `pci dss`, `token bucket`, `bloom filter`, `secops` |
+| Giám sát SRE, OpenTelemetry W3C TraceContext, PromQL P99, K8s Probes | `opentelemetry`, `sre`, `promql`, `k8s probe` |
+| Frontend hiện đại Next.js App Router, TanStack Query optimistic, Zustand | `nextjs`, `tanstack query`, `zustand` |
+| Chống sập dây chuyền Circuit Breaker Resilience4j, Bulkhead, Retry Jitter | `circuit breaker`, `resilience4j`, `fault tolerance` |
+| AI RAG Pipeline, Hybrid Search Dense/Sparse, RRF Rerank, Guardrails | `rag`, `hybrid search`, `ai guardrails` |
+| Giao dịch phân tán Transactional Outbox Pattern, Debezium CDC | `transactional outbox`, `debezium`, `cdc` |
 
 Tra mà ra rỗng: thử từ đồng nghĩa (tiếng Anh hoặc Việt). Thêm cặp đồng nghĩa vào `agents/knowledge/synonyms.json` (sửa tay được). Tra không cần gõ dấu.
 
@@ -58,6 +67,11 @@ Nguồn: dự án gdt-workspace, đã dùng thật. Còn nhắc Mantis, TestLink
 | Review code: checklist dữ liệu/SQL, giao dịch và đồng thời, lỗi và log | `ky-thuat/chuan-code-va-review.md` |
 | Viết SQL, xử lý lỗi cơ sở dữ liệu, giao dịch, migration | `ky-thuat/chuan-sql-va-loi.md` |
 | Vẽ sơ đồ: quy tắc theo loại (sequence, ERD, state, activity), checklist nộp sơ đồ (bổ sung cho `docs/design/diagram-guide.md`, vốn lo thẩm mỹ) | `srs/chuan-ve-so-do.md` |
+| Toàn diện 22+ loại sơ đồ UML 2.5, 8 sơ đồ cốt lõi Gate 2 & Sổ bộ 706 ảnh mẫu thực tế | `srs/uml-diagrams-mastery.md` |
+| Mô hình hóa thực chiến 4 tầng theo Case Study sân bay (SourceMaking UML Airport), Query vs Mutation Events, Tích hợp hệ thống | `srs/sourcemaking-uml-case-study.md` |
+| Phân tích nghiệp vụ thực chiến, Use Case vs User Story, Luồng thanh toán QR/POS/CITAD | `quy-trinh/ba-business-analysis-mastery.md` |
+| Kiến trúc sạch, Tối ưu CSDL & 4 Giải thuật tinh hoa (RepoMap, Diff compression, JPA Concurrency, ArchUnit) | `architecture/clean-architecture-and-db-patterns.md` |
+| 16 Bản thiết kế kiến trúc tinh hoa Big Tech (Figma 100x Postgres, Shopify Resilient Payments, Zero-Copy Kafka) | `architecture/system-design-elite-patterns.md` |
 | Viết tài liệu đặc tả theo mẫu SRS_FDD: văn phong, checklist, NFR, ba file mỗi chức năng | `srs/srs-fdd-writing-standard.md` |
 | Chuẩn viết tài liệu kỹ thuật: Google Style, Microsoft Guide và The Good Docs Project (Diátaxis) | `srs/technical-writing-and-doc-standards.md` |
 | Mẫu để viết (đặc tả, thiết kế kỹ thuật, Excel SRS_FDD, test report, TestLink) | thư mục `agents/templates/`, xem `agents/templates/README.md` |
@@ -102,6 +116,20 @@ Bắt đầu từ ba file đầu: chuẩn dự án đi trước, công cụ bổ
 | Apache Kafka, Apache Spark & Apache Iceberg Data Lakehouse | `ky-thuat/kafka-spark-and-iceberg-lakehouse.md` |
 | Model Context Protocol (MCP) & BDD Testing với Cucumber | `ky-thuat/mcp-and-bdd-testing.md` |
 | JUnit 5, Mockito, Testcontainers & Frontend Jest TDD | `ky-thuat/junit5-mockito-testcontainers-and-jest.md` |
+| SecOps, bảo mật thanh toán PCI-DSS, Token Bucket rate limit, thu hồi token OAuth2 Bloom Filter | `ky-thuat/secops-fintech-security.md` |
+| Observability, SRE, OpenTelemetry W3C TraceContext, PromQL P99, K8s Probes & Graceful Shutdown | `ky-thuat/observability-sre-production.md` |
+| Frontend hiện đại Next.js App Router RSC, Streaming Suspense, TanStack Query optimistic, Zustand | `ky-thuat/modern-frontend-architecture.md` |
+| PCI-DSS v4.0, Tokenization & Kiến trúc PAN Vaulting | `ky-thuat/fintech-pci-dss-tokenization.md` |
+| Thuật toán Rate Limiting phân tán Redis Lua Scripts | `ky-thuat/redis-rate-limiting-algorithms.md` |
+| Thu hồi token OAuth2/OIDC JWT Blacklisting Redis Bloom Filter | `ky-thuat/oauth2-token-revocation-bloom-filter.md` |
+| OpenTelemetry (OTel), chuẩn W3C TraceContext & Distributed Tracing | `ky-thuat/opentelemetry-distributed-tracing.md` |
+| Google SRE: định lượng SLI, thiết lập SLO & quản trị Error Budget | `ky-thuat/sre-sli-slo-error-budget.md` |
+| Kubernetes Probes & Graceful Shutdown không downtime | `ky-thuat/k8s-probes-graceful-shutdown.md` |
+| Next.js App Router, React Server Components (RSC) & Streaming SSR | `ky-thuat/nextjs-app-router-rsc-streaming.md` |
+| Quản lý trạng thái: TanStack Query v5 Optimistic Updates & Zustand Slices | `ky-thuat/state-management-tanstack-zustand.md` |
+| Khả năng chống chịu lỗi: Circuit Breaker (Resilience4j), Bulkhead & Retry Jitter | `ky-thuat/resilience4j-fault-tolerance.md` |
+| Kỹ thuật AI/LLM: Hybrid Search RAG, RRF Reranking & Guardrails an toàn | `ky-thuat/ai-rag-hybrid-search-guardrails.md` |
+| Giao dịch phân tán: Transactional Outbox Pattern & Debezium CDC | `ky-thuat/transactional-outbox-and-cdc.md` |
 | Chọn công nghệ, xem công nghệ đã duyệt | `tech-radar.md` |
 | Đổi schema không gián đoạn (expand-contract) | `zero-downtime-migrations.md` |
 | Frontend: RSC, store, compound component | `frontend-patterns.md` |

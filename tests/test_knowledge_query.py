@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def query(*args):
-    return subprocess.run([sys.executable, "scripts/knowledge.py", "query", *args], cwd=ROOT, capture_output=True, text=True)
+    return subprocess.run([sys.executable, "scripts/knowledge.py", "query", *args], cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
 
 
 class TestKnowledgeQuery(unittest.TestCase):

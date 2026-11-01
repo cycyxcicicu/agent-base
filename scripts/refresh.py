@@ -1,3 +1,8 @@
+import sys
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8')
 #!/usr/bin/env python3
 """scripts/refresh.py
 
@@ -34,7 +39,7 @@ STEPS = [
 
 
 def run(args):
-    return subprocess.run([PY, *args], cwd=ROOT, capture_output=True, text=True)
+    return subprocess.run([PY, *args], cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
 
 
 def main():

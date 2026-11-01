@@ -300,6 +300,107 @@ def cmd_learn(args: argparse.Namespace) -> int:
     return 0
 
 
+
+
+def cmd_section(args: argparse.Namespace) -> int:
+    """Trích xuất đúng 1 mục (heading) cụ thể trong file Markdown."""
+    target_file = Path(args.root) / args.file if not Path(args.file).is_absolute() else Path(args.file)
+    if not target_file.exists():
+        target_file = ROOT / args.file
+    if not target_file.exists():
+        print(f"❌ Không tìm thấy tệp: {args.file}")
+        return 1
+
+    content = target_file.read_text(encoding="utf-8")
+    lines = content.splitlines()
+    target_heading = args.heading.lower().strip()
+
+    matched_lines = []
+    recording = False
+    current_level = 0
+    found_title = ""
+
+    for line in lines:
+        m = re.match(r'^(#{1,6})\s+(.*)$', line)
+        if m:
+            level = len(m.group(1))
+            title = m.group(2).strip()
+            if target_heading in title.lower():
+                recording = True
+                current_level = level
+                found_title = title
+                matched_lines.append(line)
+                continue
+            elif recording and level <= current_level:
+                recording = False
+                break
+        if recording:
+            matched_lines.append(line)
+
+    if not matched_lines:
+        print(f"❌ Không tìm thấy mục chứa tiêu đề '{args.heading}' trong tệp {args.file}.")
+        headings = [line.strip() for line in lines if re.match(r'^#{1,4}\s+', line)]
+        if headings:
+            print("  Các tiêu đề có sẵn:")
+            for h in headings[:10]:
+                print(f"    - {h}")
+        return 1
+
+    extracted_content = "\n".join(matched_lines).strip()
+    tokens = estimate_tokens(extracted_content)
+    images = re.findall(r'!\[.*?\]\((.*?)\)', extracted_content)
+
+    print(f"🎯 TRÍCH XUẤT MỤC: '{found_title}'")
+    print(f"   Tệp nguồn: {args.file} | Dung lượng: ~{tokens} tokens")
+    if images:
+        print(f"   Ảnh sơ đồ đi kèm ({len(images)}): {', '.join(images)}")
+    print("-" * 60)
+    print(extracted_content)
+    return 0
+
+
+def cmd_image(args: argparse.Namespace) -> int:
+    """Tra cứu ảnh sơ đồ mẫu từ IMAGE_REGISTRY.json theo từ khóa và loại sơ đồ."""
+    reg_path = Path(args.root) / "agents/knowledge/IMAGE_REGISTRY.json"
+    if not reg_path.exists():
+        reg_path = ROOT / "agents/knowledge/IMAGE_REGISTRY.json"
+
+    if not reg_path.exists():
+        print("❌ Chưa tìm thấy sổ bộ ảnh IMAGE_REGISTRY.json.")
+        return 1
+
+    with open(reg_path, "r", encoding="utf-8") as fh:
+        registry = json.load(fh)
+
+    query = args.query.lower().strip()
+    diagram_filter = getattr(args, "type", None)
+
+    matched = []
+    for item in registry:
+        if diagram_filter and diagram_filter.lower() not in item.get("diagram_type", "").lower():
+            continue
+        text_corpus = f"{item.get('caption', '')} {item.get('image_name', '')} {item.get('diagram_type', '')}".lower()
+        if all(word in text_corpus for word in query.split()):
+            matched.append(item)
+
+    limit = getattr(args, "limit", 5) or 5
+    print(f"🎯 KẾT QUẢ TRA CỨU ẢNH SƠ ĐỒ MẪU (Từ khóa: '{args.query}', Khớp: {len(matched)} ảnh)")
+    if not matched:
+        print("  Không tìm thấy ảnh nào khớp. Thử tìm với từ khóa ngắn hơn (ví dụ: 'sequence', 'state', 'class', 'alt', 'qr').")
+        return 0
+
+    for idx, img in enumerate(matched[:limit], 1):
+        rel = img.get("rel_path", "").replace("\\", "/")
+        full_path = (ROOT / rel).resolve()
+        file_uri = full_path.as_uri()
+        print(f"\n  [{idx}] Mã ảnh: {img['id']} | Loại: {img['diagram_type']}")
+        print(f"      Mô tả: {img['caption']}")
+        print(f"      Đường dẫn cục bộ: {full_path}")
+        print(f"      Cú pháp nhúng Markdown: ![{img['caption']}]({rel})")
+        print(f"      URI trực tiếp: {file_uri}")
+
+    return 0
+
 def main():
     parser = argparse.ArgumentParser(description="CLI Quản lý & Trích xuất ngữ cảnh tri thức")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -339,6 +440,20 @@ def main():
     p_lrn.add_argument("--role", default="dev", help="Vai trò phát hiện bài học")
     p_lrn.add_argument("--root", default=".", help="Thư mục gốc (mặc định .)")
 
+    # Lệnh image (Tra cứu ảnh sơ đồ mẫu từ IMAGE_REGISTRY)
+    p_img = subparsers.add_parser("image", help="Tra cứu ảnh sơ đồ mẫu chuẩn từ IMAGE_REGISTRY.json")
+    p_img.add_argument("--query", "-q", required=True, help="Từ khóa tìm kiếm ảnh (VD: 'sequence alt', 'binary association', 'qr')")
+    p_img.add_argument("--type", "-t", help="Lọc theo loại sơ đồ (class-diagram, sequence-diagram...)")
+    p_img.add_argument("--limit", type=int, default=4, help="Số lượng ảnh tối đa")
+    p_img.add_argument("--root", default=".", help="Thư mục gốc (mặc định .)")
+
+    # Lệnh section (Trích xuất nguyên tử một mục duy nhất)
+    p_sec = subparsers.add_parser("section", help="Trích xuất đúng một mục (heading) cụ thể trong tệp tri thức")
+    p_sec.add_argument("--file", "-f", required=True, help="Đường dẫn tệp Markdown cần trích xuất")
+    p_sec.add_argument("--heading", "-s", required=True, help="Tiêu đề mục cần trích xuất (VD: 'State Machine', 'Quy tắc 2')")
+    p_sec.add_argument("--root", default=".", help="Thư mục gốc (mặc định .)")
+
+
     args = parser.parse_args()
 
     # Không chỉ định --manifest và gốc không có knowledge.manifest.json: dùng catalog của khung agent-base.
@@ -360,6 +475,10 @@ def main():
         sys.exit(cmd_query(args))
     elif args.command == "learn":
         sys.exit(cmd_learn(args))
+    elif args.command == "section":
+        sys.exit(cmd_section(args))
+    elif args.command == "image":
+        sys.exit(cmd_image(args))
     else:
         parser.print_help()
         sys.exit(2)
