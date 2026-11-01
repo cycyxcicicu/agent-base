@@ -7,4 +7,4 @@ Agent chỉ mở note khớp task/module (tối đa 3), không đọc cả hộp
 
 | Note | Task | Summary |
 |---|---|---|
-| — | — | (hộp thư trống) |
+| `docs/notes/inbox/GOV-fail-fast-git-credential-devops.md` | — | Bay deadlock Git Credential Manager tren headless Windows va quy tac Fail-Fast toi da 3 lan thu. |

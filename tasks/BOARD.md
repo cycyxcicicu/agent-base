@@ -14,7 +14,7 @@ Ký hiệu: ✅ done · 👀 review · 🔄 doing · ⬜ todo · ⛔ blocked · 
 
 - ✅ **T-02** Thiết Lập Trạm `D:\test-repo` & Xây Dựng Engine Crawler Jina Đa Năng (Kèm Tải Ảnh) · _dev_
   - 📄 `D:/test-repo/`
-  - 📄 `scripts/crawl_jina_assets.py`
+  - 📄 `scripts/research_tools/crawl_jina_assets.py`
 - ✅ **T-03** Khai Thác Toàn Diện `uml-diagrams.org` (Tài Liệu + 100% Ảnh Mẫu + Template Drawio/JSON) · _analyst_
   - 📄 `D:/test-repo/uml/`
 - ✅ **T-04** Khai Thác & Phân Loại Toàn Diện Blog `m2mba.com/blog` (Kèm Ảnh Minh Họa) · _ba_

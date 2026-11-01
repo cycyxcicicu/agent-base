@@ -183,10 +183,6 @@
         {
           "type": "related_to",
           "target": "Design:cmmi-l3-70-checks"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:ba-business-analysis-mastery"
         }
       ],
       "content_sha256": "9147e5ab113e3acb561d0f11ab049c2aaf026a149394b0c6fecc171a78a35179",
@@ -238,10 +234,6 @@
         {
           "type": "related_to",
           "target": "Requirement:test-cases"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:ba-business-analysis-mastery"
         }
       ],
       "content_sha256": "cb637f0184b80ca3644a6cc8ef5223cd389b33bf437312c817f3be10976b9672",
@@ -643,14 +635,6 @@
         {
           "type": "related_to",
           "target": "Requirement:test-cases"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:ba-business-analysis-mastery"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:uml-diagrams-mastery"
         }
       ],
       "content_sha256": "b4cc222cb2edfa0db77e25a98b9a3181cc25fbaa7c8d82491aef943e96de324b",
@@ -1132,10 +1116,6 @@
         {
           "type": "related_to",
           "target": "Skill:jpa-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:clean-architecture-and-db-patterns"
         }
       ],
       "content_sha256": "6b008de58b8e95d2f1f42bd477ca3fcc07834c7c07927fc4c8984f22ad29f910",
@@ -1420,10 +1400,6 @@
         {
           "type": "related_to",
           "target": "Design:diagram-aws-architecture-icons-guide"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:uml-diagrams-mastery"
         }
       ],
       "content_sha256": "a397d1692fe885b1a23423d3e8da922c8585f767895a6dcaabdab7f55e856465",
@@ -1516,10 +1492,6 @@
         {
           "type": "related_to",
           "target": "Requirement:test-cases"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:uml-diagrams-mastery"
         }
       ],
       "content_sha256": "ce268626b5ab7e9173a4e06e87cf62b36d225e8a1f4a0a9f5f0980015890089b",
@@ -1575,10 +1547,6 @@
         {
           "type": "related_to",
           "target": "Requirement:test-cases"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:uml-diagrams-mastery"
         }
       ],
       "content_sha256": "e8c8bd62d9e0b4a52cd23e116789ec62071141de378813740421e86e1c54b5a3",
@@ -1613,10 +1581,6 @@
         {
           "type": "owned_by",
           "target": "Role:designer"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:uml-diagrams-mastery"
         }
       ],
       "content_sha256": "357279f36f72031123e0ee6412c87932caf172d4e2c069110e9887bbf6b5e46d",
@@ -1744,14 +1708,6 @@
         {
           "type": "related_to",
           "target": "Design:cloud-recipes"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:clean-architecture-and-db-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:system-design-elite-patterns"
         }
       ],
       "content_sha256": "552c2e40c692da4fc614ca756e28db55ed03816dd1294442e909b826a1ede164",
@@ -1808,10 +1764,6 @@
         {
           "type": "related_to",
           "target": "Skill:jpa-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:clean-architecture-and-db-patterns"
         }
       ],
       "content_sha256": "a16b2d79140d90065e02c1e9605464f34bff844e0a5ba8d15924e3378227eae7",
@@ -1871,10 +1823,6 @@
         {
           "type": "related_to",
           "target": "Skill:jpa-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:clean-architecture-and-db-patterns"
         }
       ],
       "content_sha256": "413476933a0b24dc7208e19da49e4ceac4ab32accf0c1bafb39f231d04a0653e",
@@ -1900,10 +1848,6 @@
         {
           "type": "owned_by",
           "target": "Role:lead"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:clean-architecture-and-db-patterns"
         }
       ],
       "content_sha256": "e589091ebe83fefc06b3e5d543077dfa7de59f561dcb90d46f649a0a294232c6",
@@ -1959,10 +1903,6 @@
         {
           "type": "owned_by",
           "target": "Role:dev"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:clean-architecture-and-db-patterns"
         }
       ],
       "content_sha256": "bc5ce172c9cb2f4904d683fb3a1a42d0319a2beaaa0b511718b149f77b76cda0",
@@ -2767,10 +2707,6 @@
         {
           "type": "related_to",
           "target": "Requirement:test-cases"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:ba-business-analysis-mastery"
         }
       ],
       "content_sha256": "eddb8282d5f04fa9a52ff201d23832c90f15e218533798cdb5075d2213a0c05e",
@@ -2893,54 +2829,39 @@
       "state": "draft",
       "version": 1,
       "content_ref": "agents/knowledge/architecture/clean-architecture-and-db-patterns.md",
-      "owner_role": "architect",
+      "owner_role": "lead",
       "relations": [
         {
           "type": "owned_by",
-          "target": "Role:architect"
+          "target": "Role:lead"
         },
         {
           "type": "related_to",
-          "target": "Design:clean-architecture-and-ddd"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:sql-postgresql-and-jpa-hibernate"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:chuan-sql-va-loi"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:postgresql-partitioning-and-performance"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:redis-patterns-and-enterprise-architecture"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:gof-design-patterns-and-solid"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:jpa-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:postgres-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:codebase-design"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:system-design-elite-patterns"
+          "target": "Design:chuan-ve-so-do"
         }
       ],
       "content_sha256": "bbcaf10e444a7f22722e92c44fbcf38245b570b8ade65f3105f3bc84626b4745",
+      "provenance": []
+    },
+    {
+      "id": "Design:system-design-elite-patterns",
+      "kind": "Design",
+      "title": "Mười Sáu Bản Thiết Kế Kiến Trúc Tinh Hoa (ByteByteGo Elite System Design)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/architecture/system-design-elite-patterns.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "5a9a9a5b45c2ca633adbae5c244decf2444c6e99586e578393c6fbcfdc1dd304",
       "provenance": []
     },
     {
@@ -2963,13 +2884,303 @@
         {
           "type": "related_to",
           "target": "Rule:definition-of-done"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:ba-business-analysis-mastery"
         }
       ],
       "content_sha256": "9d328247cc4b111dca1e3bcd783f97b831f796cf6316d6ff9c694f88e8e8573e",
+      "provenance": []
+    },
+    {
+      "id": "Design:ai-rag-hybrid-search-guardrails",
+      "kind": "Design",
+      "title": "Chuyên Đề Kỹ Thuật AI/LLM: Hybrid Search RAG, RRF Reranking & Guardrails An Toàn",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/ai-rag-hybrid-search-guardrails.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "cc83788ddb9ea119a7dbf71c72f899b6cc8a82bdf2aa31e453bd8f8e6e00f2b6",
+      "provenance": []
+    },
+    {
+      "id": "Design:fintech-pci-dss-tokenization",
+      "kind": "Design",
+      "title": "Chuyên Đề PCI-DSS v4.0, Tokenization & Kiến Trúc PAN Vaulting",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/fintech-pci-dss-tokenization.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "317447641fd54307b0f4d01c3402163415d09ae38c96963a1067b02ac2e892c7",
+      "provenance": []
+    },
+    {
+      "id": "Design:k8s-probes-graceful-shutdown",
+      "kind": "Design",
+      "title": "Chuyên Đề Kubernetes Probes & Graceful Shutdown Không Downtime",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/k8s-probes-graceful-shutdown.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "56d370d9bd56a664f9b26278d9c59c186fc89b5d186b7eb7c204018f2ac01ac4",
+      "provenance": []
+    },
+    {
+      "id": "Design:modern-frontend-architecture",
+      "kind": "Design",
+      "title": "Cẩm Nang Kiến Trúc Frontend Hiện Đại: Next.js App Router, TanStack Query & Zustand",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/modern-frontend-architecture.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "75aabd4a4033bc5f3321bbcbdee7179305265d4467b5d0f465524d0f326aa771",
+      "provenance": []
+    },
+    {
+      "id": "Design:nextjs-app-router-rsc-streaming",
+      "kind": "Design",
+      "title": "Chuyên Đề Next.js App Router, React Server Components (RSC) & Streaming SSR",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/nextjs-app-router-rsc-streaming.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "30dc07976de50e57ead124a05a20ac98ed05d917c9b778a10cb08aa4097da9df",
+      "provenance": []
+    },
+    {
+      "id": "Design:oauth2-token-revocation-bloom-filter",
+      "kind": "Design",
+      "title": "Chuyên Đề Thu Hồi Token OAuth2/OIDC & JWT Blacklisting Bằng Redis Bloom Filter",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/oauth2-token-revocation-bloom-filter.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "2fe99082f86396488af21411b63a64b03c8e96659c368c5dbfaf0add528072e1",
+      "provenance": []
+    },
+    {
+      "id": "Design:observability-sre-production",
+      "kind": "Design",
+      "title": "Cẩm Nang Observability, SRE Production & Kubernetes Reliability",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/observability-sre-production.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "63aca1f4cadd79452dbe7fad2ba8aea423efc5e59e5b54e13c2f9ecae6ea0dd3",
+      "provenance": []
+    },
+    {
+      "id": "Design:opentelemetry-distributed-tracing",
+      "kind": "Design",
+      "title": "Chuyên Đề OpenTelemetry (OTel), Chuẩn W3C TraceContext & Distributed Tracing",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/opentelemetry-distributed-tracing.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "67b13bc2192a6e0e655a2f610dfdc15b66913f5ff5280849ceb09d88c8d405aa",
+      "provenance": []
+    },
+    {
+      "id": "Design:redis-rate-limiting-algorithms",
+      "kind": "Design",
+      "title": "Chuyên Đề Thuật Toán Rate Limiting Phân Tán Với Redis & Lua Scripts",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/redis-rate-limiting-algorithms.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "f64860ecbf97344f3485f8d550ddcd50d22623fbcc37f73243f625f851b60b52",
+      "provenance": []
+    },
+    {
+      "id": "Design:resilience4j-fault-tolerance",
+      "kind": "Design",
+      "title": "Chuyên Đề Khả Năng Chống Chịu Lỗi: Circuit Breaker (Resilience4j), Bulkhead & Retry Jitter",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/resilience4j-fault-tolerance.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "8fc31c8c48e1c116091a2e78fdb619c3a29aab57f2c75562ccc412459792bc2c",
+      "provenance": []
+    },
+    {
+      "id": "Design:secops-fintech-security",
+      "kind": "Design",
+      "title": "Cẩm Nang SecOps, Bảo Mật Thanh Toán Fintech & Phòng Thủ API",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/secops-fintech-security.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "361cfb4434112744a70fd3106d3ef308c51f0e77f1631a2e162fb2d5a8c2d23f",
+      "provenance": []
+    },
+    {
+      "id": "Design:sre-sli-slo-error-budget",
+      "kind": "Design",
+      "title": "Chuyên Đề Google SRE: Định Lượng SLI, Thiết Lập SLO & Quản Trị Error Budget",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/sre-sli-slo-error-budget.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "85570c7a88eb584b18c48e54226bf3772d54634ebb0e70f4dbc168e1ca06d69a",
+      "provenance": []
+    },
+    {
+      "id": "Design:state-management-tanstack-zustand",
+      "kind": "Design",
+      "title": "Chuyên Đề Quản Lý Trạng Thái: TanStack Query v5 Optimistic Updates & Zustand Slices",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/state-management-tanstack-zustand.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "f10f74d1d390c39622dcc8784db108237a3855a3816c3b8e79d2f536e6e2f641",
+      "provenance": []
+    },
+    {
+      "id": "Design:transactional-outbox-and-cdc",
+      "kind": "Design",
+      "title": "Chuyên Đề Giao Dịch Phân Tán: Transactional Outbox Pattern & Debezium CDC",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/transactional-outbox-and-cdc.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "d9164f5d17b5a9886ae5635b46b76d3a408422270bc55a8940db67416948fe8f",
       "provenance": []
     },
     {
@@ -2979,47 +3190,15 @@
       "state": "draft",
       "version": 1,
       "content_ref": "agents/knowledge/quy-trinh/ba-business-analysis-mastery.md",
-      "owner_role": "ba",
+      "owner_role": "lead",
       "relations": [
         {
           "type": "owned_by",
-          "target": "Role:ba"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:uml-diagrams-mastery"
-        },
-        {
-          "type": "related_to",
-          "target": "Requirement:baccm-and-cr"
-        },
-        {
-          "type": "related_to",
-          "target": "Requirement:srs-writing-standard"
-        },
-        {
-          "type": "related_to",
-          "target": "Requirement:srs-workflow"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:glossary"
+          "target": "Role:lead"
         },
         {
           "type": "related_to",
           "target": "Design:chuan-ve-so-do"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:domain-modeling"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:api-design"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:sourcemaking-uml-case-study"
         }
       ],
       "content_sha256": "4024702b85e57a4e056120717af4e03a116e899d3dd5699f41002e5b4e61dd95",
@@ -3072,53 +3251,42 @@
       "provenance": []
     },
     {
+      "id": "Design:sourcemaking-uml-case-study",
+      "kind": "Design",
+      "title": "Cẩm Nang Phân Tích & Thiết Kế Hệ Thống Theo Case Study Thực Chiến (SourceMaking UML Airport)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/sourcemaking-uml-case-study.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "b4048e528eded88a2e0b98df39718f0626d6ef06c9cb2d58b7fbaead06ce0aff",
+      "provenance": []
+    },
+    {
       "id": "Design:uml-diagrams-mastery",
       "kind": "Design",
       "title": "Cẩm Nang Toàn Diện 22+ Loại Sơ Đồ UML 2.5 & Chuẩn Mực Vẽ Cho AI Agent",
       "state": "draft",
       "version": 1,
       "content_ref": "agents/knowledge/srs/uml-diagrams-mastery.md",
-      "owner_role": "ba",
+      "owner_role": "lead",
       "relations": [
         {
           "type": "owned_by",
-          "target": "Role:ba"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:ba-business-analysis-mastery"
+          "target": "Role:lead"
         },
         {
           "type": "related_to",
           "target": "Design:chuan-ve-so-do"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:diagram-mo-ta-hoat-dong-so-do"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:diagram-quy-uoc-draw-io-va-archify"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:diagram-uml-25-guide"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:diagram-diagrams-cheatsheet-and-decision-matrix"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:diagram-design"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:archify"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:sourcemaking-uml-case-study"
         }
       ],
       "content_sha256": "99e55c0d6171c7d550ff312706ec232797a1b97d74cb37c43d9325e9ce5e9295",
@@ -3173,10 +3341,6 @@
         {
           "type": "related_to",
           "target": "Skill:skills-registry"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:ba-business-analysis-mastery"
         }
       ],
       "content_sha256": "250e464413a13c0eb93cc73447b423df1f9aa8e4f80e5e68c41f895b2c33e352",
@@ -3202,10 +3366,6 @@
         {
           "type": "owned_by",
           "target": "Role:ba"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:uml-diagrams-mastery"
         }
       ],
       "content_sha256": "9cc11878e6275e94cc04c2b4d2ae6a3c2b1b9f8a9f3f3e85085a46f8d6c15492",
@@ -3335,10 +3495,6 @@
         {
           "type": "owned_by",
           "target": "Role:architect"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:clean-architecture-and-db-patterns"
         }
       ],
       "content_sha256": "2c20617f87ec8af6a434859f381b2f061a69b530444e74eb39e78bb016a6d1e2",
@@ -3451,10 +3607,6 @@
         {
           "type": "related_to",
           "target": "Skill:archify"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:uml-diagrams-mastery"
         }
       ],
       "content_sha256": "749696817a874a98bc83047904452b4b0529cf9d9c67ca60d5f4559aaeeb9dd4",
@@ -3476,10 +3628,6 @@
         {
           "type": "owned_by",
           "target": "Role:architect"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:ba-business-analysis-mastery"
         }
       ],
       "content_sha256": "327a2b50620e2fd70abc6893cd6965e76b20f8d0adb0dc2c8d5eb3845efb643e",
@@ -3617,10 +3765,6 @@
         {
           "type": "owned_by",
           "target": "Role:architect"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:clean-architecture-and-db-patterns"
         }
       ],
       "content_sha256": "bcdd45c5e435df259856b20aae47182209b0467b542eacfc7e32bcf452326839",
@@ -3811,10 +3955,6 @@
         {
           "type": "related_to",
           "target": "Skill:jpa-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:clean-architecture-and-db-patterns"
         }
       ],
       "content_sha256": "9c8c391ae9e9aa87faa7ca091e1d395c97766df14080d0bfbea8a97721776163",
@@ -4303,530 +4443,6 @@
         }
       ],
       "content_sha256": "551adca942227b44192edba88acd4e8db911f0121ce58ad16944ccf6a896a74a",
-      "provenance": []
-    },
-    {
-      "id": "Design:sourcemaking-uml-case-study",
-      "kind": "Design",
-      "title": "Mô Hình Hóa Thực Chiến Theo Case Study Sân Bay (SourceMaking UML Airport)",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/srs/sourcemaking-uml-case-study.md",
-      "content_sha256": "b4048e528eded88a2e0b98df39718f0626d6ef06c9cb2d58b7fbaead06ce0aff",
-      "owner_role": "ba",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:ba"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:uml-diagrams-mastery"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:ba-business-analysis-mastery"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:chuan-ve-so-do"
-        },
-        {
-          "type": "related_to",
-          "target": "Requirement:srs-writing-standard"
-        },
-        {
-          "type": "related_to",
-          "target": "Requirement:srs-workflow"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:clean-architecture-and-db-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:diagram-design"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:domain-modeling"
-        }
-      ],
-      "provenance": []
-    },
-    {
-      "id": "Design:system-design-elite-patterns",
-      "kind": "Design",
-      "title": "Mười Sáu Bản Thiết Kế Kiến Trúc Tinh Hoa (ByteByteGo Elite System Design)",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/architecture/system-design-elite-patterns.md",
-      "content_sha256": "5a9a9a5b45c2ca633adbae5c244decf2444c6e99586e578393c6fbcfdc1dd304",
-      "owner_role": "architect",
-      "provenance": [],
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:architect"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:clean-architecture-and-db-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:clean-architecture-and-ddd"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:redis-patterns-and-enterprise-architecture"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:kafka-spark-and-iceberg-lakehouse"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:postgresql-partitioning-and-performance"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:ba-business-analysis-mastery"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:postgres-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:jpa-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:codebase-design"
-        }
-      ]
-    },
-    {
-      "id": "Design:secops-fintech-security",
-      "kind": "Design",
-      "title": "Cẩm Nang SecOps, Bảo Mật Thanh Toán Fintech và Phòng Thủ API",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/secops-fintech-security.md",
-      "owner_role": "security",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:security"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:redis-patterns-and-enterprise-architecture"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:system-design-elite-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:cso"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:security-scan"
-        }
-      ],
-      "content_sha256": "361cfb4434112744a70fd3106d3ef308c51f0e77f1631a2e162fb2d5a8c2d23f",
-      "provenance": []
-    },
-    {
-      "id": "Design:observability-sre-production",
-      "kind": "Design",
-      "title": "Cẩm Nang Observability, SRE Production và Kubernetes Reliability",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/observability-sre-production.md",
-      "owner_role": "architect",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:architect"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:kubernetes-architecture-and-manifests"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:distributed-systems-and-ddia"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:systematic-debugging"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:careful"
-        }
-      ],
-      "content_sha256": "63aca1f4cadd79452dbe7fad2ba8aea423efc5e59e5b54e13c2f9ecae6ea0dd3",
-      "provenance": []
-    },
-    {
-      "id": "Design:modern-frontend-architecture",
-      "kind": "Design",
-      "title": "Cẩm Nang Kiến Trúc Frontend Hiện Đại: Next.js App Router, TanStack Query và Zustand",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/modern-frontend-architecture.md",
-      "owner_role": "dev",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:dev"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:clean-architecture-and-ddd"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:system-design-elite-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:ui-ux-pro-max"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:codebase-design"
-        }
-      ],
-      "content_sha256": "75aabd4a4033bc5f3321bbcbdee7179305265d4467b5d0f465524d0f326aa771",
-      "provenance": []
-    },
-    {
-      "id": "Design:fintech-pci-dss-tokenization",
-      "kind": "Design",
-      "title": "Chuyên Đề PCI-DSS v4.0, Tokenization và Kiến Trúc PAN Vaulting",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/fintech-pci-dss-tokenization.md",
-      "owner_role": "security",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:security"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:secops-fintech-security"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:system-design-elite-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:cso"
-        }
-      ],
-      "content_sha256": "317447641fd54307b0f4d01c3402163415d09ae38c96963a1067b02ac2e892c7",
-      "provenance": []
-    },
-    {
-      "id": "Design:redis-rate-limiting-algorithms",
-      "kind": "Design",
-      "title": "Chuyên Đề Thuật Toán Rate Limiting Phân Tán Với Redis và Lua Scripts",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/redis-rate-limiting-algorithms.md",
-      "owner_role": "architect",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:architect"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:redis-patterns-and-enterprise-architecture"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:secops-fintech-security"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:api-design"
-        }
-      ],
-      "content_sha256": "f64860ecbf97344f3485f8d550ddcd50d22623fbcc37f73243f625f851b60b52",
-      "provenance": []
-    },
-    {
-      "id": "Design:oauth2-token-revocation-bloom-filter",
-      "kind": "Design",
-      "title": "Chuyên Đề Thu Hồi Token OAuth2/OIDC và JWT Blacklisting Bằng Redis Bloom Filter",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/oauth2-token-revocation-bloom-filter.md",
-      "owner_role": "security",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:security"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:redis-patterns-and-enterprise-architecture"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:secops-fintech-security"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:security-scan"
-        }
-      ],
-      "content_sha256": "2fe99082f86396488af21411b63a64b03c8e96659c368c5dbfaf0add528072e1",
-      "provenance": []
-    },
-    {
-      "id": "Design:opentelemetry-distributed-tracing",
-      "kind": "Design",
-      "title": "Chuyên Đề OpenTelemetry (OTel), Chuẩn W3C TraceContext và Distributed Tracing",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/opentelemetry-distributed-tracing.md",
-      "owner_role": "architect",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:architect"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:observability-sre-production"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:distributed-systems-and-ddia"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:systematic-debugging"
-        }
-      ],
-      "content_sha256": "67b13bc2192a6e0e655a2f610dfdc15b66913f5ff5280849ceb09d88c8d405aa",
-      "provenance": []
-    },
-    {
-      "id": "Design:sre-sli-slo-error-budget",
-      "kind": "Design",
-      "title": "Chuyên Đề Google SRE: Định Lượng SLI, Thiết Lập SLO và Quản Trị Error Budget",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/sre-sli-slo-error-budget.md",
-      "owner_role": "architect",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:architect"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:observability-sre-production"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:careful"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:systematic-debugging"
-        }
-      ],
-      "content_sha256": "85570c7a88eb584b18c48e54226bf3772d54634ebb0e70f4dbc168e1ca06d69a",
-      "provenance": []
-    },
-    {
-      "id": "Design:k8s-probes-graceful-shutdown",
-      "kind": "Design",
-      "title": "Chuyên Đề Kubernetes Probes và Graceful Shutdown Không Downtime",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/k8s-probes-graceful-shutdown.md",
-      "owner_role": "architect",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:architect"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:kubernetes-architecture-and-manifests"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:observability-sre-production"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:careful"
-        }
-      ],
-      "content_sha256": "56d370d9bd56a664f9b26278d9c59c186fc89b5d186b7eb7c204018f2ac01ac4",
-      "provenance": []
-    },
-    {
-      "id": "Design:nextjs-app-router-rsc-streaming",
-      "kind": "Design",
-      "title": "Chuyên Đề Next.js App Router, React Server Components (RSC) và Streaming SSR",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/nextjs-app-router-rsc-streaming.md",
-      "owner_role": "dev",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:dev"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:modern-frontend-architecture"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:frontend-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:ui-ux-pro-max"
-        }
-      ],
-      "content_sha256": "30dc07976de50e57ead124a05a20ac98ed05d917c9b778a10cb08aa4097da9df",
-      "provenance": []
-    },
-    {
-      "id": "Design:state-management-tanstack-zustand",
-      "kind": "Design",
-      "title": "Chuyên Đề Quản Lý Trạng Thái: TanStack Query v5 Optimistic Updates và Zustand Slices",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/state-management-tanstack-zustand.md",
-      "owner_role": "dev",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:dev"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:modern-frontend-architecture"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:frontend-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:ui-ux-pro-max"
-        }
-      ],
-      "content_sha256": "f10f74d1d390c39622dcc8784db108237a3855a3816c3b8e79d2f536e6e2f641",
-      "provenance": []
-    },
-    {
-      "id": "Design:resilience4j-fault-tolerance",
-      "kind": "Design",
-      "title": "Chuyên Đề Khả Năng Chống Chịu Lỗi: Circuit Breaker (Resilience4j), Bulkhead và Retry Jitter",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/resilience4j-fault-tolerance.md",
-      "owner_role": "architect",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:architect"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:system-design-elite-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:distributed-systems-and-ddia"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:springboot-patterns"
-        }
-      ],
-      "content_sha256": "8fc31c8c48e1c116091a2e78fdb619c3a29aab57f2c75562ccc412459792bc2c",
-      "provenance": []
-    },
-    {
-      "id": "Design:ai-rag-hybrid-search-guardrails",
-      "kind": "Design",
-      "title": "Chuyên Đề Kỹ Thuật AI/LLM: Hybrid Search RAG, RRF Reranking và Guardrails An Toàn",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/ai-rag-hybrid-search-guardrails.md",
-      "owner_role": "ai-eng",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:ai-eng"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:prompt-as-code-registry"
-        },
-        {
-          "type": "related_to",
-          "target": "EvalSuite:llm-redteam-taxonomy"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:security-scan"
-        }
-      ],
-      "content_sha256": "cc83788ddb9ea119a7dbf71c72f899b6cc8a82bdf2aa31e453bd8f8e6e00f2b6",
-      "provenance": []
-    },
-    {
-      "id": "Design:transactional-outbox-and-cdc",
-      "kind": "Design",
-      "title": "Chuyên Đề Giao Dịch Phân Tán: Transactional Outbox Pattern và Debezium CDC",
-      "state": "draft",
-      "version": 1,
-      "content_ref": "agents/knowledge/ky-thuat/transactional-outbox-and-cdc.md",
-      "owner_role": "architect",
-      "relations": [
-        {
-          "type": "owned_by",
-          "target": "Role:architect"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:enterprise-integration-and-microservices-patterns"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:kafka-spark-and-iceberg-lakehouse"
-        },
-        {
-          "type": "related_to",
-          "target": "Design:sql-postgresql-and-jpa-hibernate"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:jpa-patterns"
-        }
-      ],
-      "content_sha256": "d9164f5d17b5a9886ae5635b46b76d3a408422270bc55a8940db67416948fe8f",
       "provenance": []
     }
   ]
