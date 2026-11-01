@@ -11,10 +11,10 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def run_hook(payload, env_extra=None):
-    env = dict(os.environ, **(env_extra or {}))
-    stdin = payload if isinstance(payload, str) else json.dumps(payload)
+    env = dict(os.environ, PYTHONIOENCODING="utf-8", **(env_extra or {}))
+    stdin = payload if isinstance(payload, str) else json.dumps(payload, ensure_ascii=False)
     return subprocess.run([sys.executable, "scripts/knowledge-hook.py"], cwd=ROOT, input=stdin, capture_output=True,
-                          text=True, env=env)
+                          text=True, encoding="utf-8", errors="replace", env=env)
 
 
 class TestKnowledgeHook(unittest.TestCase):

@@ -69,9 +69,12 @@ class SrsCase(unittest.TestCase):
         (self.dir / "hinh" / "hoat-dong.png").write_bytes(b"png")
 
     def run_check(self, text, *args):
+        import os
         f = self.dir / "UC-01-feat-dat-hang.md"
         f.write_text(text, encoding="utf-8")
-        return subprocess.run([sys.executable, str(SCRIPT), str(f), *args], capture_output=True, text=True)
+        env = dict(os.environ, PYTHONIOENCODING="utf-8")
+        return subprocess.run([sys.executable, str(SCRIPT), str(f), *args], capture_output=True, text=True,
+                              encoding="utf-8", errors="replace", env=env)
 
 
 class TestSrsCheck(SrsCase):
