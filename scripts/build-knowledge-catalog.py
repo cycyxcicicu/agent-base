@@ -14,6 +14,14 @@ import hashlib
 import json
 import os
 import sys
+
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -25,12 +33,10 @@ from agent_core.knowledge.context import build_context, ContextRequest
 
 
 def calculate_sha256(filepath: Path) -> str:
-    """Tính hash sha256 cho tệp vật lý."""
-    h = hashlib.sha256()
+    """Tính hash sha256 cho tệp vật lý (chuẩn hóa LF để tương thích đa nền tảng)."""
     with open(filepath, "rb") as f:
-        while chunk := f.read(65536):
-            h.update(chunk)
-    return h.hexdigest()
+        content = f.read().replace(b"\r\n", b"\n")
+    return hashlib.sha256(content).hexdigest()
 
 
 # Danh mục các Node tri thức tinh hoa từ 2 Notebook
@@ -1047,7 +1053,7 @@ RELATED_CLUSTERS += [
                 "Requirement:document-templates", "Design:diagram-mo-ta-hoat-dong-so-do", "Design:chuan-ve-so-do",
                 "Design:diagram-quy-uoc-draw-io-va-archify", "Requirement:test-cases"]),
 ]
-FALLBACK_HUB = {"Requirement": "Rule:task-loop", "Skill": "Skill:skills-registry"}
+FALLBACK_HUB = {"Requirement": "Rule:task-loop", "Skill": "Skill:skills-registry", "Design": "Design:chuan-ve-so-do"}
 
 
 def _h1(text, fallback):

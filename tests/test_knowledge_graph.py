@@ -16,8 +16,9 @@ def manifest():
 
 def query(q, *args):
     r = subprocess.run([sys.executable, "scripts/knowledge.py", "query", "-q", q, "--format", "json", *args],
-                       cwd=ROOT, capture_output=True, text=True)
-    return json.loads(r.stdout) if r.stdout.strip().startswith("[") else []
+                       cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
+    stdout = r.stdout or ""
+    return json.loads(stdout) if stdout.strip().startswith("[") else []
 
 
 class TestGraphCoverage(unittest.TestCase):
@@ -71,6 +72,7 @@ GOLDEN = [
     ("phản biện kế hoạch trước khi code", {"Requirement:plan-critique"}),
     ("trạng thái ticket", {"Requirement:ticket-status"}),
     ("wayfinder", {"Skill:wayfinder"}),
+    ("case study sân bay", {"Design:sourcemaking-uml-case-study"}),
 ]
 
 

@@ -129,8 +129,14 @@ def rank(catalog, root_dir: str, query: str, role: Optional[str] = None) -> List
         if score <= 0:
             continue
         score *= (matched / len(q_tokens)) ** 0.5 if matched else 0.5
-        if role and (node.owner_role == role or any(r.target == f"Role:{role}" for r in node.relations)):
-            score += 1.5
+        if role:
+            if node.owner_role == role or any(r.target == f"Role:{role}" for r in node.relations):
+                score += 1.5
+            node_roles = node.raw_data.get("roles") or []
+            if isinstance(node_roles, str):
+                node_roles = [node_roles]
+            if any(r.lower() == role.lower() for r in node_roles):
+                score += 1.0
         scored.append((int(round(score * 10)), node))
     scored.sort(key=lambda x: (-x[0], x[1].id))
     return scored

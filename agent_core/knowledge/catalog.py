@@ -363,7 +363,8 @@ def validate_catalog(catalog: Catalog, as_of: Optional[datetime] = None) -> List
                     expected_hash = raw.get("content_sha256")
                     try:
                         with open(abs_content_path, "rb") as cf:
-                            actual_hash = hashlib.sha256(cf.read()).hexdigest()
+                            raw_bytes = cf.read().replace(b"\r\n", b"\n")
+                            actual_hash = hashlib.sha256(raw_bytes).hexdigest()
                         if expected_hash and actual_hash.lower() != expected_hash.lower():
                             diags.append(
                                 Diagnostic(
