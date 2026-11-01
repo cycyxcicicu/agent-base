@@ -1,0 +1,18 @@
+# ByteByteGo System Design — 16 Tinh Hoa Kiến Trúc Chọn Lọc
+
+- [100X Postgres Scaling at Figma](assets/system-design-elite/pages/100x-postgres-scaling-at-figma.md) - 🖼️ [Infographic](assets/system-design-elite/images/100x-postgres-scaling-at-figma.png)
+- [How Discord Stores Trillions of Messages](assets/system-design-elite/pages/how-discord-stores-trillions-of-messages.md) - 🖼️ [Infographic](assets/system-design-elite/images/how-discord-stores-trillions-of-messages.png)
+- [A Crash Course on Database Sharding](assets/system-design-elite/pages/a-crash-course-in-database-sharding.md) - 🖼️ [Infographic](assets/system-design-elite/images/a-crash-course-in-database-sharding.png)
+- [Top 4 Data Sharding Algorithms Explained](assets/system-design-elite/pages/top-4-data-sharding-algorithms-explained.md) - 🖼️ [Infographic](assets/system-design-elite/images/top-4-data-sharding-algorithms-explained.png)
+- [Consistent Hashing Explained](assets/system-design-elite/pages/consistent-hashing.md) - 🖼️ [Infographic](assets/system-design-elite/images/consistent-hashing.png)
+- [10 Principles for Building Resilient Payment Systems](assets/system-design-elite/pages/10-principles-for-building-resilient-payment-systems-by-shopify.md) - 🖼️ [Infographic](assets/system-design-elite/images/10-principles-for-building-resilient-payment-systems-by-shopify.png)
+- [How to Avoid Double Payment](assets/system-design-elite/pages/how-to-avoid-double-payment.md) - 🖼️ [Infographic](assets/system-design-elite/images/how-to-avoid-double-payment.png)
+- [Payment System](assets/system-design-elite/pages/payment-system.md) - 🖼️ [Infographic](assets/system-design-elite/images/payment-system.png)
+- [Reconciliation in Payment](assets/system-design-elite/pages/reconciliation-in-payment.md) - 🖼️ [Infographic](assets/system-design-elite/images/reconciliation-in-payment.png)
+- [How Can Cache Systems Go Wrong?](assets/system-design-elite/pages/how-can-cache-systems-go-wrong.md) - 🖼️ [Infographic](assets/system-design-elite/images/how-can-cache-systems-go-wrong.png)
+- [Things to Consider When Using Cache](assets/system-design-elite/pages/things-to-consider-when-using-cache.md) - 🖼️ [Infographic](assets/system-design-elite/images/things-to-consider-when-using-cache.png)
+- [Top 8 Cache Eviction Strategies](assets/system-design-elite/pages/top-8-cache-eviction-strategies.md) - 🖼️ [Infographic](assets/system-design-elite/images/top-8-cache-eviction-strategies.png)
+- [Why Use a Distributed Lock?](assets/system-design-elite/pages/why-do-we-need-to-use-a-distributed-lock.md) - 🖼️ [Infographic](assets/system-design-elite/images/why-do-we-need-to-use-a-distributed-lock.png)
+- [Why is Kafka Fast?](assets/system-design-elite/pages/why-is-kafka-fast.md) - 🖼️ [Infographic](assets/system-design-elite/images/why-is-kafka-fast.png)
+- [Can Kafka Lose Messages?](assets/system-design-elite/pages/can-kafka-lose-messages.md) - 🖼️ [Infographic](assets/system-design-elite/images/can-kafka-lose-messages.png)
+- [Netflix's Overall Architecture](assets/system-design-elite/pages/netflixs-overall-architecture.md) - 🖼️ [Infographic](assets/system-design-elite/images/netflixs-overall-architecture.png)
