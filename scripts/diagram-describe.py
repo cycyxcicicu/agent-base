@@ -25,6 +25,11 @@ import sys
 import xml.etree.ElementTree as ET
 from collections import deque
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
 
 def clean(label):
     text = html.unescape(label or "")

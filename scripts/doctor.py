@@ -100,9 +100,10 @@ def run_diagnostics():
     # MỤC 4: KIỂM TRA KHO KỸ NĂNG & QUARANTINE (SKILLS & AGENT RUNTIME)
     # --------------------------------------------------------------------------
     print("\n4️⃣ KIỂM TRA KHO KỸ NĂNG & QUARANTINE (SKILLS & AGENT RUNTIME):")
-    config_file = ROOT_DIR / "skills.config.json"
+    local_config = ROOT_DIR / "skills.config.local.json"
+    config_file = local_config if local_config.exists() else (ROOT_DIR / "skills.config.json")
     skills_dir = ROOT_DIR / ".agents" / "skills"
-    has_config = config_file.exists()
+    has_config = config_file.exists() or bool(os.environ.get("SKILLS_QUARANTINE_DIR"))
     quarantine_ok = False
     quarantine_desc = "Chưa cấu hình"
     skills_count = 0
@@ -110,8 +111,8 @@ def run_diagnostics():
     if has_config:
         try:
             import json
-            cfg_data = json.loads(config_file.read_text(encoding="utf-8"))
-            q_dir = cfg_data.get("quarantine_dir", "")
+            cfg_data = json.loads(config_file.read_text(encoding="utf-8")) if config_file.exists() else {}
+            q_dir = os.environ.get("SKILLS_QUARANTINE_DIR") or cfg_data.get("quarantine_dir", "")
             if q_dir:
                 p_q = Path(q_dir).expanduser()
                 if p_q.exists():

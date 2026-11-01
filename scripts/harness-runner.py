@@ -20,10 +20,16 @@ import subprocess
 import sys
 from pathlib import Path
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
 ROOT = Path(__file__).resolve().parent.parent
 
 # Tìm kiếm vị trí repo harness2 trên máy
 CANDIDATE_PATHS = [
+    Path("D:/skills-quarantine/harness2"),
     Path.home() / "Documents" / "skill" / "repos" / "harness2",
     ROOT.parent / "skill" / "repos" / "harness2",
     Path(os.environ.get("HARNESS2_HOME", "")) if os.environ.get("HARNESS2_HOME") else None,

@@ -107,9 +107,11 @@ REALTIME_WATCHER = RealtimeWatcher()
 
 def get_project_roots() -> list[Path]:
     roots = []
-    if PROJECTS_FILE.is_file():
+    local_p = ROOT / "projects.local.json"
+    p_file = local_p if local_p.is_file() else PROJECTS_FILE
+    if p_file.is_file():
         try:
-            data = json.loads(PROJECTS_FILE.read_text(encoding="utf-8"))
+            data = json.loads(p_file.read_text(encoding="utf-8"))
             for p in data.get("projects", []):
                 pth = Path(p.get("path", "")).resolve()
                 if pth.is_dir() and pth not in roots:

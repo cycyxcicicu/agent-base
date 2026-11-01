@@ -73,8 +73,9 @@ Việc từ cỡ "vừa" có một card `doc/delivery/tasks/T-<ticket>-<loại>-
 Trạng thái: `todo → doing → review → done`, hoặc `blocked` (kèm lý do).
 Việc cỡ "nhỏ": ghi một dòng vào `tasks/quick-log.md` nếu không tạo card.
 
-## 6. Trao đổi giữa agent
+## 6. Trao đổi giữa agent & Hiển thị Nhận diện Vai trò (Icon Header)
 
+- **Nhận diện trực quan bắt buộc (Icon Header)**: Để người dùng phân biệt tức thì agent nào đang xử lý trong chat, mọi agent khi bắt đầu lượt phản hồi của mình BẮT BUỘC phải đặt một dòng Icon Header tinh gọn ở ngay đầu câu trả lời: `> <EMOJI> **[<ROLE>] <TÊN>** · *<NHIỆM VỤ>*` theo mẫu `agents/protocols/message.md`. Tuyệt đối không dùng bảng table HTML cồng kềnh. Bất kỳ ai clone repo này về dùng đều được tự động hưởng tính năng nhận diện này.
 - Quyết định và bàn giao: viết vào task card.
 - Báo nhanh: Swarm Board (`board_post`, `board_read`). Đây chỉ là thông tin, không đánh thức hay giao việc.
 - Nhắn thẳng theo mẫu `agents/protocols/message.md` (Từ, Đến, Loại, Task, Nội dung).

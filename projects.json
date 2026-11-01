@@ -21,6 +21,17 @@
       "mantis_csv": null,
       "desc": "Đồng bộ đơn hàng TikTok Shop & Shopee với vận chuyển J&T Express",
       "is_active": true
+    },
+    {
+      "id": "Humana-Handover-Package",
+      "name": "Humana-Handover-Package (Healthcare AI Platform)",
+      "path": "D:\\congviec\\Humana-Handover-Package",
+      "doc_dir": "docs",
+      "diagrams_dir": "docs/diagrams",
+      "tasks_dir": "tasks",
+      "code_dir": "Humana-Handover",
+      "desc": "Hệ thống Nhân sự & Quản lý Onboarding/Tuyển dụng Humana AI",
+      "is_active": true
     }
   ]
 }
