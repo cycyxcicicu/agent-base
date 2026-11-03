@@ -480,8 +480,8 @@ def main():
                             project_root = p_path
                             doc_dir_name = p.get("doc_dir")
                             break
-                    elif Path(p.get("path", "")).resolve() == Path(harvest_target).resolve():
-                        project_root = Path(p.get("path", "")).resolve()
+                    elif p.get("path") and Path(p.get("path")).resolve() == Path(harvest_target).resolve():
+                        project_root = Path(p.get("path")).resolve()
                         doc_dir_name = p.get("doc_dir")
                         break
             except Exception:
@@ -552,12 +552,14 @@ def main():
             filtered_traps = [t for t in n["traps"] if not any(dk in t.lower() for dk in domain_keywords)]
             filtered_lessons = [l for l in n["lessons"] if not any(dk in l.lower() for dk in domain_keywords)]
             filtered_conventions = [c for c in n["conventions"] if not any(dk in c.lower() for dk in domain_keywords)]
+            filtered_decisions = [d for d in n["decisions"] if not any(dk in d.lower() for dk in domain_keywords)]
 
-            if filtered_traps or filtered_lessons or filtered_conventions or n["skills"]:
+            if filtered_traps or filtered_lessons or filtered_conventions or filtered_decisions or n["skills"]:
                 filtered_note = dict(n)
                 filtered_note["traps"] = filtered_traps
                 filtered_note["lessons"] = filtered_lessons
                 filtered_note["conventions"] = filtered_conventions
+                filtered_note["decisions"] = filtered_decisions
                 notes.append(filtered_note)
         print(f"🔍 Bộ lọc phân loại: Đã trích xuất {len(notes)} bài học kỹ nghệ chung (bỏ qua nghiệp vụ riêng).")
     else:
