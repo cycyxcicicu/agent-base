@@ -173,17 +173,18 @@ def setup_project(target_dir: Path) -> int:
     else:
         print(f"⚪ 2. Bảng công việc: Đã có sẵn ({doc_name}/delivery/tasks/BOARD.md)")
 
-    # 3. Ghi file liên kết .agentbase.json
-    agentbase_link_file = target_dir / ".agentbase.json"
+    # 3. Ghi file liên kết .agentbase.json và .agent-base.json (tương thích ngược)
     link_data = {
+        "source": str(HUB_ROOT),
         "hub_path": str(HUB_ROOT),
         "target_project": target_dir.name,
         "roles_count": 20,
         "initialized_at": datetime.now(timezone.utc).isoformat(),
         "status": "ready"
     }
-    agentbase_link_file.write_text(json.dumps(link_data, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"✅ 3. Gắn thẻ định danh liên kết: .agentbase.json")
+    for link_name in [".agentbase.json", ".agent-base.json"]:
+        (target_dir / link_name).write_text(json.dumps(link_data, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"✅ 3. Gắn thẻ định danh liên kết: .agentbase.json & .agent-base.json")
 
     # 3.1. Tự động đăng ký dự án vào Dashboard trung tâm (Multi-Project Registry)
     register_project_in_dashboard(target_dir)
