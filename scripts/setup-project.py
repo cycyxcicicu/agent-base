@@ -199,8 +199,8 @@ Dự án này sử dụng bộ khung chuẩn hóa từ `agent-base`.
 ## Quy tắc cốt lõi:
 1. **Phân quyền & Ranh giới:**
    - Chỉ commit, push, tạo MR khi người dùng yêu cầu rõ ràng.
-   - Tài liệu nghiệp vụ dùng chung ghi vào `doc/` ở gốc dự án.
-   - Hộp thư bàn giao nội bộ ghi vào `docs/notes/inbox/`.
+   - Tài liệu nghiệp vụ dùng chung ghi vào `{doc_name}/` ở gốc dự án.
+   - Hộp thư bàn giao nội bộ ghi vào `{doc_name}/notes/inbox/`.
 2. **Cơ chế Hai Tốc Độ (Fast-Track vs Full-Track):**
    - Việc nhỏ ($\le 50$ dòng diff): Được lập trình ngay, Reviewer được Quick Fix lỗi chính tả.
    - Việc vừa & lớn: Cần kế hoạch phân rã và phê duyệt trước khi code.
