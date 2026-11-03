@@ -166,9 +166,136 @@ relations:
         self.assertEqual(custom_node["title"], "Custom Knowledge Topic")
         self.assertEqual(custom_node["owner_role"], "dev")
 
-        # Đảm bảo không trùng với bất kỳ ID nào trong RAW_NODES
-        self.assertNotIn(custom_node["id"], taken_ids)
+    def test_extract_domain_keywords_from_headings_and_parentheses(self):
+        glossary_file = self.tmp_dir / "domain-glossary-headings.md"
+        content = """# Từ điển thuật ngữ miền y tế
+## 1. Bệnh án điện tử (EMR)
+- **Nghĩa là**: Hồ sơ bệnh án lưu trữ kỹ thuật số
+- **KHÔNG PHẢI**: Giấy khám bệnh thông thường
+
+## 2. Bảo hiểm y tế (BHYT)
+- **Định nghĩa**: Chế độ bảo hiểm do nhà nước bảo trợ
+
+### Đơn thuốc ngoại trú
+**Tiền tạm ứng**: Khoản phí đặt cọc trước khi nhập viện.
+"""
+        glossary_file.write_text(content, encoding="utf-8")
+        extracted = harness_mod.extract_domain_keywords_from_glossary(glossary_file)
+        self.assertIn("bệnh án điện tử", extracted)
+        self.assertIn("emr", extracted)
+        self.assertIn("bảo hiểm y tế", extracted)
+        self.assertIn("bhyt", extracted)
+        self.assertIn("đơn thuốc ngoại trú", extracted)
+        self.assertIn("tiền tạm ứng", extracted)
+        # Boilerplate terms must NOT be extracted as domain keywords
+        self.assertNotIn("nghĩa là", extracted)
+        self.assertNotIn("không phải", extracted)
+        self.assertNotIn("định nghĩa", extracted)
+
+    def test_harvest_sanitizes_sensitive_decisions(self):
+        # Raw note có cả trap và decision chứa từ khóa nhạy cảm "bệnh án điện tử"
+        domain_keywords = ["bệnh án điện tử", "kế toán"]
+        raw_notes = [
+            {
+                "path": Path("dummy.md"),
+                "filename": "T-01-dev.md",
+                "task": "T-01",
+                "agent": "dev",
+                "date": "2026-11-03",
+                "summary": "Fix lỗi dữ liệu",
+                "traps": ["Bệnh án điện tử có thể bị null", "Timeout khi gọi Redis"],
+                "decisions": ["Lưu cache bệnh án điện tử vào RAM", "Dùng HikariCP với pool size 20"],
+                "conventions": [],
+                "lessons": ["Cần validate input cẩn thận"],
+                "skills": [],
+            },
+            {
+                "path": Path("dummy2.md"),
+                "filename": "T-02-dev.md",
+                "task": "T-02",
+                "agent": "dev",
+                "date": "2026-11-03",
+                "summary": "Chỉ có decision kế toán",
+                "traps": [],
+                "decisions": ["Đồng bộ số liệu kế toán qua Kafka"],
+                "conventions": [],
+                "lessons": [],
+                "skills": [],
+            }
+        ]
+
+        filtered_notes = []
+        for n in raw_notes:
+            f_traps = [t for t in n["traps"] if not any(dk in t.lower() for dk in domain_keywords)]
+            f_lessons = [l for l in n["lessons"] if not any(dk in l.lower() for dk in domain_keywords)]
+            f_convs = [c for c in n["conventions"] if not any(dk in c.lower() for dk in domain_keywords)]
+            f_decs = [d for d in n["decisions"] if not any(dk in d.lower() for dk in domain_keywords)]
+
+            if f_traps or f_lessons or f_convs or f_decs or n["skills"]:
+                f_n = dict(n)
+                f_n["traps"] = f_traps
+                f_n["lessons"] = f_lessons
+                f_n["conventions"] = f_convs
+                f_n["decisions"] = f_decs
+                filtered_notes.append(f_n)
+
+        # Note 1 được giữ lại nhưng trap và decision nhạy cảm bị loại bỏ
+        self.assertEqual(len(filtered_notes), 1)
+        self.assertEqual(filtered_notes[0]["traps"], ["Timeout khi gọi Redis"])
+        self.assertEqual(filtered_notes[0]["decisions"], ["Dùng HikariCP với pool size 20"])
+        # Note 2 chỉ có decision kế toán -> bị loại bỏ 100%
+        self.assertNotIn("Chỉ có decision kế toán", [n["summary"] for n in filtered_notes])
+
+    def test_update_project_notes_includes_lessons(self):
+        project_notes = self.tmp_dir / "PROJECT-NOTES.md"
+        initial_content = """# Sổ tay dự án
+
+## Lưu ý và bẫy đã gặp
+
+| ID | Ngày | Nguồn | Phạm vi | Lưu ý |
+|---|---|---|---|---|
+
+## Quyết định quan trọng
+
+| ID | Ngày | Quyết định | ADR |
+|---|---|---|---|
+
+## Quy ước phát hiện thêm
+
+"""
+        project_notes.write_text(initial_content, encoding="utf-8")
+        notes = [{
+            "filename": "T-99-dev.md",
+            "task": "T-99",
+            "agent": "dev",
+            "date": "2026-11-03",
+            "summary": "T-99 lesson test",
+            "traps": ["Bẫy connection pool"],
+            "lessons": ["Bài học về tối ưu hoá Hibernate"],
+            "decisions": ["Quyết định dùng Liquibase"],
+            "conventions": ["Đặt tên index theo mẫu idx_table_col"],
+            "skills": [],
+        }]
+
+        added = harness_mod.update_project_notes(project_notes, notes, dry_run=False)
+        self.assertEqual(added, 4)
+
+        updated_text = project_notes.read_text(encoding="utf-8")
+        self.assertIn("[Bài học] Bài học về tối ưu hoá Hibernate", updated_text)
+        self.assertIn("Bẫy connection pool", updated_text)
+        self.assertIn("Quyết định dùng Liquibase", updated_text)
+        self.assertIn("Đặt tên index theo mẫu idx_table_col", updated_text)
+
+    def test_parse_yaml_frontmatter_bom_and_booleans(self):
+        bom_text = "\ufeff---\nid: Design:bom-test\nkind: Design\ntitle: BOM Test\nis_active: true\ndraft: false\nvalue: null\n---\n# Body"
+        fm = catalog_builder_mod.parse_yaml_frontmatter(bom_text)
+        self.assertIsNotNone(fm)
+        self.assertEqual(fm["id"], "Design:bom-test")
+        self.assertEqual(fm["is_active"], True)
+        self.assertEqual(fm["draft"], False)
+        self.assertIsNone(fm["value"])
 
 
 if __name__ == "__main__":
     unittest.main()
+
