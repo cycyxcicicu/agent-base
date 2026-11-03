@@ -1091,7 +1091,7 @@ def _owners(roles):
 
 def parse_yaml_frontmatter(text: str) -> dict | None:
     """Trích xuất và phân tích YAML frontmatter ở đầu file Markdown (thuần Python stdlib)."""
-    text = text.lstrip()
+    text = text.lstrip("\ufeff \t\r\n")
     if not text.startswith("---"):
         return None
     match = re.match(r"^---\r?\n(.*?)\r?\n---", text, re.DOTALL)
@@ -1142,8 +1142,15 @@ def parse_yaml_frontmatter(text: str) -> dict | None:
                     data[key] = val
             else:
                 clean_val = val.strip("\"'")
+                lower_val = clean_val.lower()
                 if clean_val.isdigit():
                     data[key] = int(clean_val)
+                elif lower_val in ("true", "yes", "on"):
+                    data[key] = True
+                elif lower_val in ("false", "no", "off"):
+                    data[key] = False
+                elif lower_val in ("null", "none", "~"):
+                    data[key] = None
                 else:
                     data[key] = clean_val
             continue
@@ -1257,7 +1264,7 @@ def auto_nodes(root_dir):
                 "id": node_id,
                 "kind": kind,
                 "title": title,
-                "state": fm.get("state", "draft"),
+                "state": "draft",
                 "version": int(fm.get("version", 1)),
                 "content_ref": rel,
                 "owner_role": owner,
