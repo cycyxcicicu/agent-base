@@ -1089,6 +1089,90 @@ def _owners(roles):
     return mapped or ["lead"]
 
 
+def parse_yaml_frontmatter(text: str) -> dict | None:
+    """Trích xuất và phân tích YAML frontmatter ở đầu file Markdown (thuần Python stdlib)."""
+    text = text.lstrip()
+    if not text.startswith("---"):
+        return None
+    match = re.match(r"^---\r?\n(.*?)\r?\n---", text, re.DOTALL)
+    if not match:
+        return None
+    raw_yaml = match.group(1).strip()
+    if not raw_yaml:
+        return None
+
+    data: dict[str, any] = {}
+    current_key = None
+    current_list: list = []
+    in_list = False
+    current_list_dict: dict | None = None
+
+    for line in raw_yaml.splitlines():
+        if not line.strip() or line.strip().startswith("#"):
+            continue
+
+        indent = len(line) - len(line.lstrip())
+        stripped = line.strip()
+
+        # Key-value ở cấp gốc (indent == 0)
+        if indent == 0 and ":" in stripped and not stripped.startswith("-"):
+            if in_list and current_key:
+                if current_list_dict is not None:
+                    current_list.append(current_list_dict)
+                    current_list_dict = None
+                data[current_key] = current_list
+                in_list = False
+                current_key = None
+                current_list = []
+
+            key, val = stripped.split(":", 1)
+            key = key.strip()
+            val = val.strip()
+            if not val:
+                current_key = key
+                current_list = []
+                in_list = True
+            elif val.startswith("[") and val.endswith("]"):
+                items = [x.strip().strip("\"'") for x in val[1:-1].split(",") if x.strip()]
+                data[key] = items
+            elif val.startswith("{") and val.endswith("}"):
+                try:
+                    data[key] = json.loads(val)
+                except Exception:
+                    data[key] = val
+            else:
+                clean_val = val.strip("\"'")
+                if clean_val.isdigit():
+                    data[key] = int(clean_val)
+                else:
+                    data[key] = clean_val
+            continue
+
+        # Phần tử danh sách
+        if in_list and current_key:
+            if stripped.startswith("- "):
+                if current_list_dict is not None:
+                    current_list.append(current_list_dict)
+                    current_list_dict = None
+
+                item_content = stripped[2:].strip()
+                if ":" in item_content:
+                    k, v = item_content.split(":", 1)
+                    current_list_dict = {k.strip(): v.strip().strip("\"'")}
+                else:
+                    current_list.append(item_content.strip("\"'"))
+            elif ":" in stripped and current_list_dict is not None and indent > 0:
+                k, v = stripped.split(":", 1)
+                current_list_dict[k.strip()] = v.strip().strip("\"'")
+
+    if in_list and current_key:
+        if current_list_dict is not None:
+            current_list.append(current_list_dict)
+        data[current_key] = current_list
+
+    return data if data else None
+
+
 def _neutral(title):
     """Tiêu đề trong manifest mẫu không mang tên người hay tên dự án (tests/test_knowledge_seed.py)."""
     title = re.sub(r"(?i)lauren tan", "bài nói của tác giả", title)
@@ -1127,14 +1211,71 @@ def auto_nodes(root_dir):
         owner = PROTOCOL_OWNER.get(path.stem, "lead")
         add("Requirement", _slug(path.stem), _h1(text, path.stem), f"agents/protocols/{path.name}", [owner])
 
+    # Quét động các file trong agents/knowledge/ hỗ trợ File-driven Frontmatter Scanner
     for path in sorted((root_dir / "agents" / "knowledge").rglob("*.md")):
         rel = path.relative_to(root_dir).as_posix()
         if path.name == "README.md" or "/review-rules/" in rel:
             continue
-        text = path.read_text(encoding="utf-8")
-        kind = "Source" if "/research/" in rel else "Design"
-        owner = KNOWLEDGE_OWNER.get(path.stem, "lead")
-        add(kind, _slug(path.stem), _h1(text, path.stem), rel, [owner])
+        if rel in taken_refs:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except Exception:
+            continue
+
+        fm = parse_yaml_frontmatter(text)
+        if fm:
+            kind = fm.get("kind") or ("Source" if "/research/" in rel else "Design")
+            base_slug = _slug(path.stem)
+            node_id = fm.get("id") or f"{kind}:{base_slug}"
+            if not node_id.startswith(f"{kind}:"):
+                node_id = f"{kind}:{node_id.split(':', 1)[-1]}"
+            if node_id in taken_ids:
+                node_id = f"{kind}:{kind.lower()}-{base_slug}"
+            if node_id in taken_ids:
+                continue
+
+            title = _neutral(fm.get("title") or _h1(text, path.stem))
+            raw_owner = fm.get("owner_role") or fm.get("owner") or KNOWLEDGE_OWNER.get(path.stem, "lead")
+            owner = ROLE_ALIAS.get(raw_owner, raw_owner)
+            if owner not in ROLE_NODES:
+                owner = "lead"
+
+            raw_relations = fm.get("relations")
+            relations = []
+            has_owned_by = False
+            if isinstance(raw_relations, list):
+                for r in raw_relations:
+                    if isinstance(r, dict) and "type" in r and "target" in r:
+                        relations.append({"type": str(r["type"]), "target": str(r["target"])})
+                        if r["type"] == "owned_by":
+                            has_owned_by = True
+            if not has_owned_by:
+                relations.insert(0, {"type": "owned_by", "target": f"Role:{owner}"})
+
+            node = {
+                "id": node_id,
+                "kind": kind,
+                "title": title,
+                "state": fm.get("state", "draft"),
+                "version": int(fm.get("version", 1)),
+                "content_ref": rel,
+                "owner_role": owner,
+                "relations": relations,
+            }
+            if "keywords" in fm:
+                kw = fm["keywords"]
+                node["keywords"] = kw if isinstance(kw, str) else " ".join(kw)
+            if "summary" in fm:
+                node["summary"] = str(fm["summary"])
+
+            taken_ids.add(node_id)
+            taken_refs.add(rel)
+            out.append(node)
+        else:
+            kind = "Source" if "/research/" in rel else "Design"
+            owner = KNOWLEDGE_OWNER.get(path.stem, "lead")
+            add(kind, _slug(path.stem), _h1(text, path.stem), rel, [owner])
 
     registry = _registry_roles(root_dir)
     for path in sorted((root_dir / ".agents" / "skills").glob("*/SKILL.md")):

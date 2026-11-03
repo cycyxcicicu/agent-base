@@ -265,25 +265,66 @@ def cmd_learn(args: argparse.Namespace) -> int:
         sys.stderr.write("Lỗi: Cần cung cấp --title và --note\n")
         return 2
 
-    inbox_dir = os.path.join(root_dir, "docs", "notes", "inbox")
+    inbox_candidates = [
+        os.path.join(root_dir, "doc", "notes", "inbox"),
+        os.path.join(root_dir, "docs", "notes", "inbox"),
+    ]
+    inbox_dir = next((d for d in inbox_candidates if os.path.isdir(d)), None)
+    if not inbox_dir:
+        inbox_dir = os.path.join(root_dir, "doc", "notes", "inbox") if os.path.isdir(os.path.join(root_dir, "doc")) else os.path.join(root_dir, "docs", "notes", "inbox")
     os.makedirs(inbox_dir, exist_ok=True)
 
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    now = datetime.now(timezone.utc)
+    timestamp = now.strftime("%Y%m%d_%H%M%S")
+    today_str = now.strftime("%Y-%m-%d")
     slug = re.sub(r'[^a-zA-Z0-9_-]', '_', title.lower())[:30]
     filename = f"learn_{timestamp}_{slug}.md"
     file_path = os.path.join(inbox_dir, filename)
 
-    content = f"""# Bài học tự phản tư: {title}
+    # Định dạng bullet points cho Lessons
+    note_lines = [ln.strip() for ln in note_content.splitlines() if ln.strip()]
+    formatted_lessons = []
+    for ln in note_lines:
+        if ln.startswith(("- ", "* ")):
+            formatted_lessons.append(ln)
+        else:
+            formatted_lessons.append(f"- {ln}")
+    lessons_block = "\n".join(formatted_lessons) if formatted_lessons else f"- {note_content}"
+
+    trap_input = getattr(args, "trap", None)
+    if trap_input and trap_input.strip():
+        trap_lines = [ln.strip() for ln in trap_input.strip().splitlines() if ln.strip()]
+        formatted_traps = [ln if ln.startswith(("- ", "* ")) else f"- {ln}" for ln in trap_lines]
+        traps_block = "\n".join(formatted_traps)
+    else:
+        traps_block = f"- Cần lưu ý khi triển khai {title} để tránh tái diễn lỗi trong các phiên làm việc tiếp theo."
+
+    decision_input = getattr(args, "decision", None)
+    if decision_input and decision_input.strip():
+        dec_lines = [ln.strip() for ln in decision_input.strip().splitlines() if ln.strip()]
+        formatted_dec = [ln if ln.startswith(("- ", "* ")) else f"- {ln}" for ln in dec_lines]
+        decisions_block = "\n".join(formatted_dec)
+    else:
+        decisions_block = f"- Chuẩn hóa giải pháp kỹ thuật theo đề xuất và bài học từ vai trò {role}."
+
+    content = f"""> summary: {title}
+
+Task: LEARN        Agent: {role}        Ngày: {today_str}
+
+# Bài học tự phản tư: {title}
 
 > **Vai trò:** {role}  
-> **Thời gian:** {datetime.now(timezone.utc).isoformat()}  
+> **Thời gian:** {now.isoformat()}  
 > **Trạng thái:** inbox (Chờ harness-reflect tổng hợp)
 
-## 1. Bối cảnh & Hiện tượng
-{note_content}
+## Bẫy & Lưu ý (Traps)
+{traps_block}
 
-## 2. Bài học rút ra (Do & Don't)
-- Ghi nhận tự động từ phiên làm việc nhằm tránh vỡ context.
+## Quyết định kỹ thuật (Decisions)
+{decisions_block}
+
+## Bài học kinh nghiệm (Lessons)
+{lessons_block}
 """
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(content)
@@ -438,6 +479,8 @@ def main():
     p_lrn.add_argument("--title", required=True, help="Tiêu đề bài học kinh nghiệm")
     p_lrn.add_argument("--note", required=True, help="Nội dung bài học và hiện tượng lỗi")
     p_lrn.add_argument("--role", default="dev", help="Vai trò phát hiện bài học")
+    p_lrn.add_argument("--trap", help="Bẫy và lưu ý kỹ thuật cần phòng tránh")
+    p_lrn.add_argument("--decision", help="Quyết định kỹ thuật đưa ra")
     p_lrn.add_argument("--root", default=".", help="Thư mục gốc (mặc định .)")
 
     # Lệnh image (Tra cứu ảnh sơ đồ mẫu từ IMAGE_REGISTRY)
