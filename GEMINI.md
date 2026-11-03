@@ -175,3 +175,15 @@ Mọi chức năng mới hoặc task sửa đổi bắt buộc phải tuân th�
    - **CẤM CODE KHI CHƯA ĐƯỢC DUYỆT**: Chỉ khi Biên bản Gate 2 được Người dùng duyệt thì Dev mới được bắt đầu lập trình (TDD: Red - Green - Refactor).
    - Với task sửa bug: Bắt buộc tái hiện lỗi trên code hiện tại, viết case TestLink (XML, Keyword = mã Mantis) được duyệt trước rồi mới sửa code.
 
+
+# Hướng dẫn riêng cho Gemini Code Assist (VSCode / JetBrains / macOS)
+
+## Nhận diện và kích hoạt vai trò từ `agents/roles/`
+
+Gemini Code Assist trên VSCode hoặc JetBrains (đặc biệt trên môi trường macOS/Unix) tự động nạp ngữ cảnh dự án từ `GEMINI.md`. Để nhận diện và kích hoạt các vai trò chuyên trách:
+1. **Tra cứu vai trò**: Toàn bộ định nghĩa vai trò, quyền hạn (`edit_allow`, `edit_deny`, `bash`, `web`) và checklist nhiệm vụ nằm tại thư mục `agents/roles/<tên-vai>.md` (ví dụ `agents/roles/dev.md`, `agents/roles/reviewer.md`, `agents/roles/qa.md`, `agents/roles/architect.md`, v.v.).
+2. **Kích hoạt vai trò**: Khi người dùng yêu cầu đóng vai (ví dụ: "Hãy đóng vai @reviewer để review PR này" hoặc "Thực hiện task với vai trò dev"), Gemini đọc ngay file `agents/roles/<tên-vai>.md` tương ứng để nạp quy tắc làm việc, phạm vi sửa file và kịch bản thực thi.
+3. **Tuân thủ ranh giới**:
+   - Chỉ sửa các file nằm trong phạm vi `edit_allow` của vai đó, tuyệt đối không sửa file thuộc `edit_deny`.
+   - Với các vai chỉ đọc (`reviewer`, `qa`, `runner`), không sửa đổi mã nguồn (`src/`).
+   - Tuân thủ quy tắc git và quy trình 5 bước (Khảo sát/Phản biện -> Thiết kế kỹ thuật -> ATDD/TDD Test Design -> Hồ sơ đặc tả -> Gate 2 / Code) được quy định ở trên.

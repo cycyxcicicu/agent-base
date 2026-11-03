@@ -7,7 +7,7 @@ Generate tool-specific files from the single source of truth:
                      ->  .claude/agents/<name>.md      (Claude Code subagents, bỏ vai mode primary)
                      ->  .codex/agents/<name>.toml     (Codex custom agents, bỏ vai mode primary)
                      ->  .qoder/agents/<name>.md       (Qoder custom agents)
-  AGENTS.md          ->  GEMINI.md, CODEX.md, .github/copilot-instructions.md, .agents/rules/agents-core.md
+  AGENTS.md          ->  CLAUDE.md, GEMINI.md, CODEX.md, .github/copilot-instructions.md, .agents/rules/agents-core.md
   static             ->  .qoder/rules/00-agent-loader.md (Qoder rule Always Apply)
 
 Usage:
@@ -50,6 +50,40 @@ description: Nạp khi bắt đầu một việc trong repo agent-base: tra cứ
 - **Protocol** (`agents/protocols/`): mọi việc đọc `definition-of-done.md`, `handoff-note.md`, `skills-policy.md`; việc vừa trở lên thêm `full-workflow.md`, `task-card.md`, `commit-plan.md`, `git-rules.md`; mất dữ liệu: `risk-gate.md`; giao diện: `ui-fidelity.md`.
 - **Vai**: chọn agent ở picker header New Task (hoặc Agent tool); mô tả chi tiết từng vai: `agents/roles/<vai>.md`.
 - Luật cứng luôn thường trực trong `AGENTS.md` §§1–4, 11–13; §§15–17 ở đó là bản cổng, toàn văn trong `full-workflow.md`.
+"""
+
+CLAUDE_GUIDE = """
+# Ghi chú riêng cho Claude Code
+
+Mọi quy tắc cốt lõi nằm trong `AGENTS.md` ở trên. Dưới đây là hướng dẫn và cơ chế kích hoạt subagents dành riêng cho Claude Code:
+
+## 1. Cơ chế Subagents trong Claude Code (`.claude/agents/`)
+
+Claude Code tự động nhận diện và nạp các subagents được định nghĩa trong thư mục `.claude/agents/<tên-vai>.md` (sinh ra từ `agents/roles/*.md` qua `scripts/sync-adapters.py`).
+- **Vai điều phối (Lead / Primary)**: Phiên chính Claude Code đảm nhiệm vai trò `lead`, chịu trách nhiệm phân cỡ công việc, bóc tách Scrum subtasks hạt mịn, giao việc và điều phối tổng thể.
+- **Kích hoạt Subagent**: Khi bước vào một công đoạn chuyên biệt (như `dev` để code, `reviewer` để review PR/diff, `qa` để kiểm thử, `architect` để thiết kế kiến trúc, `security` để rà soát bảo mật, `dba` để thiết kế DB/migration, `sre` để điều tra hiệu năng, `debt-hunter` để quét nợ kỹ thuật...), hãy kích hoạt subagent tương ứng bằng công cụ `Agent` hoặc gọi tên vai. Mỗi subagent chạy trong ngữ cảnh cách ly với danh sách công cụ chuẩn POSIX đa nền tảng (`Bash`, `Read`, `Write`, `Edit`, `Glob`, `Grep`, `WebFetch`, `WebSearch`).
+- **Quy trình phối hợp**: Subagent hoàn thành nhiệm vụ độc lập theo đúng phạm vi (scope) và checklist trong thẻ task card, sau đó báo cáo kết quả lại cho phiên chính (Lead).
+
+## 2. Bộ khung agent-base, epic, bảng tổng
+
+- Card nằm ở `tasks/<thư mục epic>/T-<số>-<loại>-<mô tả>.md` (ví dụ `T-13-fix-loi-xuat-excel.md`; quy ước ở `agents/protocols/task-card.md`); epic khai trong `tasks/EPICS.md`; tiến độ ở `tasks/BOARD.md` (sinh bằng `python scripts/task-board.py`, không sửa tay). Chi tiết: `agents/protocols/task-card.md`.
+- Danh sách file khung: `agents/manifest.txt`. **Sửa file khung** thì ghi vào mục "Thay đổi dùng chung cho agent-base" của ghi chú bàn giao và đưa ngược về agent-base: `agents/protocols/agent-base-sync.md` (`python scripts/agent-base-diff.py`).
+- Tri thức dùng chung (quy trình, chuẩn code/SQL, chuẩn SRS và sơ đồ, tech radar...): tra `agents/knowledge/README.md`, chỉ mở đúng file khớp việc, không đọc cả thư mục. Không nạp sẵn: tự tra theo từ khóa bằng `python scripts/knowledge.py query -q "<từ khóa>"` (xem `AGENTS.md` mục 1).
+- Cài đặt cho dự án mới: xem `README.md` mục "Dùng cho dự án mới", sử dụng `scripts/bootstrap-project.py`, không copy cả thư mục.
+"""
+
+GEMINI_GUIDE = """
+# Hướng dẫn riêng cho Gemini Code Assist (VSCode / JetBrains / macOS)
+
+## Nhận diện và kích hoạt vai trò từ `agents/roles/`
+
+Gemini Code Assist trên VSCode hoặc JetBrains (đặc biệt trên môi trường macOS/Unix) tự động nạp ngữ cảnh dự án từ `GEMINI.md`. Để nhận diện và kích hoạt các vai trò chuyên trách:
+1. **Tra cứu vai trò**: Toàn bộ định nghĩa vai trò, quyền hạn (`edit_allow`, `edit_deny`, `bash`, `web`) và checklist nhiệm vụ nằm tại thư mục `agents/roles/<tên-vai>.md` (ví dụ `agents/roles/dev.md`, `agents/roles/reviewer.md`, `agents/roles/qa.md`, `agents/roles/architect.md`, v.v.).
+2. **Kích hoạt vai trò**: Khi người dùng yêu cầu đóng vai (ví dụ: "Hãy đóng vai @reviewer để review PR này" hoặc "Thực hiện task với vai trò dev"), Gemini đọc ngay file `agents/roles/<tên-vai>.md` tương ứng để nạp quy tắc làm việc, phạm vi sửa file và kịch bản thực thi.
+3. **Tuân thủ ranh giới**:
+   - Chỉ sửa các file nằm trong phạm vi `edit_allow` của vai đó, tuyệt đối không sửa file thuộc `edit_deny`.
+   - Với các vai chỉ đọc (`reviewer`, `qa`, `runner`), không sửa đổi mã nguồn (`src/`).
+   - Tuân thủ quy tắc git và quy trình 5 bước (Khảo sát/Phản biện -> Thiết kế kỹ thuật -> ATDD/TDD Test Design -> Hồ sơ đặc tả -> Gate 2 / Code) được quy định ở trên.
 """
 
 # Model tiers & role overrides mapping
@@ -295,7 +329,7 @@ claude_read_allow = [
 
 
 def yq(text) -> str:
-    """Quote a string as a YAML/JSON-compatible double-quoted scalar.
+    r"""Quote a string as a YAML/JSON-compatible double-quoted scalar.
 
     Escapes backslash, double quote, newline, carriage return, tab and other control
     characters, so patterns such as a real newline before "git push" or a Windows path
@@ -505,7 +539,7 @@ def build_claude(meta: dict, body: str, src_rel: str) -> str:
         tools += ['Edit', 'Write']
     bash = meta.get('bash')
     if bash in ('readonly', 'full'):
-        tools += ['Bash', 'PowerShell']
+        tools += ['Bash']
     web = meta.get('web', 'deny')
     if web in ('allow', 'ask'):
         tools += ['WebFetch', 'WebSearch']
@@ -630,7 +664,8 @@ def main():
             outputs[f".codex/agents/{meta['name']}.toml"] = build_codex(meta, body, src_rel)
 
     agents_md = norm((ROOT / 'AGENTS.md').read_text(encoding='utf-8'))
-    outputs['GEMINI.md'] = f"<!-- {MARKER} from AGENTS.md. Do not edit. -->\n" + agents_md
+    outputs['GEMINI.md'] = f"<!-- {MARKER} from AGENTS.md. Do not edit. -->\n" + agents_md + '\n' + norm(GEMINI_GUIDE).strip() + '\n'
+    outputs['CLAUDE.md'] = f"<!-- {MARKER} from AGENTS.md. Do not edit. -->\n" + agents_md + '\n' + norm(CLAUDE_GUIDE).strip() + '\n'
     outputs['CODEX.md'] = f"<!-- {MARKER} from AGENTS.md. Do not edit. -->\n" + agents_md
     outputs['.github/copilot-instructions.md'] = f"<!-- {MARKER} from AGENTS.md. Do not edit. -->\n" + agents_md
     # Antigravity đã đọc AGENTS.md và GEMINI.md ở gốc repo (không frontmatter); bản này chỉ để @ nhắc khi cần, tránh nạp trùng.
