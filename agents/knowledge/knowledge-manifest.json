@@ -10,7 +10,7 @@
       "content_ref": "agents/roles/dev.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "dcc1dd1162a4814b4bd4ea0776df64d746209cde61bd1376fc09a77078602a0b",
+      "content_sha256": "2fa0ce20208b6597ca8bf46406e8f94494435f1e2c5f92431bb1730ed9900a49",
       "provenance": []
     },
     {
@@ -22,7 +22,7 @@
       "content_ref": "agents/roles/qa.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "610cb4199e7f4ac7c37673fb97a82e918ce71825768ae940f707196aceabe05d",
+      "content_sha256": "bd6fc9b9db998613cfc125fd49d437297f482acbe18b48877d4730e741c4d82c",
       "provenance": []
     },
     {
@@ -34,7 +34,7 @@
       "content_ref": "agents/roles/reviewer.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "ec145bbac029e3ddd29e91670173aecb42112262452758b87ddea4370c1cb996",
+      "content_sha256": "f1278b282b43d994941cae65773de818c0d828391f484cfe457ce8c2050afe6a",
       "provenance": []
     },
     {
@@ -46,7 +46,7 @@
       "content_ref": "agents/roles/ba.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "7678f02c0d4355a549485ce2f8c4e5567ad7e263df29570fe1e5a9c2f5fdd348",
+      "content_sha256": "ace93e32716ef184c4916428b852d6537d969ac80bc7f8b3c9d903839069e801",
       "provenance": []
     },
     {
@@ -58,7 +58,7 @@
       "content_ref": "agents/roles/architect.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "7964ca9d4025ebd92becb11dafa1a3baee82bee5a8d0450d9f07167a0e6b2588",
+      "content_sha256": "d9af837ae38b5d68e213399150403ff132fbefb55c6fdac8ffe93d5e78fca162",
       "provenance": []
     },
     {
@@ -82,7 +82,7 @@
       "content_ref": "agents/roles/lead.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "79a9bdaceef899be1216941f67fa87f8a7f29e8b3406ea155f7484980db7a566",
+      "content_sha256": "80ec354ef88041f1233790daad1cff9fea0f2024ea6c33e4eccb573115cc5480",
       "provenance": []
     },
     {
@@ -236,7 +236,7 @@
           "target": "Requirement:test-cases"
         }
       ],
-      "content_sha256": "cb637f0184b80ca3644a6cc8ef5223cd389b33bf437312c817f3be10976b9672",
+      "content_sha256": "97d406a955be13741f6bccdc6cab2179161e6112a786501a03a0ea6f21301ea3",
       "provenance": [
         "Source:notebook1-agile-sdlc"
       ],
@@ -637,7 +637,7 @@
           "target": "Requirement:test-cases"
         }
       ],
-      "content_sha256": "b4cc222cb2edfa0db77e25a98b9a3181cc25fbaa7c8d82491aef943e96de324b",
+      "content_sha256": "42be56a30c7dfc6616f3894cf41283edaea035a7f233b1f8376a95021d6f6f28",
       "provenance": [],
       "keywords": "vẽ sơ đồ erd sequence activity use case state checklist diagram"
     },
@@ -714,6 +714,18 @@
         {
           "type": "related_to",
           "target": "Design:git-rules"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:context-budget"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:bug-repro"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:bug-handling-pipeline"
         }
       ],
       "content_sha256": "c10871ad9d7fde23270bf4d12c4af553f2b3c5169104da6b570bbc84644da192",
@@ -1549,7 +1561,7 @@
           "target": "Requirement:test-cases"
         }
       ],
-      "content_sha256": "e8c8bd62d9e0b4a52cd23e116789ec62071141de378813740421e86e1c54b5a3",
+      "content_sha256": "96fe73c2680510ac654b1088cc80bfac9db3540b30068e8e210f1d0b55cecdf8",
       "provenance": []
     },
     {
@@ -2274,6 +2286,31 @@
       "provenance": []
     },
     {
+      "id": "Requirement:context-budget",
+      "kind": "Requirement",
+      "title": "Giao thức Quản trị Ngân sách Context và Điều phối Multi-Agent (Context Budget & Multi-Agent Isolation Protocol)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/context-budget.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:bug-repro"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:bug-handling-pipeline"
+        }
+      ],
+      "content_sha256": "51194791719a7ddbfa7a99e13bccdf674a45be680e9c486dec713dd58125e784",
+      "provenance": []
+    },
+    {
       "id": "Requirement:delegation-prompt",
       "kind": "Requirement",
       "title": "Khuôn mẫu prompt ủy thác và giao việc cho mô hình (Delegation Prompt Protocol)",
@@ -2291,7 +2328,7 @@
           "target": "Rule:task-loop"
         }
       ],
-      "content_sha256": "c8d3fdf6815198a06674549868b9e123937775999d7ac28c589d6494021f9cb3",
+      "content_sha256": "c7c9ca6c7aee65f1ed4970d9dc207cfe473a2f62e71df884049a1073d282ecd2",
       "provenance": []
     },
     {
@@ -2354,7 +2391,7 @@
           "target": "Rule:task-loop"
         }
       ],
-      "content_sha256": "e5c15f7795a554210f3c0e16dd26f56905e03215f5cb1fd1941681374bbd0ba5",
+      "content_sha256": "10e6daf4c8e30f504ba88a5ceef4b81a02454b631c07dc888f761e8b755da1fc",
       "provenance": []
     },
     {
@@ -2375,7 +2412,7 @@
           "target": "Rule:task-loop"
         }
       ],
-      "content_sha256": "9ea0b0ba51415a67cd51ebf88bf3041f1d4ab643c4266476f6d0492f217e6bef",
+      "content_sha256": "1a9c178ace87753e47b4658304d2c83c25805c4f94b5ebb75d1106882b9491e6",
       "provenance": []
     },
     {
@@ -2514,7 +2551,7 @@
           "target": "Rule:task-loop"
         }
       ],
-      "content_sha256": "f1f6abf31f7a3e7a276a8bb7d87a5ea9250f01a43c8bfed9cdd7d41ad2ff9f1a",
+      "content_sha256": "4cbbb79594ad74b81a47d6861177b91802d11c15105c96b30de89438eee16dc7",
       "provenance": []
     },
     {
@@ -2664,7 +2701,7 @@
           "target": "Requirement:test-cases"
         }
       ],
-      "content_sha256": "5415205e7d99fc321614247be4feb907218cfaf11df445fd27a1ba8301aa5b92",
+      "content_sha256": "3bca3148272bb307a7f01d0185a638ff34b6faff29ee3d733760c0de3f237a6c",
       "provenance": []
     },
     {
@@ -2709,7 +2746,7 @@
           "target": "Requirement:test-cases"
         }
       ],
-      "content_sha256": "eddb8282d5f04fa9a52ff201d23832c90f15e218533798cdb5075d2213a0c05e",
+      "content_sha256": "c06e5f36904978b9451d18b8647e762b9025f813337d603072908cc0f0a75cc8",
       "provenance": [],
       "keywords": "viết srs quy trình đặc tả từ đầu đến cuối checklist kiểm srs-check sơ đồ tối thiểu thư mục srs"
     },
@@ -3202,6 +3239,39 @@
         }
       ],
       "content_sha256": "4024702b85e57a4e056120717af4e03a116e899d3dd5699f41002e5b4e61dd95",
+      "provenance": []
+    },
+    {
+      "id": "Design:task-archetypes",
+      "kind": "Design",
+      "title": "Năm Gói Tri Thức Bó Theo Loại Việc (Task Archetype Bundles)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/task-archetypes.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:context-budget"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:bug-repro"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:bug-handling-pipeline"
+        }
+      ],
+      "content_sha256": "032eea8937e99d8b5faf7c5a873bd8bb6a6e551ec170aa873bd2043a12379542",
       "provenance": []
     },
     {

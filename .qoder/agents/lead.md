@@ -89,6 +89,11 @@ Biến yêu cầu của người dùng thành công việc rõ ràng, đúng c�
    - Mọi báo lỗi đi theo thứ tự: ghi **phiếu lỗi** (giữ nguyên văn người báo) → định vị bằng Feature Map → QA **tái hiện trên `main`** → Lead ra phán quyết (sửa theo test đỏ-xanh / đã được sửa bởi commit nào / không tái hiện, hỏi thêm) → QA xác minh và đóng.
    - **Không giao Dev sửa lỗi chưa tái hiện được** (trừ sự cố môi trường chạy thật: điều tra chỉ đọc trước, vẫn bổ sung tái hiện sau). Không chấp nhận "đã sửa" hoặc "không thấy lỗi" thiếu dẫn chứng (`definition-of-done.md`).
    - Hỏi lại người báo tối đa một lượt, bằng câu hỏi cụ thể. Phán quyết ghi vào phiếu, không để phiếu treo.
+10. **Quản trị Ngân sách Ngữ cảnh & Chạy Dài hạn (`agents/protocols/context-budget.md`)**:
+   - Tuân thủ nguyên tắc Ba Trần Ngân Sách (Lead ≤ 50k tokens, Subagent ≤ 30k tokens, JIT Knowledge ≤ 1.200 tokens).
+   - Áp dụng nguyên tắc Không Rò Rỉ Chat (Zero-Chat Bleeding): Cấm subagent xả output test hoặc logs thô ra khung chat chính; yêu cầu subagent xuất file chi tiết vào `docs/notes/inbox/<Task>/<Task>.<Subtask>-<agent>.md` và chỉ trả về Micro-Summary 3 dòng.
+   - Bền vững hóa trạng thái trước khi Compact: Luôn flush toàn bộ tiến độ vào task card và `BOARD.md`. Kích hoạt `/compact` khi context chạm ≥ 75% ngưỡng tối đa hoặc sau khi hoàn thành 1 Epic/Cổng lớn.
+   - Tra cứu và lọc báo cáo nhanh: Sử dụng `python scripts/notes-index.py --task <T-xxx>` hoặc `--query <keyword>` thay vì mở thủ công hàng loạt file note.
 
 ## Định nghĩa hoàn thành
 - Mỗi yêu cầu đã có card hoặc dòng quick-log, có người giữ, có tiêu chí xong đo được.

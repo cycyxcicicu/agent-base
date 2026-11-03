@@ -63,6 +63,7 @@ Nguồn: dự án gdt-workspace, đã dùng thật. Còn nhắc Mantis, TestLink
 | Khi nào | Đọc |
 |---|---|
 | Biết quy trình công ty yêu cầu gì (vòng SDLC, DoR/DoD, CR, kiểm thử, dùng AI, Git/CI-CD) và khung còn thiếu gì | `quy-trinh/quy-trinh-cong-ty.md` |
+| Năm gói tri thức bó sẵn theo từng loại việc (Bug fix, DB migration, REST API, Front-end, DevOps/Infra) | `quy-trinh/task-archetypes.md` |
 | Nhận một danh sách bug: lọc, gom nhóm, xếp ưu tiên, tái hiện từng nhóm trước khi sửa (bổ sung cho `protocols/bug-repro.md`, vốn xử lý từng bug) | `quy-trinh/xu-ly-bug-hang-loat.md` |
 | Review code: checklist dữ liệu/SQL, giao dịch và đồng thời, lỗi và log | `ky-thuat/chuan-code-va-review.md` |
 | Viết SQL, xử lý lỗi cơ sở dữ liệu, giao dịch, migration | `ky-thuat/chuan-sql-va-loi.md` |

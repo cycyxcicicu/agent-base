@@ -138,6 +138,46 @@ def run_diagnostics():
         print("        - Windows (PowerShell): .\\setup.ps1 (hoặc: python scripts/setup-skills.py)")
         print("        - macOS / Linux:        ./setup.sh  (hoặc: python3 scripts/setup-skills.py)")
 
+    graph_file = ROOT_DIR / "agents" / "knowledge" / "skill-graph.json"
+    if graph_file.exists():
+        try:
+            g_data = json.loads(graph_file.read_text(encoding="utf-8"))
+            g_stats = g_data.get("stats", {})
+            sync_info = ""
+            if quarantine_ok and p_q and p_q.exists():
+                try:
+                    from agent_core.knowledge.skill_graph import check_skill_graph_drift
+                    is_sync, drift = check_skill_graph_drift(g_data, p_q)
+                    sync_info = " - Đồng bộ 100% ✅" if is_sync else f" - Cần cập nhật (+{len(drift['added'])} mới/sửa) ⚠️"
+                except Exception:
+                    pass
+            print(f"  ✅ Đồ thị Kỹ năng (Skill Graph): Sẵn sàng ({g_stats.get('total_skills', 0)} unique skills, {g_stats.get('total_variants', 0)} files{sync_info})")
+        except Exception as e:
+            print(f"  ⚠️ Đồ thị Kỹ năng: Lỗi đọc file ({e})")
+    elif quarantine_ok:
+        print("  ℹ️ Đồ thị Kỹ năng: Chưa tạo (chạy: python scripts/build-skill-graph.py)")
+
+    # Kiểm tra Đồ thị Kiến trúc Dự án mặc định
+    pj_file = ROOT_DIR / "projects.json"
+    if pj_file.exists():
+        try:
+            pj_data = json.loads(pj_file.read_text(encoding="utf-8"))
+            def_proj_id = pj_data.get("default_project")
+            for p_item in pj_data.get("projects", []):
+                if p_item.get("id") == def_proj_id:
+                    p_path = Path(p_item.get("path", ""))
+                    doc_folder = p_path / p_item.get("doc_dir", "doc") / "architecture"
+                    pj_graph_file = doc_folder / "project-graph.json"
+                    if pj_graph_file.exists():
+                        pg_data = json.loads(pj_graph_file.read_text(encoding="utf-8"))
+                        pg_stats = pg_data.get("stats", {})
+                        print(f"  ✅ Đồ thị Dự án ({def_proj_id}): Sẵn sàng ({pg_stats.get('total_services')} services, {pg_stats.get('total_endpoints')} APIs, {pg_stats.get('total_tables')} tables ✅)")
+                    else:
+                        print(f"  ℹ️ Đồ thị Dự án ({def_proj_id}): Chưa tạo (chạy: python scripts/knowledge.py project-graph sync)")
+                    break
+        except Exception:
+            pass
+
     # --------------------------------------------------------------------------
     # MỤC 5: HƯỚNG DẪN CẤU HÌNH DÀNH CHO NGƯỜI DÙNG MỚI
     # --------------------------------------------------------------------------

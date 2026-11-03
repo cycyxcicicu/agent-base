@@ -1,0 +1,6 @@
+{
+  "$schema": "./schemas/skills-config.schema.json",
+  "description": "File mẫu cấu hình kho kỹ năng cho máy mới. Hãy sao chép thành skills.config.local.json và điền đường dẫn thư mục kỹ năng trên máy của bạn.",
+  "quarantine_dir": "~/skills-quarantine",
+  "skills_dir": ".agents/skills"
+}

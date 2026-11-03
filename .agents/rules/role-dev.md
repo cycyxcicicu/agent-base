@@ -15,6 +15,16 @@ description: "Cài đặt đúng một task trong worktree riêng, chỉ sửa f
 Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn giao rõ ràng.
 
 ## Kỹ năng & Cẩm nang áp dụng (Skills Applied)
+> [!IMPORTANT]
+> **MANDATORY SKILL RETRIEVAL PROTOCOL (Bắt buộc 100%)**:
+> Trước khi viết code hoặc sửa bất kỳ file nào, Dev BẮT BUỘC:
+> 1. Tra cứu kỹ năng: `python scripts/knowledge.py query-skill -q "<chủ đề>" --role dev` (từ kho 755 skills).
+> 2. Đọc file `SKILL.md` tương ứng từ đường dẫn trả về.
+> 3. Ghi 2 dòng bằng chứng bắt buộc vào Handoff Note (`docs/notes/inbox/` hoặc `doc/notes/inbox/`):
+>    - `Skill đã chọn & áp dụng: <tên_skill>`
+>    - `Checklist đã tuân thủ: <nội dung cụ thể>`
+> Cổng `merge-gate.py` sẽ từ chối merge nếu thiếu bằng chứng này!
+
 - **`feature-map`** (`.agents/skills/feature-map/SKILL.md`): Chế độ `maintain`: đổi giao diện (thêm màn hình, đổi đường vào, đổi selector) thì cập nhật các mục Feature Map bị ảnh hưởng **trong cùng task**, chạy `python scripts/feature-map-check.py --changed-against <nhánh-gốc>` trước khi đặt `review`. Không sửa mã cho khớp bản đồ.
 - **`codebase-map`** (`.agents/skills/codebase-map/SKILL.md`): Trước khi sửa chỗ chưa quen, đọc `docs/CODEMAP.md` để biết điểm vào, ranh giới và luồng; đổi cấu trúc thư mục hoặc thêm module thì cập nhật bản đồ trong cùng task.
 - **`sparc-methodology`** (`.agents/skills/sparc-methodology/SKILL.md`): Chu trình phát triển 5 pha hạt mịn (Specification $\rightarrow$ Pseudocode $\rightarrow$ Architecture $\rightarrow$ Refinement $\rightarrow$ Completion).
@@ -26,6 +36,7 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 - **`subagent-driven-development`** (`.agents/skills/subagent-driven-development/SKILL.md`): Chu trình Bite-Sized TDD 2-5 phút (Red-Green-Refactor).
 - **`frontend-patterns`** (`agents/knowledge/frontend-patterns.md`): Quy chuẩn ranh giới Server/Client (RSC), vòng đời Store chống memory leak, Compound Components, và Token-Efficient Surgical Diffs (sửa phẫu thuật tối thiểu, không rewrite nguyên file).
 - **`ui-ux-pro-max`** (`.agents/skills/ui-ux-pro-max/SKILL.md`): Tra cứu thiết kế UI nhanh theo stack (`--stack nextjs/react/tailwind`) và tự động kiểm tra Pre-Delivery Checklist (cấm emoji làm icon, nút bấm tối thiểu 44px, tương phản 4.5:1, cursor-pointer).
+- **`verification-skills-cdp`** (`agents/knowledge/ky-thuat/verification-skills-cdp.md`): BẮT BUỘC khi sửa file giao diện/Frontend: tự chạy kiểm thử trên trình duyệt (Playwright/CDP), xác nhận Console error = 0, Network OK và ghi bằng chứng `Xác minh giao diện (CDP/Browser): PASS` vào Handoff Note. Cổng `merge-gate.py` sẽ từ chối nếu thiếu.
 
 ## Đầu vào
 - Task card của bạn (`scope_edit`, `scope_deny`, tiêu chí xong).
@@ -81,7 +92,7 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
   * *Chức năng mới*: Cấm chạm vào code khi chưa có đủ bộ 3 file SRS Markdown + file Excel 14 sheets Copilot, chưa có TestLink XML do QA viết, và chưa có Biên bản Swarm Gate 2 Review được Người dùng phê duyệt.
   * *Sửa bug*: Cấm sửa code hú họa khi chưa tái hiện được lỗi trên code hiện tại và chưa viết case TestLink (XML, Keyword = mã Mantis) được duyệt trước.
   * *Lập trình TDD*: Bắt buộc viết test trước (Red), code pass (Green), rồi mới refactor. Tuyệt đối không commit/push khi chưa có lệnh rõ ràng từ người dùng.
-- **Phân bổ phiên làm việc**: Với Subagent chạy ngầm tự chủ (Autonomous Worker), mỗi phiên chỉ làm đúng 1 Subtask (tối đa 8–10 tool calls) rồi ghi handoff note ngắn. Khi đang tương tác trực tiếp (Pair-programming) với người dùng, Dev được quyền linh hoạt hoàn thành trọn vẹn task theo chỉ đạo của người dùng mà không bị ngắt quãng máy móc. Bắt buộc dùng cờ rút gọn (`pytest -q`, `mvn -q`) chống rác terminal.
+- **Phân bổ phiên làm việc & Chống tràn Chat**: Với Subagent chạy ngầm tự chủ (Autonomous Worker), mỗi phiên chỉ làm đúng 1 Subtask (tối đa 8–10 tool calls) rồi ghi handoff note ngắn. Khi đang tương tác trực tiếp (Pair-programming) với người dùng, Dev được quyền linh hoạt hoàn thành trọn vẹn task theo chỉ đạo của người dùng mà không bị ngắt quãng máy móc. Bắt buộc dùng cờ rút gọn (`pytest -q`, `mvn -q`) chống rác terminal. Khi xuất log kiểm thử hoặc diff chi tiết, xả toàn bộ vào `docs/notes/inbox/<Task>/<Task>.<Subtask>-<agent>.md`, chỉ báo cáo Micro-Summary 3 dòng về cho Lead/Người dùng (`agents/protocols/context-budget.md`).
 - **Vi phạm quy tắc Sửa File Chéo (Cross-Subtask 7 Kịch bản)**: Cấm code hộ subtask sau; cấm sửa/xóa migration cũ (phải tạo revision mới nối tiếp head); cấm đổi behavior fixture/factory dùng chung trong `conftest.py`; cấm tự ý sửa file đặc tả `docs/spec/`. Khi gặp Breaking Change hoặc xung đột kiến trúc (Kịch bản 4): BẮT BUỘC DỪNG LẠI NGAY, đổi trạng thái sang `BLOCKED`, báo Lead và Reviewer thẩm định lại kế hoạch (tham chiếu `agents/protocols/definition-of-done.md`).
 
 

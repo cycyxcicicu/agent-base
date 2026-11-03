@@ -8,15 +8,20 @@ Giải thích đầy đủ từng sheet/ cột + ví dụ thật: `doc/quy-trinh
 Nguồn quy tắc: mẫu v3.0 + file đã điền thật `doc/quy-trinh/template/04-srs-fdd-copilot-da-dien/goc/_SRS_FDD_AI-Agent-Copilot.xlsx`. Mục đánh dấu **[ĐỀ XUẤT]** là suy ra từ file Copilot, chưa được team GDT chốt — hỏi người dùng nếu ảnh hưởng kết quả.
 
 ## A. Nguyên tắc chung (bắt buộc)
+0. **May đo quy mô (Tailoring Policy):**
+   - Mẫu Excel SRS_FDD 13 tab này áp dụng cho các dự án Enterprise, tài chính, kế toán hoặc khách hàng yêu cầu nghiệm thu CMMI-L3.
+   - Đối với dự án vừa & nhỏ, MVP hoặc dịch vụ nhanh: Sử dụng quy trình Markdown tinh gọn theo `agents/protocols/srs-workflow.md` (bộ 3 file `UC-xx.md`, `thiet-ke.md`, `doi-chieu.md` + task card).
+   - **Tuy nhiên, khi dự án ĐÃ CHỌN dùng mẫu Excel SRS_FDD thì BẮT BUỘC giữ nguyên 100% các cột chuẩn của mẫu Copilot (`_SRS_FDD_AI-Agent-Copilot.xlsx`), TUYỆT ĐỐI KHÔNG CẮT XÉN CỘT**. Muốn bỏ mục nào thì đánh dấu `No` ở sheet `DauMucTaiLieuCanLam` kèm lý do giải trình.
 1. **Chỉ ghi ở máy** (file md/ xlsx trong `doc/`); **không ghi vào Google Sheet/ Doc**. Người dùng tự đưa lên. Nội dung chưa đưa lên ghi ở file bổ sung, xem `AGENTS.md`.
 2. **Không bịa.** Mọi API, tên bảng, tên file, mã trạng thái, tên màn hình phải lấy từ **code thật hoặc tài liệu đã tải** (`doc/yeu-cau/project-doc`, `doc/thiet-ke`, `doc/uat`). Không có căn cứ → ghi `(chưa xác nhận — hỏi: …)` thay vì đoán.
-3. **AI đề xuất, người duyệt.** Không tự điền "Người duyệt", "Ngày duyệt", "Xác nhận của con người", trạng thái `Approved/ Hoàn thành`. Những ô này chỉ người dùng điền, **bằng file** (không tính xác nhận qua chat).
+3. **AI đề xuất, người duyệt (File-based GATE).** Không tự điền "Người duyệt", "Ngày duyệt", "Xác nhận của con người", trạng thái `Approved/ Hoàn thành`. Những ô này chỉ người dùng điền, **bằng file** (không tính xác nhận qua chat).
 4. **Một chức năng = một ID** (`UC-xx` hoặc `US_xx`) xuyên suốt: Use-case/ User Story → WBS → RTM → TestCases. ID mới phải hỏi người dùng nếu chưa có quy ước. **[ĐỀ XUẤT]** WBS `STT`; RTM `No` dạng `<STT task>.<chỉ số con>`.
 5. **Mỗi lần làm một chức năng/ task**, xong dừng chờ duyệt rồi mới làm tiếp. Phát hiện lỗi ngoài phạm vi → ghi `Risk_Register`/ báo người dùng, **không tự sửa** task khác.
-6. **Mọi thay đổi ghi `NhatKyThayDoi`.** Sửa cấu trúc mẫu → ghi lý do ở `DauMucTaiLieuCanLam`. Sheet không dùng → đánh `No` **kèm lý do**.
+6. **Mọi thay đổi ghi `NhatKyThayDoi` (8 cột).** Sửa cấu trúc mẫu → ghi lý do ở `DauMucTaiLieuCanLam` (13 cột). Sheet không dùng → đánh `No` **kèm lý do**.
 7. **Không sao chép chữ mẫu.** Ví dụ trong mẫu (News System, trung tâm anh văn, Toktak i18n, "Lorem ipsum", NFR "<2 giây/ 1000 đăng nhập") là của dự án khác — thay bằng nội dung thật hoặc để trống có ghi chú. Không để dòng "VD:" trong bản chính thức.
 8. Ngôn ngữ: tiếng Việt, câu ngắn, dùng đúng tên trên giao diện/ trong code. Ngày `dd/mm/yyyy`. Không đưa SĐT, tên khách thật vào ví dụ (dùng dữ liệu giả rõ ràng).
 9. Quy tắc commit/ Liquibase/ kiến trúc vẫn theo `git-workflow.md`, `engineering-conventions.md`; test theo `qa-process.md`.
+10. **Tư duy BA thực chiến & Code Reality:** Đọc code thật trước khi viết; bao phủ toàn diện các ca biên thực tế (Edge cases), không chỉ viết Happy Path. Luôn giữ tư duy phản biện trung thực (Anti-flattery), không vuốt đuôi khi người dùng đưa giải pháp rủi ro.
 
 ## B. Chuẩn viết từng sheet
 
@@ -180,3 +185,31 @@ Mẫu SRS của dự án có cho **mỗi màn**: UI Form, User Story, ERD, Compo
 ## K. Câu hỏi gửi Kế toán, BA (chốt 18/10/2026)
 
 Gộp các câu hỏi mở thành một file `doc/srs/cau-hoi-ke-toan.md` (một bảng: Mã, Nhóm, Màn, Câu hỏi, Bối cảnh, Phương án A, B, C, Khuyến nghị). Quy tắc: câu hỏi bằng ngôn ngữ nghiệp vụ (không tên class, hàm); mỗi câu 3 phương án và một khuyến nghị có lý do; bỏ câu đã quyết; câu kỹ thuật chuyển sang "hỏi BA và Dev". Bản Excel có ô chọn: `python3 scripts/srs_questions_to_xlsx.py`.
+
+## L. Bản Đồ 13 Sơ Đồ & Vị Trí Dòng Neo Chuẩn Trong File Excel SRS_FDD
+
+Khi xuất hoặc điền vào file Excel SRS_FDD (`SRS_FDD_Template-v3.0.xlsx` hoặc `_SRS_FDD_AI-Agent-Copilot.xlsx`), Agent BẮT BUỘC tuân thủ vị trí neo và bảng thuyết minh đi kèm:
+
+| STT | Tên Sơ Đồ | Sheet Nằm Trong | Dòng Neo (Row) | Bảng Thuyết Minh Bằng Chữ Đi Kèm Dưới Ảnh |
+|---|---|---|---|---|
+| **1** | **Luồng nghiệp vụ tổng quan (BPMN)** | `Component_Detail_Design` | Dòng 12 (Cột G) | Bảng bơi làn 4 cột: *Bước, Làn (Actor), Hành động, Dữ liệu, Bước kế tiếp*. |
+| **2** | **Sơ đồ phân rã WBS dạng cây** | `Component_Detail_Design` | Dòng 26 | Cây phân cấp: Dự án $\rightarrow$ Phase $\rightarrow$ Work Package $\rightarrow$ Tasks. |
+| **3** | **Bản đồ luồng màn hình (Screen Flow)** | `Component_Detail_Design` | Dòng 73 | Sơ đồ chuyển trang: Mã màn hình nguồn $\rightarrow$ Sự kiện bấm $\rightarrow$ Màn đích. |
+| **4** | **Wireframe Board (Figma Overview)** | `Component_Detail_Design` | Dòng 95 | Bảng tổng thể các màn hình thu nhỏ nối với nhau. |
+| **5** | **Package & Component hệ thống** | `Component_Detail_Design` | Dòng 138 | Khối module (A..L), mũi tên quan hệ "Use" giữa các service. |
+| **6** | **Kiến trúc phần mềm chi tiết (Software Arch)** | `Component_Detail_Design` | Dòng 112 | Phân tầng: Interaction $\rightarrow$ Orchestrator $\rightarrow$ Core $\rightarrow$ DB kèm 12 bước đánh số. |
+| **7** | **Sơ đồ Triển khai hạ tầng (Deployment)** | `Component_Detail_Design` | Dòng 245 | Internet $\rightarrow$ Firewall $\rightarrow$ Nginx Proxy $\rightarrow$ Containers $\rightarrow$ DB. |
+| **8** | **Trục tích hợp giữa các hệ thống** | `Component_Detail_Design` | Dòng 275 | Luồng gọi API đối tác (Pancake, J&T, Ngân hàng) kèm Protocol & Port. |
+| **9** | **Sơ đồ bơi làn chi tiết (Activity Swimlane)** | `Use-Case01..n` | Dòng 129 | 2 làn "Người dùng" và "Hệ thống", hình thoi rẽ nhánh điều kiện hợp lệ/không hợp lệ. |
+| **10** | **Wireframe màn hình chi tiết** | `Use-Case01..n` | Dòng 28 | Màn hình giao diện chi tiết, **đánh số ô 1..7 tương ứng với bảng Business Rules bên cột H**. |
+| **11** | **Sơ đồ tuần tự giao dịch (Sequence Diagram)** | `Use-Case01..n` | Dòng 136 | Lifelines: Client $\rightarrow$ Gateway $\rightarrow$ Controller $\rightarrow$ DB; có khung `LOOP` và `ALT`. |
+| **12** | **Sơ đồ thực thể CSDL (ERD)** | `Use-Case01..n` | Dòng 168 | Ký hiệu chân quạ, bảng có PK/FK, kiểu dữ liệu và quan hệ 1-N. |
+| **13** | **Bảng Screen Items chi tiết (Kiểu Nhật)** | Sheet `20210620` | Dòng 1 | Bảng mô tả từng nút bấm: `Item Name`, `Type`, `IOE`, `Required`, `Data Type`, `Max Length`, `Default Value`, `Error Message`. |
+
+### Nguyên Tắc Ô Công Thức (Bất Di Bất Dịch):
+- **CẤM GHI ĐÈ CÔNG THỨC**:
+  * `NhatKyThayDoi`: Cột A (`=ROW()-1`).
+  * `PJT_Definition`: Ô `B3` (`=B2`).
+  * `WBS_Planning`: Cột E (`=D/6.4`), Cột H (công thức `WORKDAY`), Cột I (`=WORKDAY(H, Duration-1)`), Dòng tổng cha (`=SUM(con)`).
+  * `Use-Case01`: Ô *Mức độ của UC* (công thức đếm số bước tính độ phức tạp).
+

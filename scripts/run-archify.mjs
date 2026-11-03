@@ -27,8 +27,9 @@ if (fs.existsSync(localArchify)) {
   process.exit(result.status ?? 0);
 }
 
-// 2. Đọc đường dẫn quarantine từ file cấu hình trung tâm skills.config.json
-const configFile = path.join(rootDir, 'skills.config.json');
+// 2. Đọc đường dẫn quarantine từ file cấu hình trung tâm (ưu tiên skills.config.local.json)
+const localConfigFile = path.join(rootDir, 'skills.config.local.json');
+const configFile = fs.existsSync(localConfigFile) ? localConfigFile : path.join(rootDir, 'skills.config.json');
 let quarantineDir = process.env.SKILLS_QUARANTINE_DIR || '';
 
 if (fs.existsSync(configFile)) {
@@ -39,7 +40,7 @@ if (fs.existsSync(configFile)) {
       quarantineDir = parsed.quarantine_dir;
     }
   } catch (err) {
-    console.warn(`⚠️ Cảnh báo: Không thể phân tích skills.config.json: ${err.message}`);
+    console.warn(`⚠️ Cảnh báo: Không thể phân tích ${path.basename(configFile)}: ${err.message}`);
   }
 }
 

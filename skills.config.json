@@ -1,6 +1,6 @@
 {
   "$schema": "./schemas/skills-config.schema.json",
-  "description": "Cấu hình trung tâm duy nhất cho thư mục kỹ năng và quarantine của dự án. Thay đổi ở đây sẽ tự động áp dụng cho tất cả các script, wrapper và agent.",
-  "quarantine_dir": "/Users/ducnvh/Documents/skill/repos",
+  "description": "Cấu hình trung tâm dự phòng cho thư mục kỹ năng. Khuyến nghị tạo skills.config.local.json trên từng máy (file này nằm trong .gitignore) để không xung đột đường dẫn máy cá nhân.",
+  "quarantine_dir": "~/skills-quarantine",
   "skills_dir": ".agents/skills"
 }

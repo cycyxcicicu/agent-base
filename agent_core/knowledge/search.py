@@ -63,15 +63,23 @@ def _outline(text: str) -> Tuple[str, List[str]]:
     return summary, heads
 
 
-def _field_sets(node, root_dir: str) -> Dict[str, set]:
+_FIELD_CACHE: Dict[Tuple[str, str, float], Tuple[Dict[str, set], Dict[str, str]]] = {}
+
+
+def _field_sets(node, root_dir: str) -> Tuple[Dict[str, set], Dict[str, str]]:
+    content_ref = node.content_ref or ""
+    path = os.path.join(root_dir, content_ref) if content_ref else None
+    mtime = os.path.getmtime(path) if (path and os.path.isfile(path)) else 0.0
+    cache_key = (node.id, content_ref, mtime)
+    if cache_key in _FIELD_CACHE:
+        return _FIELD_CACHE[cache_key]
+
     body = summary = ""
     heads: List[str] = []
-    if node.content_ref:
-        path = os.path.join(root_dir, node.content_ref)
-        if os.path.isfile(path):
-            with open(path, "r", encoding="utf-8", errors="ignore") as fh:
-                body = fh.read()
-            summary, heads = _outline(body)
+    if path and os.path.isfile(path):
+        with open(path, "r", encoding="utf-8", errors="ignore") as fh:
+            body = fh.read()
+        summary, heads = _outline(body)
     fields = {
         "id": node.id.split(":", 1)[-1].replace("-", " "),
         "title": node.title,
@@ -80,7 +88,9 @@ def _field_sets(node, root_dir: str) -> Dict[str, set]:
         "summary": (node.raw_data.get("summary") or "") + " " + summary,
         "body": body,
     }
-    return {k: set(normalize(v).split()) for k, v in fields.items()}, {k: " " + normalize(v) + " " for k, v in fields.items()}
+    res = ({k: set(normalize(v).split()) for k, v in fields.items()}, {k: " " + normalize(v) + " " for k, v in fields.items()})
+    _FIELD_CACHE[cache_key] = res
+    return res
 
 
 def _has(token: str, tokset: set) -> bool:

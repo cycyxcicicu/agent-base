@@ -85,3 +85,40 @@ Quy tắc:
 - Sơ đồ phải khớp quá trình **đang chốt**. Khi quyết định đổi, vẽ lại sơ đồ trước khi sửa tài liệu, rồi xuất ảnh và nhìn từng ảnh.
 - Khi tạo sơ đồ mới: chọn loại theo `chuan-ve-so-do.md`, chọn công cụ theo mục 1, ghi vào chỉ mục sơ đồ của dự án (tên, loại, nguồn, dùng ở đâu), dẫn ảnh vào md kèm mô tả hoạt động, xuất ảnh và đối chiếu checklist.
 - Đường cắt nhau nổi vòng (line jumps): thêm `jumpStyle=arc;jumpSize=10;` vào `style` mũi tên. **Chưa kiểm chứng** ảnh xuất có hiện đúng không.
+
+## 7. Vòng vẽ, xem, sửa và lỗi bố cục thường gặp (bổ sung 02/11/2026)
+
+Rút ra khi vẽ 3 sơ đồ (hoạt động bơi làn, sequence, use case) của chức năng "ghi nhận kế toán khi Check trùng" trong dự án gdt. **Lần vẽ đầu hầu như luôn có lỗi bố cục; sơ đồ đẹp là kết quả của vòng lặp, không phải của lần vẽ đầu** (sơ đồ hoạt động phải vẽ lại 3 lần mới sạch).
+
+### 7.1 Vòng lặp bắt buộc
+1. Viết hoặc sửa **file nguồn** (JSON hoặc `.drawio`). Không sửa ảnh.
+2. Sinh `.drawio` hoặc PNG.
+3. **Mở ảnh PNG ra xem** và liệt kê lỗi: đường cắt ngang ô, nhãn bị đè, ô chồng nhau, chữ tràn ô, hai đường nhập thành một đoạn khó phân biệt.
+4. Sửa nguồn, sinh lại. Lặp đến khi hết lỗi (thường 2 đến 3 vòng).
+5. Kiểm cấu trúc: `python scripts/diagram-describe.py <file.drawio> --page "<tên trang>" --check`.
+
+Agent **không xem được ảnh**: bỏ bước 3, dựa vào bước 5 và bảng lỗi dưới đây, và nói rõ với người dùng là chưa kiểm tra bằng mắt. Đừng báo "sơ đồ đẹp" khi chưa nhìn.
+
+### 7.2 Lỗi nhìn thấy, nguyên nhân, cách sửa (đã gặp thật)
+| Lỗi nhìn thấy | Nguyên nhân | Cách sửa |
+|---|---|---|
+| Đường từ nút ở làn này sang nút ở làn kế bên đi ngang **xuyên qua** một nút khác cùng hàng | Hai nhánh dồn về một nút, một nhánh phải đi qua làn của nhánh kia; bộ định tuyến tự động đi theo hàng | Hạ nút của nhánh thứ hai xuống **một hàng** để đường đi qua hàng trống. Hoặc đặt nút quyết định kế tiếp cùng làn với nhánh dài hơn (ví dụ "Ghi DB thành công?" đặt ở làn service thay vì làn DB) |
+| Đường về nút kết thúc cắt ngang các nút cuối (nút hiển thị kết quả, nút lỗi) | Nút kết thúc nằm ở làn ngoài cùng, đường đi ngang đúng hàng của các nút cuối | Đặt các nút đi về kết thúc ở **các hàng khác nhau**, giữ làn ngoài cùng trống, để đường đi theo lề |
+| Nhãn "có", "không" nằm đè lên ô hoặc lên đường khác | Hai nhánh dùng chung một đoạn nằm ngang | Chấp nhận khi vẫn đọc được; nếu không thì tách hai nút nhánh ra hai hàng |
+| Use case: hai tác nhân chồng lên nhau, nhãn bị che | Hai tác nhân cùng bên và gần nhau | Đổi một tác nhân sang bên kia (`"side": "right"`) |
+| Use case: nhãn dài xuống 3 dòng trong hình elip | Nhãn quá dài | Còn đọc được thì giữ; nếu chật thì rút ngắn nhãn (dưới khoảng 30 ký tự) |
+| Sequence: nhãn thông điệp bị đường lifeline của participant ở giữa cắt qua | Thông điệp dài đi ngang một participant không liên quan | Bỏ participant không cần (gộp tên vào nhãn thông điệp), xếp các participant hay nói chuyện với nhau cạnh nhau |
+| Nút lỗi không có màu đỏ | Bộ chuyển JSON sang drawio chỉ tô màu theo làn, không có loại nút lỗi | Hậu xử lý XML: đổi `fillColor` và `strokeColor` của nút lỗi và của các cạnh vào ra nó. Luôn kèm chữ "LỖI" trong nhãn (màu không là nghĩa duy nhất) |
+
+### 7.3 Mở được bằng draw.io
+- **Đã kiểm chứng:** file `.drawio` nhiều trang, mỗi `<diagram>` có `id` và `name` bằng tên sơ đồ, XML không nén; xuất PNG bằng CLI `draw.io -x -f png -p <số trang tính từ 1> -s 2 -b 10 -o ra.png vao.drawio` chạy đúng; `diagram-describe.py --check` báo "Đạt".
+- **Chưa kiểm chứng:** mở cửa sổ draw.io Desktop (giao diện) với các trang mới. Xuất PNG bằng dòng lệnh thành công **không chứng minh** mở bằng giao diện được; nhờ người dùng mở một lần và báo lại.
+- Thêm trang vào file nhiều trang: xóa trang cùng tên trước khi thêm (tránh trùng tên và id), rồi đọc lại danh sách trang để biết số thứ tự xuất ảnh.
+
+### 7.4 Script của dự án gdt còn trỏ đường dẫn cũ
+- `json_to_drawio.py`, `ve_lai.py`, `drawio_nhom.py` còn trỏ `doc/srs/hinh` (cấu trúc cũ); dự án đã chuyển sang `doc/features/<UC>/hinh/`. Cách vòng qua: viết script phụ `import json_to_drawio as J`, gọi `J.activity(spec)` hoặc `J.sequence(spec)` để lấy trang XML, tự ghép vào file nhóm rồi xuất ảnh bằng CLI draw.io. Hoặc sửa hằng `HINH` trong các script.
+- Use case: `python3 scripts/usecase_png.py <đường dẫn đầy đủ tới .usecase.json>` ghi `.svg` và `.png` cạnh file nguồn (cần Chrome và Pillow).
+- Mẫu nguồn đã chạy được (xem làm khuôn, đổi sang dữ liệu của chức năng mình):
+  - Hoạt động: `doc/features/TMP-dong-bo-user/hinh/TMP-dong-bo-user-hoat-dong-ghi-nhan-ke-toan.activity.json` (làn, nút `start`/`action`/`decision`/`end` gán `lane` và `row`, cạnh có nhãn).
+  - Sequence: `.../TMP-dong-bo-user-sequence-ghi-nhan-ke-toan.json` (`participants`, `messages` có `y` cách nhau 44).
+  - Use case: `.../TMP-dong-bo-user-use-case.usecase.json` (`usecases`, `actors` có `side` và `near`, `links`, `relations`).

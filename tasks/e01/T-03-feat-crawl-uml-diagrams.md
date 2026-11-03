@@ -6,11 +6,11 @@ owner: analyst
 epic: E01
 phase: GĐ1
 outputs:
-  - D:/test-repo/uml/
+  - assets/uml/
 branch: feature/03-crawl-uml-diagrams
 requirements: [REQ-KG-02]
 scope_edit:
-  - D:/test-repo/uml/**
+  - assets/uml/**
 scope_deny:
   - AGENTS.md
 ---

@@ -16,6 +16,13 @@ Quy chuẩn văn phong và cấu trúc tài liệu đặc tả giúp đảm bả
 6. **Tuân thủ Từ điển miền (Domain Glossary)**: Dùng đúng thuật ngữ thống nhất trong `docs/requirements/glossary.md`. Không tự bịa từ đồng nghĩa gây mơ hồ.
 7. **Lượng hóa tuyệt đối, tránh tính từ cảm tính**: Cấm dùng từ ngữ chung chung ("phản hồi nhanh", "giao diện trực quan", "bảo mật cao"). Phải lượng hóa ("phản hồi trong < 200ms", "đạt chuẩn tương phản WCAG 2.1 AA").
 8. **Tách biệt Quy tắc nghiệp vụ (BR) và Ca sử dụng (Use Case)**: Quy tắc nghiệp vụ tồn tại độc lập với giao diện; Use Case mô tả luồng thao tác cụ thể qua các bước.
+9. **Tư duy BA thực chiến — Suy diễn trường thực tế & Bao phủ Edge Cases**:
+   - Đặc tả không bao giờ chỉ dừng lại ở kịch bản lý tưởng (Happy Path). BA/Agent phải đặt mình vào vị trí người vận hành đời thực để suy diễn các trường hợp biên.
+   - *Ví dụ điển hình (Chia đơn):* Chia đều cho nhân viên $\rightarrow$ nhân viên làm sáng, chiều nghỉ đột xuất $\rightarrow$ đặc tả phải có cơ chế: thu hồi đơn chưa xử lý, chia lại cho nhân viên đang active, cơ chế khóa đơn (Locking) chống xung đột khi đang thao tác, và ghi vết lịch sử kiểm toán (Audit Trail).
+10. **Bám sát hiện trạng mã nguồn (Code Reality)**:
+    - Nếu hệ thống đã có code chạy, trước khi viết đặc tả/FDD bắt buộc phải đọc controller, service, repository, enum để xác định: Cái gì đã có, cái gì chưa có, cái gì bị ảnh hưởng. Tuyệt đối không bịa đặt hoặc suy diễn tách rời mã nguồn.
+11. **Phản biện trung thực & Độc lập kỹ thuật (Anti-Flattery)**:
+    - Kỹ sư/Agent không được xu nịnh, vuốt đuôi hoặc chiều theo phương án chưa tối ưu của người dùng nếu nó dẫn đến nợ kỹ thuật hoặc vỡ kiến trúc. Khi người dùng nói sai hoặc đưa giải pháp rủi ro, bắt buộc phải phản biện dứt khoát kèm 3 phương án lựa chọn, lý do và cách khắc phục rủi ro.
 
 ---
 

@@ -1052,6 +1052,8 @@ RELATED_CLUSTERS += [
     ("clique", ["Requirement:srs-workflow", "Requirement:spec-writing", "Requirement:srs-writing-standard",
                 "Requirement:document-templates", "Design:diagram-mo-ta-hoat-dong-so-do", "Design:chuan-ve-so-do",
                 "Design:diagram-quy-uoc-draw-io-va-archify", "Requirement:test-cases"]),
+    ("clique", ["Design:task-archetypes", "Rule:task-loop", "Requirement:context-budget", "Requirement:bug-repro",
+                "Design:bug-handling-pipeline"]),
 ]
 FALLBACK_HUB = {"Requirement": "Rule:task-loop", "Skill": "Skill:skills-registry", "Design": "Design:chuan-ve-so-do"}
 

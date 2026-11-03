@@ -36,7 +36,7 @@ KILO_MGR = ROOT / '.kilo' / 'agent-manager.json'
 KILO_DB = Path.home() / '.local' / 'share' / 'kilo' / 'kilo.db'
 TASKS_DIR = ROOT / 'tasks'
 ROLES_DIR = ROOT / 'agents' / 'roles'
-INBOX_DIR = ROOT / 'docs' / 'notes' / 'inbox'
+INBOX_DIR = ROOT / 'doc' / 'notes' / 'inbox' if (ROOT / 'doc' / 'notes' / 'inbox').is_dir() else ROOT / 'docs' / 'notes' / 'inbox'
 VIEWER_ASSETS = ROOT / 'tools' / 'viewer' / 'assets'
 MONITOR_HTML = VIEWER_ASSETS / 'monitor.html'
 VIEWER_BUILD = ROOT / 'build' / 'viewer'  # do scripts/generate-dashboard.py sinh ra
@@ -944,7 +944,7 @@ def get_current_swarm_state(force_refresh=False):
     # 4. Đọc 8 ghi chú mới nhất từ inbox
     recent_notes = []
     if INBOX_DIR.exists():
-        note_files = list(INBOX_DIR.glob('*.md'))
+        note_files = list(INBOX_DIR.rglob('*.md'))
         note_files.sort(key=lambda x: os.path.getmtime(x), reverse=True)
         for nf in note_files[:8]:
             recent_notes.append({
@@ -1116,7 +1116,7 @@ def file_watcher_loop():
             for p in TASKS_DIR.rglob('*.md'):
                 snap[str(p)] = os.path.getmtime(p)
         if INBOX_DIR.exists():
-            for p in INBOX_DIR.glob('*.md'):
+            for p in INBOX_DIR.rglob('*.md'):
                 snap[str(p)] = os.path.getmtime(p)
         if ROLES_DIR.exists():
             for p in ROLES_DIR.glob('*.md'):

@@ -6,11 +6,11 @@ owner: ba
 epic: E01
 phase: GĐ1
 outputs:
-  - D:/test-repo/m2mba/
+  - assets/m2mba/
 branch: feature/04-crawl-m2mba-blog
 requirements: [REQ-KG-03]
 scope_edit:
-  - D:/test-repo/m2mba/**
+  - assets/m2mba/**
 scope_deny:
   - AGENTS.md
 ---

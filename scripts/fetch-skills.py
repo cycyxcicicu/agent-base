@@ -311,9 +311,9 @@ def save_skills_config(quarantine_dir: Path, skills_dir: Optional[Path] = None) 
         data["skills_dir"] = ".agents/skills"
 
     local_cfg = ROOT_DIR / "skills.config.local.json"
-    target_file = local_cfg if local_cfg.exists() else CONFIG_FILE
+    target_file = local_cfg
     target_file.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"💾 Đã lưu cấu hình vào: {target_file.relative_to(ROOT_DIR)}")
+    print(f"💾 Đã lưu cấu hình máy cục bộ vào: {target_file.relative_to(ROOT_DIR)} (file này nằm trong .gitignore)")
 
 
 def get_quarantine_map(quarantine_dir: Path) -> Dict[str, Path]:

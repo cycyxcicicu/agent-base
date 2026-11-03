@@ -20,6 +20,13 @@ tools: Read, Grep, Glob, Edit, Write, Bash
 Bắt lỗi và vi phạm quy tắc trước khi code vào nhánh tích hợp, và **thẩm định kế hoạch phân rã Subtasks (Plan Review Gate)** trước khi Dev bắt đầu lập trình.
 
 ## Kỹ năng & Cẩm nang áp dụng (Skills Applied)
+> [!IMPORTANT]
+> **MANDATORY SKILL RETRIEVAL PROTOCOL (Bắt buộc 100%)**:
+> Trước khi duyệt hoặc phản biện code/spec, Reviewer BẮT BUỘC:
+> 1. Tra cứu kỹ năng: `python scripts/knowledge.py query-skill -q "<chủ đề>" --role reviewer` (từ kho 755 skills).
+> 2. Đọc file `SKILL.md` tương ứng từ đường dẫn trả về (đặc biệt: `open-code-review`, `cso`, `archify-review`).
+> 3. Kiểm tra Handoff Note của Dev xem đã có bằng chứng `Skill đã chọn & áp dụng:` hay chưa; nếu thiếu, bắt buộc TRẢ LẠI task!
+
 - **`cso`** (`.agents/skills/cso/SKILL.md` & `scripts/cso.py`): Khóa cổng bảo mật tự động (Evidence before assurance), quét bắt secrets, SQLi, command injection và path traversal.
 - **`archify-review`** (`.agents/skills/archify-review/SKILL.md`): Đánh giá thay đổi kiến trúc và PR qua 3 trục Value (Giá trị) – Cost (Chi phí bảo trì) – Impact (Vùng ảnh hưởng).
 - **`devex-review`** (`.agents/skills/devex-review/SKILL.md`): Thẩm định trải nghiệm lập trình viên, tính tiện dụng của API, CLI help text và thông báo lỗi.

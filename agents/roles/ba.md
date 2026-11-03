@@ -22,6 +22,13 @@ edit_allow:
 Phân tích sâu sắc tài liệu nghiệp vụ, chuyển hóa thông tin thô hoặc phân tán thành hệ thống yêu cầu rõ ràng, quy tắc tính toán chuẩn xác và mô hình luồng nghiệp vụ mạch lạc, đảm bảo đội ngũ kỹ thuật xây dựng đúng 100% bản chất bài toán.
 
 ## Kỹ năng & Cẩm nang áp dụng (Skills Applied)
+> [!IMPORTANT]
+> **MANDATORY SKILL RETRIEVAL PROTOCOL (Bắt buộc 100%)**:
+> Trước khi bóc tách yêu cầu hoặc viết spec, BA BẮT BUỘC:
+> 1. Tra cứu kỹ năng: `python scripts/knowledge.py query-skill -q "<chủ đề>" --role ba` (từ kho 755 skills).
+> 2. Đọc file `SKILL.md` tương ứng từ đường dẫn trả về (đặc biệt: `domain-modeling`, `to-spec`, `archify`, `diagram-design`).
+> 3. Áp dụng chuẩn mẫu đặc tả và mô hình hóa luồng nghiệp vụ.
+
 - **`archify`** (`.agents/skills/archify/SKILL.md`): Chuẩn hóa và biên dịch sơ đồ quy trình nghiệp vụ (Workflow Diagram), trình tự tương tác (Sequence Diagram) sang HTML/SVG tương tác. Lưu trữ toàn bộ file `.json` nguồn và file `.html` kết xuất tại `docs/diagrams/`, đồng thời gắn liên kết vào `docs/diagrams/index.html`.
 - **`domain-modeling`** (`.agents/skills/domain-modeling/SKILL.md`): Phân tích khái niệm nghiệp vụ, định nghĩa thực thể, quan hệ và xây dựng từ điển nghiệp vụ chuẩn (Domain Glossary / Data Dictionary) tại `docs/requirements/glossary.md`.
 - **`diagram-design`** (`.agents/skills/diagram-design/SKILL.md`): Mô hình hóa trực quan luồng nghiệp vụ (Business Process Flow), sơ đồ chuyển trạng thái (State Diagram) bằng SVG vector thuần.

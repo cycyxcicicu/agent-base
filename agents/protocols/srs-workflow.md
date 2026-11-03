@@ -14,6 +14,27 @@
 
 Dự án đã có sẵn thư mục riêng (ví dụ `doc/srs`) thì ghi vào `PROJECT.md`, không đổi tên thư mục theo khung.
 
+---
+
+## 1b. Phân cấp quy mô tài liệu (Tailoring Policy — May đo theo dự án)
+
+Không phải dự án nào cũng cần WBS, RTM 23 cột hay bộ hồ sơ Excel 14 tab cồng kềnh. Khung `agent-base` phân chia rõ 2 chế độ áp dụng:
+
+1. **Chế độ Agile / Tinh gọn (Lightweight Mode — Mặc định cho dự án vừa & nhỏ, MVP, dịch vụ đơn lẻ):**
+   - **Hồ sơ:** Sử dụng bộ ba file Markdown (`UC-xx.md`, `UC-xx-thiet-ke.md`, `UC-xx-doi-chieu.md`) và sơ đồ dạng ảnh nhúng tại `hinh/`.
+   - **Quản lý công việc:** Dùng Task Card hạt mịn (`tasks/T-xx.md`) hoặc bảng Kanban của dự án/Jira/GitLab.
+   - **Không bắt buộc:** Không cần lập file Excel `SRS_FDD_<UC>.xlsx`, không cần WBS Gantt hay Function_RTM phức tạp nếu không có yêu cầu từ khách hàng/thầu.
+
+2. **Chế độ Enterprise / Tuân thủ CMMI-L3 (Enterprise Mode — Dự án tài chính, kế toán, hệ thống lõi lớn):**
+   - **Hồ sơ:** Đóng gói thêm file Excel `SRS_FDD_<UC>.xlsx` chuẩn 13 tab theo mẫu Copilot (`_SRS_FDD_AI-Agent-Copilot.xlsx`), có đầy đủ WBS chi tiết DoD, Function_RTM 23 cột, cổng duyệt con người (File-based GATE), Risk_Register và ADR_Log.
+   - **Nguyên tắc linh hoạt (May đo ngay trong Excel):** Sử dụng tab `DauMucTaiLieuCanLam` để chọn `Sử dụng: Yes/No` cho từng sheet (ví dụ: đã quản lý task trên Jira thì WBS có thể chọn `No` kèm lý do giải trình).
+
+3. **Nguyên tắc kỹ thuật BẮT BUỘC cho MỌI DỰ ÁN (Bất kể chế độ nào):**
+   - **Tư duy BA thực chiến (Code Reality & Edge Cases):** Trước khi viết đặc tả, bắt buộc phải đọc code hiện trạng. Không được chỉ viết Happy Path, bắt buộc phải suy diễn các ca biên thực tế (như ca chia đơn khi nhân viên nghỉ, thu hồi, concurrency locking, audit trail).
+   - **Quy chuẩn sơ đồ:** Hoạt động (Activity) bơi làn phải có **ĐÚNG 1 Start — ĐÚNG 1 End, nhánh lỗi màu đỏ**. Mockup phải đánh số tròn `①..⑦` trỏ xuống danh sách API.
+   - **Phản biện trung thực (Anti-Flattery):** Không vuốt đuôi khi người dùng đưa ra phương án rủi ro; đưa 3 lựa chọn kèm khuyến nghị và biện pháp phòng ngừa rủi ro.
+   - **Nghiệm thu bằng File (File-based GATE):** Duyệt qua file task/RTM, không duyệt miệng qua chat.
+
 ## 2. Bộ file của một chức năng (nằm trong `Thư mục SRS`)
 
 | File | Nội dung |

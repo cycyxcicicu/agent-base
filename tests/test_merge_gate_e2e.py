@@ -219,7 +219,7 @@ class TestGateMustPass(GateRepoTestCase):
 
     def test_handoff_note_in_inbox(self):
         self.branch("l-note")
-        self.write("docs/notes/inbox/T-1-dev.md", "không có lưu ý\n")
+        self.write("docs/notes/inbox/T-1-dev.md", "không có lưu ý\n- Skill đã chọn & áp dụng: springboot-patterns\n- Checklist đã tuân thủ: controller\n")
         self.commit_all()
         self.assertGatePasses("l-note")
 
@@ -330,6 +330,24 @@ class TestGateChangeSize(GateRepoTestCase):
         code, out = self.run_gate_args("s-lock", "--max-lines", "10")
         # package-lock.json nằm ngoài scope_edit nên vẫn bị chặn theo phạm vi, nhưng KHÔNG được báo vượt cỡ
         self.assertNotIn("dòng thay đổi", out)
+
+    def test_ui_file_without_cdp_verification_fails(self):
+        self.branch("l-ui-fail")
+        self.write("src/components/App.tsx", "export const App = () => <div>Hello</div>;\n")
+        self.write("docs/notes/inbox/T-1-dev.md",
+                   "- Skill đã chọn & áp dụng: ui-ux-pro-max\n- Checklist đã tuân thủ: checked\n")
+        self.commit_all()
+        code, out = self.run_gate("l-ui-fail")
+        self.assertEqual(code, 1, out)
+        self.assertIn("touches UI/Frontend files but missing mandatory UI Verification proof", out)
+
+    def test_ui_file_with_cdp_verification_passes(self):
+        self.branch("l-ui-pass")
+        self.write("src/components/App.tsx", "export const App = () => <div>Hello</div>;\n")
+        self.write("docs/notes/inbox/T-1-dev.md",
+                   "- Skill đã chọn & áp dụng: ui-ux-pro-max\n- Checklist đã tuân thủ: checked\n- Xác minh giao diện (CDP/Browser): PASS\n- Console errors: 0\n")
+        self.commit_all()
+        self.assertGatePasses("l-ui-pass")
 
 
 if __name__ == "__main__":

@@ -138,7 +138,7 @@ def epic_retro_warns(cards: list) -> list:
     warns, by_epic = [], {}
     for c in cards:
         by_epic.setdefault(c.get('epic', '?'), []).append(c)
-    inbox = ROOT / 'docs' / 'notes' / 'inbox'
+    inbox = ROOT / 'doc' / 'notes' / 'inbox' if (ROOT / 'doc' / 'notes' / 'inbox').is_dir() else ROOT / 'docs' / 'notes' / 'inbox'
     for epic, cs in by_epic.items():
         if all(c.get('status') == 'done' for c in cs):
             if not (inbox.is_dir() and any(inbox.glob(f'retro-{epic}*.md'))):

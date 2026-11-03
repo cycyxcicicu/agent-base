@@ -2,11 +2,11 @@
 
 # Khuôn mẫu prompt ủy thác và giao việc cho mô hình (Delegation Prompt Protocol)
 
-Giao thức này quy chuẩn hóa hợp đồng giao việc giữa các tác tử (đặc biệt khi giao việc cho mô hình khác hoặc subagent), giúp ngăn ngừa tình trạng báo cáo khống ("báo xong nhưng chưa làm"), trôi lệch phạm vi và ảo giác.
+Giao thức này quy chuẩn hóa hợp đồng giao việc giữa các tác tử (đặc biệt khi Lead giao việc cho Subagent hoặc giữa các tác tử với nhau), giúp ngăn ngừa tình trạng báo cáo khống ("báo xong nhưng chưa làm"), trôi lệch phạm vi, ảo giác và chống làm bẩn cửa sổ ngữ cảnh (Context Window).
 
 ---
 
-## 1. Bảy thành phần bắt buộc của một Prompt giao việc
+## 1. Tám thành phần bắt buộc của một Prompt giao việc
 
 1. **Bối cảnh & Điều KHÔNG làm**: Nêu bối cảnh 1-2 câu, mục tiêu cốt lõi, và danh sách điều CẤM (ví dụ: không git ghi, không sửa file ngoài scope, không thêm dependency).
 2. **Khóa phạm vi (Scope Gating)**: Liệt kê tường minh danh sách file được sửa (`scope_edit`) và file cấm chạm (`scope_deny`). Ngoài danh sách này BẮT BUỘC DỪNG và hỏi, không tự tiện sửa.
@@ -15,6 +15,9 @@ Giao thức này quy chuẩn hóa hợp đồng giao việc giữa các tác t�
 5. **Lệnh bằng chứng với kết quả kỳ vọng**: Lệnh kiểm chứng độc lập (ví dụ `git status -s`, `grep`, test exit code). Dán nguyên văn kết quả thật.
 6. **Mục bắt buộc "CHƯA chạy / CHƯA kiểm chứng" trong báo cáo**: Mọi điểm chưa có lệnh kiểm tra thực tế phải liệt kê trung thực tại mục này; cấm tự suy đoán là "đã chạy ngầm".
 7. **Nguyên tắc vàng**: *"Tuyệt đối không ghi đã sửa / đã xong / PASS khi chưa chạy lệnh bằng chứng và dán output thật."*
+8. **Kênh báo cáo & Chống tràn Chat (Reporting Channel & Anti-Bleed Directive)**:
+   - Subagent bắt buộc xả toàn bộ log chi tiết, lệnh bằng chứng và diff vào file báo cáo: `docs/notes/inbox/<Task>/<Task>.<Subtask>-<agent>.md` (theo `agents/protocols/handoff-note.md`).
+   - Phản hồi trong chat gửi về cho Lead chỉ được chứa **Micro-Summary 3 dòng**; tuyệt đối KHÔNG in hàng trăm dòng log terminal vào khung chat.
 
 ---
 
@@ -27,6 +30,7 @@ Bạn là dev thực thi trong repo `my-project`. Nhiệm vụ: chuẩn hóa hà
 - KHÔNG thêm thư viện bên ngoài.
 - KHÔNG sửa file ngoài phạm vi: chỉ sửa `src/auth/token.py` và `tests/test_token.py`.
 - KHÔNG ghi "đã sửa" khi chưa chạy lệnh bằng chứng.
+- KHÔNG in toàn bộ log dài vào chat; ghi toàn bộ bằng chứng vào file note được chỉ định bên dưới.
 
 == 2. MỐC TEST BAN ĐẦU ==
 - Chạy `python -m unittest discover -s tests -q` -> Mốc đầu phải là 45 test OK.
@@ -36,8 +40,11 @@ Bạn là dev thực thi trong repo `my-project`. Nhiệm vụ: chuẩn hóa hà
 2. Tại `src/auth/token.py`, định vị hàm `normalize_payload`, thêm điều kiện guard check `if not payload: return {}`.
 3. Chạy lại test suite: mốc cuối phải là 46 test OK.
 
-== 4. LỆNH BẰNG CHỨNG & BÁO CÁO ==
-- Chạy: `git status --porcelain` (chỉ hiển thị 2 file trong phạm vi).
-- Chạy: `python -m unittest discover -s tests -q` (46 tests OK).
-- Báo cáo gồm: (1) Đã làm gì; (2) Lệnh và output; (3) Mục CHƯA chạy/CHƯA kiểm chứng.
+== 4. LỆNH BẰNG CHỨNG & BÁO CÁO (CHỐNG TRÀN CHAT) ==
+- Xả toàn bộ kết quả kiểm thử và bằng chứng vào file:
+  `docs/notes/inbox/T-12/T-12.1-dev.md`
+- Phản hồi trong khung chat gửi về cho Lead chỉ gồm đúng 3 dòng:
+  * Đã làm: Thêm guard check `normalize_payload` cho chuỗi rỗng.
+  * Bằng chứng: `python -m unittest discover -s tests -q` -> 46 tests OK (0 fail).
+  * Chi tiết: Xem file `docs/notes/inbox/T-12/T-12.1-dev.md`.
 ```

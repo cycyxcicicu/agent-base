@@ -38,6 +38,11 @@ if str(ROOT) not in sys.path:
 
 from agent_core.knowledge.catalog import load_catalog, validate_catalog
 from agent_core.knowledge.context import build_context, ContextRequest, estimate_tokens
+from agent_core.knowledge.project_graph import (
+    detect_project_context,
+    build_project_graph,
+    query_project_graph,
+)
 
 
 def parse_as_of(raw: str | None) -> datetime | None:
@@ -442,6 +447,296 @@ def cmd_image(args: argparse.Namespace) -> int:
 
     return 0
 
+def cmd_query_skill(args: argparse.Namespace) -> int:
+    from agent_core.knowledge.skill_graph import (
+        load_skills_config, load_skill_graph, scan_quarantine_skills,
+        save_skill_graph, check_skill_graph_drift, search_skills
+    )
+    root = Path(args.root or ROOT).resolve()
+    graph_path = root / "agents" / "knowledge" / "skill-graph.json"
+    quarantine_dir, _, _ = load_skills_config(root)
+
+    # 1. Tự động sinh nếu chưa có file đồ thị
+    if not graph_path.exists():
+        if quarantine_dir and quarantine_dir.exists():
+            msg = "⚠️ Chưa có file đồ thị skill-graph.json. Đang tự động quét và xây dựng...\n"
+            if getattr(args, "format", "text") == "json":
+                sys.stderr.write(msg)
+            else:
+                print(msg, end="")
+            graph_data = scan_quarantine_skills(quarantine_dir, root_dir=root)
+            save_skill_graph(graph_data, graph_path)
+        else:
+            sys.stderr.write("❌ Lỗi: Chưa có đồ thị kỹ năng và không tìm thấy quarantine_dir.\n")
+            return 1
+    else:
+        graph_data = load_skill_graph(graph_path)
+
+    # 2. Tìm kiếm trên đồ thị
+    results = search_skills(
+        graph_data,
+        args.query,
+        role=args.role,
+        budget=args.budget,
+        limit=args.limit,
+        quarantine_dir=quarantine_dir,
+        root_dir=root
+    )
+
+    # 3. Khi không tìm thấy kết quả hoặc người dùng bật --auto-update:
+    # Tự động kiểm tra kho quarantine xem có skill mới thêm/sửa hay không
+    if (not results or getattr(args, "auto_update", False)) and quarantine_dir and quarantine_dir.exists():
+        is_sync, drift = check_skill_graph_drift(graph_data, quarantine_dir)
+        if not is_sync:
+            added_cnt = len(drift["added"])
+            mod_cnt = len(drift["modified"])
+            del_cnt = len(drift["deleted"])
+            msg = f"🔄 Phát hiện kho quarantine thay đổi (+{added_cnt} mới, ~{mod_cnt} sửa, -{del_cnt} xóa). Đang tự động cập nhật đồ thị...\n"
+            if getattr(args, "format", "text") == "json":
+                sys.stderr.write(msg)
+            else:
+                print(msg, end="")
+            graph_data = scan_quarantine_skills(quarantine_dir, root_dir=root)
+            save_skill_graph(graph_data, graph_path)
+            # Tìm lại trên đồ thị mới
+            results = search_skills(
+                graph_data,
+                args.query,
+                role=args.role,
+                budget=args.budget,
+                limit=args.limit,
+                quarantine_dir=quarantine_dir,
+                root_dir=root
+            )
+
+    if args.format == "json":
+        print(json.dumps(results, ensure_ascii=False, indent=2))
+        return 0
+
+    role_str = f" [Vai: {args.role}]" if args.role else ""
+    print(f"🎯 KẾT QUẢ TRA CỨU ĐỒ THỊ KỸ NĂNG (Từ khóa: '{args.query}'{role_str}, Ngân sách: {args.budget} tokens)")
+    if not results:
+        print("  🔍 Không tìm thấy kỹ năng nào phù hợp.")
+        return 0
+
+    for idx, item in enumerate(results, 1):
+        status = " [ĐÃ DUYỆT]" if item.get("approved") else ""
+        installed = " [ĐÃ CÀI ĐẶT]" if item.get("installed") else ""
+        print(f"\n  [{idx}] {item['name']}{status}{installed} (Điểm khớp: {item.get('score', 0)})")
+        print(f"      Domain: {item.get('domain')} | Vai trò: {', '.join(item.get('roles', []))}")
+        print(f"      Mô tả: {item.get('description', '')[:160]}...")
+        if item.get("local_path"):
+            print(f"      Đường dẫn cục bộ: {item['local_path']}")
+            print(f"      URI: {item.get('file_uri')}")
+        else:
+            primary = item.get("primary_source", {})
+            print(f"      Nguồn repo: {primary.get('repo')} ({primary.get('rel_path')})")
+
+    return 0
+
+
+def cmd_skill_graph(args: argparse.Namespace) -> int:
+    from agent_core.knowledge.skill_graph import (
+        load_skills_config, save_skills_local_config, load_skill_graph,
+        scan_quarantine_skills, save_skill_graph, check_skill_graph_drift
+    )
+    root = Path(args.root or ROOT).resolve()
+    action = args.action
+    quarantine_dir, _, cfg_source = load_skills_config(root)
+    graph_path = root / "agents" / "knowledge" / "skill-graph.json"
+
+    if action == "config":
+        new_dir = getattr(args, "dir", None)
+        if new_dir:
+            try:
+                saved = save_skills_local_config(Path(new_dir), root_dir=root)
+                print(f"✅ Đã cấu hình kho kỹ năng cục bộ vào: {saved.name}")
+                print(f"   Đường dẫn: {new_dir}")
+                print(f"   File này nằm trong .gitignore, không bao giờ bị commit lên Git.")
+                return 0
+            except Exception as e:
+                sys.stderr.write(f"❌ Lỗi cấu hình: {e}\n")
+                return 1
+        else:
+            print("📋 CẤU HÌNH KHO KỸ NĂNG HIỆN TẠI:")
+            print(f"   - Nguồn cấu hình: {cfg_source.name if cfg_source else 'Chưa có'}")
+            print(f"   - Thư mục quarantine: {quarantine_dir if quarantine_dir else 'Chưa tìm thấy'}")
+            print(f"   👉 Để đổi đường dẫn: python scripts/knowledge.py skill-graph config --dir <đường_dẫn>")
+            return 0
+
+    elif action in ("build", "sync", "update"):
+        if not quarantine_dir or not quarantine_dir.exists():
+            sys.stderr.write(
+                "❌ Lỗi: Chưa cấu hình hoặc không tìm thấy thư mục quarantine trên máy này.\n"
+                "👉 Dùng: python scripts/knowledge.py skill-graph config --dir <đường_dẫn>\n"
+            )
+            return 2
+
+        if action in ("sync", "update") and graph_path.exists():
+            graph_data = load_skill_graph(graph_path)
+            if graph_data:
+                is_sync, drift = check_skill_graph_drift(graph_data, quarantine_dir)
+                if is_sync:
+                    print(f"✅ Đồ thị Kỹ năng đã hoàn toàn đồng bộ với kho quarantine ({drift['total_current']} files).")
+                    return 0
+                print(f"🔄 Phát hiện lệch: {len(drift['added'])} thêm mới, {len(drift['modified'])} sửa, {len(drift['deleted'])} bị xóa. Đang cập nhật...")
+
+        print(f"🔍 Đang quét kho kỹ năng tại: {quarantine_dir} ...")
+        graph_data = scan_quarantine_skills(quarantine_dir, root_dir=root)
+        save_skill_graph(graph_data, graph_path)
+        stats = graph_data["stats"]
+        print(f"✅ Đã cập nhật Đồ thị Kỹ năng: {stats['total_skills']} unique skills ({stats['total_variants']} files) từ {len(stats['repos_scanned'])} repos.")
+        return 0
+
+    elif action == "check":
+        if not graph_path.exists():
+            print("⚠️ Chưa có file đồ thị skill-graph.json.")
+            if getattr(args, "auto_update", False) and quarantine_dir and quarantine_dir.exists():
+                return cmd_skill_graph(argparse.Namespace(action="build", root=str(root)))
+            return 1
+        graph_data = load_skill_graph(graph_path)
+        if not quarantine_dir or not quarantine_dir.exists():
+            sys.stderr.write("❌ Lỗi: Thư mục quarantine không khả dụng trên máy này.\n")
+            return 2
+        is_sync, drift = check_skill_graph_drift(graph_data, quarantine_dir)
+        if is_sync:
+            print(f"✅ Đồ thị Kỹ năng đồng bộ 100% với kho quarantine ({drift['total_current']} files).")
+            return 0
+        else:
+            print(f"⚠️ Phát hiện lệch (Drift): {len(drift['added'])} thêm mới, {len(drift['modified'])} sửa đổi, {len(drift['deleted'])} bị xóa.")
+            if getattr(args, "auto_update", False):
+                print("🔄 Bật --auto-update: Đang tự động cập nhật lại Đồ thị Kỹ năng...")
+                return cmd_skill_graph(argparse.Namespace(action="build", root=str(root)))
+            return 1
+
+    elif action == "status":
+        if not graph_path.exists():
+            print("❌ Chưa có file đồ thị skill-graph.json.")
+            return 1
+        graph_data = load_skill_graph(graph_path)
+        stats = graph_data.get("stats", {})
+        print("📋 TRẠNG THÁI ĐỒ THỊ KỸ NĂNG:")
+        print(f"   - Nguồn cấu hình: {cfg_source.name if cfg_source else 'Mặc định'}")
+        print(f"   - Thư mục quarantine: {quarantine_dir}")
+        print(f"   - Tổng số kỹ năng: {stats.get('total_skills')} unique skills")
+        print(f"   - Tổng số biến thể: {stats.get('total_variants')} files")
+        print(f"   - Kỹ năng đã duyệt: {stats.get('total_approved')}")
+        print(f"   - Kỹ năng đã cài đặt: {stats.get('total_installed')}")
+        if quarantine_dir and quarantine_dir.exists():
+            is_sync, _ = check_skill_graph_drift(graph_data, quarantine_dir)
+            print(f"   - Trạng thái đồng bộ: {'ĐỒNG BỘ 100% ✅' if is_sync else 'CẦN ĐỒNG BỘ ⚠️'}")
+        return 0
+
+    return 2
+
+
+def _resolve_project_target(cli_root: str | None = None) -> tuple[Path, Path]:
+    """Tìm thư mục dự án và file project-graph.json tương ứng."""
+    if cli_root:
+        p = Path(cli_root).resolve()
+    else:
+        cwd = Path.cwd().resolve()
+        if (cwd / ".agentbase.json").exists() or (cwd / ".agent-base.json").exists() or (cwd / "doc").exists():
+            p = cwd
+        else:
+            pj_file = ROOT / "projects.json"
+            p = cwd
+            if pj_file.exists():
+                try:
+                    with open(pj_file, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                        def_id = data.get("default_project")
+                        for item in data.get("projects", []):
+                            if item.get("id") == def_id and Path(item.get("path", "")).exists():
+                                p = Path(item["path"]).resolve()
+                                break
+                except Exception:
+                    pass
+
+    doc_dir = p / "doc" / "architecture"
+    if not (p / "doc").exists() and (p / "docs").exists():
+        doc_dir = p / "docs" / "architecture"
+    graph_file = doc_dir / "project-graph.json"
+    return p, graph_file
+
+
+def cmd_query_api(args) -> int:
+    """Tra cứu nhanh API, Controller, Bảng DB của dự án."""
+    proj_root, graph_file = _resolve_project_target(getattr(args, "root", None))
+    if not graph_file.exists():
+        sys.stderr.write(f"⚠️ Chưa có đồ thị tại {graph_file}. Đang quét tự động...\n")
+        build_project_graph(proj_root, graph_file)
+
+    try:
+        with open(graph_file, "r", encoding="utf-8") as f:
+            graph_data = json.load(f)
+    except Exception as e:
+        sys.stderr.write(f"❌ Lỗi nạp đồ thị dự án: {e}\n")
+        return 1
+
+    results = query_project_graph(graph_data, args.query, service=getattr(args, "service", None), kind=getattr(args, "kind", None))
+    fmt = getattr(args, "format", "text")
+    if fmt == "json":
+        print(json.dumps(results[:getattr(args, "limit", 10)], ensure_ascii=False, indent=2))
+        return 0
+
+    print(f"🎯 KẾT QUẢ TRA CỨU KIẾN TRÚC DỰ ÁN '{graph_data.get('project', {}).get('project_id')}' (Từ khóa: '{args.query}')")
+    print(f"  Tìm thấy {len(results)} kết quả:\n")
+    limit = getattr(args, "limit", 10)
+    for i, node in enumerate(results[:limit], 1):
+        kind = node.get("kind")
+        if kind == "Endpoint":
+            print(f"  [{i}] [API] {node.get('http_method')} {node.get('path')}")
+            print(f"      Service: {node.get('service')} | Controller: {node.get('controller')}::{node.get('method_name')}()")
+            if node.get("description"):
+                print(f"      Mô tả: {node.get('description')}")
+            print(f"      Tệp: {node.get('source_file')}:{node.get('line_number')}\n")
+        elif kind == "Table":
+            print(f"  [{i}] [BẢNG DB] {node.get('table_name')} (Service: {node.get('service')})")
+            print(f"      Cột: {', '.join(node.get('columns', [])[:8])}")
+            print(f"      Entities: {', '.join(node.get('entities', []))}\n")
+        elif kind == "GatewayRoute":
+            print(f"  [{i}] [GATEWAY ROUTE] {node.get('route_id')} -> {node.get('target_uri')}")
+            print(f"      Paths: {', '.join(node.get('paths', []))}\n")
+        else:
+            print(f"  [{i}] [{kind}] {node.get('name') or node.get('id')}\n")
+    return 0
+
+
+def cmd_project_graph(args) -> int:
+    """Quản lý và đồng bộ đồ thị kiến trúc dự án (build, status, sync)."""
+    proj_root, graph_file = _resolve_project_target(getattr(args, "root", None))
+    action = getattr(args, "action", "status")
+
+    if action in ("build", "sync"):
+        print(f"🔍 Đang quét kiến trúc dự án tại: {proj_root} ...")
+        graph = build_project_graph(proj_root, graph_file)
+        stats = graph.get("stats", {})
+        print(f"✅ Đã cập nhật Đồ thị Dự án ({stats.get('project_id')}):")
+        print(f"   - {stats.get('total_services')} services | {stats.get('total_gateway_routes')} gateway routes")
+        print(f"   - {stats.get('total_endpoints')} endpoints | {stats.get('total_tables')} tables | {stats.get('total_entities')} entities")
+        print(f"   - Lưu tại: {graph_file}")
+        return 0
+
+    elif action == "status":
+        if not graph_file.exists():
+            print(f"⚠️ Chưa có file đồ thị tại: {graph_file}")
+            print("👉 Chạy: python scripts/knowledge.py project-graph sync")
+            return 1
+        with open(graph_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        stats = data.get("stats", {})
+        print(f"📋 TRẠNG THÁI ĐỒ THỊ DỰ ÁN: {stats.get('project_id')}")
+        print(f"   - Thư mục dự án: {proj_root}")
+        print(f"   - Tệp đồ thị: {graph_file}")
+        print(f"   - Services: {stats.get('total_services')} | Gateway Routes: {stats.get('total_gateway_routes')}")
+        print(f"   - Endpoints: {stats.get('total_endpoints')} | Bảng DB: {stats.get('total_tables')}")
+        print(f"   - Trạng thái: SẴN SÀNG ✅")
+        return 0
+
+    return 2
+
+
 def main():
     parser = argparse.ArgumentParser(description="CLI Quản lý & Trích xuất ngữ cảnh tri thức")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -474,6 +769,38 @@ def main():
     p_qry.add_argument("--role", help="Lọc ưu tiên theo vai trò (dev, architect, qa...)")
     p_qry.add_argument("--format", choices=["text", "json"], default="text", help="Định dạng đầu ra")
 
+    # Lệnh query-skill (Tra cứu kỹ năng trong Đồ thị Kỹ năng)
+    p_qsk = subparsers.add_parser("query-skill", help="Tra cứu kỹ năng JIT On-Demand trong Đồ thị Kỹ năng (Skill Graph)")
+    p_qsk.add_argument("--query", "-q", required=True, help="Từ khóa tìm kiếm skill (VD: 'subagent', 'react', 'adr', 'cso')")
+    p_qsk.add_argument("--root", default=".", help="Thư mục gốc agent-base (mặc định .)")
+    p_qsk.add_argument("--role", help="Lọc theo vai trò (dev, architect, qa...)")
+    p_qsk.add_argument("--budget", type=int, default=1200, help="Ngân sách token tối đa")
+    p_qsk.add_argument("--limit", type=int, default=5, help="Số lượng kỹ năng tối đa")
+    p_qsk.add_argument("--auto-update", action="store_true", help="Tự động cập nhật nếu kho quarantine có thay đổi")
+    p_qsk.add_argument("--format", choices=["text", "json"], default="text", help="Định dạng đầu ra")
+
+    # Lệnh skill-graph (Quản lý đồ thị kỹ năng)
+    p_skg = subparsers.add_parser("skill-graph", help="Quản lý và đồng bộ Đồ thị Kỹ năng (build, check, status, sync, update, config)")
+    p_skg.add_argument("action", choices=["build", "check", "status", "sync", "update", "config"], help="Hành động: build (quét & tạo đồ thị), check (kiểm tra lệch), status (xem trạng thái), sync/update (tự cập nhật khi lệch), config (cấu hình đường dẫn local)")
+    p_skg.add_argument("--root", default=".", help="Thư mục gốc agent-base")
+    p_skg.add_argument("--auto-update", action="store_true", help="Tự động cập nhật nếu phát hiện độ lệch (dùng cho action check)")
+    p_skg.add_argument("--dir", help="Đường dẫn thư mục quarantine khi dùng lệnh config")
+
+    # Lệnh query-api (Tra cứu Endpoint, Controller, Bảng DB trong Đồ thị Dự án)
+    p_qapi = subparsers.add_parser("query-api", help="Tra cứu REST Endpoint, Controller, Bảng DB trong Đồ thị Dự án (Project Graph)")
+    p_qapi.add_argument("--query", "-q", required=True, help="Từ khóa tìm kiếm (VD: 'orders', 'status', 'check-duplicate')")
+    p_qapi.add_argument("--root", help="Thư mục gốc của dự án (mặc định: tự nhận diện qua .agentbase.json hoặc thư mục hiện tại)")
+    p_qapi.add_argument("--service", "-s", help="Lọc theo tên dịch vụ (accounting-service, ws-iam...)")
+    p_qapi.add_argument("--kind", "-k", choices=["Endpoint", "Table", "Entity", "GatewayRoute"], help="Lọc theo loại node")
+    p_qapi.add_argument("--limit", type=int, default=10, help="Số lượng kết quả hiển thị tối đa")
+    p_qapi.add_argument("--format", choices=["text", "json"], default="text", help="Định dạng đầu ra")
+
+    # Lệnh project-graph (Quản lý và đồng bộ đồ thị dự án)
+    p_pjg = subparsers.add_parser("project-graph", help="Quản lý và đồng bộ Đồ thị Kiến trúc Dự án (build, status, sync)")
+    p_pjg.add_argument("action", choices=["build", "status", "sync"], default="status", nargs="?", help="Hành động: status (xem trạng thái), sync/build (quét và cập nhật)")
+    p_pjg.add_argument("--root", help="Thư mục gốc của dự án (mặc định: tự nhận diện)")
+    p_pjg.add_argument("--format", choices=["text", "json"], default="text", help="Định dạng đầu ra")
+
     # Lệnh learn (Ghi nhận bài học tự học mà không làm rác context)
     p_lrn = subparsers.add_parser("learn", help="Ghi nhận bài học mới vào inbox an toàn mà không làm phình to context")
     p_lrn.add_argument("--title", required=True, help="Tiêu đề bài học kinh nghiệm")
@@ -496,16 +823,16 @@ def main():
     p_sec.add_argument("--heading", "-s", required=True, help="Tiêu đề mục cần trích xuất (VD: 'State Machine', 'Quy tắc 2')")
     p_sec.add_argument("--root", default=".", help="Thư mục gốc (mặc định .)")
 
-
     args = parser.parse_args()
 
     # Không chỉ định --manifest và gốc không có knowledge.manifest.json: dùng catalog của khung agent-base.
     default_name = "knowledge.manifest.json"
     alt_name = "agents/knowledge/knowledge-manifest.json"
     root = getattr(args, "root", None) or "."
-    if root == "." and not os.path.exists(os.path.join(root, default_name)) and not os.path.exists(os.path.join(root, alt_name)):
-        root = str(ROOT)
-        args.root = root
+    if args.command not in ("query-api", "project-graph"):
+        if root == "." and not os.path.exists(os.path.join(root, default_name)) and not os.path.exists(os.path.join(root, alt_name)):
+            root = str(ROOT)
+            args.root = root
     if getattr(args, "manifest", None) == default_name and not os.path.exists(os.path.join(root, default_name)) \
             and os.path.exists(os.path.join(root, alt_name)):
         args.manifest = alt_name
@@ -516,6 +843,14 @@ def main():
         sys.exit(cmd_context(args))
     elif args.command == "query":
         sys.exit(cmd_query(args))
+    elif args.command == "query-skill":
+        sys.exit(cmd_query_skill(args))
+    elif args.command == "skill-graph":
+        sys.exit(cmd_skill_graph(args))
+    elif args.command == "query-api":
+        sys.exit(cmd_query_api(args))
+    elif args.command == "project-graph":
+        sys.exit(cmd_project_graph(args))
     elif args.command == "learn":
         sys.exit(cmd_learn(args))
     elif args.command == "section":

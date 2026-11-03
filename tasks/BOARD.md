@@ -13,20 +13,19 @@ Ký hiệu: ✅ done · 👀 review · 🔄 doing · ⬜ todo · ⛔ blocked · 
 ### E01 Thu thập dữ liệu & Crawler Trạm D:\test-repo  (3/3)  · `tasks/e01/`
 
 - ✅ **T-02** Thiết Lập Trạm `D:\test-repo` & Xây Dựng Engine Crawler Jina Đa Năng (Kèm Tải Ảnh) · _dev_
-  - 📄 `D:/test-repo/`
+  - 📄 `scripts/research_tools/`
   - 📄 `scripts/research_tools/crawl_jina_assets.py`
 - ✅ **T-03** Khai Thác Toàn Diện `uml-diagrams.org` (Tài Liệu + 100% Ảnh Mẫu + Template Drawio/JSON) · _analyst_
-  - 📄 `D:/test-repo/uml/`
+  - 📄 `assets/uml/`
 - ✅ **T-04** Khai Thác & Phân Loại Toàn Diện Blog `m2mba.com/blog` (Kèm Ảnh Minh Họa) · _ba_
-  - 📄 `D:/test-repo/m2mba/`
+  - 📄 `assets/m2mba/`
 
 ## GĐ2  ██████████ 2/2 xong
 
 ### E02 Giải phẫu 30+ Repo & Thiết kế Kiến trúc KG 2.0  (2/2)  · `tasks/e02/`
 
 - ✅ **T-05** Tải Về & Giải Phẫu Đối Chuẩn 30+ Siêu Repo Kinh Điển Thế Giới · _researcher_
-  - 📄 `D:/test-repo/repos/`
-  - 📄 `D:/test-repo/benchmarks/30-repos-analysis.md`
+  - 📄 `docs/research/30-repos-analysis.md`
 - ✅ **T-06** Nghiên Cứu & Thiết Kế Kiến Trúc Knowledge Graph 2.0 Tối Ưu Cho AI · _architect_
   - 📄 `docs/spec/knowledge-graph-v2-architecture.md`
 

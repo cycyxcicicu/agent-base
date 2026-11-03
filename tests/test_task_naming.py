@@ -114,7 +114,8 @@ class TestMergeGateAcceptsSlugCard(unittest.TestCase):
         self.write("src/a.py", "print(2)\n")
         self.write("tasks/E1-x/T-1-them-cot-an-hien.md",
                    CARD.format(id="T-1", title="Thêm cột ẩn hiện") + "\n## Nhật ký phiên\n- xong\n")
-        self.write("docs/notes/inbox/T-1-them-cot-an-hien-dev.md", "không có lưu ý\n")
+        self.write("docs/notes/inbox/T-1-them-cot-an-hien-dev.md",
+                   "không có lưu ý\n- Skill đã chọn & áp dụng: springboot-patterns\n- Checklist đã tuân thủ: controller\n")
         self.git("add", "-A")
         self.git("commit", "-q", "-m", "change")
         r = self.gate()

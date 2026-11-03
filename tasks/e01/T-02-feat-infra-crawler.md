@@ -6,7 +6,7 @@ owner: dev
 epic: E01
 phase: GĐ1
 outputs:
-  - D:/test-repo/
+  - scripts/research_tools/
   - scripts/research_tools/crawl_jina_assets.py
 branch: feature/02-infra-crawler
 requirements: [REQ-KG-01]

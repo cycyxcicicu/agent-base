@@ -60,6 +60,19 @@ Luồng việc lớn: Người dùng → Lead ↔ Product → BA / Analyst (nế
 
 ## 17. Tự Động Chọn & Áp Dụng Skill (Skill Auto-Selection Gate)
 
-- **Bắt buộc**: Mọi Agent/Subagent trước khi thực thi task phải tự đối chiếu với danh mục Skills tại `agents/knowledge/skills.md` và đọc tệp `SKILL.md` tương ứng trước khi code.
-- **Ánh xạ chính**: Debug/lỗi $\rightarrow$ `systematic-debugging`; Code/refactor $\rightarrow$ `codebase-design`; Review $\rightarrow$ `open-code-review`; UI/CSS $\rightarrow$ `ui-ux-pro-max`; Bảo mật $\rightarrow$ `cso`; Docker/Release $\rightarrow$ `careful` + `ship`; Sơ đồ $\rightarrow$ `archify` / `diagram-design`.
-- **Bằng chứng**: Khi có dùng skill, handoff note (`docs/notes/inbox/`) ghi 2 dòng: (1) `Skill đã chọn & áp dụng: <tên>`, (2) `Checklist đã tuân thủ: <2-3 điểm cụ thể>`. Không dùng skill thì không cần.
+- **Bắt buộc 100%**: Mọi Agent/Subagent trước khi thực thi task BẮT BUỘC tra cứu Đồ thị Kỹ năng bằng lệnh: `python3 scripts/knowledge.py query-skill -q "<chủ đề>" --role <vai>` (từ kho 755 skills), nạp file `SKILL.md` tương ứng vào ngữ cảnh và tuân thủ các quy tắc trong đó trước khi gõ code.
+- **Ánh xạ chính**: Debug/lỗi $\rightarrow$ `systematic-debugging` / `investigate`; Code/refactor $\rightarrow$ `springboot-patterns` / `codebase-design`; Review $\rightarrow$ `open-code-review`; UI/CSS $\rightarrow$ `ui-ux-pro-max`; Bảo mật $\rightarrow$ `cso` / `security-scan`; Docker/Release $\rightarrow$ `careful` + `ship`; Sơ đồ $\rightarrow$ `archify` / `diagram-design`; Database $\rightarrow$ `postgres-patterns` / `database-migrations`.
+- **Bằng chứng Nghiệm thu Bắt buộc**: Mọi handoff note (`docs/notes/inbox/` hoặc `doc/notes/inbox/`) BẮT BUỘC ghi rõ 2 dòng (cổng `merge-gate.py` sẽ từ chối merge nếu thiếu):
+  1. `Skill đã chọn & áp dụng: <tên_skill>`
+  2. `Checklist đã tuân thủ: <2-3 điểm cụ thể đã áp dụng từ SKILL.md>`
+
+## 18. Tự Xác Minh Giao Diện Bắt Buộc (Mandatory UI & CDP Verification Gate)
+
+- **Phạm vi áp dụng**: Mọi task có sửa hoặc thêm file giao diện, frontend (`.tsx`, `.jsx`, `.vue`, `.svelte`, `.html`, `.css`, thư mục `frontend/`, `components/`, `pages/`, `views/`).
+- **Quy tắc cứng**: Cấm dựa hoàn toàn vào việc con người xem bằng mắt. Agent thực thi (Dev, Frontend, Designer hoặc QA) BẮT BUỘC khởi chạy ứng dụng hoặc chạy kiểm thử trình duyệt (Playwright headless / Chrome DevTools Protocol - CDP) để tự thu thập bằng chứng thực tế:
+  * Trang tải thành công, không vỡ layout.
+  * Console error = 0 ngoại lệ (`console.error = 0`).
+  * Network call liên quan trả về HTTP 200/201, không bị 4xx/5xx.
+- **Bằng chứng Nghiệm thu Bắt buộc**: Trong Handoff Note (`docs/notes/inbox/` hoặc `doc/notes/inbox/`) BẮT BUỘC có 2 dòng (cổng `merge-gate.py` sẽ tự động FAIL nếu thiếu khi task chạm file frontend):
+  1. `Xác minh giao diện (CDP/Browser): PASS`
+  2. `Console errors: 0` (hoặc `Network OK / UI Verified`)

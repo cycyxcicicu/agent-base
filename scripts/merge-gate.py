@@ -36,7 +36,7 @@ DEFAULT_MAX_LINES = 600
 # Không tính vào cỡ thay đổi: file sinh ra hoặc khóa phụ thuộc, thư mục build, card và ghi chú bàn giao.
 SIZE_IGNORE_GLOBS = [
     '**/package-lock.json', '**/pnpm-lock.yaml', '**/yarn.lock', '**/poetry.lock', '**/Pipfile.lock', '**/composer.lock',
-    '**/Cargo.lock', '**/go.sum', 'build/**', 'dist/**', '**/*.min.js', '**/*.map', 'tasks/**', 'docs/notes/inbox/**',
+    '**/Cargo.lock', '**/go.sum', 'build/**', 'dist/**', '**/*.min.js', '**/*.map', 'tasks/**', 'docs/notes/inbox/**', 'doc/notes/inbox/**',
 ]
 
 
@@ -155,6 +155,70 @@ def check_files_in_scope(files: list, allow: list, deny: list) -> list:
     return violations
 
 
+def verify_skill_compliance(repo: str, branch: str, note_files: list) -> list:
+    """Kiểm tra xem handoff notes có chứa bằng chứng áp dụng skill hay không."""
+    missing = []
+    for nf in note_files:
+        content = ""
+        p = Path(repo) / nf
+        if p.exists():
+            content = p.read_text(encoding='utf-8', errors='replace')
+        else:
+            try:
+                content = subprocess.check_output(
+                    ['git', '-C', repo, 'show', f"{branch}:{nf}"],
+                    text=True, encoding='utf-8', stderr=subprocess.DEVNULL
+                )
+            except Exception:
+                pass
+
+        has_skill = bool(re.search(r'(?i)(skill\s+đã\s+chọn(\s*&\s*áp\s+dụng)?|skill\s+áp\s+dụng|skill\s+applied|kỹ\s+năng\s+áp\s+dụng)\s*:', content))
+        has_checklist = bool(re.search(r'(?i)(checklist\s+đã\s+tuân\s+thủ|checklist\s+tuân\s+thủ|compliance\s+checklist|tiêu\s+chí\s+tuân\s+thủ)\s*:', content))
+
+        if not (has_skill and has_checklist):
+            missing.append(nf)
+    return missing
+
+
+def is_frontend_file(f: str) -> bool:
+    """Xác định xem file có thuộc phạm vi giao diện / Frontend hay không."""
+    lower = f.lower()
+    fe_exts = ('.tsx', '.jsx', '.vue', '.svelte', '.html', '.css', '.scss', '.less')
+    if any(lower.endswith(ext) for ext in fe_exts):
+        return True
+    fe_dirs = ('frontend/', 'ui/', 'views/', 'pages/', 'components/', 'static/', 'templates/')
+    return any(d in lower for d in fe_dirs)
+
+
+def verify_ui_verification(repo: str, branch: str, inbox_notes: list) -> bool:
+    """Kiểm tra xem handoff note có bằng chứng tự xác minh giao diện (CDP/Browser) hay không."""
+    for nf in inbox_notes:
+        content = ""
+        p = Path(repo) / nf
+        if p.exists():
+            content = p.read_text(encoding='utf-8', errors='replace')
+        else:
+            try:
+                content = subprocess.check_output(
+                    ['git', '-C', repo, 'show', f"{branch}:{nf}"],
+                    text=True, encoding='utf-8', stderr=subprocess.DEVNULL
+                )
+            except Exception:
+                pass
+
+        has_ui_check = bool(re.search(
+            r'(?i)(xác\s+minh\s+giao\s+diện[^:\n]*|kiểm\s+thử\s+giao\s+diện[^:\n]*|cdp\s+verification|browser\s+verification|ui\s+verification|tự\s+xác\s+minh\s+giao\s+diện[^:\n]*)\s*:',
+            content
+        ))
+        has_console_or_pass = bool(re.search(
+            r'(?i)(console\s*error|console\s*log|network\s*200|network\s*ok|pass|0\s*lỗi|không\s*lỗi)',
+            content
+        ))
+        if has_ui_check and has_console_or_pass:
+            return True
+    return False
+
+
 def main():
     parser = argparse.ArgumentParser(description="Check branch file changes against task card scope.")
     parser.add_argument("--branch", required=True, help="Feature branch name.")
@@ -162,6 +226,10 @@ def main():
     parser.add_argument("--base", default="develop", help="Base integration branch (default: develop).")
     parser.add_argument("--max-lines", type=int, default=0, help="Ngưỡng số dòng thay đổi (xem đầu file).")
     parser.add_argument("--strict-size", action="store_true", help="Vượt ngưỡng thì FAIL thay vì chỉ cảnh báo.")
+    parser.add_argument("--strict-skill", action="store_true", default=True, help="Bắt buộc handoff note phải có bằng chứng áp dụng Skill (mặc định: bật).")
+    parser.add_argument("--no-strict-skill", dest="strict_skill", action="store_false", help="Tắt kiểm tra bằng chứng Skill.")
+    parser.add_argument("--strict-ui", action="store_true", default=True, help="Bắt buộc xác minh giao diện CDP/Browser nếu thay đổi file Frontend (mặc định: bật).")
+    parser.add_argument("--no-strict-ui", dest="strict_ui", action="store_false", help="Tắt kiểm tra xác minh giao diện CDP.")
     args = parser.parse_args()
 
     try:
@@ -243,17 +311,19 @@ def main():
     # Card may live at tasks/T-n.md or in its epic folder tasks/<epic-folder>/T-n.md; a meaningful slug may follow the id (T-n-<slug>.md).
     card_re = re.compile(rf"^tasks/(?:[^/]+/)?{re.escape(task_id)}(?:-[a-z0-9]+(?:-[a-z0-9]+)*)?\.md$")
     violations = []
+    inbox_notes = []
 
     for f in files:
         if card_re.match(f) or f == "tasks/BOARD.md":
             continue
-        if re.match(rf"^docs/notes/inbox/(?:{re.escape(task_id)}/|{re.escape(task_id)}[\.-]).*\.md$", f):
+        if re.match(rf"^docs?/notes/inbox/(?:{re.escape(task_id)}/|{re.escape(task_id)}[\.-]).*\.md$", f):
+            inbox_notes.append(f)
             continue
 
         # ---------------------------------------------------------------------
         # C3 Fix: Risk tickets must be approved with verified human signer
         # ---------------------------------------------------------------------
-        if re.match(r"^docs/risk/RK-.*\.md$", f):
+        if re.match(r"^docs?/risk/RK-.*\.md$", f):
             base_risk_text = ""
             try:
                 base_risk_text = subprocess.check_output(
@@ -347,6 +417,36 @@ def main():
         print(f"{level}: {total_lines} dòng thay đổi, vượt ngưỡng {limit}. Lớn nhất: {top}.")
         print("  Chia thành PR nguyên tử (50 đến vài trăm dòng, một thay đổi logic): agents/protocols/atomic-changes.md")
         if args.strict_size:
+            sys.exit(1)
+
+    # -------------------------------------------------------------------------
+    # C4: Bắt buộc tuân thủ Kỹ năng (Skill Compliance Gate)
+    # -------------------------------------------------------------------------
+    if args.strict_skill and inbox_notes:
+        non_compliant = verify_skill_compliance(repo, args.branch, inbox_notes)
+        if non_compliant:
+            print("FAIL: Missing mandatory Skill Compliance proof in handoff note(s):")
+            for nc in non_compliant:
+                print(f"  - {nc}: must contain both 'Skill đã chọn & áp dụng:' and 'Checklist đã tuân thủ:'.")
+            print("  Every agent MUST execute 'python scripts/knowledge.py query-skill' and document applied skills in its note.")
+            sys.exit(1)
+
+    # -------------------------------------------------------------------------
+    # C5: Bắt buộc Tự Xác minh Giao diện qua CDP/Browser (Verification Skills)
+    # -------------------------------------------------------------------------
+    ui_touched_files = [f for f in files if is_frontend_file(f)]
+    if args.strict_ui and ui_touched_files:
+        if not inbox_notes:
+            print("FAIL: Task touches UI/Frontend files but no handoff note found in docs/notes/inbox/ to verify UI.")
+            print(f"  Touched UI files: {ui_touched_files[:5]}")
+            sys.exit(1)
+        if not verify_ui_verification(repo, args.branch, inbox_notes):
+            print("FAIL: Task touches UI/Frontend files but missing mandatory UI Verification proof:")
+            print(f"  Touched UI files: {ui_touched_files[:5]}")
+            print("  Handoff note must document UI/Browser verification (CDP):")
+            print("    - 'Xác minh giao diện (CDP/Browser): PASS'")
+            print("    - 'Console errors: 0' (hoặc kết quả kiểm tra mạng/giao diện)")
+            print("  See: agents/knowledge/ky-thuat/verification-skills-cdp.md")
             sys.exit(1)
 
     print("PASS: all changed files are within scope.")

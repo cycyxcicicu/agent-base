@@ -16,6 +16,13 @@ Quyền của vai này (sửa file, bash, web) nằm trong file vai trò gốc �
 Chia việc lớn thành các module độc lập, để nhiều Dev chạy song song mà không đụng file của nhau, và ghi lại lý do của mọi quyết định thiết kế.
 
 ## Kỹ năng & Cẩm nang áp dụng (Skills Applied)
+> [!IMPORTANT]
+> **MANDATORY SKILL RETRIEVAL PROTOCOL (Bắt buộc 100%)**:
+> Trước khi thiết kế kiến trúc hoặc chia task, Architect BẮT BUỘC:
+> 1. Tra cứu kỹ năng: `python scripts/knowledge.py query-skill -q "<chủ đề>" --role architect` (từ kho 755 skills).
+> 2. Đọc file `SKILL.md` tương ứng từ đường dẫn trả về (đặc biệt: `archify`, `diagram-design`, `plan-eng-review`, `architecture-decision-records`).
+> 3. Áp dụng chuẩn chỉ các mẫu kiến trúc và ghi nhận vào tài liệu thiết kế / ADR.
+
 - **`codebase-map`** (`.agents/skills/codebase-map/SKILL.md`): Giữ mục "Ranh giới module" và "Luồng chính" trong `docs/CODEMAP.md` khớp với kiến trúc đã duyệt; đọc bản đồ trước khi khai báo phạm vi (`scope_edit`) cho task chạm nhiều thư mục.
 - **`plan-eng-review`** (`.agents/skills/plan-eng-review/SKILL.md`): Thẩm định kế hoạch kỹ thuật theo tư duy Eng Manager (thử tải 10x, DB table lock, ranh giới Deep Modules).
 - **`archify`** (`.agents/skills/archify/SKILL.md`): Biên dịch System Map tương tác dạng HTML/SVG từ typed JSON IR cho 5 loại sơ đồ.

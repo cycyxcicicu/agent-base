@@ -6,13 +6,11 @@ owner: researcher
 epic: E02
 phase: GĐ2
 outputs:
-  - D:/test-repo/repos/
-  - D:/test-repo/benchmarks/30-repos-analysis.md
+  - docs/research/30-repos-analysis.md
 branch: feature/05-clone-analyze-30-repos
 requirements: [REQ-KG-04]
 scope_edit:
-  - D:/test-repo/repos/**
-  - D:/test-repo/benchmarks/**
+  - docs/research/**
 scope_deny:
   - AGENTS.md
 ---

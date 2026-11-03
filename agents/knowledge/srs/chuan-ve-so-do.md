@@ -55,7 +55,27 @@ Tối thiểu cho một chức năng: luồng (use-case hoặc activity), sequen
 
 ### Activity và flowchart
 - **Một điểm bắt đầu và đúng MỘT điểm kết thúc** (người dùng chốt 19/10/2026, theo sơ đồ mẫu). Mọi nhánh kết thúc (lỗi, từ chối, hoàn tất) dồn về chấm kết thúc duy nhất ở cuối sơ đồ; không vẽ mỗi nhánh một chấm. Đường dồn đi theo lề của sơ đồ hoặc theo khe giữa hai hàng, không chui qua nút nào.
+- Nhánh lỗi, từ chối, thất bại **bắt buộc dùng đường kẻ màu đỏ (`#EF4444`)** kèm nhãn điều kiện rõ ràng `[Lỗi...]`.
 - Mỗi hình thoi có từ hai nhánh, nhãn đầy đủ.
+
+### Component phân tầng (3-Tier)
+- Chia 3 tầng rõ ràng: Presentation Layer -> Application/Domain Layer -> Infrastructure Layer.
+- Phân biệt trực quan: Thành phần đã có dùng **khung viền liền + Dấu tích xanh (✔)**; thành phần mới phát triển dùng **khung viền nét đứt**.
+- Cột bên trái có 2 hộp text: "Chức năng cần chuyên sâu" & "API cần xây dựng".
+
+### Sequence phân khối Transaction
+- Lifeline: Actor -> Frontend -> Gateway -> Controller -> Service -> DB / External API.
+- Gom cụm bước thành từng khối **Transaction** có khung ngoặc vuông bên trái (vd: *Transaction 1: Validate -> Transaction 2: Xử lý -> Transaction 3: Ghi DB*).
+- Số thứ tự mũi tên `1.1, 1.2, 2.1...` **khớp 100% với số bước trong bảng Use-case**.
+
+### Wireframe Mockup chú thích số API
+- Màn hình giao diện chuẩn ở giữa. Các nút bấm, ô tìm kiếm, bảng dữ liệu có **vòng tròn đánh số đỏ `①, ②, ③, ④...`**.
+- Bên dưới hoặc bên cạnh có bảng đối chiếu 1-1: Vòng tròn số nào gọi đến Endpoint API nào (Method, Path, Event).
+
+### Mô tả màn hình kiểu Nhật (Screen Items & Events)
+- Ảnh chụp form giao diện đánh số ô `[1], [2], [3]...`.
+- Bảng Screen Items liệt kê: Tên ô, Loại ô (Button, Textbox, Dropdown), IOE (Input/Output/Event), Bắt buộc, Kiểu dữ liệu, Min/Max digits, Giá trị mặc định.
+- Bảng Event Action: Hành động khi Click/Change, API gọi, chuyển màn, thông báo lỗi/thành công nguyên văn câu chữ.
 
 ## 4. Mermaid trong md
 

@@ -210,6 +210,13 @@ Dự án này sử dụng bộ khung chuẩn hóa từ `agent-base`.
 4. **Tự học không làm rác context:**
    - Khi phát hiện bài học kỹ thuật mới:
      `python3 {HUB_ROOT}/scripts/knowledge.py learn --title "<tiêu đề>" --note "<nội dung>" --role dev`
+5. **Quản trị Ngân sách Context & Zero-Chat Bleeding:**
+   - Cấm in log kiểm thử, terminal output, diff thô dài vào chat; bắt buộc xả vào `{doc_name}/notes/inbox/<Task>/<Task>.<Subtask>-<vai>.md`.
+   - Khung chat chỉ nhận Micro-Summary 3 dòng: việc cốt lõi, lệnh test & kết quả PASS, link file note.
+   - Tra cứu và lọc báo cáo nhanh: `python3 {HUB_ROOT}/scripts/notes-index.py --task <Task>`.
+6. **Stateful Checkpoints & Auto-Compact:**
+   - Trước khi compact hoặc chuyển khâu, luôn flush trạng thái ra đĩa (`BOARD.md`, card, `inbox/`).
+   - Kích hoạt `/compact` khi context chạm >= 75% ngưỡng tối đa. Sau compact, chỉ đọc lại `BOARD.md` để tiếp tục.
 """
         agents_rule_file.write_text(agents_content, encoding="utf-8")
         print("✅ 4. Khởi tạo file luật dự án: AGENTS.md")

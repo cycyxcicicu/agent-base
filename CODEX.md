@@ -6,7 +6,12 @@ Nguồn quy tắc duy nhất. `GEMINI.md`, `.agents/rules/agents-core.md` đư�
 ## 0. Nguyên tắc chung
 
 Việc hoàn tác được trong phạm vi được giao thì cứ làm. **Hỏi trước khi làm việc có tác động**: mất code, dữ liệu hay lịch sử; đụng nhánh chung hoặc việc của người khác; tốn tiền hoặc tài nguyên ngoài; lộ khóa bí mật hay dữ liệu cá nhân; chạy mã bên ngoài chưa duyệt. Người dùng đã nói đồng ý rõ ràng trong chat thì làm ngay và ghi trích dẫn vào file (`agents/protocols/approval.md`). Câu chung chung ("ok" không rõ việc gì) thì hỏi lại.
-- **Chống lặp vô tận & Rào chắn thất bại (Anti-Loop & Fail-Fast)**: Không lặp lại cùng một câu/đoạn văn dưới nhiều biến thể từ ngữ. Trả lời dứt khoát, đi thẳng vào kết quả công việc và hành động, không độc thoại nội tâm lê thê. Nếu phát hiện đang lặp ý hoặc thiếu dữ kiện, DỪNG LẠI NGAY và hỏi người dùng; tuyệt đối không sinh nội dung rác hoặc bảng biểu không liên quan. **Quy tắc thử lại tối đa 3 lần (Max 3 Retries & Circuit Breaker)**: Mọi lệnh shell, kết nối mạng, git push/pull, test hoặc thao tác tự động nếu thất bại hoặc treo không có phản hồi quá ngưỡng timeout (10–15s), CHỈ ĐƯỢC THỬ LẠI TỐI ĐA 3 LẦN. Đến lần thứ 3 vẫn thất bại/treo, BẮT BUỘC DỪNG LẠI NGAY LẬP TỨC (HALT), kill tiến trình treo, cô lập lỗi và báo cáo người dùng; tuyệt đối cấm chạy ngầm vô tận hoặc lặp đi lặp lại vô ích.
+- **Chống lặp vô tận, Rào chắn thất bại & Rò rỉ suy nghĩ (Anti-Loop & Fail-Fast)**: Không lặp lại cùng một câu/đoạn văn dưới nhiều biến thể từ ngữ. Trả lời dứt khoát, đi thẳng vào kết quả công việc và hành động, không độc thoại nội tâm lê thê. Nếu phát hiện đang lặp ý hoặc thiếu dữ kiện, DỪNG LẠI NGAY và hỏi người dùng; tuyệt đối không sinh nội dung rác hoặc bảng biểu không liên quan. **Quy tắc thử lại tối đa 3 lần (Max 3 Retries & Circuit Breaker)**: Mọi lệnh shell, kết nối mạng, git push/pull, test hoặc thao tác tự động nếu thất bại hoặc treo không có phản hồi quá ngưỡng timeout (10–15s), CHỈ ĐƯỢC THỬ LẠI TỐI ĐA 3 LẦN. Đến lần thứ 3 vẫn thất bại/treo, BẮT BUỘC DỪNG LẠI NGAY LẬP TỨC (HALT), kill tiến trình treo, cô lập lỗi và báo cáo người dùng; tuyệt đối cấm chạy ngầm vô tận hoặc lặp đi lặp lại vô ích.
+- **Mặc định Chế độ Phản biện Sâu (Default Boost Mode - Anti-Flattery & 10x Scale)**: MỌI LÚC, MỌI NƠI, Agent BẮT BUỘC TỰ ĐỘNG kích hoạt tư duy phản biện gắt gao mà KHÔNG CẦN người dùng phải gõ `/boost`:
+  + Soi thật kỹ, chất vấn thẳng thắn, bóc trần mọi rủi ro kỹ thuật, giả định ngầm, không vuốt đuôi hay vâng dạ làm liều.
+  + Tự động áp dụng `plan-eng-review` (The 10x Scale Stress Test: 10x Data OOM, 10x Concurrency Deadlock, 10x Latency Cascade) và `plan-ceo-review` (The 10-Star Sweet Spot).
+  + Thứ tự bắt buộc: Phản biện đề bài (Challenger) -> Tài liệu thiết kế (SRS/FDD) -> Plan Review & Chia task hạt mịn -> Happy Path & TestLink XML -> Rồi mới code.
+  + Mỗi lần đưa lựa chọn: Luôn đưa ra 3 phương án đối trọng, 1 khuyến nghị dứt khoát kèm lý do và cách khắc phục rủi ro.
 
 ## 1. Đọc gì trước khi làm
 
@@ -15,7 +20,12 @@ Việc hoàn tác được trong phạm vi được giao thì cứ làm. **Hỏi
 3. **`doc/notes/PROJECT-NOTES.md`** (hoặc `docs/PROJECT-NOTES.md`) và các file chưa gộp trong **`doc/notes/inbox/`** (hoặc `docs/notes/inbox/`): bộ nhớ chung, ghi chú của các agent làm trước bạn (bẫy, quyết định, việc dở dang).
 4. Task card của bạn trong `tasks/`.
 5. File vai trò của bạn trong `agents/roles/`.
-6. Tri thức: **không nạp sẵn**. Gặp chủ đề thì tự tra `python scripts/knowledge.py query -q "<từ khóa>" --role <vai>` (trả tóm tắt, mục và đường dẫn, khoảng 1.200 token), rồi chỉ đọc phần cần; mục lục: `agents/knowledge/README.md`.
+6. Tri thức & Kỹ năng: **không nạp sẵn toàn bộ vào context**. Trước khi phân tích hoặc code, Agent BẮT BUỘC:
+   - Tra cứu tri thức chuẩn: `python scripts/knowledge.py query -q "<từ khóa>" --role <vai>` (147 nodes).
+   - Tra cứu & nạp kỹ năng chuyên sâu: `python scripts/knowledge.py query-skill -q "<từ khóa>" --role <vai>` (755 skills).
+   - Tra cứu API & DB dự án: `python scripts/knowledge.py query-api -q "<từ khóa>"` (142 APIs, 36 tables).
+   - Đọc file `SKILL.md` tương ứng và ghi bằng chứng áp dụng vào Handoff Note (bắt buộc để qua `merge-gate.py`).
+   - Khi task đụng file giao diện/Frontend: BẮT BUỘC tự kiểm thử trên trình duyệt (Playwright/CDP) và ghi bằng chứng `Xác minh giao diện (CDP/Browser): PASS` kèm `Console errors: 0` vào Handoff Note (bắt buộc để qua `merge-gate.py`).
 
 Chưa rõ thì hỏi, đừng đoán. Không có nguồn thì không khẳng định.
 
@@ -174,4 +184,12 @@ Mọi chức năng mới hoặc task sửa đổi bắt buộc phải tuân th�
    - Bộ ba vai trò tự review chéo và lập Biên bản Gate 2 (`<UC>-bien-ban-tham-dinh-gate-2.md`): `architect` duyệt kiến trúc/JPA; `reviewer` duyệt hiệu năng/DB lock/an toàn; `qa` duyệt ma trận bao phủ ATDD/TestLink.
    - **CẤM CODE KHI CHƯA ĐƯỢC DUYỆT**: Chỉ khi Biên bản Gate 2 được Người dùng duyệt thì Dev mới được bắt đầu lập trình (TDD: Red - Green - Refactor).
    - Với task sửa bug: Bắt buộc tái hiện lỗi trên code hiện tại, viết case TestLink (XML, Keyword = mã Mantis) được duyệt trước rồi mới sửa code.
+
+## 19. Ngân sách Context & Điều phối Subagent (Anti-Bleed)
+
+Chi tiết: `agents/protocols/context-budget.md`. Bốn quy tắc chạy dài hạn không tràn context:
+1. **Ba trần token**: Lead $\le$ 50k; Subagent $\le$ 30k/subtask (phiên ngắn, xong thì thoát); JIT Knowledge $\le$ 1.200 (`scripts/knowledge.py query`).
+2. **Zero-Chat Bleeding**: Cấm in logs, diff dài vào chat; xả thô vào `doc/notes/inbox/<Task>/<Task>.<Subtask>-<vai>.md`. Chat chỉ nhận 3 dòng tóm tắt: việc cốt lõi, lệnh test & PASS, link note.
+3. **Chỉ mục tự động**: `python scripts/notes-index.py` sinh `INDEX.md`. Tra cứu dùng cờ `--task <Task>`.
+4. **Stateful Checkpoint & Compact**: Flush trạng thái ra đĩa (`BOARD.md`, card, `inbox/`). Compact khi context $\ge$ 75%. Sau compact, đọc `BOARD.md` tiếp tục.
 

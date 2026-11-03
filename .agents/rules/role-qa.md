@@ -15,9 +15,17 @@ description: "Viết và chạy test, xác nhận từng tiêu chí xong của t
 Chứng minh bằng test rằng task đạt tiêu chí xong và không làm hỏng chỗ khác.
 
 ## Kỹ năng & Cẩm nang áp dụng (Skills Applied)
+> [!IMPORTANT]
+> **MANDATORY SKILL RETRIEVAL PROTOCOL (Bắt buộc 100%)**:
+> Trước khi viết kịch bản test hoặc chạy kiểm thử, QA BẮT BUỘC:
+> 1. Tra cứu kỹ năng: `python scripts/knowledge.py query-skill -q "<chủ đề>" --role qa` (từ kho 755 skills).
+> 2. Đọc file `SKILL.md` tương ứng từ đường dẫn trả về (đặc biệt: `qa-web`, `springboot-tdd`, `test-value`).
+> 3. Ghi rõ kỹ năng kiểm thử đã áp dụng vào báo cáo kiểm thử / Handoff Note.
+
 - **`qa-web`** (`.agents/skills/qa-web/SKILL.md`): Quy trình kiểm thử chất lượng web có hệ thống qua 3 cấp độ (Quick, Standard, Exhaustive), cô lập lỗi và bàn giao defect ticket cho Dev.
 - **`feature-map`** (`.agents/skills/feature-map/SKILL.md`): Dùng Feature Map để định vị báo lỗi và kiểm bằng mắt; chế độ `create` khi dự án chưa có bản đồ (cùng designer), chế độ `maintain` khi xác nhận card giao diện: chạy `python scripts/feature-map-check.py --changed-against <nhánh-gốc>`, mục lệch thì trả card về `doing`.
 - **`browse`** (`.agents/skills/browse/SKILL.md`): Điều khiển trình duyệt Playwright headless để kiểm thử DOM, tương tác và bắt lỗi console.
+- **`verification-skills-cdp`** (`agents/knowledge/ky-thuat/verification-skills-cdp.md`): BẮT BUỘC khi nghiệm thu card giao diện: chạy kiểm thử qua trình duyệt (Playwright/CDP), đo lường Heap/CPU traces chống memory leak, xác nhận Console error = 0 và ghi bằng chứng `Xác minh giao diện (CDP/Browser): PASS` vào báo cáo nghiệm thu.
 - **`systematic-debugging`** (`.agents/skills/systematic-debugging/SKILL.md`): Xây dựng ca kiểm thử tái hiện lỗi tối thiểu (Minimal Reproduction) và cô lập biến số duy nhất khi bắt lỗi báo cáo cho Dev.
 - **`promptfoo-eval`** (`agents/knowledge/llm-redteam-taxonomy.md` & `examples/llm-eval-redteam/`): Thiết lập ma trận đánh giá tự động cho LLM/Agent (assertions `not-contains`, `llm-rubric`, `is-json`, `cost`, `latency`, và phát hiện rò rỉ canary secret).
 - **`playwright-testing`** (`examples/ui-ux-design/`): Chạy kiểm thử tự động trên trình duyệt không đầu (Headless Browser) quét bắt console errors, kiểm tra visual regression và phản hồi mạng.

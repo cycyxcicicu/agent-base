@@ -6,6 +6,7 @@ không bao giờ đụng `docs/notes/` thật.
 Run: python -m unittest discover -s tests -p "test_notes_index.py" -v
 """
 
+import json
 import os
 import subprocess
 import sys
@@ -27,8 +28,9 @@ def run(root, *args):
 
 
 def write_note(inbox, name, body):
-    inbox.mkdir(parents=True, exist_ok=True)
-    (inbox / name).write_text(body, encoding="utf-8")
+    file_path = inbox / name
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    file_path.write_text(body, encoding="utf-8")
 
 
 class NotesIndexTest(unittest.TestCase):
@@ -83,6 +85,43 @@ class NotesIndexTest(unittest.TestCase):
         proc = run(self.root)
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertIn("| — | — |", self.index.read_text(encoding="utf-8"))
+
+    def test_subfolder_notes_indexed_recursively(self):
+        # Mẫu 2: docs/notes/inbox/T-12/T-12.1-dev.md
+        write_note(self.inbox, "T-12/T-12.1-dev.md", "---\ntask: T-12.1\nrole: dev\ntags: [auth, jwt]\nsummary: subtask auth dev\n---\n")
+        proc = run(self.root)
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        text = self.index.read_text(encoding="utf-8")
+        self.assertIn("`docs/notes/inbox/T-12/T-12.1-dev.md` | T-12.1 | [auth, jwt] subtask auth dev", text)
+
+    def test_cli_filter_by_task_and_role(self):
+        write_note(self.inbox, "T-10-dev.md", "---\ntask: T-10\nrole: dev\nsummary: lam backend\n---\n")
+        write_note(self.inbox, "T-10-qa.md", "---\ntask: T-10\nrole: qa\nsummary: test backend\n---\n")
+        write_note(self.inbox, "T-20-dev.md", "---\ntask: T-20\nrole: dev\nsummary: lam frontend\n---\n")
+
+        # Lọc task T-10
+        proc_task = run(self.root, "--task", "T-10")
+        self.assertEqual(proc_task.returncode, 0)
+        self.assertIn("T-10-dev.md", proc_task.stdout)
+        self.assertIn("T-10-qa.md", proc_task.stdout)
+        self.assertNotIn("T-20-dev.md", proc_task.stdout)
+
+        # Lọc role qa
+        proc_role = run(self.root, "--role", "qa")
+        self.assertEqual(proc_role.returncode, 0)
+        self.assertIn("T-10-qa.md", proc_role.stdout)
+        self.assertNotIn("T-10-dev.md", proc_role.stdout)
+
+    def test_cli_json_output(self):
+        write_note(self.inbox, "T-30/T-30.1-dba.md", "---\ntask: T-30.1\nrole: dba\ntags: [sql, postgres]\nsummary: migration schema\n---\n")
+        proc = run(self.root, "--json", "--task", "T-30")
+        self.assertEqual(proc.returncode, 0)
+        data = json.loads(proc.stdout)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["task"], "T-30.1")
+        self.assertEqual(data[0]["role"], "dba")
+        self.assertIn("postgres", data[0]["tags"])
+        self.assertEqual(data[0]["summary"], "migration schema")
 
 
 if __name__ == "__main__":
