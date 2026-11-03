@@ -12,7 +12,6 @@ PROJECT_DATA = [
     r"^docs/notes/inbox/(?!\.gitkeep$).+",
     r"^docs/notes/archive/.+",
     r"^docs/proposals/PRP-.+",
-    r"^tasks/BOARD\.md$",
     r"^tasks/E[^/]+/.+",
     r"^scratch/.+",
     r"^\.local/.+",

@@ -159,15 +159,19 @@ def main():
     if not args.dry_run:
         meta = {
             'source': str(BASE),
+            'hub_path': str(BASE),
             'commit': base_commit(),
             'mode': args.mode,
             'installed': datetime.date.today().isoformat(),
             'files': record,
         }
-        (target / '.agent-base.json').write_text(json.dumps(meta, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        meta_json = json.dumps(meta, ensure_ascii=False, indent=2) + '\n'
+        for link_name in ['.agent-base.json', '.agentbase.json']:
+            (target / link_name).write_text(meta_json, encoding='utf-8')
 
     if args.mode == 'hidden':
         hide.add('.agent-base.json')
+        hide.add('.agentbase.json')
         exclude = target / '.git' / 'info' / 'exclude'
         have = exclude.read_text(encoding='utf-8').splitlines() if exclude.exists() else []
         add = [p for p in sorted(hide) if p not in have]

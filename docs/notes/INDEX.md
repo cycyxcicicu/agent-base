@@ -7,4 +7,4 @@ Agent chỉ mở note khớp task/module (tối đa 3), không đọc cả hộp
 
 | Note | Task | Summary |
 |---|---|---|
-| — | — | (hộp thư trống) |
+| `docs/notes/inbox/GOV-fail-fast-git-credential-devops.md` | — | Chống deadlock mạng/Git trong môi trường headless và quy tắc Fail-Fast tối đa 3 lần thử. |

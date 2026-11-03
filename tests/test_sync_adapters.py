@@ -141,9 +141,62 @@ class TestQoderAdapters(unittest.TestCase):
             self.assertTrue((root / ".qoder" / "agents" / "lead.md").is_file())
             self.assertTrue((root / ".qoder" / "agents" / "dev.md").is_file())
             self.assertTrue((root / ".qoder" / "rules" / "00-agent-loader.md").is_file())
+            self.assertTrue((root / "CLAUDE.md").is_file())
+            self.assertTrue((root / "GEMINI.md").is_file())
+            self.assertIn("Cơ chế Subagents trong Claude Code", (root / "CLAUDE.md").read_text(encoding="utf-8"))
+            self.assertIn("Hướng dẫn riêng cho Gemini Code Assist", (root / "GEMINI.md").read_text(encoding="utf-8"))
 
             out = _run_main(root, check=True)
             self.assertIn("OK: generated files are up to date.", out)
+
+    def test_build_claude_excludes_powershell_and_keeps_posix_tools(self):
+        # Role dev has bash: full, edit_allow
+        text = sync_adapters.build_claude(_meta(name="dev", bash="full", edit_allow=["src/**"]), "body", "agents/roles/dev.md")
+        self.assertIn("tools: Read, Grep, Glob, Edit, Write, Bash", text)
+        self.assertNotIn("PowerShell", text)
+
+        # Role runner has bash: readonly, no edit_allow
+        text_runner = sync_adapters.build_claude(_meta(name="runner", bash="readonly"), "body", "agents/roles/runner.md")
+        self.assertIn("tools: Read, Grep, Glob, Bash", text_runner)
+        self.assertNotIn("PowerShell", text_runner)
+
+        # Role researcher has bash: deny, web: allow
+        text_researcher = sync_adapters.build_claude(_meta(name="researcher", bash="deny", web="allow"), "body", "agents/roles/researcher.md")
+        self.assertIn("tools: Read, Grep, Glob, WebFetch, WebSearch", text_researcher)
+        self.assertNotIn("PowerShell", text_researcher)
+
+    def test_all_generated_claude_agents_have_no_powershell_and_only_valid_posix_tools(self):
+        claude_agents_dir = ROOT / ".claude" / "agents"
+        agent_files = list(claude_agents_dir.glob("*.md"))
+        self.assertEqual(len(agent_files), 20)
+        allowed_tools = {"Bash", "Read", "Write", "Edit", "Glob", "Grep", "WebFetch", "WebSearch"}
+
+        for f in agent_files:
+            content = f.read_text(encoding="utf-8")
+            tool_line = next((line for line in content.splitlines() if line.startswith("tools:")), None)
+            self.assertIsNotNone(tool_line, f"{f.name} missing tools declaration")
+            tools = [t.strip() for t in tool_line.replace("tools:", "").split(",") if t.strip()]
+            self.assertNotIn("PowerShell", tools, f"{f.name} contains PowerShell tool")
+            for t in tools:
+                self.assertIn(t, allowed_tools, f"{f.name} contains invalid tool {t}")
+
+    def test_claude_md_generated_with_agents_md_and_subagents_guide(self):
+        claude_path = ROOT / "CLAUDE.md"
+        self.assertTrue(claude_path.is_file())
+        content = claude_path.read_text(encoding="utf-8")
+        self.assertNotIn("@AGENTS.md", content)
+        self.assertIn(sync_adapters.MARKER, content)
+        self.assertIn("# AGENTS.md — quy tắc chung cho mọi agent", content)
+        self.assertIn("Cơ chế Subagents trong Claude Code (`.claude/agents/`)", content)
+
+    def test_gemini_md_generated_with_role_instructions(self):
+        gemini_path = ROOT / "GEMINI.md"
+        self.assertTrue(gemini_path.is_file())
+        content = gemini_path.read_text(encoding="utf-8")
+        self.assertIn(sync_adapters.MARKER, content)
+        self.assertIn("# AGENTS.md — quy tắc chung cho mọi agent", content)
+        self.assertIn("Hướng dẫn riêng cho Gemini Code Assist", content)
+        self.assertIn("agents/roles/", content)
 
 
 if __name__ == "__main__":

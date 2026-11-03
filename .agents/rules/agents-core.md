@@ -9,7 +9,7 @@ Nguồn quy tắc duy nhất. `GEMINI.md`, `.agents/rules/agents-core.md` đư�
 ## 0. Nguyên tắc chung
 
 Việc hoàn tác được trong phạm vi được giao thì cứ làm. **Hỏi trước khi làm việc có tác động**: mất code, dữ liệu hay lịch sử; đụng nhánh chung hoặc việc của người khác; tốn tiền hoặc tài nguyên ngoài; lộ khóa bí mật hay dữ liệu cá nhân; chạy mã bên ngoài chưa duyệt. Người dùng đã nói đồng ý rõ ràng trong chat thì làm ngay và ghi trích dẫn vào file (`agents/protocols/approval.md`). Câu chung chung ("ok" không rõ việc gì) thì hỏi lại.
-- **Chống lặp vô tận & rò rỉ suy nghĩ (Anti-Loop)**: Không lặp lại cùng một câu/đoạn văn dưới nhiều biến thể từ ngữ. Trả lời dứt khoát, đi thẳng vào kết quả công việc và hành động, không độc thoại nội tâm lê thê. Nếu phát hiện đang lặp ý hoặc thiếu dữ kiện, DỪNG LẠI NGAY và hỏi người dùng; tuyệt đối không sinh nội dung rác hoặc bảng biểu không liên quan.
+- **Chống lặp vô tận & Rào chắn thất bại (Anti-Loop & Fail-Fast)**: Không lặp lại cùng một câu/đoạn văn dưới nhiều biến thể từ ngữ. Trả lời dứt khoát, đi thẳng vào kết quả công việc và hành động, không độc thoại nội tâm lê thê. Nếu phát hiện đang lặp ý hoặc thiếu dữ kiện, DỪNG LẠI NGAY và hỏi người dùng; tuyệt đối không sinh nội dung rác hoặc bảng biểu không liên quan. **Quy tắc thử lại tối đa 3 lần (Max 3 Retries & Circuit Breaker)**: Mọi lệnh shell, kết nối mạng, git push/pull, test hoặc thao tác tự động nếu thất bại hoặc treo không có phản hồi quá ngưỡng timeout (10–15s), CHỈ ĐƯỢC THỬ LẠI TỐI ĐA 3 LẦN. Đến lần thứ 3 vẫn thất bại/treo, BẮT BUỘC DỪNG LẠI NGAY LẬP TỨC (HALT), kill tiến trình treo, cô lập lỗi và báo cáo người dùng; tuyệt đối cấm chạy ngầm vô tận hoặc lặp đi lặp lại vô ích.
 
 ## 1. Đọc gì trước khi làm
 

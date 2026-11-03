@@ -28,7 +28,24 @@ try:
 except Exception:
     pass
 
-PROJECT = Path.cwd() if (Path.cwd() / '.agent-base.json').is_file() else Path(__file__).resolve().parent.parent
+def find_meta_file(project_dir: Path) -> Path:
+    f1 = project_dir / '.agent-base.json'
+    f2 = project_dir / '.agentbase.json'
+    if f1.is_file():
+        return f1
+    if f2.is_file():
+        return f2
+    return f1
+
+
+def get_project_dir() -> Path:
+    cwd = Path.cwd()
+    if (cwd / '.agent-base.json').is_file() or (cwd / '.agentbase.json').is_file():
+        return cwd
+    return Path(__file__).resolve().parent.parent
+
+
+PROJECT = get_project_dir()
 SKIP_DIRS = {'__pycache__', '.pytest_cache'}
 
 
@@ -64,9 +81,10 @@ def main():
     ap.add_argument('--mark-synced', action='store_true', help='ghi mốc mới vào .agent-base.json')
     args = ap.parse_args()
 
-    meta_file = PROJECT / '.agent-base.json'
+    meta_file = find_meta_file(PROJECT)
     meta = json.loads(meta_file.read_text(encoding='utf-8')) if meta_file.exists() else {}
-    base = Path(args.base or meta.get('source', '')).resolve() if (args.base or meta.get('source')) else None
+    base_src = args.base or meta.get('source') or meta.get('hub_path')
+    base = Path(base_src).resolve() if base_src else None
     if not base or not (base / 'agents' / 'manifest.txt').is_file():
         sys.exit('LỖI  không tìm thấy agent-base. Dùng --base <đường dẫn agent-base>')
     if base == PROJECT:
@@ -102,9 +120,14 @@ def main():
 
     if args.mark_synced:
         meta.setdefault('source', str(base))
+        meta.setdefault('hub_path', str(base))
         meta['files'] = {rel: h for rel in sorted(tracked)
                          if (h := sha(PROJECT / rel)) and h == sha(base / rel)}
-        meta_file.write_text(json.dumps(meta, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        meta_json = json.dumps(meta, ensure_ascii=False, indent=2) + '\n'
+        meta_file.write_text(meta_json, encoding='utf-8')
+        other_file = PROJECT / ('.agentbase.json' if meta_file.name == '.agent-base.json' else '.agent-base.json')
+        if other_file.exists():
+            other_file.write_text(meta_json, encoding='utf-8')
         print(f'đã ghi mốc: {len(meta["files"])} file khớp giữa dự án và agent-base')
         return
 

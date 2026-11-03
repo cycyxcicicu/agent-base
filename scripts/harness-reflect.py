@@ -26,6 +26,16 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+import json
+
+if sys.platform == "win32":
+    try:
+        if hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        if hasattr(sys.stderr, "reconfigure"):
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
@@ -293,6 +303,13 @@ def update_project_notes(project_notes_path: Path, notes: list[dict], dry_run: b
             new_traps.append(f"| {nid} | {date_str} | {source_tag} | Toàn cục | {trap} |")
             added_count += 1
 
+        # 1.1 Bài học kinh nghiệm (Lessons)
+        for lesson in note["lessons"]:
+            nid = f"N-{next_id:03d}"
+            next_id += 1
+            new_traps.append(f"| {nid} | {date_str} | {source_tag} | Toàn cục | [Bài học] {lesson} |")
+            added_count += 1
+
         # 2. Quyết định kỹ thuật
         for dec in note["decisions"]:
             nid = f"N-{next_id:03d}"
@@ -332,7 +349,11 @@ def update_project_notes(project_notes_path: Path, notes: list[dict], dry_run: b
 
     if not dry_run:
         project_notes_path.write_text(content, encoding="utf-8")
-        print(f"📝 Đã gộp thành công {added_count} mục bài học/lưu ý vào: {project_notes_path.relative_to(ROOT)}")
+        try:
+            rel_display = project_notes_path.relative_to(ROOT)
+        except ValueError:
+            rel_display = project_notes_path
+        print(f"📝 Đã gộp thành công {added_count} mục bài học/lưu ý vào: {rel_display}")
     else:
         print(f"🔍 [DRY-RUN] Sẽ gộp {added_count} mục vào PROJECT-NOTES.md")
 
@@ -368,7 +389,76 @@ def archive_processed_notes(inbox_dir: Path, archive_dir: Path):
         moved_count += 1
 
     if moved_count > 0:
-        print(f"📦 Đã lưu trữ an toàn {moved_count} note vào: {archive_month.relative_to(ROOT)}/")
+        try:
+            rel_display = archive_month.relative_to(ROOT)
+        except ValueError:
+            rel_display = archive_month
+        print(f"📦 Đã lưu trữ an toàn {moved_count} note vào: {rel_display}/")
+
+
+def extract_domain_keywords_from_glossary(glossary_path: Path) -> set[str]:
+    """Trích xuất danh sách thuật ngữ nghiệp vụ từ file domain-glossary.md để tự động khử dữ liệu nhạy cảm."""
+    keywords = set()
+    if not glossary_path.is_file():
+        return keywords
+    try:
+        content = glossary_path.read_text(encoding="utf-8", errors="ignore")
+    except Exception:
+        return keywords
+
+    ignore_terms = {
+        "thuật ngữ", "thuat ngu", "định nghĩa", "dinh nghia", "mô tả", "mo ta",
+        "tiếng anh", "tieng anh", "viết tắt", "viet tat", "stt", "no", "term",
+        "definition", "meaning", "note", "ghi chú", "ghi chu", "ví dụ", "vi du",
+        "nghĩa là", "nghia la", "không phải", "khong phai", "tổng quan", "tong quan",
+        "mục đích", "muc dich", "phạm vi", "pham vi", "yêu cầu", "yeu cau",
+    }
+
+    def add_term(term_str: str):
+        if not term_str:
+            return
+        cleaned = re.sub(r"[`*_#]", "", term_str).strip().lower()
+        if not cleaned or cleaned.startswith("---") or cleaned in ignore_terms:
+            return
+        # Bóc tách cụm trong ngoặc đơn nếu có: "Bệnh án điện tử (EMR)" -> "Bệnh án điện tử" và "emr"
+        parens = re.findall(r"\(([^)]+)\)", cleaned)
+        for p in parens:
+            p_clean = p.strip()
+            if p_clean and p_clean not in ignore_terms and len(p_clean) >= 3:
+                keywords.add(p_clean)
+        cleaned_no_paren = re.sub(r"\([^)]*\)", "", cleaned).strip()
+        if cleaned_no_paren and cleaned_no_paren not in ignore_terms and len(cleaned_no_paren) >= 3:
+            keywords.add(cleaned_no_paren)
+
+    for line in content.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+
+        # 1. Tiêu đề Markdown: ## 1. Bệnh án điện tử (EMR) hoặc ### Kế toán công nợ
+        if line.startswith("#"):
+            m = re.match(r"^#{1,4}\s+(?:\d+[\.\)]\s*)?([^\n#]+)", line)
+            if m:
+                add_term(m.group(1))
+            continue
+
+        # 2. Bảng Markdown: | Thuật ngữ | Tiếng Anh | Định nghĩa |
+        if line.startswith("|") and line.endswith("|"):
+            parts = [p.strip() for p in line.split("|")[1:-1]]
+            for p in parts[:2]:
+                add_term(p)
+            continue
+
+        # 3. Danh sách gạch đầu dòng hoặc in đậm: - **Bệnh án**: ... hoặc **Bệnh án**: ...
+        m = re.match(r"^(?:[-*]\s+)?\*{1,2}([^:*(\[]+)\*{1,2}\s*:", line)
+        if m:
+            add_term(m.group(1))
+        elif line.startswith(("- ", "* ")):
+            m = re.match(r"^[-*]\s+\*{0,2}([^:*(\[]+)\*{0,2}", line)
+            if m:
+                add_term(m.group(1))
+
+    return keywords
 
 
 def main():
@@ -378,10 +468,52 @@ def main():
     parser.add_argument("--harvest", help="Đường dẫn tới dự án bên ngoài để tự động thu hoạch bài học kỹ nghệ")
     args = parser.parse_args()
 
-    project_root = Path(args.harvest).resolve() if args.harvest else ROOT
-    inbox_dir = project_root / "docs" / "notes" / "inbox"
-    archive_dir = project_root / "docs" / "notes" / "archive"
+    project_root = ROOT
+    doc_dir_name = None
+
+    if args.harvest:
+        harvest_target = args.harvest.strip()
+        projects_file = ROOT / "projects.json"
+        if projects_file.is_file():
+            try:
+                pdata = json.loads(projects_file.read_text(encoding="utf-8"))
+                for p in pdata.get("projects", []):
+                    if harvest_target in (p.get("id"), p.get("name")):
+                        p_path = Path(p.get("path", "")).resolve()
+                        if p_path.is_dir():
+                            project_root = p_path
+                            doc_dir_name = p.get("doc_dir")
+                            break
+                    elif p.get("path") and Path(p.get("path")).resolve() == Path(harvest_target).resolve():
+                        project_root = Path(p.get("path")).resolve()
+                        doc_dir_name = p.get("doc_dir")
+                        break
+            except Exception:
+                pass
+
+        if project_root == ROOT and harvest_target:
+            project_root = Path(harvest_target).resolve()
+
+    # Tự động phát hiện doc_dir nếu chưa xác định từ projects.json
+    if not doc_dir_name:
+        if (project_root / "doc" / "notes" / "inbox").is_dir():
+            doc_dir_name = "doc"
+        elif (project_root / "docs" / "notes" / "inbox").is_dir():
+            doc_dir_name = "docs"
+        elif (project_root / "doc").is_dir():
+            doc_dir_name = "doc"
+        else:
+            doc_dir_name = "docs"
+
+    inbox_dir = project_root / doc_dir_name / "notes" / "inbox"
+    archive_dir = project_root / doc_dir_name / "notes" / "archive"
     project_notes_path = ROOT / "docs" / "PROJECT-NOTES.md"
+    if not project_notes_path.is_file():
+        if (ROOT / "doc" / "PROJECT-NOTES.md").is_file():
+            project_notes_path = ROOT / "doc" / "PROJECT-NOTES.md"
+        elif (ROOT / "doc" / "notes" / "PROJECT-NOTES.md").is_file():
+            project_notes_path = ROOT / "doc" / "notes" / "PROJECT-NOTES.md"
+
     proposals_dir = ROOT / "docs" / "proposals"
     proposals_dir.mkdir(parents=True, exist_ok=True)
 
@@ -399,17 +531,39 @@ def main():
     # Nếu là chế độ thu hoạch từ dự án ngoài, lọc bỏ thông tin nghiệp vụ riêng
     notes = []
     if args.harvest:
-        domain_keywords = ["accounting-service", "iam-service", "j&t", "pancake", "kế toán", "ke toan", "tiền tệ", "đơn hàng", "don hang"]
+        glossary_candidates = [
+            project_root / doc_dir_name / "architecture" / "domain-glossary.md",
+            project_root / "doc" / "architecture" / "domain-glossary.md",
+            project_root / "docs" / "architecture" / "domain-glossary.md",
+            project_root / doc_dir_name / "domain-glossary.md",
+            project_root / "doc" / "domain-glossary.md",
+            project_root / "docs" / "domain-glossary.md",
+        ]
+        glossary_file = next((f for f in glossary_candidates if f.is_file()), None)
+        loaded_keywords = set()
+        if glossary_file:
+            loaded_keywords = extract_domain_keywords_from_glossary(glossary_file)
+            try:
+                rel_g = glossary_file.relative_to(project_root)
+            except ValueError:
+                rel_g = glossary_file
+            print(f"📖 Đã nạp động {len(loaded_keywords)} từ khóa nghiệp vụ từ: {rel_g}")
+
+        default_keywords = {"accounting-service", "iam-service", "j&t", "pancake", "kế toán", "ke toan", "tiền tệ", "đơn hàng", "don hang"}
+        domain_keywords = sorted(default_keywords | loaded_keywords)
+
         for n in raw_notes:
             filtered_traps = [t for t in n["traps"] if not any(dk in t.lower() for dk in domain_keywords)]
             filtered_lessons = [l for l in n["lessons"] if not any(dk in l.lower() for dk in domain_keywords)]
             filtered_conventions = [c for c in n["conventions"] if not any(dk in c.lower() for dk in domain_keywords)]
+            filtered_decisions = [d for d in n["decisions"] if not any(dk in d.lower() for dk in domain_keywords)]
 
-            if filtered_traps or filtered_lessons or filtered_conventions or n["skills"]:
+            if filtered_traps or filtered_lessons or filtered_conventions or filtered_decisions or n["skills"]:
                 filtered_note = dict(n)
                 filtered_note["traps"] = filtered_traps
                 filtered_note["lessons"] = filtered_lessons
                 filtered_note["conventions"] = filtered_conventions
+                filtered_note["decisions"] = filtered_decisions
                 notes.append(filtered_note)
         print(f"🔍 Bộ lọc phân loại: Đã trích xuất {len(notes)} bài học kỹ nghệ chung (bỏ qua nghiệp vụ riêng).")
     else:

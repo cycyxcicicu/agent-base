@@ -20,7 +20,6 @@ template   agents/models.txt
 template   agents/knowledge/knowledge-manifest.json
 
 copy       AGENTS.md
-copy       CLAUDE.md
 copy       agents/
 copy       scripts/
 copy       agent_core/
@@ -38,6 +37,7 @@ copy       tasks/_template.md
 
 generated  GEMINI.md
 generated  CODEX.md
+generated  CLAUDE.md
 generated  .kilo/agents/
 generated  .agents/rules/
 generated  .claude/agents/

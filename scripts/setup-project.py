@@ -173,17 +173,18 @@ def setup_project(target_dir: Path) -> int:
     else:
         print(f"⚪ 2. Bảng công việc: Đã có sẵn ({doc_name}/delivery/tasks/BOARD.md)")
 
-    # 3. Ghi file liên kết .agentbase.json
-    agentbase_link_file = target_dir / ".agentbase.json"
+    # 3. Ghi file liên kết .agentbase.json và .agent-base.json (tương thích ngược)
     link_data = {
+        "source": str(HUB_ROOT),
         "hub_path": str(HUB_ROOT),
         "target_project": target_dir.name,
         "roles_count": 20,
         "initialized_at": datetime.now(timezone.utc).isoformat(),
         "status": "ready"
     }
-    agentbase_link_file.write_text(json.dumps(link_data, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"✅ 3. Gắn thẻ định danh liên kết: .agentbase.json")
+    for link_name in [".agentbase.json", ".agent-base.json"]:
+        (target_dir / link_name).write_text(json.dumps(link_data, indent=2, ensure_ascii=False), encoding="utf-8")
+    print(f"✅ 3. Gắn thẻ định danh liên kết: .agentbase.json & .agent-base.json")
 
     # 3.1. Tự động đăng ký dự án vào Dashboard trung tâm (Multi-Project Registry)
     register_project_in_dashboard(target_dir)
@@ -198,8 +199,8 @@ Dự án này sử dụng bộ khung chuẩn hóa từ `agent-base`.
 ## Quy tắc cốt lõi:
 1. **Phân quyền & Ranh giới:**
    - Chỉ commit, push, tạo MR khi người dùng yêu cầu rõ ràng.
-   - Tài liệu nghiệp vụ dùng chung ghi vào `doc/` ở gốc dự án.
-   - Hộp thư bàn giao nội bộ ghi vào `docs/notes/inbox/`.
+   - Tài liệu nghiệp vụ dùng chung ghi vào `{doc_name}/` ở gốc dự án.
+   - Hộp thư bàn giao nội bộ ghi vào `{doc_name}/notes/inbox/`.
 2. **Cơ chế Hai Tốc Độ (Fast-Track vs Full-Track):**
    - Việc nhỏ ($\le 50$ dòng diff): Được lập trình ngay, Reviewer được Quick Fix lỗi chính tả.
    - Việc vừa & lớn: Cần kế hoạch phân rã và phê duyệt trước khi code.
