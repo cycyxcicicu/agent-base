@@ -349,7 +349,11 @@ def update_project_notes(project_notes_path: Path, notes: list[dict], dry_run: b
 
     if not dry_run:
         project_notes_path.write_text(content, encoding="utf-8")
-        print(f"📝 Đã gộp thành công {added_count} mục bài học/lưu ý vào: {project_notes_path.relative_to(ROOT)}")
+        try:
+            rel_display = project_notes_path.relative_to(ROOT)
+        except ValueError:
+            rel_display = project_notes_path
+        print(f"📝 Đã gộp thành công {added_count} mục bài học/lưu ý vào: {rel_display}")
     else:
         print(f"🔍 [DRY-RUN] Sẽ gộp {added_count} mục vào PROJECT-NOTES.md")
 
