@@ -76,6 +76,7 @@ Nguồn: dự án gdt-workspace, đã dùng thật. Còn nhắc Mantis, TestLink
 | 16 Bản thiết kế kiến trúc tinh hoa Big Tech (Figma 100x Postgres, Shopify Resilient Payments, Zero-Copy Kafka) | `architecture/system-design-elite-patterns.md` |
 | Viết tài liệu đặc tả theo mẫu SRS_FDD: văn phong, checklist, NFR, ba file mỗi chức năng | `srs/srs-fdd-writing-standard.md` |
 | Khung hồ sơ hoàn chỉnh bắt buộc cho từng Use Case / Feature | `srs/ho-so-hoan-chinh-khung-bat-buoc.md` |
+| Chuẩn thiết kế Happy Path, Happy Case & Test Plan Excel (SRS / FDD / UAT) từ mẫu thực chiến | `srs/chuan-form-happy-path-va-test-plan-excel.md` |
 | Chuyển đổi Markdown sang định dạng Office (Word, Excel) giữ nguyên độ nét | `srs/md-to-office-fidelity.md` |
 | Chuẩn viết tài liệu kỹ thuật: Google Style, Microsoft Guide và The Good Docs Project (Diátaxis) | `srs/technical-writing-and-doc-standards.md` |
 | Mẫu để viết (đặc tả, thiết kế kỹ thuật, Excel SRS_FDD, test report, TestLink) | thư mục `agents/templates/`, xem `agents/templates/README.md` |

@@ -1,6 +1,6 @@
 # Chuẩn thiết kế Happy Path, Happy Case & Test Plan Excel (SRS / FDD / UAT)
 
-> Nguồn chuẩn: Chuẩn hóa thực chiến 100% từ bộ hồ sơ kiểm thử 34 sheets `Accounting_TestPlan_NgaPT_20260826.xlsx`.
+> **Loại: tham khảo.** Nguồn chuẩn hóa thực chiến 100% từ bộ hồ sơ kiểm thử 34 sheets `Accounting_TestPlan_NgaPT_20260826.xlsx`. Khi khác `AGENTS.md`, vai trò hoặc `agents/protocols/` thì theo các nơi đó.
 > Phạm vi áp dụng: Kỹ sư BA, QA, Architect khi xây dựng sheet `TDD_TestScenario_Cases` trong file Excel SRS_FDD hoặc các file Test Plan / UAT độc lập.
 
 ---

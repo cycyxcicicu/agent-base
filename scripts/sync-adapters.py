@@ -729,15 +729,23 @@ def main():
     claude_deny = [f"Bash({_balance_claude_pattern(c)})" for c in (git_hard_deny + danger_deny)] + [f"PowerShell({_balance_claude_pattern(c)})" for c in (git_hard_deny + danger_deny)]
     claude_ask = [f"Bash({_balance_claude_pattern(c)})" for c in (danger_ask + git_commit_ask)] + [f"PowerShell({_balance_claude_pattern(c)})" for c in (danger_ask + git_commit_ask)]
     
-    worktrees_dir = str(Path.home() / "Documents" / "worktrees")
-    agentbase_dir = str(ROOT)
+    claude_settings_file = ROOT / '.claude' / 'settings.json'
+    existing_dirs = []
+    if claude_settings_file.exists():
+        try:
+            old_data = json.loads(claude_settings_file.read_text(encoding='utf-8'))
+            existing_dirs = old_data.get("permissions", {}).get("additionalDirectories", [])
+        except Exception:
+            pass
+    if not existing_dirs:
+        worktrees_dir = str(Path.home() / "Documents" / "worktrees")
+        agentbase_dir = str(ROOT)
+        existing_dirs = [worktrees_dir, agentbase_dir]
+
     claude_settings = {
         "$schema": "https://json.schemastore.org/claude-code-settings.json",
         "permissions": {
-            "additionalDirectories": [
-                worktrees_dir,
-                agentbase_dir
-            ],
+            "additionalDirectories": existing_dirs,
             "allow": claude_allow,
             "deny": claude_deny,
             "ask": claude_ask
