@@ -3387,6 +3387,27 @@
       "provenance": []
     },
     {
+      "id": "Design:chuan-form-happy-path-va-test-plan-excel",
+      "kind": "Design",
+      "title": "Chuẩn thiết kế Happy Path, Happy Case & Test Plan Excel (SRS / FDD / UAT)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/chuan-form-happy-path-va-test-plan-excel.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "7bd2f96be8a3ddce7d9d7e044275a8dc13533204589df91b6c2919a0af6b9454",
+      "provenance": []
+    },
+    {
       "id": "Design:ho-so-hoan-chinh-khung-bat-buoc",
       "kind": "Design",
       "title": "Khung bắt buộc của hồ sơ hoàn chỉnh một chức năng",
