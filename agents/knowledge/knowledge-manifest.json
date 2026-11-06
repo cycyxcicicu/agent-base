@@ -10,7 +10,7 @@
       "content_ref": "agents/roles/dev.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "2fa0ce20208b6597ca8bf46406e8f94494435f1e2c5f92431bb1730ed9900a49",
+      "content_sha256": "0860265c0955990dcf27206e9b90c6583fdd7c659163cf4c0f1d1f191f27814d",
       "provenance": []
     },
     {
@@ -22,7 +22,7 @@
       "content_ref": "agents/roles/qa.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "bd6fc9b9db998613cfc125fd49d437297f482acbe18b48877d4730e741c4d82c",
+      "content_sha256": "acdcb13ad48b366045476664efe1b954c22d2dcc4ccebe7990c3eef61002f31e",
       "provenance": []
     },
     {
@@ -34,7 +34,7 @@
       "content_ref": "agents/roles/reviewer.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "f1278b282b43d994941cae65773de818c0d828391f484cfe457ce8c2050afe6a",
+      "content_sha256": "8e13dd76bc50da4106d47af90e036a94a58b59ca48b4b599b0db6c89b966145b",
       "provenance": []
     },
     {
@@ -58,7 +58,7 @@
       "content_ref": "agents/roles/architect.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "d9af837ae38b5d68e213399150403ff132fbefb55c6fdac8ffe93d5e78fca162",
+      "content_sha256": "5c27b8185860b85a172419f5e8f994456108101b0d7427eba1956913bd26ebc3",
       "provenance": []
     },
     {
@@ -82,7 +82,7 @@
       "content_ref": "agents/roles/lead.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "80ec354ef88041f1233790daad1cff9fea0f2024ea6c33e4eccb573115cc5480",
+      "content_sha256": "f1643ae12426b1824b813b6e3559a195ce54adf90d92423c207295b9d627d26d",
       "provenance": []
     },
     {
@@ -234,9 +234,13 @@
         {
           "type": "related_to",
           "target": "Requirement:test-cases"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:md-to-office-fidelity"
         }
       ],
-      "content_sha256": "97d406a955be13741f6bccdc6cab2179161e6112a786501a03a0ea6f21301ea3",
+      "content_sha256": "0843c31939fabb0623ea09a8c55250a79548e70e841bdcaf949abb65e447c03f",
       "provenance": [
         "Source:notebook1-agile-sdlc"
       ],
@@ -501,7 +505,7 @@
           "target": "Role:architect"
         }
       ],
-      "content_sha256": "31369dee51952bd1bf805b8054b199a03287aa7c79ad226023c253d80a057c93",
+      "content_sha256": "87be3896e6c5adf3d7bf911d1fa800715b966eaf38fc717a171aa1b28f6944ad",
       "provenance": []
     },
     {
@@ -622,6 +626,14 @@
         },
         {
           "type": "related_to",
+          "target": "Design:diagram-bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:md-to-office-fidelity"
+        },
+        {
+          "type": "related_to",
           "target": "Design:diagram-diagrams-cheatsheet-and-decision-matrix"
         },
         {
@@ -637,7 +649,7 @@
           "target": "Requirement:test-cases"
         }
       ],
-      "content_sha256": "42be56a30c7dfc6616f3894cf41283edaea035a7f233b1f8376a95021d6f6f28",
+      "content_sha256": "e183430e80fe5689e517b656475d7367f9e131af62e68363c5743deee1003c1a",
       "provenance": [],
       "keywords": "vẽ sơ đồ erd sequence activity use case state checklist diagram"
     },
@@ -1414,7 +1426,7 @@
           "target": "Design:diagram-aws-architecture-icons-guide"
         }
       ],
-      "content_sha256": "a397d1692fe885b1a23423d3e8da922c8585f767895a6dcaabdab7f55e856465",
+      "content_sha256": "07865d0357f3225e0593a9be5beaba3177b269f9d23fd14b0cf96d6cfeb68f5f",
       "provenance": []
     },
     {
@@ -1491,6 +1503,14 @@
         },
         {
           "type": "related_to",
+          "target": "Design:diagram-bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:md-to-office-fidelity"
+        },
+        {
+          "type": "related_to",
           "target": "Design:diagram-diagrams-cheatsheet-and-decision-matrix"
         },
         {
@@ -1506,7 +1526,7 @@
           "target": "Requirement:test-cases"
         }
       ],
-      "content_sha256": "ce268626b5ab7e9173a4e06e87cf62b36d225e8a1f4a0a9f5f0980015890089b",
+      "content_sha256": "cbc2559fed8aecd9faa3d867035d9a425c34246cca4df486570904f4210c15be",
       "provenance": [],
       "keywords": "mô tả sơ đồ hoạt động bước nhánh activity diagram description đọc sơ đồ"
     },
@@ -1546,6 +1566,14 @@
         },
         {
           "type": "related_to",
+          "target": "Design:diagram-bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:md-to-office-fidelity"
+        },
+        {
+          "type": "related_to",
           "target": "Design:diagram-diagrams-cheatsheet-and-decision-matrix"
         },
         {
@@ -1561,8 +1589,42 @@
           "target": "Requirement:test-cases"
         }
       ],
-      "content_sha256": "96fe73c2680510ac654b1088cc80bfac9db3540b30068e8e210f1d0b55cecdf8",
+      "content_sha256": "964be95a74aafc58c3bedefe63933ff5dccc036484797fa54e3090349e5676a6",
       "provenance": []
+    },
+    {
+      "id": "Design:diagram-bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu",
+      "kind": "Design",
+      "title": "Bài học viết tài liệu thiết kế, vẽ sơ đồ và bàn giao tài liệu",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu.md",
+      "owner_role": "designer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:designer"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:md-to-office-fidelity"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-diagrams-cheatsheet-and-decision-matrix"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:diagram-design"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:archify"
+        }
+      ],
+      "content_sha256": "9809db79dff772f187287dd73cfcb00880f7665445b246aa65742adb7839872a",
+      "provenance": [],
+      "keywords": "vẽ xong xem lại sửa vòng lặp không xem được ảnh chưa kiểm tra bằng mắt sửa tại chỗ drawio người dùng chỉnh tay hàng đợi consumer làn queue thiết kế chưa code webhook tên api đối tác chưa kiểm chứng câu hỏi chờ xác nhận link tab draw.io tải lên drive google doc bàn giao tài liệu sơ đồ"
     },
     {
       "id": "Design:diagram-structurizr-dsl-guide",
@@ -1896,7 +1958,7 @@
           "target": "Design:gof-design-patterns-and-solid"
         }
       ],
-      "content_sha256": "dacd88b3622b405a8d9957897df7d08043736224425a7ba3d1a380bd0b043a33",
+      "content_sha256": "f4dab0d52ea7ff43e6fc7f9f3456c992176f5d026bb265b6673532fbe445de12",
       "provenance": []
     },
     {
@@ -2744,9 +2806,13 @@
         {
           "type": "related_to",
           "target": "Requirement:test-cases"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:md-to-office-fidelity"
         }
       ],
-      "content_sha256": "c06e5f36904978b9451d18b8647e762b9025f813337d603072908cc0f0a75cc8",
+      "content_sha256": "26a32b25dc6cd66cbc70233fabb40b7dd1d8b6cf1c8bacc609e6149f72ad9831",
       "provenance": [],
       "keywords": "viết srs quy trình đặc tả từ đầu đến cuối checklist kiểm srs-check sơ đồ tối thiểu thư mục srs"
     },
@@ -2789,7 +2855,7 @@
           "target": "Rule:task-loop"
         }
       ],
-      "content_sha256": "c297dab2ea3e4d5deda40147286c7d5e6f3a2a5013d531a728d605964facbbf2",
+      "content_sha256": "e284ff90332c1322625ad5ce227b7eba5b39fabf76cff8719fb98fe5c5918aa5",
       "provenance": []
     },
     {
@@ -2818,7 +2884,7 @@
           "target": "Design:junit5-mockito-testcontainers-and-jest"
         }
       ],
-      "content_sha256": "cc73bf77caa6633a1d5c6bf0e89b994329cc4c32e808e027897eab14cd8d1238",
+      "content_sha256": "f9429c7b4548390c252bbfc05bf3b751053f00af36647db30da3123c6abf9d61",
       "provenance": []
     },
     {
@@ -3319,6 +3385,66 @@
       ],
       "content_sha256": "66398cdba403f63a26b352b63fb3c196c230a48039e635467569841baf193fc6",
       "provenance": []
+    },
+    {
+      "id": "Design:ho-so-hoan-chinh-khung-bat-buoc",
+      "kind": "Design",
+      "title": "Khung bắt buộc của hồ sơ hoàn chỉnh một chức năng",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/ho-so-hoan-chinh-khung-bat-buoc.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:srs-workflow"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:srs-writing-standard"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:md-to-office-fidelity"
+        }
+      ],
+      "content_sha256": "25a14926967c9141ceec0735493de9295e98ca9b414739d9781146adcb88bb14",
+      "provenance": [],
+      "keywords": "hồ sơ hoàn chỉnh khung bắt buộc nhật ký thay đổi hạng mục thiết kế use-case chi tiết tiền điều kiện luồng chính luồng thay thế ngoại lệ câu hỏi chờ xác nhận srs-check full bàn giao thiếu mục template 16 mục"
+    },
+    {
+      "id": "Design:md-to-office-fidelity",
+      "kind": "Design",
+      "title": "Chuẩn Mực Chuyển Đổi Markdown Sang Word & Google Docs Độ Trung Thực Cao (High-Fidelity Office Document Conversion)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/md-to-office-fidelity.md",
+      "owner_role": "ba",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:diagram-diagrams-cheatsheet-and-decision-matrix"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:diagram-design"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:archify"
+        }
+      ],
+      "content_sha256": "bcf0063800a719f37892c722613043d2276a9ef7819323a5c1ffd69ad2472997",
+      "provenance": [],
+      "keywords": "md sang docx google docs google doc pandoc bảng chữ trần bảng dính mục lục rỗng cột bị bẻ chữ ảnh trang trống a4 md_to_docx lên drive format lỗi"
     },
     {
       "id": "Design:sourcemaking-uml-case-study",
@@ -4434,6 +4560,39 @@
         }
       ],
       "content_sha256": "9e43824b33b4102e396bdf892c17feeca18b53a0a904bf857b38fc30f464e7d7",
+      "provenance": []
+    },
+    {
+      "id": "Skill:ub-mode",
+      "kind": "Skill",
+      "title": "ub-mode: >",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/ub-mode/SKILL.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "4120873db2e3681ea9b7de4d7105fc9d3406657c9ada91ce77b9b3c4962f3202",
       "provenance": []
     },
     {

@@ -9,16 +9,19 @@ Giao thức này quy định phương pháp thiết kế kịch bản kiểm th�
 ## 1. Các nguyên tắc cốt lõi
 
 1. **Test-First (Viết kịch bản trước khi code)**: Kịch bản kiểm thử phải được lập ngay từ Bước 3 của vòng đời task; cấm nhảy vào code khi chưa có kịch bản test.
-2. **Luồng thiết kế tuần tự**: Bắt đầu từ **Happy Path** (luồng thuận lợi cơ bản nhất) → **Happy Cases** (các luồng thuận chi tiết có dữ liệu hợp lệ) → **Biên & Ngoại lệ** (Negative / Edge Cases).
-3. **Áp dụng 4 kỹ thuật thiết kế ISTQB**:
+2. **Phân biệt rạch ròi Happy Path vs Happy Case**:
+   - **Happy Path (Đường dẫn thuận lợi xuyên suốt)**: Là **luồng nghiệp vụ chính từ đầu đến cuối (End-to-End Flow)** khi mọi quyết định rẽ nhánh đều thành công (dữ liệu luôn hợp lệ, người dùng đủ quyền, hệ thống ổn định, người dùng không hủy giữa chừng). Happy Path là "xương sống" của toàn bộ tính năng; nếu Happy Path hỏng thì 100% các kịch bản kiểm thử khác (biên, ngoại lệ, lỗi) đều phải dừng lại vì không thể chạy tiếp.
+   - **Happy Case (Ca kiểm thử cụ thể)**: Là **từng ca kiểm thử cụ thể (Test Case)** được chuẩn bị cho các bước thuận lợi của một lát cắt chức năng, có điều kiện tiên quyết, dữ liệu test cụ thể, các bước thao tác đo lường được và kết quả kỳ vọng quan sát được. **Quy tắc bắt buộc đối với Dev**: Happy Case **PHẢI ĐƯỢC VIẾT TRƯỚC KHI CODE** (theo nguyên lý TDD & ATDD). Sau khi code xong, Dev tự chạy Happy Case trên môi trường dev thật để nghiệm thu trước khi tạo Merge Request.
+3. **Luồng thiết kế tuần tự**: Bắt đầu từ **Happy Path** (luồng thuận lợi cơ bản nhất) → **Happy Cases** (các luồng thuận chi tiết có dữ liệu hợp lệ) → **Biên & Ngoại lệ** (Negative / Edge Cases).
+4. **Áp dụng 4 kỹ thuật thiết kế ISTQB**:
    - *Phân vùng tương đương (Equivalence Partitioning - EP)*: Gom nhóm dữ liệu hợp lệ và không hợp lệ.
    - *Phân tích giá trị biên (Boundary Value Analysis - BVA)*: Kiểm tra các điểm giá trị tại ngưỡng (min, min-1, max, max+1).
    - *Bảng quyết định (Decision Table)*: Kiểm tra tổ hợp nhiều điều kiện logic phức tạp.
    - *Chuyển đổi trạng thái (State Transition)*: Kiểm tra tính đúng đắn của máy trạng thái qua các sự kiện.
-4. **Mỗi bước một hành động cụ thể**: Mỗi bước kiểm thử phải gồm hành động đo lường được và kết quả quan sát được (Observable Result), không viết mơ hồ ("nhập dữ liệu và kiểm tra").
-5. **Duyệt kịch bản bằng file trước khi code**: Danh sách test cases phải được con người phê duyệt bằng dấu trong file trước khi Dev tiến hành lập trình.
-6. **Cấm AI tự ghi "Passed"**: Kết quả chỉ được đánh dấu Passed khi có bằng chứng chạy thật (Exit code 0, log output kiểm thử tự động, hoặc trace CDP).
-7. **Phân định thẩm quyền Dev vs QA**: Khi sửa lỗi, **Dev chỉ được đổi trạng thái sang `Resolved`**; **CHỈ QA HOẶC CON NGƯỜI MỚI CÓ QUYỀN ĐÓNG (`Closed`)** sau khi tái kiểm chứng đạt.
+5. **Mỗi bước một hành động cụ thể**: Mỗi bước kiểm thử phải gồm hành động đo lường được và kết quả quan sát được (Observable Result), không viết mơ hồ ("nhập dữ liệu và kiểm tra").
+6. **Duyệt kịch bản bằng file trước khi code**: Danh sách test cases phải được con người phê duyệt bằng dấu trong file trước khi Dev tiến hành lập trình.
+7. **Cấm AI tự ghi "Passed"**: Kết quả chỉ được đánh dấu Passed khi có bằng chứng chạy thật (Exit code 0, log output kiểm thử tự động, hoặc trace CDP).
+8. **Phân định thẩm quyền Dev vs QA**: Khi sửa lỗi, **Dev chỉ được đổi trạng thái sang `Resolved`**; **CHỈ QA HOẶC CON NGƯỜI MỚI CÓ QUYỀN ĐÓNG (`Closed`)** sau khi tái kiểm chứng đạt.
 
 ---
 

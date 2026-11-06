@@ -223,6 +223,29 @@ Dự án này sử dụng bộ khung chuẩn hóa từ `agent-base`.
     else:
         print("⚪ 4. File luật AGENTS.md: Đã có sẵn (Giữ nguyên luật riêng của dự án)")
 
+    # 4.1. Khởi tạo CLAUDE.md và GEMINI.md trỏ vào AGENTS.md nếu chưa có
+    claude_md = target_dir / "CLAUDE.md"
+    if not claude_md.exists():
+        claude_content = """# Hướng dẫn cho Claude Code
+
+Thư mục này được quản trị bởi agent-base. Mọi quy tắc cốt lõi và phân vai nằm tại `AGENTS.md`.
+
+@AGENTS.md
+"""
+        claude_md.write_text(claude_content, encoding="utf-8")
+        print("✅ 4.1. Khởi tạo file luật Claude Code: CLAUDE.md -> @AGENTS.md")
+
+    gemini_md = target_dir / "GEMINI.md"
+    if not gemini_md.exists():
+        gemini_content = """# Hướng dẫn cho Gemini / Antigravity
+
+Thư mục này được quản trị bởi agent-base. Mọi quy tắc cốt lõi và phân vai nằm tại `AGENTS.md`.
+
+Đọc `AGENTS.md` ở cùng thư mục để nhận diện 20 vai trò và quy tắc vận hành.
+"""
+        gemini_md.write_text(gemini_content, encoding="utf-8")
+        print("✅ 4.2. Khởi tạo file luật Gemini: GEMINI.md -> AGENTS.md")
+
     # 5. Cấu hình adapter Kilo Code (.kilo/) và AI Adapters (.agents/, .claude/, .codex/, .qoder/)
     # Đặc biệt: Kilo Code sandbox chặn nạp agent nếu .kilo/agents là symlink ra ngoài project scope.
     # Do đó, thư mục .kilo cục bộ của project luôn là thư mục thực tế (không symlink cả thư mục .kilo).
@@ -286,33 +309,21 @@ Dự án này sử dụng bộ khung chuẩn hóa từ `agent-base`.
                             shutil.copy2(child, dst_child)
                         print(f"✅ 5. Sao chép thành phần con: {adapter}/{child.name}")
 
-    # 6. Bảo vệ an toàn MCP: Khởi tạo file mẫu mcp.example.json & cập nhật .gitignore
-    kilo_target = target_dir / ".kilo"
-    kilo_target.mkdir(parents=True, exist_ok=True)
+    # 6. Đồng bộ cấu hình MCP đa nền tảng (Universal MCP Hub)
+    kilo_dir = target_dir / ".kilo"
+    kilo_dir.mkdir(parents=True, exist_ok=True)
     mcp_example_src = HUB_ROOT / ".kilo" / "mcp.example.json"
-    mcp_example_dst = kilo_target / "mcp.example.json"
+    mcp_example_dst = kilo_dir / "mcp.example.json"
     if mcp_example_src.is_file() and not mcp_example_dst.exists():
         shutil.copy2(mcp_example_src, mcp_example_dst)
-        print("✅ 6. Tạo file mẫu MCP an toàn: .kilo/mcp.example.json (chỉ chứa template mẫu)")
 
-    # Đảm bảo .gitignore của dự án đích chặn tuyệt đối file cấu hình MCP cá nhân
-    target_gitignore = target_dir / ".gitignore"
-    mcp_ignore_rules = [
-        ".kilo/mcp.json",
-        ".kilo/mcp.local.json",
-        ".kilo/kilo.jsonc",
-        "mcp.json",
-        "mcp.local.json",
-        "*.mcp.local.json"
-    ]
-    existing_ignore = target_gitignore.read_text(encoding="utf-8") if target_gitignore.is_file() else ""
-    missing_rules = [r for r in mcp_ignore_rules if r not in existing_ignore]
-    if missing_rules:
-        with open(target_gitignore, "a", encoding="utf-8") as f:
-            f.write("\n# MCP cá nhân hóa (Tuyệt đối không đẩy lên Git)\n")
-            for r in missing_rules:
-                f.write(f"{r}\n")
-        print("✅ 6. Cập nhật .gitignore dự án: Đã chặn các file cấu hình MCP cá nhân không bị commit.")
+    mcp_sync_script = HUB_ROOT / "scripts" / "sync-mcp.py"
+    if mcp_sync_script.is_file():
+        try:
+            subprocess.run([sys.executable, str(mcp_sync_script), "--target", str(target_dir)], check=False)
+            print("✅ 6. Đồng bộ MCP đa nền tảng: Claude Code (mcp.json), Kilo (.kilo/mcp.json), Cursor (.cursor/mcp.json)")
+        except Exception as e:
+            print(f"⚠️ 6. Không thể đồng bộ MCP: {e}")
 
     # 7. Tự động kiểm tra và tải ngầm động cơ Harness² nếu máy người mới chưa có
     harness2_dir = Path.home() / "Documents" / "skill" / "repos" / "harness2"

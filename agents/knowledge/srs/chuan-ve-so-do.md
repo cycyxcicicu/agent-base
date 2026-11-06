@@ -35,6 +35,7 @@ Tối thiểu cho một chức năng: luồng (use-case hoặc activity), sequen
 6. **Mũi tên có nhãn** là hành động hoặc điều kiện. Mũi tên trả về vẽ nét đứt (sequence).
 7. **Mã trạng thái đơn đúng `doc/thiet-ke/05-process-status`.**
 8. Không tô màu để truyền nghĩa duy nhất; nhánh lỗi dùng màu đỏ kèm nhãn chữ.
+9. **Giữ nguyên thuật ngữ tiếng Anh chuẩn:** Dùng *Swimlane Diagram* (hoặc *Swimlane*), tuyệt đối không dịch thành "bơi làn". Mọi thành phần kỹ thuật (Controller, Service, Worker, Consumer, Producer, Queue, Payload, Webhook, State Machine...) giữ nguyên tiếng Anh chuẩn công nghệ phần mềm, không dịch ép sang tiếng Việt khi gây ngô nghê hoặc tối nghĩa.
 
 ## 3. Quy tắc theo loại
 

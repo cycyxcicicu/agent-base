@@ -23,7 +23,7 @@ Agent đọc được chữ, không "nhìn" được ảnh `.png` hay `.svg`. M�
 
 | Loại | Phần chữ cần có | Cột hoặc mục tối thiểu |
 |---|---|---|
-| Hoạt động (bơi làn) | Bảng bước + mô tả rẽ nhánh | Bước, làn, hành động, điều kiện rẽ, dữ liệu đọc/ghi, đi tới |
+| Activity (Swimlane) | Bảng bước + mô tả rẽ nhánh | Bước, Lane/Actor, Hành động, Điều kiện rẽ, Dữ liệu đọc/ghi, Đi tới |
 | Sequence | Bảng thông điệp | Số, từ, đến, nội dung, đồng bộ hay bất đồng bộ, phản hồi, lỗi |
 | Trạng thái (vòng đời) | Bảng chuyển trạng thái | Từ, sự kiện hoặc điều kiện, tác nhân, sang, việc đi kèm |
 | ERD | Bảng thực thể | Bảng, cột chính, khóa, quan hệ và bội số, ai ghi, ai đọc |

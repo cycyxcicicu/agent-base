@@ -20,6 +20,7 @@ Biến yêu cầu của người dùng thành công việc rõ ràng, đúng c�
 - **`careful`** (`.agents/skills/careful/SKILL.md`): Rào chắn an toàn, cảnh báo và dừng lại trước các thao tác shell hủy hoại dữ liệu.
 - **`subagent-driven-development`** (`.agents/skills/subagent-driven-development/SKILL.md`): Điều phối subagents độc lập, phân bổ ngữ cảnh sạch (clean context), kiểm soát tiến độ và phán quyết tranh chấp (Rulings).
 - **`to-tickets`** (`.agents/skills/to-tickets/SKILL.md`): Phân rã đặc tả kỹ thuật thành các task card nguyên tử trong `tasks/T-<number>.md`.
+- **`ub-mode`** (`.agents/skills/ub-mode/SKILL.md`): Kích hoạt **Boy Scout Rule** khi tạo Task Card: Trong tiêu chí xong của card, luôn quy định Dev dành 20% công sức nhân tiện dọn dẹp các khối code mục nát, nuốt lỗi hoặc hàm phức tạp trong các file thuộc `scope_edit`.
 - **`grilling`** (`.agents/skills/grilling/SKILL.md`): Đặt câu hỏi phỏng vấn đào sâu nhu cầu cốt lõi khi bắt đầu dự án.
 
 ## Đầu vào

@@ -34,6 +34,10 @@ Chia việc lớn thành các module độc lập, để nhiều Dev chạy song
 - **`archify-review`** (`.agents/skills/archify-review/SKILL.md`): Đánh giá thay đổi kiến trúc qua 3 trục Value (Giá trị) – Cost (Chi phí tải nhận thức) – Impact (Vùng ảnh hưởng).
 - **`architecture-decision-records`** (`.agents/skills/architecture-decision-records/SKILL.md`): Chuẩn hóa ghi chép quyết định kiến trúc theo định dạng Michael Nygard trong `docs/adr/`.
 - **`codebase-design`** (`.agents/skills/codebase-design/SKILL.md`): Áp dụng triết lý Deep Modules (interface mỏng, logic sâu), Information Hiding và xác định các đường nối (Seams) giữa các module.
+- **`ub-mode`** (`.agents/skills/ub-mode/SKILL.md`): Áp dụng triết lý Clean Architecture & First Principles của Uncle Bob:
+  1. *Model the Domain*: Cấu trúc dữ liệu và thực thể phải làm cho các trạng thái sai không thể biểu diễn được (*Make illegal states impossible*).
+  2. *Boundary Discipline & Single Writer*: Kiểm soát ranh giới dữ liệu tại cổng vào; phân tách state độc lập trước khi đồng bộ, bắt buộc áp dụng nguyên lý 1 writer duy nhất khi ghi vào tài nguyên chia sẻ.
+  3. *Redesign From First Principles*: Khi mở rộng kiến trúc, không chắp vá lên thiết kế cũ; thiết kế lại theo hướng tối ưu tổng thể rồi phân rã chuyển giao từng phần.
 - **`domain-modeling`** (`.agents/skills/domain-modeling/SKILL.md`): Phân chia ranh giới module theo Bounded Contexts và chuẩn hóa giao tiếp giữa các miền.
 - **`diagram-design`** (`.agents/skills/diagram-design/SKILL.md`): Thiết kế sơ đồ kiến trúc hệ thống, sơ đồ tuần tự (Sequence Diagram) bằng SVG vector thuần.
 - **`grilling` & `challenger`** (`agents/protocols/challenger.md`): Phản biện sắc bén đề bài kỹ thuật, đánh giá rủi ro kiến trúc (Blast Radius), thách thức giải pháp thiếu tối ưu và đưa ra ma trận 3 phương án đối trọng.

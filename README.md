@@ -200,6 +200,29 @@ python scripts/watch-swarm.py            # http://localhost:4200/ (giám sát) v
 
 Mã nằm ở `tools/viewer/` (thu thập dữ liệu, dựng site, giao diện tách riêng). Trang đầu rất nhẹ, nội dung từng tài liệu chỉ nạp khi bạn mở nó.
 
+## Khởi tạo kết nối dự án mới (1-Click Onboarding)
+
+Khi bắt đầu một dự án mới tinh hoặc kết nối một workspace lớn với `agent-base`:
+
+```bash
+# 1-Click Onboarding tự động cấu hình doc/, BOARD.md, adapter, rules và MCP:
+python3 scripts/setup-project.py --target /path/to/project
+```
+
+Xem chi tiết quy chuẩn tại: `docs/runbooks/quy-chuan-setup-du-an-va-mcp.md`.
+
+## Quản trị MCP Servers đa nền tảng (Universal MCP Hub)
+
+Danh mục MCP được quản lý tập trung (SSOT) tại `mcp/` và tự động xuất ra Claude Code (`mcp.json`), Kilo Code (`.kilo/mcp.json`), Antigravity (`~/.gemini/config/mcp_config.json`) và Cursor (`.cursor/mcp.json`):
+
+```bash
+# Đồng bộ toàn cục (Antigravity & Claude Global):
+python3 scripts/sync-mcp.py --global
+
+# Đồng bộ cho một dự án cụ thể:
+python3 scripts/sync-mcp.py --target /path/to/project
+```
+
 ## Chạy song song
 
 ```

@@ -3,7 +3,7 @@
 > **Loại: tham khảo.**  
 > **Mã định danh:** `clean-code-and-refactoring-guide`  
 > **Chuyên mục:** Kỹ Nghệ Viết Mã Sạch, Tái Cấu Trúc Mã Nguồn & Tiêu Chuẩn Review Code  
-> **Nguồn gốc:** Martin Fowler (Refactoring: Improving the Design of Existing Code), Google Software Engineering Practices  
+> **Nguồn gốc:** Martin Fowler (Refactoring), Google Engineering Practices, Robert C. Martin - Uncle Bob (`ub-mode`)  
 > **Trạng thái:** `draft` (Chờ nghiệm thu con người)  
 
 ---
@@ -100,3 +100,53 @@ Google quản trị mã nguồn quy mô hàng tỷ dòng lệnh dựa trên các
 2. **Phân biệt rõ giữa Yêu cầu bắt buộc và Đề xuất tùy chọn:**
    - Sử dụng tiền tố `Nit:` (Nitpick - tiểu tiết tùy chọn) cho những nhận xét nhỏ về phong cách, không chặn việc merge PR.
 3. **Giải thích lý do tại sao:** Luôn đi kèm lời giải thích về rủi ro hiệu năng, bảo mật hoặc khả năng bảo trì thay vì chỉ nói "phải sửa thế này".
+
+---
+
+## 3. Kỷ Luật Kỹ Nghệ Phần Mềm ub-mode (Robert C. Martin - Uncle Bob)
+
+Kỷ luật `ub-mode` là bản hiến pháp thực thi mã nguồn dành riêng cho AI Agent và Lập trình viên chuyên nghiệp, chia thành 3 giai đoạn bắt buộc:
+
+### 3.1. First Make it Work (Làm cho nó chạy — Nhưng đúng nền tảng)
+1. **Laziness Protocol (Giao thức tối giản):**
+   - *One decision lives in one place:* Một quyết định logic chỉ được phép tồn tại ở một nơi duy nhất (*Single Source of Truth*).
+   - *Ship the smallest edit that solves the problem:* Chỉ viết lượng code tối thiểu vừa đủ giải quyết bài toán. Không tự ý viết thêm code thừa (*YAGNI*).
+2. **Foundational Thinking (Tư duy nền móng):**
+   - *Get the data shape right before you write the logic:* Chuẩn hóa Schema/Entity/DTO trước khi bắt tay viết logic xử lý.
+   - *Do first whatever helps every later phase:* Ưu tiên làm trước những phần tạo nền cho các bước sau.
+   - *If a concurrent writer would matter, do not share state:* Không dùng bộ nhớ chia sẻ khả biến khi có nhiều luồng cùng ghi.
+3. **TDD (Test-Driven Development):**
+   - Viết test thất bại (*Red*) trước khi sửa code; test phải trượt đúng vì thiếu tính năng.
+   - Viết lượng code tối thiểu để test pass (*Green*).
+   - Nếu không thể viết honest test, tuyệt đối không viết một bad test (mock vô nghĩa đối phó coverage).
+4. **Redesign From First Principles (Thiết kế lại từ nguyên lý đầu tiên):**
+   - Không chắp vá (*bolt*) yêu cầu mới lên thiết kế cũ đã mục nát; tự hỏi thiết kế lý tưởng từ đầu sẽ thế nào, rồi phân rã chuyển giao từng phần.
+5. **Attack the Premise (Tấn công tiền đề):**
+   - Khi 2 phương án fix chung một giả định cùng trượt kiểm thử, hãy loại bỏ tiền đề giả định sai lầm đó trước khi thử tiếp.
+6. **Subtract Before You Add (Giảm trước khi tăng):**
+   - Cắt giảm độ phức tạp dư thừa trong code hiện tại trước khi thêm tính năng mới.
+7. **Architecture & Boundary Discipline:**
+   - *Model the Domain:* Thiết kế cấu trúc sao cho *những trạng thái phi lý là không thể biểu diễn được* (*Make illegal states unrepresentable*).
+   - *Boundary Discipline:* Kiểm tra và validate dữ liệu ngay tại ranh giới đầu vào (Controller, Gateway). Vào bên trong Domain/Service lõi thì tin tưởng dữ liệu; giữ logic nghiệp vụ trong *pure functions*.
+   - *Type System:* Tận dụng hệ thống kiểu để chặn đứng giá trị sai; không tắt cảnh báo của compiler (`@SuppressWarnings`).
+   - *Idempotency:* Mọi thao tác phải đảm bảo tính lũy thừa (chạy lại 2 lần hoặc crash giữa chừng vẫn cùng một trạng thái).
+
+### 3.2. Then Make it Right (Làm cho nó chuẩn và sạch)
+1. **Fix Root Causes:**
+   - Bắt buộc phải tái hiện lỗi bằng test case trước khi sửa.
+   - **Châm ngôn tối thượng:** *A guard that only hides the crash is not a fix.* Thêm khối `try/catch` rỗng hay `if != null` chỉ để che đậy vết crash KHÔNG PHẢI LÀ SỬA BUG.
+2. **Sequence into Verifiable Units:** Chia nhỏ việc thành các phần kiểm chứng được độc lập. Xong phần nào kiểm chứng phần đó.
+3. **Test Behavior, Not Implementation:**
+   - Test theo hành vi mà người dùng nhìn thấy khi gọi API.
+   - Ném bỏ bài test nếu test vẫn pass khi hàm trả về rỗng/null.
+4. **Tiêu chuẩn Định lượng (Deterministic Quality Gates):**
+   - $\text{CRAP} = \text{CC}^2 \times (1 - \text{coverage})^3 + \text{CC} < 10$ cho mọi hàm.
+   - Loại bỏ trùng lặp mã cấu trúc ($\ge 80\%$).
+   - Diệt sạch các mutant sống sót (surviving mutants) và xóa dead code.
+5. **Refactoring:** Khóa chặt hành vi bằng test $\rightarrow$ Đổi cấu trúc $\rightarrow$ Chứng minh hành vi không đổi.
+
+### 3.3. Practice (Kỷ luật thực hành của Agent)
+1. **Keep a Log:** Ghi chép nhật ký mọi hành động và lý do thực hiện.
+2. **Guard the Context Window:** Giữ ngữ cảnh chat cô đọng (*Zero-Chat Bleeding*), đẩy log thô ra file ngoài.
+3. **Worktree Cleanup:** Dọn dẹp thư mục và nhánh git tạm sau khi hoàn tất.
+4. **Commit & Push:** Commit nhỏ, có trật tự, nêu rõ: *Why (Tại sao)*, *What changed (Sửa gì)*, *How proved (Chứng minh thế nào)*.

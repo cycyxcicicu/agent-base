@@ -47,6 +47,7 @@ scope_deny:
 
 ## Tiêu chí xong
 - [ ] Happy Path Unit Test chạy PASS 100%
+- [ ] Áp dụng Boy Scout Rule (ub-mode): Dọn dẹp các khối code mục nát/nuốt lỗi và kiểm tra tính an toàn trong các file thuộc `scope_edit`
 - [ ] ...
 - [ ] ...
 

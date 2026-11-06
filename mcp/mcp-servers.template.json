@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json.schemastore.org/kilo-mcp.json",
+  "mcpServers": {
+    "chrome-devtools-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest"
+      ],
+      "env": {},
+      "disabled": false,
+      "description": "Điều khiển Chrome DevTools qua MCP: chụp ảnh, inspect console, test UI."
+    },
+    "notebooklm": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@roomi-fields/notebooklm-mcp@latest"
+      ],
+      "env": {
+        "BROWSER_CHANNEL": "chrome"
+      },
+      "disabled": false,
+      "description": "Google NotebookLM (Gemini 2.5) nghiên cứu tài liệu grounded."
+    },
+    "GitLab": {
+      "type": "http",
+      "url": "https://git.gdttech.net/api/v4/mcp",
+      "disabled": false,
+      "description": "GitLab MCP Server nội bộ GDT Technology."
+    },
+    "db-postgres-template": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://username:password@localhost:5432/my_database"
+      ],
+      "disabled": true,
+      "description": "PostgreSQL Database Connector mẫu (Khai báo cấu hình thật trong mcp-servers.local.json)."
+    }
+  }
+}

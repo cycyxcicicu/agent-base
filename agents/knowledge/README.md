@@ -14,6 +14,7 @@ Không nạp sẵn. Gặp việc thuộc dòng nào thì chạy `python scripts/
 | Đổi schema, migration | `migration không dừng hệ thống` |
 | Vẽ hoặc mô tả sơ đồ | `sơ đồ hoạt động`, `mô tả sơ đồ`, `drawio` |
 | Viết đặc tả SRS và sơ đồ từ đầu đến cuối | `viết srs quy trình`, `srs đặc tả`, `mẫu tài liệu` |
+| Vẽ sơ đồ xong phải xem lại và sửa; sửa sơ đồ người dùng đã chỉnh tay; thiết kế chưa code; bàn giao lên Drive | `vẽ xong xem lại sửa`, `sửa tại chỗ drawio`, `thiết kế chưa code`, `bàn giao drive` |
 | Đổi yêu cầu đã duyệt | `thay đổi yêu cầu ccb` |
 | Xử lý nhiều bug | `bug hàng loạt` |
 | Viết test, TDD | `tdd spring boot`, `testcontainers` |
@@ -74,6 +75,8 @@ Nguồn: dự án gdt-workspace, đã dùng thật. Còn nhắc Mantis, TestLink
 | Kiến trúc sạch, Tối ưu CSDL & 4 Giải thuật tinh hoa (RepoMap, Diff compression, JPA Concurrency, ArchUnit) | `architecture/clean-architecture-and-db-patterns.md` |
 | 16 Bản thiết kế kiến trúc tinh hoa Big Tech (Figma 100x Postgres, Shopify Resilient Payments, Zero-Copy Kafka) | `architecture/system-design-elite-patterns.md` |
 | Viết tài liệu đặc tả theo mẫu SRS_FDD: văn phong, checklist, NFR, ba file mỗi chức năng | `srs/srs-fdd-writing-standard.md` |
+| Khung hồ sơ hoàn chỉnh bắt buộc cho từng Use Case / Feature | `srs/ho-so-hoan-chinh-khung-bat-buoc.md` |
+| Chuyển đổi Markdown sang định dạng Office (Word, Excel) giữ nguyên độ nét | `srs/md-to-office-fidelity.md` |
 | Chuẩn viết tài liệu kỹ thuật: Google Style, Microsoft Guide và The Good Docs Project (Diátaxis) | `srs/technical-writing-and-doc-standards.md` |
 | Mẫu để viết (đặc tả, thiết kế kỹ thuật, Excel SRS_FDD, test report, TestLink) | thư mục `agents/templates/`, xem `agents/templates/README.md` |
 
@@ -85,6 +88,7 @@ Bắt đầu từ ba file đầu: chuẩn dự án đi trước, công cụ bổ
 |---|---|
 | Viết phần chữ mô tả hoạt động đi kèm sơ đồ (bước, nhánh, dữ liệu) để agent hiểu hết sơ đồ; đọc nhanh `.drawio` bằng `scripts/diagram-describe.py` | `diagrams/mo-ta-hoat-dong-so-do.md` |
 | Chọn công cụ nguồn cho từng loại sơ đồ, viết và sửa `.drawio`, xuất ảnh, bài học vẽ bơi làn | `diagrams/quy-uoc-draw-io-va-archify.md` |
+| Bài học thiết kế trước khi code, vẽ sơ đồ và bàn giao tài liệu | `diagrams/bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu.md` |
 | Ma trận chọn công cụ vẽ sơ đồ; thứ tự áp dụng chuẩn dự án đi trước | `diagrams/diagrams-cheatsheet-and-decision-matrix.md` |
 | Icon và bố cục hạ tầng AWS | `diagrams/aws-architecture-icons-guide.md` |
 | Quy trình nghiệp vụ theo BPMN 2.0 (Camunda) | `diagrams/bpmn-20-camunda-guide.md` |

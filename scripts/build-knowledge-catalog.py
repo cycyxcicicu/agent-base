@@ -693,6 +693,18 @@ RAW_NODES = [
         ],
     },
     {
+        "id": "Design:diagram-bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu",
+        "kind": "Design",
+        "title": "Bài học viết tài liệu thiết kế, vẽ sơ đồ và bàn giao tài liệu",
+        "state": "draft",
+        "version": 1,
+        "content_ref": "agents/knowledge/diagrams/bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu.md",
+        "owner_role": "designer",
+        "relations": [
+            {"type": "owned_by", "target": "Role:designer"},
+        ],
+    },
+    {
         "id": "Design:diagram-structurizr-dsl-guide",
         "kind": "Design",
         "title": "Structurizr DSL",
@@ -968,6 +980,7 @@ PROTOCOL_OWNER = {
 }
 KNOWLEDGE_OWNER = {
     "verification-cli-runbook": "qa", "glossary": "lead", "lauren-tan-primary-sources": "ai-eng", "graphify": "architect",
+    "ho-so-hoan-chinh-khung-bat-buoc": "ba", "md-to-office-fidelity": "ba",
 }
 
 # Từ khóa và từ đồng nghĩa (tiếng Việt, tiếng Anh) để tra cứu theo từ khóa trúng hơn.
@@ -994,12 +1007,16 @@ KEYWORDS = {
     "Requirement:ticket-status": "trạng thái ticket status board",
     "Design:chuan-code-va-review": "review code checklist soát code reviewer",
     "Requirement:srs-workflow": "viết srs quy trình đặc tả từ đầu đến cuối checklist kiểm srs-check sơ đồ tối thiểu thư mục srs",
+    "Design:ho-so-hoan-chinh-khung-bat-buoc": "hồ sơ hoàn chỉnh khung bắt buộc nhật ký thay đổi hạng mục thiết kế use-case chi tiết tiền điều kiện luồng chính luồng thay thế ngoại lệ câu hỏi chờ xác nhận srs-check full bàn giao thiếu mục template 16 mục",
+    "Design:diagram-bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu": "vẽ xong xem lại sửa vòng lặp không xem được ảnh chưa kiểm tra bằng mắt sửa tại chỗ drawio người dùng chỉnh tay hàng đợi consumer làn queue thiết kế chưa code webhook tên api đối tác chưa kiểm chứng câu hỏi chờ xác nhận link tab draw.io tải lên drive google doc bàn giao tài liệu sơ đồ",
+    "Design:md-to-office-fidelity": "md sang docx google docs google doc pandoc bảng chữ trần bảng dính mục lục rỗng cột bị bẻ chữ ảnh trang trống a4 md_to_docx lên drive format lỗi",
 }
 
 # Cụm kiến thức liên quan: "clique" nối mọi cặp, "star" nối phần tử đầu (hub) với các phần tử còn lại.
 # Phần tử là id nút hoặc đường dẫn file (nút tự đăng ký có id suy ra từ đường dẫn).
 RELATED_CLUSTERS = [
     ("clique", ["Design:diagram-mo-ta-hoat-dong-so-do", "Design:diagram-quy-uoc-draw-io-va-archify", "Design:chuan-ve-so-do",
+                "Design:diagram-bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu", "Design:md-to-office-fidelity",
                 "Design:diagram-diagrams-cheatsheet-and-decision-matrix", "Skill:diagram-design", "Skill:archify"]),
     ("star", ["Design:diagram-diagrams-cheatsheet-and-decision-matrix", "Design:diagram-drawio-csv-autolayout",
               "Design:diagram-drawio-icons-index", "Design:diagram-python-diagrams-and-drawpyo", "Design:diagram-mermaid-syntax-guide",
@@ -1054,6 +1071,8 @@ RELATED_CLUSTERS += [
                 "Design:diagram-quy-uoc-draw-io-va-archify", "Requirement:test-cases"]),
     ("clique", ["Design:task-archetypes", "Rule:task-loop", "Requirement:context-budget", "Requirement:bug-repro",
                 "Design:bug-handling-pipeline"]),
+    ("clique", ["Design:ho-so-hoan-chinh-khung-bat-buoc", "Requirement:srs-workflow", "Requirement:srs-writing-standard",
+                "Design:md-to-office-fidelity", "Requirement:definition-of-done"]),
 ]
 FALLBACK_HUB = {"Requirement": "Rule:task-loop", "Skill": "Skill:skills-registry", "Design": "Design:chuan-ve-so-do"}
 

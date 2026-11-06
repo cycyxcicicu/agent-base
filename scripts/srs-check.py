@@ -7,6 +7,8 @@ Kiểm một bản đặc tả (SRS) dạng md theo quy trình ở agents/protoc
   python scripts/srs-check.py --all            kiểm mọi UC-*.md trong "Thư mục SRS" của PROJECT.md (mặc định docs/spec)
   python scripts/srs-check.py <file.md> --strict   cảnh báo cũng làm thất bại
   python scripts/srs-check.py <file.md> --json
+  python scripts/srs-check.py <file.md> --full     hồ sơ hoàn chỉnh (trước khi bàn giao): bắt thêm Nhật ký thay đổi, Hạng mục
+                                                   thiết kế, WBS, RTM, rủi ro, câu hỏi chờ xác nhận, use-case đủ 4 phần
 
 LỖI (mã thoát 1): thiếu mục bắt buộc; ảnh sơ đồ không tồn tại; một AC-xx không có ca kiểm thử nào nhắc tới;
 file .drawio được dẫn tới vi phạm quy tắc (scripts/diagram-describe.py).
@@ -42,6 +44,22 @@ REQUIRED_SECTIONS = {
     "yêu cầu phi chức năng": r"(phi chuc nang|\bnfr\b|non functional)",
     "kiểm thử": r"(kiem thu|\btest\b)",
     "câu hỏi mở": r"cau hoi",
+}
+# Chế độ --full: hồ sơ hoàn chỉnh của một chức năng (khung template 16 mục + use-case chi tiết).
+# Mục tiêu: không để hồ sơ lên bàn giao khi thiếu Nhật ký, Hạng mục thiết kế, use-case đủ 4 phần, câu hỏi chờ xác nhận.
+FULL_SECTIONS = {
+    "nhật ký thay đổi": r"nhat ky (thay doi|sua doi)",
+    "hạng mục thiết kế": r"(hang muc thiet ke|dau muc thiet ke|design checklist)",
+    "kế hoạch phân rã (WBS)": r"(\bwbs\b|phan ra cong viec|ke hoach)",
+    "truy vết yêu cầu (RTM)": r"(\brtm\b|truy vet)",
+    "rủi ro": r"(rui ro|\brisk\b)",
+    "câu hỏi chờ xác nhận": r"cau hoi.*cho xac nhan",
+}
+FULL_USECASE_PARTS = {
+    "tiền điều kiện": r"tien dieu kien|precondition",
+    "luồng chính": r"luong chinh|main flow|happy path",
+    "luồng thay thế": r"luong thay the|alternative",
+    "luồng ngoại lệ hoặc lỗi": r"ngoai le|luong loi|exception|nhanh loi",
 }
 VAGUE = ["nhanh", "mượt", "trực quan", "dễ dùng", "dễ sử dụng", "thân thiện", "bảo mật cao", "hợp lý", "đẹp", "v.v",
          "vân vân", "tbd", "tương tự như trên"]
@@ -92,7 +110,7 @@ def clean_lines(text):
     return out
 
 
-def check_file(path: Path):
+def check_file(path: Path, full: bool = False):
     errors, warnings = [], []
     text = path.read_text(encoding="utf-8")
     lines = clean_lines(text)
@@ -109,6 +127,13 @@ def check_file(path: Path):
             errors.append((0, f"thiếu mục bắt buộc: {name}"))
     if not re.search(r"a/c|tiêu chí chấp nhận|tiêu chí nghiệm thu", body.lower()):
         errors.append((0, "thiếu tiêu chí nghiệm thu (A/C)"))
+    if full:
+        for name, pat in FULL_SECTIONS.items():
+            if not any(re.search(pat, h) for h in norm_heads):
+                errors.append((0, f"[--full] thiếu mục bắt buộc của hồ sơ hoàn chỉnh: {name}"))
+        for name, pat in FULL_USECASE_PARTS.items():
+            if not re.search(pat, norm):
+                errors.append((0, f"[--full] use-case chi tiết thiếu phần: {name}"))
 
     # --- A/C và ca kiểm thử
     test_start = next((n for (n, h, _), nh in zip(headings, norm_heads) if re.search(r"(kiem thu|\btest\b)", nh)), None)
@@ -213,6 +238,9 @@ def main():
     ap.add_argument("--all", action="store_true", help="Kiểm mọi UC-*.md trong Thư mục SRS của PROJECT.md")
     ap.add_argument("--strict", action="store_true", help="Cảnh báo cũng làm thất bại")
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--full", action="store_true",
+                    help="Hồ sơ hoàn chỉnh: bắt thêm Nhật ký, Hạng mục thiết kế, WBS, RTM, rủi ro, câu hỏi chờ xác nhận, "
+                         "use-case đủ tiền điều kiện/luồng chính/luồng thay thế/lỗi")
     args = ap.parse_args()
 
     targets = [Path(f) for f in args.files]
@@ -229,7 +257,7 @@ def main():
         if not t.is_file():
             print(f"LỖI  không thấy file {t}", file=sys.stderr)
             sys.exit(2)
-        errors, warnings = check_file(t)
+        errors, warnings = check_file(t, full=args.full)
         failed = failed or bool(errors) or (args.strict and bool(warnings))
         report.append({"file": str(t), "errors": errors, "warnings": warnings})
 

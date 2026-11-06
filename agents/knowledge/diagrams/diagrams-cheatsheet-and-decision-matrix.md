@@ -15,10 +15,10 @@
 
 | Loại sơ đồ | Công cụ nguồn của dự án (ưu tiên) | Công cụ bổ sung khi cần |
 |---|---|---|
-| Hoạt động bơi làn, use case, luồng màn hình | draw.io `.drawio` (một file nhiều trang mỗi chức năng) | Draw.io CSV để sinh bản nháp có icon (`drawio-csv-autolayout.md`) |
+| Activity Swimlane, use case, luồng màn hình | draw.io `.drawio` (một file nhiều trang mỗi chức năng) | Draw.io CSV để sinh bản nháp có icon (`drawio-csv-autolayout.md`) |
 | ERD, sequence, vòng đời trạng thái | archify (`.json`, sinh lại khi sửa) | DBML để thiết kế schema bằng chữ; Mermaid cho bản nhỏ trong md |
 | Thành phần, triển khai, kiến trúc hệ thống | draw.io hoặc archify `architecture` | C4-PlantUML, Structurizr DSL, D2, Python `diagrams` (hạ tầng cloud) khi dự án chọn |
-| Quy trình nghiệp vụ nhiều bộ phận | draw.io bơi làn | BPMN 2.0 khi cần chuẩn quốc tế |
+| Quy trình nghiệp vụ nhiều bộ phận (Swimlane) | draw.io (Swimlane) | BPMN 2.0 khi cần chuẩn quốc tế |
 | Sơ đồ nhỏ nằm trong md | Mermaid | - |
 
 Hai quy tắc đi kèm, áp dụng cho mọi công cụ:

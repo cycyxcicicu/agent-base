@@ -18,6 +18,7 @@ Usage:
 import sys
 import re
 import json
+import subprocess
 from pathlib import Path
 
 # Force UTF-8 on Windows console if needed
@@ -314,6 +315,7 @@ git_read_allow = [
 ]
 
 claude_read_allow = [
+    # 1. Direct git read & inspection commands
     'git status', 'git status *',
     'git diff', 'git diff *',
     'git log', 'git log *',
@@ -324,7 +326,45 @@ claude_read_allow = [
     'git tag', 'git tag *',
     'git stash list', 'git stash list *',
     'git config --get*', 'git config --list*', 'git config -l*',
-    'git rev-parse*', 'git merge-base*', 'git rev-list*', 'git shortlog*', 'git ls-files*', 'git grep*'
+    'git rev-parse*', 'git merge-base*', 'git rev-list*', 'git shortlog*',
+    'git ls-files*', 'git ls-tree*', 'git cat-file*', 'git grep*',
+    'git fetch*',
+
+    # 2. Multi-repo / Worktree support: git -C <path> ...
+    'git -C * status*',
+    'git -C * diff*',
+    'git -C * log*',
+    'git -C * show*',
+    'git -C * blame*',
+    'git -C * branch*',
+    'git -C * worktree list*',
+    'git -C * tag*',
+    'git -C * stash list*',
+    'git -C * config --get*', 'git -C * config --list*', 'git -C * config -l*',
+    'git -C * rev-parse*', 'git -C * merge-base*', 'git -C * rev-list*', 'git -C * shortlog*',
+    'git -C * ls-files*', 'git -C * ls-tree*', 'git -C * cat-file*', 'git -C * grep*',
+    'git -C * fetch*',
+
+    # 3. Compound commands: cd <path> && git ...
+    'cd * && git status*',
+    'cd * && git diff*',
+    'cd * && git log*',
+    'cd * && git show*',
+    'cd * && git blame*',
+    'cd * && git branch*',
+    'cd * && git worktree list*',
+    'cd * && git tag*',
+    'cd * && git stash list*',
+    'cd * && git rev-parse*', 'cd * && git merge-base*', 'cd * && git rev-list*', 'cd * && git shortlog*',
+    'cd * && git ls-files*', 'cd * && git grep*',
+    'cd * && git fetch*',
+
+    # 4. Safe read & shell inspection commands
+    'ls*', 'pwd', 'tree*', 'stat *', 'file *', 'du *',
+    'cat *', 'head *', 'tail *', 'wc *', 'sort *', 'uniq *',
+    'grep *', 'rg *', 'find *', 'diff *', 'which *',
+    'python3 *knowledge.py query*',
+    'python3 *notes-index.py*'
 ]
 
 
@@ -677,12 +717,27 @@ def main():
 
     # Generate .claude/settings.json to enforce deny rules on Claude Code
     # Use tool specifiers Bash(...) and PowerShell(...) strictly; no bare strings
-    claude_allow = [f"Bash({c})" for c in claude_read_allow] + [f"PowerShell({c})" for c in claude_read_allow]
-    claude_deny = [f"Bash({c})" for c in (git_hard_deny + danger_deny)] + [f"PowerShell({c})" for c in (git_hard_deny + danger_deny)]
-    claude_ask = [f"Bash({c})" for c in (danger_ask + git_commit_ask)] + [f"PowerShell({c})" for c in (danger_ask + git_commit_ask)]
+    def _balance_claude_pattern(c: str) -> str:
+        diff = c.count("(") - c.count(")")
+        if diff > 0:
+            return c + (")" * diff)
+        elif diff < 0:
+            return ("(" * (-diff)) + c
+        return c
+
+    claude_allow = [f"Bash({_balance_claude_pattern(c)})" for c in claude_read_allow] + [f"PowerShell({_balance_claude_pattern(c)})" for c in claude_read_allow]
+    claude_deny = [f"Bash({_balance_claude_pattern(c)})" for c in (git_hard_deny + danger_deny)] + [f"PowerShell({_balance_claude_pattern(c)})" for c in (git_hard_deny + danger_deny)]
+    claude_ask = [f"Bash({_balance_claude_pattern(c)})" for c in (danger_ask + git_commit_ask)] + [f"PowerShell({_balance_claude_pattern(c)})" for c in (danger_ask + git_commit_ask)]
+    
+    worktrees_dir = str(Path.home() / "Documents" / "worktrees")
+    agentbase_dir = str(ROOT)
     claude_settings = {
         "$schema": "https://json.schemastore.org/claude-code-settings.json",
         "permissions": {
+            "additionalDirectories": [
+                worktrees_dir,
+                agentbase_dir
+            ],
             "allow": claude_allow,
             "deny": claude_deny,
             "ask": claude_ask
@@ -734,6 +789,14 @@ def main():
         print("OK: generated files are up to date.")
     elif problems > 0:
         sys.exit(1)
+    else:
+        # Tự động đồng bộ MCP đa nền tảng (Universal MCP Sync)
+        mcp_sync_script = ROOT / "scripts" / "sync-mcp.py"
+        if mcp_sync_script.is_file():
+            try:
+                subprocess.run([sys.executable, str(mcp_sync_script), "--global", "--all-projects"], check=False)
+            except Exception as e:
+                print(f"⚠️ Không thể chạy sync-mcp: {e}")
 
 
 if __name__ == '__main__':

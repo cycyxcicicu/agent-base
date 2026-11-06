@@ -9,7 +9,7 @@ Một sơ đồ chỉ có **một** file nguồn là sự thật. Ảnh `.png`, 
 
 | Loại | Công cụ nguồn | File nguồn | Người sửa bằng tay |
 |---|---|---|---|
-| Hoạt động (bơi làn), use case, luồng màn hình, thành phần và triển khai muốn tự chỉnh | draw.io | `<tên>.drawio` | Có (draw.io Desktop) |
+| Activity (Swimlane), use case, luồng màn hình, thành phần và triển khai muốn tự chỉnh | draw.io | `<tên>.drawio` | Có (draw.io Desktop) |
 | ERD, sequence, vòng đời (trạng thái), kiến trúc sinh từ dữ liệu | archify | `<tên>.json` | Không: sửa JSON rồi vẽ lại |
 | Sơ đồ nhỏ trong tài liệu | Mermaid | khối mã trong md | Có (sửa chữ) |
 
@@ -80,7 +80,7 @@ Quy tắc:
 
 ## 6. Bài học khi vẽ bộ sơ đồ
 
-- Sơ đồ hoạt động bơi làn: đường nối dùng `orthogonalEdgeStyle` tự định tuyến; muốn đường gọn thì xếp ô vào **làn và hàng liền kề**. Mỗi sơ đồ 3 đến 5 làn, làn không có ô thì bỏ. Nhánh quyết định dài (nhiều ô rẽ liên tiếp) nên tách thành sơ đồ khác.
+- Sơ đồ Activity (Swimlane): đường nối dùng `orthogonalEdgeStyle` tự định tuyến; muốn đường gọn thì xếp ô vào **làn (lane) và hàng liền kề**. Mỗi sơ đồ 3 đến 5 làn, làn không có ô thì bỏ. Nhánh quyết định dài (nhiều ô rẽ liên tiếp) nên tách thành sơ đồ khác.
 - archify sequence: nhãn participant ngắn (dưới khoảng 13 đơn vị), tối đa 7 đến 9 participant, **không có self-message**, nhãn mũi tên vừa khung. archify architecture: `boundary` không chứa ô không thuộc nó. archify lifecycle: khai `mainPath`, mỗi trạng thái một `type`.
 - Sơ đồ phải khớp quá trình **đang chốt**. Khi quyết định đổi, vẽ lại sơ đồ trước khi sửa tài liệu, rồi xuất ảnh và nhìn từng ảnh.
 - Khi tạo sơ đồ mới: chọn loại theo `chuan-ve-so-do.md`, chọn công cụ theo mục 1, ghi vào chỉ mục sơ đồ của dự án (tên, loại, nguồn, dùng ở đâu), dẫn ảnh vào md kèm mô tả hoạt động, xuất ảnh và đối chiếu checklist.
@@ -88,7 +88,7 @@ Quy tắc:
 
 ## 7. Vòng vẽ, xem, sửa và lỗi bố cục thường gặp (bổ sung 02/11/2026)
 
-Rút ra khi vẽ 3 sơ đồ (hoạt động bơi làn, sequence, use case) của chức năng "ghi nhận kế toán khi Check trùng" trong dự án gdt. **Lần vẽ đầu hầu như luôn có lỗi bố cục; sơ đồ đẹp là kết quả của vòng lặp, không phải của lần vẽ đầu** (sơ đồ hoạt động phải vẽ lại 3 lần mới sạch).
+Rút ra khi vẽ 3 sơ đồ (Activity Swimlane, sequence, use case) của chức năng "ghi nhận kế toán khi Check trùng" trong dự án gdt. **Lần vẽ đầu hầu như luôn có lỗi bố cục; sơ đồ đẹp là kết quả của vòng lặp, không phải của lần vẽ đầu** (sơ đồ hoạt động phải vẽ lại 3 lần mới sạch).
 
 ### 7.1 Vòng lặp bắt buộc
 1. Viết hoặc sửa **file nguồn** (JSON hoặc `.drawio`). Không sửa ảnh.

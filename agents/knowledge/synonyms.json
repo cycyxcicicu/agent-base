@@ -88,5 +88,11 @@
   "rag": "rag hybrid search bm25 dense sparse vector embedding cross-encoder rerank reciprocal rank fusion rrf guardrails",
   "hybrid search": "hybrid search dense sparse bm25 vector rrf cohere reranker",
   "transactional outbox": "transactional outbox outbox pattern cdc debezium kafka dual write wal postgres logical replication",
-  "debezium": "debezium cdc change data capture wal outbox kafka postgres"
+  "debezium": "debezium cdc change data capture wal outbox kafka postgres",
+  "vẽ xong xem lại": "vẽ xong xem lại sửa vòng lặp không xem được ảnh sửa tại chỗ drawio thiết kế chưa code bàn giao drive google doc",
+  "sửa sơ đồ": "vẽ xong xem lại sửa vòng lặp không xem được ảnh sửa tại chỗ drawio thiết kế chưa code bàn giao drive google doc",
+  "sửa tại chỗ": "vẽ xong xem lại sửa vòng lặp không xem được ảnh sửa tại chỗ drawio thiết kế chưa code bàn giao drive google doc",
+  "thiết kế chưa code": "vẽ xong xem lại sửa vòng lặp không xem được ảnh sửa tại chỗ drawio thiết kế chưa code bàn giao drive google doc",
+  "bàn giao drive": "vẽ xong xem lại sửa vòng lặp không xem được ảnh sửa tại chỗ drawio thiết kế chưa code bàn giao drive google doc",
+  "lên drive": "vẽ xong xem lại sửa vòng lặp không xem được ảnh sửa tại chỗ drawio thiết kế chưa code bàn giao drive google doc"
 }

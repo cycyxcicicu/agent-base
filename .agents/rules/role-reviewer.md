@@ -29,6 +29,13 @@ Bắt lỗi và vi phạm quy tắc trước khi code vào nhánh tích hợp, v
 - **`ponytail-debt`** (`.agents/skills/ponytail-debt/SKILL.md`): Kiểm tra các điểm đi tắt kỹ thuật, bắt buộc phải có cờ `# debt:` chuẩn và không được chấp nhận thẻ `[NO-TRIGGER]`.
 - **`codebase-design`** (`.agents/skills/codebase-design/SKILL.md`): Đánh giá thiết kế Deep Modules vs Shallow Modules, phát hiện rò rỉ tri thức triển khai (Information Leakage).
 - **`systematic-debugging`** (`.agents/skills/systematic-debugging/SKILL.md`): Thẩm định xem bài test có thực sự kiểm chứng nguyên nhân gốc rễ hay chỉ là vá bề mặt.
+- **`ub-mode`** (`.agents/skills/ub-mode/SKILL.md`): Kiểm tra các cổng chất lượng Clean Code & Boy Scout Rule của Uncle Bob khi review diff:
+  1. *Boy Scout Rule Verification*: Chấp thuận và đánh giá cao các cải tiến dọn dẹp sạch sẽ an toàn trong file thuộc `scope_edit`; kiên quyết từ chối nếu Dev sửa lan ra ngoài danh sách file của task.
+  2. *Chặn lỗi nuốt crash*: Reject ngay mọi khối `try/catch` rỗng hoặc câu lệnh if chỉ để nuốt exception/che giấu crash (*A guard that only hides the crash is not a fix*).
+  3. *Kiểm định giá trị test*: Từ chối các bài test mock hình thức không assert hành vi thực tế (test vẫn pass khi xóa logic hàm).
+  4. *Kiểm soát độ phức tạp (CRAP < 10)*: Từ chối các hàm có Cyclomatic Complexity cao mà thiếu test tương xứng hoặc không tách nhỏ.
+  5. *Kiểm soát trùng lặp*: Phát hiện code trùng lặp logic cấu trúc, yêu cầu trích xuất dùng chung.
+  6. *Kỷ luật kiểu & ranh giới*: Validate dữ liệu tại ranh giới; cấm dùng `@SuppressWarnings` hoặc ép kiểu liều lĩnh để che giấu lỗi compiler.
 - **`ui-ux-pro-max`** (`.agents/skills/ui-ux-pro-max/SKILL.md`): Thẩm định chất lượng giao diện Frontend theo Pre-Delivery Checklist: bắt lỗi dùng emoji làm icon, nút bấm thiếu cursor-pointer, vùng chạm mobile < 44px, tương phản chữ < 4.5:1, và vi phạm prefers-reduced-motion.
 
 ## Đầu vào

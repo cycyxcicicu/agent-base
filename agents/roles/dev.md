@@ -48,6 +48,14 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 - **`systematic-debugging`** (`.agents/skills/systematic-debugging/SKILL.md`): Quy trình 4 pha gỡ lỗi nguyên nhân gốc rễ (Root Cause), kiểm thử giả thuyết một biến số, và Condition-Based Waiting (không dùng `sleep()` mù quáng).
 - **`codebase-design`** (`.agents/skills/codebase-design/SKILL.md`): Triết lý Deep Modules (module sâu, interface mỏng), Information Hiding và xác định Seams.
 - **`ponytail-debt`** (`.agents/skills/ponytail-debt/SKILL.md`): Chuẩn hóa cú pháp `# debt:` inline khi phải đi tắt kỹ thuật.
+- **`ub-mode`** (`.agents/skills/ub-mode/SKILL.md`): Kỷ luật kỹ nghệ phần mềm Clean Code & TDD của Robert C. Martin (Uncle Bob):
+  1. *Boy Scout Rule (80/20)*: Luôn để lại file sạch hơn lúc mới mở ra. Dành 80% thời gian cho tính năng chính, 20% thời gian dọn dẹp các điểm xấu trong file thuộc `scope_edit` (xóa `try/catch` nuốt lỗi, tách hàm dài > 30 dòng, bổ sung test hành vi) trước khi bàn giao.
+  2. *Laziness Protocol*: Ship thay đổi nhỏ nhất vừa đủ giải quyết bài toán; một quyết định chỉ nằm ở một nơi duy nhất.
+  3. *Model the Domain*: Cấu trúc dữ liệu phải làm cho các trạng thái bất hợp lệ không thể biểu diễn được (*Make illegal states impossible*).
+  4. *Boundary Discipline*: Kiểm tra và validate dữ liệu ngay tại ranh giới đầu vào (Controller, Gateway). Vào bên trong Domain/Service lõi thì tin tưởng dữ liệu; giữ logic nghiệp vụ trong *pure functions*.
+  5. *Fix Root Causes*: Phải tái hiện được lỗi bằng test trước khi sửa; cấm dùng `try/catch` rỗng hay `if != null` nuốt lỗi để che giấu crash (*A guard that only hides the crash is not a fix*).
+  6. *Test Behavior, Not Implementation*: Test hành vi người dùng nhìn thấy, cấm viết test hình thức (nếu hàm trả về rỗng mà test vẫn pass thì ném bỏ test đó).
+  7. *Idempotency*: Đảm bảo thao tác chạy lại 2 lần hoặc crash giữa chừng vẫn cùng kết quả trạng thái.
 - **`subagent-driven-development`** (`.agents/skills/subagent-driven-development/SKILL.md`): Chu trình Bite-Sized TDD 2-5 phút (Red-Green-Refactor).
 - **`frontend-patterns`** (`agents/knowledge/frontend-patterns.md`): Quy chuẩn ranh giới Server/Client (RSC), vòng đời Store chống memory leak, Compound Components, và Token-Efficient Surgical Diffs (sửa phẫu thuật tối thiểu, không rewrite nguyên file).
 - **`ui-ux-pro-max`** (`.agents/skills/ui-ux-pro-max/SKILL.md`): Tra cứu thiết kế UI nhanh theo stack (`--stack nextjs/react/tailwind`) và tự động kiểm tra Pre-Delivery Checklist (cấm emoji làm icon, nút bấm tối thiểu 44px, tương phản 4.5:1, cursor-pointer).

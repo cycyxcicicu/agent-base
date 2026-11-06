@@ -751,6 +751,9 @@ Chứng minh bằng test rằng task đạt tiêu chí xong và không làm hỏ
 - **`browse`** (`.agents/skills/browse/SKILL.md`): Điều khiển trình duyệt Playwright headless để kiểm thử DOM, tương tác và bắt lỗi console.
 - **`verification-skills-cdp`** (`agents/knowledge/ky-thuat/verification-skills-cdp.md`): BẮT BUỘC khi nghiệm thu card giao diện: chạy kiểm thử qua trình duyệt (Playwright/CDP), đo lường Heap/CPU traces chống memory leak, xác nhận Console error = 0 và ghi bằng chứng `Xác minh giao diện (CDP/Browser): PASS` vào báo cáo nghiệm thu.
 - **`systematic-debugging`** (`.agents/skills/systematic-debugging/SKILL.md`): Xây dựng ca kiểm thử tái hiện lỗi tối thiểu (Minimal Reproduction) và cô lập biến số duy nhất khi bắt lỗi báo cáo cho Dev.
+- **`ub-mode`** (`.agents/skills/ub-mode/SKILL.md`): Kiểm thử hành vi thực tế và diệt đột biến:
+  1. *Test Behavior, Not Implementation*: Kiểm thử hành vi thực tế của hệ thống mà client/người dùng tiếp nhận; ném bỏ các test giả mạo/hình thức vẫn pass khi xóa trắng logic hàm.
+  2. *Kill the Survivors*: Thiết kế các ca kiểm thử nhắm vào biên logic và đột biến nhánh điều kiện để đảm bảo không có lỗi lọt lưới.
 - **`promptfoo-eval`** (`agents/knowledge/llm-redteam-taxonomy.md` & `examples/llm-eval-redteam/`): Thiết lập ma trận đánh giá tự động cho LLM/Agent (assertions `not-contains`, `llm-rubric`, `is-json`, `cost`, `latency`, và phát hiện rò rỉ canary secret).
 - **`playwright-testing`** (`examples/ui-ux-design/`): Chạy kiểm thử tự động trên trình duyệt không đầu (Headless Browser) quét bắt console errors, kiểm tra visual regression và phản hồi mạng.
 

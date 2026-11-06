@@ -73,3 +73,5 @@ scratch/
 # Cấu hình máy cá nhân cục bộ (Tuyệt đối không commit lên Git để tránh ghi đè đồng nghiệp)
 projects.local.json
 skills.config.local.json
+mcp/mcp-servers.local.json
+mcp-servers.local.json

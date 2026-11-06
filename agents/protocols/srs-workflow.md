@@ -80,6 +80,8 @@ Mỗi sơ đồ có **mô tả hoạt động bằng chữ** ngay dưới ảnh 
 |---|---|
 | Kiểm một đặc tả | `python scripts/srs-check.py <file.md>` (thêm `--strict` để cảnh báo cũng là lỗi) |
 | Kiểm mọi đặc tả của dự án | `python scripts/srs-check.py --all` (đọc `Thư mục SRS` trong `PROJECT.md`) |
+| Kiểm **hồ sơ hoàn chỉnh** trước bàn giao | `python scripts/srs-check.py --full <file.md>`: bắt thêm Nhật ký thay đổi, Hạng mục thiết kế, WBS, RTM, rủi ro, câu hỏi chờ xác nhận và use-case đủ tiền điều kiện, luồng chính, luồng thay thế, luồng lỗi. Khung: `knowledge/srs/ho-so-hoan-chinh-khung-bat-buoc.md` |
+| Chuyển md sang docx để lên Google Docs | `python scripts/md_to_docx.py <file.md> <file.docx>` (cần `pandoc`); lỗi hay gặp: `knowledge/srs/md-to-office-fidelity.md` mục 4 |
 | Đọc và kiểm sơ đồ `.drawio` | `python scripts/diagram-describe.py <file.drawio> [--check]` |
 | Truy vết yêu cầu | `python scripts/rtm.py` |
 

@@ -7,4 +7,4 @@ Agent chỉ mở note khớp task/module (tối đa 3), không đọc cả hộp
 
 | Note | Task | Summary |
 |---|---|---|
-| — | — | (hộp thư trống) |
+| `docs/notes/inbox/learn_20261105_043812_ki_n_tr_c_t_ch_h_p_b_t___ng_b_.md` | — | Kiến Trúc Tích Hợp Bất Đồng Bộ & Thiết Kế Worker Đa Sàn (Sync-then-Serve) |
