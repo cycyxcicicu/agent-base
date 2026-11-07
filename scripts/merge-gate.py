@@ -190,6 +190,46 @@ def is_frontend_file(f: str) -> bool:
     return any(d in lower for d in fe_dirs)
 
 
+def is_backend_code_file(f: str) -> bool:
+    """Xác định xem file có phải là mã nguồn backend/logic không (trừ docs, configs, tests)."""
+    lower = f.lower()
+    if is_frontend_file(f):
+        return False
+    if lower.startswith(('doc/', 'docs/', 'tasks/', '.agent', '.github/', '.kilo/', '.cursor/')):
+        return False
+    code_exts = ('.java', '.py', '.ts', '.js', '.rs', '.go', '.cpp', '.c', '.cs', '.kt', '.swift', '.php', '.rb')
+    return any(lower.endswith(ext) for ext in code_exts)
+
+
+def verify_code_retrieval(repo: str, branch: str, inbox_notes: list) -> bool:
+    """Kiểm tra xem handoff note có bằng chứng tra cứu mã nguồn AST (XERJ/Graphify) hay không."""
+    for nf in inbox_notes:
+        content = ""
+        p = Path(repo) / nf
+        if p.exists():
+            content = p.read_text(encoding='utf-8', errors='replace')
+        else:
+            try:
+                content = subprocess.check_output(
+                    ['git', '-C', repo, 'show', f"{branch}:{nf}"],
+                    text=True, encoding='utf-8', stderr=subprocess.DEVNULL
+                )
+            except Exception:
+                pass
+
+        has_retrieval_check = bool(re.search(
+            r'(?i)(tra\s+cứu\s+mã\s+nguồn[^:\n]*|code\s+retrieval|ast\s+search|tìm\s+kiếm\s+ast|tra\s+cứu\s+ast)\s*:',
+            content
+        ))
+        has_pass = bool(re.search(
+            r'(?i)(xerj|graphify|pass|ok|tiết\s+kiệm|passage)',
+            content
+        ))
+        if has_retrieval_check and has_pass:
+            return True
+    return False
+
+
 def verify_ui_verification(repo: str, branch: str, inbox_notes: list) -> bool:
     """Kiểm tra xem handoff note có bằng chứng tự xác minh giao diện (CDP/Browser) hay không."""
     for nf in inbox_notes:
@@ -230,6 +270,8 @@ def main():
     parser.add_argument("--no-strict-skill", dest="strict_skill", action="store_false", help="Tắt kiểm tra bằng chứng Skill.")
     parser.add_argument("--strict-ui", action="store_true", default=True, help="Bắt buộc xác minh giao diện CDP/Browser nếu thay đổi file Frontend (mặc định: bật).")
     parser.add_argument("--no-strict-ui", dest="strict_ui", action="store_false", help="Tắt kiểm tra xác minh giao diện CDP.")
+    parser.add_argument("--strict-ast", action="store_true", default=True, help="Bắt buộc tra cứu mã nguồn AST (XERJ/Graphify) nếu thay đổi code logic (mặc định: bật).")
+    parser.add_argument("--no-strict-ast", dest="strict_ast", action="store_false", help="Tắt kiểm tra tra cứu XERJ/AST.")
     args = parser.parse_args()
 
     try:
@@ -447,6 +489,19 @@ def main():
             print("    - 'Xác minh giao diện (CDP/Browser): PASS'")
             print("    - 'Console errors: 0' (hoặc kết quả kiểm tra mạng/giao diện)")
             print("  See: agents/knowledge/ky-thuat/verification-skills-cdp.md")
+            sys.exit(1)
+
+    # -------------------------------------------------------------------------
+    # C6: Bắt buộc Tra cứu mã nguồn qua XERJ/AST (Code Retrieval Mandate)
+    # -------------------------------------------------------------------------
+    code_touched_files = [f for f in files if is_backend_code_file(f)]
+    if args.strict_ast and code_touched_files:
+        if inbox_notes and not verify_code_retrieval(repo, args.branch, inbox_notes):
+            print("FAIL: Task touches code files but missing mandatory Code Retrieval (XERJ/AST) proof:")
+            print(f"  Touched code files: {code_touched_files[:5]}")
+            print("  Handoff note must document code retrieval via XERJ/AST:")
+            print("    - 'Tra cứu mã nguồn (XERJ/AST): PASS'")
+            print("  See: AGENTS.md §1 & .agents/skills/xerj/SKILL.md")
             sys.exit(1)
 
     print("PASS: all changed files are within scope.")

@@ -56,6 +56,10 @@ Chia việc lớn thành các module độc lập, để nhiều Dev chạy song
     * Bắt buộc có bản xuất ảnh `.png` độ nét cao lưu trực tiếp tại `doc/features/<UC>/hinh/<tên>.png` để nhúng vào Markdown (nghiêm cấm để Mermaid text trần trụi mà không có ảnh render thật).
     * Tuân thủ 5 quy tắc vàng: (1) Bơi làn (Swimlane) rõ ràng giữa các tầng kiến trúc; (2) Đúng 1 điểm bắt đầu và ĐÚNG 1 điểm kết thúc; (3) Luôn có nhánh lỗi (Failure path) màu đỏ hoặc nét đứt; (4) 100% dữ liệu thật từ entity, schema DB và API endpoint; (5) Có nhãn giải thích luồng và số bước tương ứng.
   + Tham gia Swarm Gate 2 Review: Trực tiếp thẩm định kiến trúc, đối chiếu sơ đồ với code và ký Biên bản Gate 2 trước khi cho phép lập trình.
+  + **Tự phản biện Generic Hóa & Tối Ưu Hóa Sâu (Generic-First vs Specific, AGENTS.md §0 & §18)**:
+    * Bắt buộc tự chất vấn: *"Logic, DTO hoặc Component này có thể trừu tượng hóa Generic `<T>` để đưa vào `ws-library` hoặc thư viện dùng chung cho toàn bộ hệ sinh thái không?"*. Nghiêm cấm chấp nhận thiết kế cục bộ lặp lại giữa các Use Cases.
+    * Bắt buộc lập Bảng 3 Phương Án Đối Trọng: (A) Cục bộ bám code cũ (vạch trần điểm nghẽn/nợ kỹ thuật), (B) Over-engineering, (C) Khuyến nghị tối ưu đúng trọng tâm người dùng cần (kế thừa nền ổn định, đổi mới chỗ cần đổi).
+    * Bắt buộc trực tiếp chủ trì và ký duyệt mục `4. Đánh giá Generic hóa & Tối ưu sâu` trong Biên bản Gate 2.
 - ADR trong `doc/architecture/adr/` cho mỗi quyết định kiến trúc đáng kể (bối cảnh, phương án, lựa chọn, hệ quả).
 - **Phân rã Lát cắt dọc (Tracer-Bullet Vertical Slicing - pocock-skills)**:
   - Mọi task kỹ thuật phải cắt xuyên suốt từ Cơ sở dữ liệu ➔ API ➔ Giao diện ➔ Kiểm thử tự động.

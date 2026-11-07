@@ -791,7 +791,7 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 - Spec liên quan trong `docs/spec/`, yêu cầu R-xxx, `PROJECT.md`, file stack.
 
 ## Đầu ra
-- Code và test trong phạm vi `scope_edit`, trong nhánh và worktree riêng (`<type>/<ticket>-<mô-tả>`; người dùng hoặc bạn tạo bằng `task-branch.py`/`git worktree add`).
+- Code và test trong phạm vi `scope_edit`, trong nhánh và worktree riêng tại thư mục Worktree tập trung (ví dụ `$WORKTREES_DIR/<service>-<slug>` hoặc `../worktrees/<service>-<slug>`). Tuyệt đối KHÔNG tạo worktree bên trong workspace hoặc thư mục con của repo. Bắt buộc tra cứu sổ bộ bằng `python3 scripts/worktree-manager.py list` trước khi làm việc, tạo worktree và đăng ký qua `python3 scripts/worktree-manager.py add --service <tên> --name <tên-wt> --branch <nhánh> --task <task> --purpose '<mô tả>'`.
 - **Quy trình lập trình chuẩn TDD & Spec-First (Bắt buộc theo thứ tự)**:
   1. **Thiết kế Mô-đun Sâu (Deep Modules - Ousterhout)**: Tạo interface nhỏ gọn, che giấu logic sâu bên trong, xác định rõ đường nối (Seams) và tính cục bộ (Locality), triệt tiêu pass-through methods.
   2. **Định nghĩa Contract & Happy Path**: Khóa chặt cấu trúc dữ liệu Đầu vào (Input) và Đầu ra (Output) trước khi gõ logic.
