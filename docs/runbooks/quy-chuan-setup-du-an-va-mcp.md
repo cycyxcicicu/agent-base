@@ -86,11 +86,11 @@ Hiện tại, hệ thống hỗ trợ 10 MCP Servers chuẩn chia làm 2 nhóm:
 Khi mở một dự án mới tinh hoặc kết nối một workspace lớn với `agent-base`:
 
 ```bash
-# Cú pháp chạy từ bất kỳ đâu:
-python3 /Users/ducnvh/Documents/agent-base/scripts/setup-project.py --target /duong-dan/den/du-an
+# Cú pháp chạy từ thư mục agent-base:
+python3 scripts/setup-project.py --target /duong-dan/den/du-an
 
-# Ví dụ kết nối gdt-workspace:
-python3 /Users/ducnvh/Documents/agent-base/scripts/setup-project.py --target /Users/ducnvh/Documents/gdt-workspace
+# Hoặc chạy từ bất kỳ đâu (thay <agent-base-path>):
+python3 <agent-base-path>/scripts/setup-project.py --target <du-an-path>
 ```
 
 **Các bước script tự động thực hiện:**
@@ -109,18 +109,18 @@ python3 /Users/ducnvh/Documents/agent-base/scripts/setup-project.py --target /Us
 Khi có thêm server mới, thay đổi port database hoặc cập nhật token:
 
 1. **Sửa file cấu hình master tại `agent-base`:**
-   - Mở `/Users/ducnvh/Documents/agent-base/mcp/mcp-servers.local.json` và chỉnh sửa tham số.
+   - Mở `mcp/mcp-servers.local.json` (tạo từ `mcp/mcp-servers.template.json`) và chỉnh sửa tham số.
 2. **Chạy lệnh đồng bộ toàn cục & dự án:**
 
 ```bash
 # Đồng bộ cấu hình toàn cục (Antigravity & Claude Global):
-python3 /Users/ducnvh/Documents/agent-base/scripts/sync-mcp.py --global
+python3 scripts/sync-mcp.py --global
 
 # Đồng bộ cho dự án cụ thể:
-python3 /Users/ducnvh/Documents/agent-base/scripts/sync-mcp.py --target /Users/ducnvh/Documents/gdt-workspace
+python3 scripts/sync-mcp.py --target /duong-dan/den/du-an
 
 # Hoặc đồng bộ một lần cho tất cả các dự án trong hệ thống:
-python3 /Users/ducnvh/Documents/agent-base/scripts/sync-mcp.py --all-projects
+python3 scripts/sync-mcp.py --all-projects
 ```
 
 ---

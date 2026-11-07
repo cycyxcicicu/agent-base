@@ -109,6 +109,98 @@ def register_project_in_dashboard(target_dir: Path) -> None:
         print(f"⚪ 3.1. Không thể ghi projects.json: {e}")
 
 
+def ensure_xerj_and_autoindex(target_dir: Path) -> None:
+    """Tự động kiểm tra daemon XERJ và lập chỉ mục AST cho dự án mục tiêu."""
+    import urllib.request
+    
+    which_xerj = shutil.which("xerj")
+    xerj_bin = Path(which_xerj) if which_xerj else (Path.home() / ".local" / "bin" / "xerj")
+
+    if not xerj_bin.is_file():
+        print("⚪ 8. Chưa tìm thấy binary XERJ trên máy. Bỏ qua bước lập chỉ mục tự động.")
+        return
+
+    # Kiểm tra daemon trên cổng 9200
+    is_running = False
+    try:
+        req = urllib.request.Request("http://localhost:9200", method="GET")
+        with urllib.request.urlopen(req, timeout=1.5) as resp:
+            if resp.status == 200:
+                is_running = True
+    except Exception:
+        is_running = False
+
+    if not is_running:
+        plist = Path.home() / "Library" / "LaunchAgents" / "com.xerj.server.plist"
+        if plist.is_file():
+            try:
+                subprocess.run(["launchctl", "load", str(plist)], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                import time
+                time.sleep(1.5)
+                try:
+                    with urllib.request.urlopen("http://localhost:9200", timeout=1.5) as resp:
+                        is_running = (resp.status == 200)
+                except Exception:
+                    pass
+            except Exception:
+                pass
+
+    if not is_running:
+        print("⚠️ 8. XERJ daemon (cổng 9200) chưa chạy. Khởi động bằng:")
+        print("      launchctl load ~/Library/LaunchAgents/com.xerj.server.plist")
+        return
+
+    # Xác định prefix cho dự án
+    target_name_lower = target_dir.name.lower()
+    if "gdt" in target_name_lower:
+        prefix = "gdt"
+    elif "tiktok" in target_name_lower or "shoppe" in target_name_lower:
+        prefix = "tiktok"
+    elif "agent" in target_name_lower:
+        prefix = "agentbase"
+    else:
+        prefix = target_name_lower.replace("-", "_").split("_")[0]
+        if not prefix:
+            prefix = "prj"
+
+    # Nếu target là một git worktree thì kế thừa chỉ mục từ repo gốc, không cần index đè
+    if "worktree" in str(target_dir).lower():
+        print(f"✅ 8. Worktree kế thừa nhóm chỉ mục gốc '{prefix}-*'. AI có thể dùng ngay MCP xerj_search / xerj_def.")
+        return
+
+    # Kiểm tra xem dự án có file mã nguồn nào không
+    code_exts = {".java", ".py", ".ts", ".js", ".rs", ".go", ".cpp", ".c", ".cs", ".kt", ".swift", ".php"}
+    has_code = False
+    for root, dirs, files in os.walk(target_dir):
+        dirs[:] = [d for d in dirs if d not in {".git", "node_modules", "target", "dist", ".idea", ".vscode", "build"}]
+        for f in files:
+            if any(f.endswith(ext) for ext in code_exts):
+                has_code = True
+                break
+        if has_code:
+            break
+
+    if not has_code:
+        print("⚪ 8. Dự án chưa có file mã nguồn. Bỏ qua lập chỉ mục XERJ.")
+        return
+
+    print(f"⚡ 8. Đang tự động quét & lập chỉ mục AST (XERJ) cho dự án (prefix: '{prefix}')...")
+    try:
+        proc = subprocess.run(
+            [str(xerj_bin), "autoindex", str(target_dir), "--prefix", prefix, "--yes"],
+            stdin=subprocess.DEVNULL,
+            capture_output=True,
+            text=True,
+            timeout=600
+        )
+        if proc.returncode in (0, 3):
+            print(f"✅ 8. Đã lập chỉ mục AST thành công vào XERJ! Nhóm chỉ mục: '{prefix}-*'")
+        else:
+            print(f"⚪ 8. XERJ autoindex hoàn tất với mã {proc.returncode}.")
+    except Exception as e:
+        print(f"⚪ 8. Lập chỉ mục XERJ tự động gặp lỗi: {e}")
+
+
 def setup_project(target_dir: Path) -> int:
     target_dir = target_dir.resolve()
     print("=" * 70)
@@ -217,6 +309,10 @@ Dự án này sử dụng bộ khung chuẩn hóa từ `agent-base`.
 6. **Stateful Checkpoints & Auto-Compact:**
    - Trước khi compact hoặc chuyển khâu, luôn flush trạng thái ra đĩa (`BOARD.md`, card, `inbox/`).
    - Kích hoạt `/compact` khi context chạm >= 75% ngưỡng tối đa. Sau compact, chỉ đọc lại `BOARD.md` để tiếp tục.
+7. **Tra cứu Mã Nguồn AST Bắt Buộc (XERJ & Graphify):**
+   - Khi tìm hiểu code, tìm class/method/variable, BẮT BUỘC dùng công cụ MCP `xerj_def` / `xerj_search` (hoặc lệnh `xerj def` / `xerj search`) và MCP `graphify`.
+   - NGHIÊM CẤM dùng `cat` hoặc đọc toàn bộ file dài (>100 dòng) khi chỉ cần định nghĩa một khối/hàm (chống tràn context).
+   - Handoff Note trước khi merge bắt buộc ghi: `Tra cứu mã nguồn (XERJ/AST): PASS`.
 """
         agents_rule_file.write_text(agents_content, encoding="utf-8")
         print("✅ 4. Khởi tạo file luật dự án: AGENTS.md")
@@ -346,6 +442,9 @@ Thư mục này được quản trị bởi agent-base. Mọi quy tắc cốt l�
             print("⚪ 7. Mạng offline — Hệ thống tự động dùng động cơ tích hợp sẵn.")
     else:
         print(f"✅ 7. Động cơ Harness²: Đã sẵn sàng tại {harness2_dir}")
+
+    # 8. Tự động kiểm tra động cơ XERJ / Graphify & Lập chỉ mục AST (Code Retrieval Engine)
+    ensure_xerj_and_autoindex(target_dir)
 
     print("-" * 70)
     print("🎉 DỰ ÁN ĐÃ ĐƯỢC KẾT NỐI VÀ KHỞI TẠO THÀNH CÔNG VỚI AGENT-BASE!")

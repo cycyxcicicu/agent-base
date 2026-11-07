@@ -64,14 +64,23 @@ def main():
     name = repo_path.name
     if args.root:
         wt_root = Path(args.root).resolve()
+    elif os.environ.get("WORKTREES_DIR"):
+        wt_root = Path(os.environ["WORKTREES_DIR"]).expanduser().resolve()
     else:
-        wt_root = (repo_path.parent / f"{name}-worktrees").resolve()
+        # Tự động nhận diện thư mục worktrees ngoài workspace
+        sibling_wt = repo_path.parent / "worktrees"
+        if sibling_wt.exists():
+            wt_root = sibling_wt.resolve()
+        elif (Path.home() / "Documents").exists():
+            wt_root = (Path.home() / "Documents" / "worktrees").resolve()
+        else:
+            wt_root = (Path.home() / "worktrees").resolve()
 
     if 'onedrive' in str(wt_root).lower():
         print("WARNING: the worktree folder is inside OneDrive. Every worktree is a full checkout and OneDrive syncs it slowly. Prefer --root on another drive or folder.")
 
     type_word = {"feature": "feat", "bugfix": "fix"}.get(args.type, args.type)
-    target_path = wt_root / f"T-{args.ticket}-{type_word}-{args.slug}"
+    target_path = wt_root / f"{name}-T-{args.ticket}-{type_word}-{args.slug}"
     branch = f"{args.type}/{args.ticket}-{args.slug}"
 
     if target_path.exists():
@@ -84,6 +93,12 @@ def main():
     if res_wt.returncode != 0:
         print("ERROR: git worktree add failed")
         sys.exit(2)
+
+    # Tự động cấu hình MCP, Skills, Adapters và Rules cho Worktree vừa tạo
+    setup_script = Path(__file__).resolve().parent / "setup-project.py"
+    if setup_script.is_file():
+        print(f"\n🚀 Đang tự động cấu hình MCP & Rules cho Worktree...")
+        subprocess.run([sys.executable, str(setup_script), "--target", str(target_path)], check=False)
 
     print(f"\nWorktree: {target_path}")
     print(f"Branch:   {branch} (from {base})\n")

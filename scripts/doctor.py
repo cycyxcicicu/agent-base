@@ -11,6 +11,9 @@ Kiểm tra tính sẵn sàng khi tải dự án về máy khác:
 import os
 import sys
 import subprocess
+import shutil
+import socket
+import platform
 from pathlib import Path
 
 # Cấu hình UTF-8 cho Windows console
@@ -252,6 +255,76 @@ def run_diagnostics():
     except Exception as e:
         errors += 1
         print(f"  ❌ agent_core/ingest: LỖI ({e})")
+
+    # --------------------------------------------------------------------------
+    # MỤC 7: ĐA NỀN TẢNG, WORKTREE ĐỘNG & KIỂM TRA MÁY MỚI (PORTABILITY)
+    # --------------------------------------------------------------------------
+    print("\n7️⃣ ĐA NỀN TẢNG, WORKTREE ĐỘNG & TÍNH SẴN SÀNG PORTABLE:")
+    os_name = platform.system()
+    os_release = platform.release()
+    print(f"  ℹ️ Hệ điều hành máy: {os_name} {os_release} ({platform.machine()})")
+
+    # 7.1 Git Identity
+    git_user = ""
+    git_email = ""
+    try:
+        git_user = subprocess.run(["git", "config", "user.name"], capture_output=True, text=True).stdout.strip()
+        git_email = subprocess.run(["git", "config", "user.email"], capture_output=True, text=True).stdout.strip()
+    except Exception:
+        pass
+    if git_user and git_email:
+        print(f"  ✅ Danh tính Git: {git_user} <{git_email}>")
+    else:
+        print(f"  ⚠️ Danh tính Git: CHƯA CẤU HÌNH (user.name='{git_user}', user.email='{git_email}')")
+        print("     👉 Cần thiết lập để tránh lỗi khi commit: git config --global user.name \"Tên\" && git config --global user.email \"email@domain.com\"")
+
+    # 7.2 Dynamic Worktree Resolution
+    try:
+        sys.path.insert(0, str(ROOT_DIR / "scripts"))
+        from worktree_manager import resolve_workspace_root, resolve_worktrees_dir
+        ws_root = resolve_workspace_root()
+        wt_dir = resolve_worktrees_dir(ws_root)
+        wt_ok = wt_dir.exists() or wt_dir.parent.exists()
+        print(f"  {check_mark(wt_ok)} Thư mục Worktree động: {wt_dir} ({'Đã sẵn sàng' if wt_dir.exists() else 'Sẽ tự động tạo khi dùng'})")
+    except Exception:
+        # Fallback check
+        wt_env = os.environ.get("WORKTREES_DIR")
+        wt_dir = Path(wt_env) if wt_env else (Path.home() / "Documents" / "worktrees")
+        print(f"  ℹ️ Thư mục Worktree: {wt_dir}")
+
+    # 7.3 CLI Dependencies (XERJ, Graphify, Node, Git)
+    xerj_path = shutil.which("xerj") or (Path.home() / ".local/bin/xerj" if (Path.home() / ".local/bin/xerj").exists() else None)
+    print(f"  {info_mark(bool(xerj_path))} Công cụ AST Search (xerj): {'Sẵn sàng (' + str(xerj_path) + ')' if xerj_path else 'Chưa cài đặt (dùng ripgrep/graphify fallback)'}")
+
+    graphify_path = shutil.which("graphify-mcp") or shutil.which("graphify")
+    print(f"  {info_mark(bool(graphify_path))} Công cụ Knowledge Graph (graphify): {'Sẵn sàng' if graphify_path else 'Chưa cài đặt (tùy chọn)'}")
+
+    node_path = shutil.which("node")
+    print(f"  {info_mark(bool(node_path))} Môi trường Node.js: {'Sẵn sàng (' + str(node_path) + ')' if node_path else 'Chưa cài đặt (cần cho MCP JS/TS)'}")
+
+    # 7.4 Port Collision Probing (Microservices Localhost)
+    def check_port(port):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(0.3)
+            return s.connect_ex(("127.0.0.1", port)) == 0
+
+    critical_ports = {
+        5432: "PostgreSQL Database",
+        8080: "API Gateway",
+        8761: "Eureka Discovery Server",
+        8888: "Spring Cloud Config Server",
+        16001: "Config Server Internal",
+        16002: "Discovery Server Internal"
+    }
+    occupied = []
+    for port, service in critical_ports.items():
+        if check_port(port):
+            occupied.append(f"{port} ({service})")
+
+    if occupied:
+        print(f"  ℹ️ Cổng cục bộ đang hoạt động/chiếm dụng: {', '.join(occupied)}")
+    else:
+        print("  ✅ Các cổng microservices chuẩn (5432, 8080, 8761, 8888): Hoàn toàn thông thoáng")
 
     print("\n" + "=" * 80)
     if errors == 0:

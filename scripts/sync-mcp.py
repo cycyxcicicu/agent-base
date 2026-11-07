@@ -25,6 +25,7 @@ import argparse
 import copy
 import json
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -33,6 +34,31 @@ MCP_DIR = ROOT / "mcp"
 TEMPLATE_FILE = MCP_DIR / "mcp-servers.template.json"
 LOCAL_FILE = MCP_DIR / "mcp-servers.local.json"
 PROJECTS_FILE = ROOT / "projects.json"
+
+
+def resolve_command_path(cmd: str) -> str:
+    """Tự động phân giải đường dẫn binary theo máy hiện tại (tránh hardcode đường dẫn cá nhân)."""
+    if not cmd:
+        return cmd
+    # Nếu là đường dẫn tương đối hoặc lệnh trần (ví dụ 'xerj', 'graphify-mcp')
+    if not os.path.isabs(cmd):
+        which_cmd = shutil.which(cmd)
+        if which_cmd:
+            return which_cmd
+        local_bin = Path.home() / ".local" / "bin" / cmd
+        if local_bin.is_file():
+            return str(local_bin)
+    else:
+        # Nếu là đường dẫn tuyệt đối nhưng thuộc về máy người khác (chứa /Users/...), thử phân giải lại
+        cmd_path = Path(cmd)
+        if not cmd_path.is_file():
+            which_cmd = shutil.which(cmd_path.name)
+            if which_cmd:
+                return which_cmd
+            local_bin = Path.home() / ".local" / "bin" / cmd_path.name
+            if local_bin.is_file():
+                return str(local_bin)
+    return cmd
 
 
 def load_master_servers() -> dict:
@@ -62,9 +88,13 @@ def load_master_servers() -> dict:
 
 def format_for_kilo(servers: dict) -> dict:
     """Định dạng cho Kilo Code (.kilo/mcp.json)."""
+    kilo_servers = copy.deepcopy(servers)
+    for srv in kilo_servers.values():
+        if "command" in srv:
+            srv["command"] = resolve_command_path(srv["command"])
     return {
         "$schema": "https://json.schemastore.org/kilo-mcp.json",
-        "mcpServers": servers
+        "mcpServers": kilo_servers
     }
 
 
@@ -83,7 +113,7 @@ def format_for_claude(servers: dict) -> dict:
         if "headers" in srv:
             cfg["headers"] = copy.deepcopy(srv["headers"])
         if "command" in srv:
-            cfg["command"] = srv["command"]
+            cfg["command"] = resolve_command_path(srv["command"])
         if "args" in srv:
             cfg["args"] = copy.deepcopy(srv["args"])
         if "env" in srv:
@@ -112,7 +142,7 @@ def format_for_antigravity(servers: dict) -> dict:
         if "url" in srv:
             cfg["url"] = srv["url"]
         if "command" in srv:
-            cfg["command"] = srv["command"]
+            cfg["command"] = resolve_command_path(srv["command"])
         if "args" in srv:
             cfg["args"] = copy.deepcopy(srv["args"])
         if "env" in srv:
@@ -258,7 +288,7 @@ def main():
                 with open(PROJECTS_FILE, "r", encoding="utf-8") as f:
                     pdata = json.load(f)
                 for p in pdata.get("projects", []):
-                    ppath = Path(p["path"]).resolve()
+                    ppath = Path(p["path"]).expanduser().resolve()
                     if ppath.is_dir():
                         sync_project(ppath, servers)
             except Exception as e:

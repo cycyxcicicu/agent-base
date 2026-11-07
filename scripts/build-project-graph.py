@@ -61,8 +61,9 @@ def find_target_project_root(cli_root: str = None) -> Path:
                 data = json.load(f)
                 def_id = data.get("default_project")
                 for p in data.get("projects", []):
-                    if p.get("id") == def_id and Path(p.get("path", "")).exists():
-                        return Path(p["path"]).resolve()
+                    target_p = Path(p.get("path", "")).expanduser()
+                    if p.get("id") == def_id and target_p.exists():
+                        return target_p.resolve()
         except Exception:
             pass
 

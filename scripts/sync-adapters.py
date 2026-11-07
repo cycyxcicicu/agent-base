@@ -15,6 +15,7 @@ Usage:
   python scripts/sync-adapters.py --check  # report drift, exit 1 if any
 """
 
+import os
 import sys
 import re
 import json
@@ -738,7 +739,8 @@ def main():
         except Exception:
             pass
     if not existing_dirs:
-        worktrees_dir = str(Path.home() / "Documents" / "worktrees")
+        wt_env = os.environ.get("WORKTREES_DIR")
+        worktrees_dir = wt_env if wt_env else str(Path.home() / "Documents" / "worktrees")
         agentbase_dir = str(ROOT)
         existing_dirs = [worktrees_dir, agentbase_dir]
 

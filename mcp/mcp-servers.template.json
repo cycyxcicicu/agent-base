@@ -38,6 +38,25 @@
       ],
       "disabled": true,
       "description": "PostgreSQL Database Connector mẫu (Khai báo cấu hình thật trong mcp-servers.local.json)."
+    },
+    "xerj": {
+      "command": "xerj",
+      "args": [
+        "mcp"
+      ],
+      "env": {
+        "XERJ_URL": "http://localhost:9200",
+        "XERJ_DISABLE_FEEDBACK": "true"
+      },
+      "disabled": false,
+      "description": "XERJ: Bộ máy tìm kiếm mã nguồn AST & Hybrid (BM25 + kNN vector search), trả về tọa độ dòng/hàm/lớp tiết kiệm token."
+    },
+    "graphify": {
+      "command": "graphify-mcp",
+      "args": [],
+      "env": {},
+      "disabled": false,
+      "description": "Graphify: Máy chủ đồ thị tri thức mã nguồn (Knowledge Graph & Call-flow extraction qua tree-sitter)."
     }
   }
 }

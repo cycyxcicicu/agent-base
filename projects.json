@@ -5,7 +5,7 @@
     {
       "id": "gdt-workspace",
       "name": "gdt-workspace",
-      "path": "/Users/ducnvh/Documents/gdt-workspace",
+      "path": "~/Documents/gdt-workspace",
       "doc_dir": "doc",
       "diagrams_dir": "doc/hinh",
       "mantis_csv": "doc/delivery/defects/mantis/mantis-ACCOUTING_Noi_Bo-2026-10-27.csv",
@@ -15,7 +15,7 @@
     {
       "id": "tiktok_shoppe_jt",
       "name": "tiktok_shoppe_jt",
-      "path": "/Users/ducnvh/Documents/tiktok_shoppe_jt",
+      "path": "~/Documents/tiktok_shoppe_jt",
       "doc_dir": "docs",
       "diagrams_dir": "docs/hinh",
       "mantis_csv": null,
@@ -31,6 +31,16 @@
       "tasks_dir": "doc/delivery/tasks",
       "code_dir": "Humana-Handover",
       "desc": "Hệ thống Nhân sự & Quản lý Onboarding/Tuyển dụng Humana AI",
+      "is_active": true
+    },
+    {
+      "id": "agent-base",
+      "name": "agent-base",
+      "path": "~/Documents/agent-base",
+      "doc_dir": "docs",
+      "diagrams_dir": "docs/hinh",
+      "mantis_csv": null,
+      "desc": "Dự án agent-base kết nối qua setup-project",
       "is_active": true
     }
   ]
