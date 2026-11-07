@@ -10,7 +10,7 @@
       "content_ref": "agents/roles/dev.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "0860265c0955990dcf27206e9b90c6583fdd7c659163cf4c0f1d1f191f27814d",
+      "content_sha256": "6ae8b0a84f07c234a761746e049abcc0ac0cc76db6c13a868f965d4e8648640c",
       "provenance": []
     },
     {
@@ -58,7 +58,7 @@
       "content_ref": "agents/roles/architect.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "5c27b8185860b85a172419f5e8f994456108101b0d7427eba1956913bd26ebc3",
+      "content_sha256": "fecaecc2e0bd165144b41fa78aac2b77daedc1cc06bb3d43b892b2fab5c40828",
       "provenance": []
     },
     {
@@ -82,7 +82,7 @@
       "content_ref": "agents/roles/lead.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "f1643ae12426b1824b813b6e3559a195ce54adf90d92423c207295b9d627d26d",
+      "content_sha256": "b7e6205d541e9fb1b3bab6da31db08205daf49ad86c17ac67f38fc4ffbec2042",
       "provenance": []
     },
     {
@@ -505,7 +505,7 @@
           "target": "Role:architect"
         }
       ],
-      "content_sha256": "87be3896e6c5adf3d7bf911d1fa800715b966eaf38fc717a171aa1b28f6944ad",
+      "content_sha256": "2ee417de69663509732824ad51bf1aa0324011750c0b87a5332bc1f4db2f9df1",
       "provenance": []
     },
     {
@@ -1281,7 +1281,7 @@
           "target": "Requirement:hard-rules"
         }
       ],
-      "content_sha256": "2865970f6c807533f979881d50e01823a123c9edc4dd193904e7cbb1b7613556",
+      "content_sha256": "0ebe55b73aaffbd1cc3a4383fa4be597f1395449826b5460a17ea2ef709b0ee6",
       "provenance": []
     },
     {
@@ -2922,7 +2922,7 @@
           "target": "Role:dev"
         }
       ],
-      "content_sha256": "ed5285de21d9fa7ef2d9f59f60ef8161a96f1a171bc515c720ceb6ab47309219",
+      "content_sha256": "36520ac25f439e7dfd736c72ecc90484bed87db7cdd578f71068f74c7dd561e5",
       "provenance": []
     },
     {
@@ -3011,6 +3011,27 @@
         }
       ],
       "content_sha256": "cc83788ddb9ea119a7dbf71c72f899b6cc8a82bdf2aa31e453bd8f8e6e00f2b6",
+      "provenance": []
+    },
+    {
+      "id": "Design:async-event-driven-worker-and-concurrency",
+      "kind": "Design",
+      "title": "Chuyên Đề Kiến Trúc Tích Hợp Bất Đồng Bộ, Worker Auto-Scaler & Chống Deadlock Concurrency",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/ky-thuat/async-event-driven-worker-and-concurrency.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "d9c0a66355fc6b8b7b1bbaca50f720bee8073af842b84b2a121097a0c845f414",
       "provenance": []
     },
     {
@@ -4693,6 +4714,64 @@
         }
       ],
       "content_sha256": "551adca942227b44192edba88acd4e8db911f0121ce58ad16944ccf6a896a74a",
+      "provenance": []
+    },
+    {
+      "id": "Skill:xerj",
+      "kind": "Skill",
+      "title": "xerj: Definition-first & hybrid AST code search over locally indexed repositories via XERJ CLI a",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/xerj/SKILL.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:ba"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "44504ef711debe985b3bd513adcc4e9d72ca1ee86d701a90f2bc5815df41ef21",
+      "provenance": []
+    },
+    {
+      "id": "Skill:xerj-hub",
+      "kind": "Skill",
+      "title": "xerj-hub: Answer questions about public libraries, frameworks, open-source code, and standards using",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/xerj-hub/SKILL.md",
+      "owner_role": "dev",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "2d9ee71bbf3c88066874272a3a2be13d6a7e97b8b2b20f7f0bac79327bf19421",
       "provenance": []
     }
   ]

@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-11-04T15:39:10.346691+00:00",
+  "generated_at": "2026-11-06T10:12:23.319909+00:00",
   "taxonomy_domains": {
     "architecture": 146,
     "development": 267,
@@ -15,8 +15,8 @@
   "stats": {
     "total_skills": 756,
     "total_variants": 1612,
-    "total_approved": 41,
-    "total_installed": 40,
+    "total_approved": 44,
+    "total_installed": 43,
     "repos_scanned": [
       "ECC",
       "archify",
@@ -41,15 +41,17 @@
       "domain": "development",
       "roles": [
         "dev",
-        "reviewer"
+        "reviewer",
+        "architect",
+        "qa"
       ],
       "description": ">",
       "triggers": [],
       "allowed_tools": [],
       "estimated_tokens": 989,
       "line_count": 152,
-      "approved": false,
-      "installed": false,
+      "approved": true,
+      "installed": true,
       "primary_source": {
         "repo": "ub-mode",
         "rel_path": "ub-mode/SKILL.md",
@@ -73,6 +75,14 @@
         {
           "type": "owned_by",
           "target": "Role:reviewer"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:architect"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:qa"
         }
       ]
     },
@@ -369,11 +379,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:browser"
         },
         {
           "type": "related_to",
-          "target": "Skill:browser"
+          "target": "Skill:browse"
         }
       ]
     },
@@ -947,11 +957,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:triage"
+          "target": "Skill:spec"
         },
         {
           "type": "related_to",
-          "target": "Skill:spec"
+          "target": "Skill:triage"
         }
       ]
     },
@@ -1484,15 +1494,15 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:code-review"
-        },
-        {
-          "type": "related_to",
           "target": "Skill:review"
         },
         {
           "type": "related_to",
           "target": "Skill:accessibility"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:code-review"
         }
       ]
     },
@@ -1657,11 +1667,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:autonomous-loops"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:autonomous-loops"
         },
         {
           "type": "related_to",
@@ -2085,11 +2095,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:codex"
+          "target": "Skill:handoff"
         },
         {
           "type": "related_to",
-          "target": "Skill:handoff"
+          "target": "Skill:codex"
         }
       ]
     },
@@ -2346,11 +2356,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:learn"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:learn"
         }
       ]
     },
@@ -4353,11 +4363,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:codex"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:codex"
         }
       ]
     },
@@ -4416,11 +4426,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:ship"
+          "target": "Skill:spec"
         },
         {
           "type": "related_to",
-          "target": "Skill:spec"
+          "target": "Skill:ship"
         },
         {
           "type": "related_to",
@@ -5228,11 +5238,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:learn"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:learn"
         }
       ]
     },
@@ -5990,11 +6000,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:motion-foundations"
+          "target": "Skill:spec"
         },
         {
           "type": "related_to",
-          "target": "Skill:spec"
+          "target": "Skill:motion-foundations"
         }
       ]
     },
@@ -6656,11 +6666,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:browser"
         },
         {
           "type": "related_to",
-          "target": "Skill:browser"
+          "target": "Skill:browse"
         }
       ]
     },
@@ -7182,11 +7192,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:benchmark"
+          "target": "Skill:implement"
         },
         {
           "type": "related_to",
-          "target": "Skill:implement"
+          "target": "Skill:benchmark"
         }
       ]
     },
@@ -7598,11 +7608,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:research"
+          "target": "Skill:browse"
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:research"
         }
       ]
     },
@@ -8293,11 +8303,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:health"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:health"
         }
       ]
     },
@@ -9076,11 +9086,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:ship"
+          "target": "Skill:spec"
         },
         {
           "type": "related_to",
-          "target": "Skill:spec"
+          "target": "Skill:ship"
         },
         {
           "type": "related_to",
@@ -9756,11 +9766,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:orch-change-feature"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:orch-fix-defect"
+          "target": "Skill:orch-add-feature"
         },
         {
           "type": "related_to",
@@ -9768,11 +9778,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:research"
+          "target": "Skill:orch-fix-defect"
         },
         {
           "type": "related_to",
@@ -9780,7 +9786,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:orch-add-feature"
+          "target": "Skill:orch-change-feature"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:research"
         }
       ]
     },
@@ -10108,11 +10118,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:health"
+          "target": "Skill:spec"
         },
         {
           "type": "related_to",
-          "target": "Skill:spec"
+          "target": "Skill:health"
         }
       ]
     },
@@ -10271,11 +10281,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:research"
+          "target": "Skill:brand"
         },
         {
           "type": "related_to",
-          "target": "Skill:brand"
+          "target": "Skill:research"
         }
       ]
     },
@@ -10377,11 +10387,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:learn"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:learn"
         }
       ]
     },
@@ -12625,15 +12635,15 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:careful"
-        },
-        {
-          "type": "related_to",
           "target": "Skill:freeze"
         },
         {
           "type": "related_to",
           "target": "Skill:guard"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:careful"
         }
       ]
     },
@@ -13080,11 +13090,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:learn"
+          "target": "Skill:continuous-learning-v2"
         },
         {
           "type": "related_to",
-          "target": "Skill:continuous-learning-v2"
+          "target": "Skill:learn"
         }
       ]
     },
@@ -14279,6 +14289,10 @@
         },
         {
           "type": "related_to",
+          "target": "Skill:browser"
+        },
+        {
+          "type": "related_to",
           "target": "Skill:review"
         },
         {
@@ -14288,10 +14302,6 @@
         {
           "type": "related_to",
           "target": "Skill:browse"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:browser"
         }
       ]
     },
@@ -14491,7 +14501,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:prompt-optimizer"
         },
         {
           "type": "related_to",
@@ -14499,7 +14509,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:prompt-optimizer"
+          "target": "Skill:browse"
         }
       ]
     },
@@ -14617,11 +14627,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:freeze"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:freeze"
         },
         {
           "type": "related_to",
@@ -15280,15 +15290,15 @@
         },
         {
           "type": "related_to",
+          "target": "Skill:browser"
+        },
+        {
+          "type": "related_to",
           "target": "Skill:review"
         },
         {
           "type": "related_to",
           "target": "Skill:browse"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:browser"
         }
       ]
     },
@@ -15571,11 +15581,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:ship"
+          "target": "Skill:spec"
         },
         {
           "type": "related_to",
-          "target": "Skill:spec"
+          "target": "Skill:ship"
         },
         {
           "type": "related_to",
@@ -16040,11 +16050,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:benchmark-methodology"
+          "target": "Skill:ship"
         },
         {
           "type": "related_to",
-          "target": "Skill:ship"
+          "target": "Skill:benchmark-methodology"
         },
         {
           "type": "related_to",
@@ -16388,7 +16398,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:health"
+          "target": "Skill:browser"
         },
         {
           "type": "related_to",
@@ -16396,11 +16406,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:health"
         },
         {
           "type": "related_to",
-          "target": "Skill:browser"
+          "target": "Skill:browse"
         }
       ]
     },
@@ -18666,7 +18676,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:wizard"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
@@ -18674,7 +18684,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:wizard"
         }
       ]
     },
@@ -20311,11 +20321,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:ship"
+          "target": "Skill:spec"
         },
         {
           "type": "related_to",
-          "target": "Skill:spec"
+          "target": "Skill:ship"
         },
         {
           "type": "related_to",
@@ -20473,11 +20483,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:archify"
+          "target": "Skill:diagram"
         },
         {
           "type": "related_to",
-          "target": "Skill:diagram"
+          "target": "Skill:archify"
         }
       ]
     },
@@ -20529,15 +20539,15 @@
         },
         {
           "type": "related_to",
+          "target": "Skill:review"
+        },
+        {
+          "type": "related_to",
           "target": "Skill:triage"
         },
         {
           "type": "related_to",
           "target": "Skill:archify"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:review"
         }
       ]
     },
@@ -20594,11 +20604,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:diagram"
+          "target": "Skill:blueprint"
         },
         {
           "type": "related_to",
-          "target": "Skill:blueprint"
+          "target": "Skill:diagram"
         },
         {
           "type": "related_to",
@@ -21855,11 +21865,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:to-spec"
+          "target": "Skill:to-tickets"
         },
         {
           "type": "related_to",
-          "target": "Skill:to-tickets"
+          "target": "Skill:to-spec"
         }
       ]
     },
@@ -23357,11 +23367,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:alpha"
+          "target": "Skill:implement"
         },
         {
           "type": "related_to",
-          "target": "Skill:implement"
+          "target": "Skill:alpha"
         }
       ]
     },
@@ -23593,11 +23603,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:learn"
+          "target": "Skill:implement"
         },
         {
           "type": "related_to",
-          "target": "Skill:implement"
+          "target": "Skill:learn"
         }
       ]
     },
@@ -23656,11 +23666,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:learn"
+          "target": "Skill:implement"
         },
         {
           "type": "related_to",
-          "target": "Skill:implement"
+          "target": "Skill:learn"
         }
       ]
     },
@@ -24292,11 +24302,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:learn"
+          "target": "Skill:implement"
         },
         {
           "type": "related_to",
-          "target": "Skill:implement"
+          "target": "Skill:learn"
         }
       ]
     },
@@ -24414,11 +24424,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:learn"
+          "target": "Skill:implement"
         },
         {
           "type": "related_to",
-          "target": "Skill:implement"
+          "target": "Skill:learn"
         }
       ]
     },
@@ -24762,11 +24772,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:learn"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:learn"
         }
       ]
     },
@@ -25129,11 +25139,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:health"
+          "target": "Skill:claims"
         },
         {
           "type": "related_to",
-          "target": "Skill:claims"
+          "target": "Skill:health"
         },
         {
           "type": "related_to",
@@ -25194,11 +25204,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:ruflo"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:ruflo"
         }
       ]
     },
@@ -25297,10 +25307,6 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:triage"
-        },
-        {
-          "type": "related_to",
           "target": "Skill:spec"
         },
         {
@@ -25310,6 +25316,10 @@
         {
           "type": "related_to",
           "target": "Skill:ruflo"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:triage"
         }
       ]
     },
@@ -26362,11 +26372,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:code-review"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:code-review"
         }
       ]
     },
@@ -26851,11 +26861,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:workflow-automation"
+          "target": "Skill:agent-workflow"
         },
         {
           "type": "related_to",
-          "target": "Skill:agent-workflow"
+          "target": "Skill:workflow-automation"
         }
       ]
     },
@@ -31343,11 +31353,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:learn"
+          "target": "Skill:browse"
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:learn"
         }
       ]
     },
@@ -32881,11 +32891,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:browser"
         },
         {
           "type": "related_to",
-          "target": "Skill:browser"
+          "target": "Skill:browse"
         }
       ]
     },
@@ -32934,11 +32944,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:browser"
         },
         {
           "type": "related_to",
-          "target": "Skill:browser"
+          "target": "Skill:browse"
         }
       ]
     },
@@ -32987,7 +32997,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:browser"
         },
         {
           "type": "related_to",
@@ -32995,7 +33005,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browser"
+          "target": "Skill:browse"
         }
       ]
     },
@@ -33044,11 +33054,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:browser"
         },
         {
           "type": "related_to",
-          "target": "Skill:browser"
+          "target": "Skill:browse"
         }
       ]
     },
@@ -33097,7 +33107,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browser-replay"
+          "target": "Skill:browser"
         },
         {
           "type": "related_to",
@@ -33105,11 +33115,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:browser-replay"
         },
         {
           "type": "related_to",
-          "target": "Skill:browser"
+          "target": "Skill:browse"
         }
       ]
     },
@@ -33158,11 +33168,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:browser"
         },
         {
           "type": "related_to",
-          "target": "Skill:browser"
+          "target": "Skill:browse"
         }
       ]
     },
@@ -33211,11 +33221,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:browser"
         },
         {
           "type": "related_to",
-          "target": "Skill:browser"
+          "target": "Skill:browse"
         }
       ]
     },
@@ -33309,11 +33319,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:browser"
         },
         {
           "type": "related_to",
-          "target": "Skill:browser"
+          "target": "Skill:browse"
         }
       ]
     },
@@ -33407,14 +33417,6 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:health"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:cost-budget-check"
-        },
-        {
-          "type": "related_to",
           "target": "Skill:cost-projection"
         },
         {
@@ -33424,6 +33426,14 @@
         {
           "type": "related_to",
           "target": "Skill:cost-burn"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:health"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:cost-budget-check"
         }
       ]
     },
@@ -34473,11 +34483,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:benchmark"
+          "target": "Skill:cost-trend"
         },
         {
           "type": "related_to",
-          "target": "Skill:cost-trend"
+          "target": "Skill:benchmark"
         }
       ]
     },
@@ -36090,7 +36100,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:learn"
+          "target": "Skill:implement"
         },
         {
           "type": "related_to",
@@ -36098,7 +36108,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:implement"
+          "target": "Skill:learn"
         }
       ]
     },
@@ -36294,7 +36304,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:harness-evolve"
+          "target": "Skill:spec"
         },
         {
           "type": "related_to",
@@ -36302,7 +36312,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:spec"
+          "target": "Skill:harness-evolve"
         }
       ]
     },
@@ -37392,15 +37402,15 @@
         },
         {
           "type": "related_to",
+          "target": "Skill:browser"
+        },
+        {
+          "type": "related_to",
           "target": "Skill:gstack"
         },
         {
           "type": "related_to",
           "target": "Skill:browse"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:browser"
         }
       ]
     },
@@ -37646,11 +37656,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:gstack"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:gstack"
         },
         {
           "type": "related_to",
@@ -37892,11 +37902,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:gstack"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:gstack"
         },
         {
           "type": "related_to",
@@ -38023,19 +38033,19 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:gstack"
-        },
-        {
-          "type": "related_to",
           "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:research"
+          "target": "Skill:gstack"
         },
         {
           "type": "related_to",
           "target": "Skill:design"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:research"
         }
       ]
     },
@@ -38450,15 +38460,15 @@
         },
         {
           "type": "related_to",
+          "target": "Skill:browser"
+        },
+        {
+          "type": "related_to",
           "target": "Skill:gstack"
         },
         {
           "type": "related_to",
           "target": "Skill:browse"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:browser"
         }
       ]
     },
@@ -39061,15 +39071,15 @@
         },
         {
           "type": "related_to",
+          "target": "Skill:browser"
+        },
+        {
+          "type": "related_to",
           "target": "Skill:gstack"
         },
         {
           "type": "related_to",
           "target": "Skill:browse"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:browser"
         }
       ]
     },
@@ -39126,15 +39136,15 @@
         },
         {
           "type": "related_to",
+          "target": "Skill:browser"
+        },
+        {
+          "type": "related_to",
           "target": "Skill:gstack"
         },
         {
           "type": "related_to",
           "target": "Skill:browse"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:browser"
         }
       ]
     },
@@ -39191,15 +39201,15 @@
         },
         {
           "type": "related_to",
+          "target": "Skill:browser"
+        },
+        {
+          "type": "related_to",
           "target": "Skill:gstack"
         },
         {
           "type": "related_to",
           "target": "Skill:browse"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:browser"
         }
       ]
     },
@@ -39256,11 +39266,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:gstack"
+          "target": "Skill:browser"
         },
         {
           "type": "related_to",
-          "target": "Skill:browse"
+          "target": "Skill:gstack"
         },
         {
           "type": "related_to",
@@ -39268,7 +39278,7 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:browser"
+          "target": "Skill:browse"
         }
       ]
     },
@@ -39383,15 +39393,15 @@
         },
         {
           "type": "related_to",
+          "target": "Skill:browser"
+        },
+        {
+          "type": "related_to",
           "target": "Skill:gstack"
         },
         {
           "type": "related_to",
           "target": "Skill:browse"
-        },
-        {
-          "type": "related_to",
-          "target": "Skill:browser"
         }
       ]
     },
@@ -39813,11 +39823,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:gstack"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:gstack"
         }
       ]
     },
@@ -40182,11 +40192,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:gstack"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:gstack"
         }
       ]
     },
@@ -40310,11 +40320,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:gstack"
+          "target": "Skill:browser"
         },
         {
           "type": "related_to",
-          "target": "Skill:browser"
+          "target": "Skill:gstack"
         }
       ]
     },
@@ -40440,11 +40450,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:gstack"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:gstack"
         }
       ]
     },
@@ -40508,11 +40518,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:gstack"
+          "target": "Skill:review"
         },
         {
           "type": "related_to",
-          "target": "Skill:review"
+          "target": "Skill:gstack"
         }
       ]
     },
@@ -41213,11 +41223,11 @@
         },
         {
           "type": "related_to",
-          "target": "Skill:ship"
+          "target": "Skill:spec"
         },
         {
           "type": "related_to",
-          "target": "Skill:spec"
+          "target": "Skill:ship"
         },
         {
           "type": "related_to",

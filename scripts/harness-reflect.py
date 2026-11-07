@@ -479,13 +479,13 @@ def main():
                 pdata = json.loads(projects_file.read_text(encoding="utf-8"))
                 for p in pdata.get("projects", []):
                     if harvest_target in (p.get("id"), p.get("name")):
-                        p_path = Path(p.get("path", "")).resolve()
+                        p_path = Path(p.get("path", "")).expanduser().resolve()
                         if p_path.is_dir():
                             project_root = p_path
                             doc_dir_name = p.get("doc_dir")
                             break
-                    elif p.get("path") and Path(p.get("path")).resolve() == Path(harvest_target).resolve():
-                        project_root = Path(p.get("path")).resolve()
+                    elif p.get("path") and Path(p.get("path")).expanduser().resolve() == Path(harvest_target).expanduser().resolve():
+                        project_root = Path(p.get("path")).expanduser().resolve()
                         doc_dir_name = p.get("doc_dir")
                         break
             except Exception:
@@ -592,6 +592,10 @@ def main():
     # 6. Lưu trữ (nếu có cờ --archive)
     if args.archive and not args.dry_run and len(notes) > 0:
         archive_processed_notes(inbox_dir, archive_dir)
+        # Tự động cập nhật lại INDEX.md sau khi di chuyển các note
+        notes_idx_script = ROOT / "scripts" / "notes-index.py"
+        if notes_idx_script.exists():
+            subprocess.run([sys.executable, str(notes_idx_script)], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     # 7. Hiển thị Cảnh Báo Con Người nếu có đề xuất sửa đổi Quy Tắc Cốt Lõi
     if created_proposals:

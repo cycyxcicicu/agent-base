@@ -647,8 +647,9 @@ def _resolve_project_target(cli_root: str | None = None) -> tuple[Path, Path]:
                         data = json.load(f)
                         def_id = data.get("default_project")
                         for item in data.get("projects", []):
-                            if item.get("id") == def_id and Path(item.get("path", "")).exists():
-                                p = Path(item["path"]).resolve()
+                            target_p = Path(item.get("path", "")).expanduser()
+                            if item.get("id") == def_id and target_p.exists():
+                                p = target_p.resolve()
                                 break
                 except Exception:
                     pass

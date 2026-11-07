@@ -136,6 +136,7 @@ Bắt đầu từ ba file đầu: chuẩn dự án đi trước, công cụ bổ
 | Khả năng chống chịu lỗi: Circuit Breaker (Resilience4j), Bulkhead & Retry Jitter | `ky-thuat/resilience4j-fault-tolerance.md` |
 | Kỹ thuật AI/LLM: Hybrid Search RAG, RRF Reranking & Guardrails an toàn | `ky-thuat/ai-rag-hybrid-search-guardrails.md` |
 | Giao dịch phân tán: Transactional Outbox Pattern & Debezium CDC | `ky-thuat/transactional-outbox-and-cdc.md` |
+| Kiến trúc tích hợp bất đồng bộ, Worker Auto-Scaler & Chống Deadlock Concurrency | `ky-thuat/async-event-driven-worker-and-concurrency.md` |
 | Chọn công nghệ, xem công nghệ đã duyệt | `tech-radar.md` |
 | Đổi schema không gián đoạn (expand-contract) | `zero-downtime-migrations.md` |
 | Frontend: RSC, store, compound component | `frontend-patterns.md` |
