@@ -164,7 +164,10 @@ def ensure_gitignore(target_dir: Path) -> None:
         ".kilo/kilo.jsonc",
         "mcp.json",
         "mcp.local.json",
-        "*.mcp.local.json"
+        "*.mcp.local.json",
+        "GEMINI.md",
+        "graphify-out/",
+        "project-graph.json"
     ]
     existing = gitignore.read_text(encoding="utf-8") if gitignore.is_file() else ""
     missing = [r for r in rules if r not in existing]
