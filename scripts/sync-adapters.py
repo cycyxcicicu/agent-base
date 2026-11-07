@@ -735,19 +735,34 @@ def main():
     if claude_settings_file.exists():
         try:
             old_data = json.loads(claude_settings_file.read_text(encoding='utf-8'))
-            existing_dirs = old_data.get("permissions", {}).get("additionalDirectories", [])
+            raw_dirs = old_data.get("permissions", {}).get("additionalDirectories", [])
+            if isinstance(raw_dirs, list):
+                existing_dirs = raw_dirs
         except Exception:
             pass
-    if not existing_dirs:
-        wt_env = os.environ.get("WORKTREES_DIR")
-        worktrees_dir = wt_env if wt_env else str(Path.home() / "Documents" / "worktrees")
-        agentbase_dir = str(ROOT)
-        existing_dirs = [worktrees_dir, agentbase_dir]
+
+    # Chuẩn hóa đường dẫn: hỗ trợ WORKTREES_DIR đa máy, tự động mở rộng ~/ thành path tuyệt đối
+    wt_env = os.environ.get("WORKTREES_DIR")
+    if wt_env:
+        worktrees_dir = str(Path(os.path.expanduser(wt_env)).resolve())
+    else:
+        worktrees_dir = str((Path.home() / "Documents" / "worktrees").resolve())
+    agentbase_dir = str(ROOT.resolve())
+
+    # Hợp nhất: giữ nguyên mọi thư mục người dùng đã cấu hình trước đó, đồng thời đảm bảo worktrees và agent-base luôn có mặt
+    merged_dirs = []
+    for d in existing_dirs:
+        norm_d = str(Path(os.path.expanduser(d)).resolve()) if isinstance(d, str) else str(d)
+        if norm_d not in merged_dirs:
+            merged_dirs.append(norm_d)
+    for d in [worktrees_dir, agentbase_dir]:
+        if d not in merged_dirs:
+            merged_dirs.append(d)
 
     claude_settings = {
         "$schema": "https://json.schemastore.org/claude-code-settings.json",
         "permissions": {
-            "additionalDirectories": existing_dirs,
+            "additionalDirectories": merged_dirs,
             "allow": claude_allow,
             "deny": claude_deny,
             "ask": claude_ask

@@ -2,7 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "additionalDirectories": [
-      "~/Documents/worktrees"
+      "/Users/ducnvh/Documents/worktrees",
+      "/Users/ducnvh/Documents/agent-base"
     ],
     "allow": [
       "Bash(git status)",
