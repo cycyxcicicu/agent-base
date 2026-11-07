@@ -161,7 +161,7 @@ def run_diagnostics():
         print("  ℹ️ Đồ thị Kỹ năng: Chưa tạo (chạy: python scripts/build-skill-graph.py)")
 
     # Kiểm tra Đồ thị Kiến trúc Dự án mặc định
-    pj_file = ROOT_DIR / "projects.json"
+    pj_file = ROOT_DIR / "projects.local.json" if (ROOT_DIR / "projects.local.json").exists() else (ROOT_DIR / "projects.json")
     if pj_file.exists():
         try:
             pj_data = json.loads(pj_file.read_text(encoding="utf-8"))

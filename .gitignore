@@ -30,6 +30,10 @@ Thumbs.db
 *-worktrees/
 
 # AI tools, IDE and local config (per the GitFlow lecture)
+project-graph.json
+**/project-graph.json
+docs/architecture/project-graph.json
+doc/architecture/project-graph.json
 .claude/*
 !.claude/settings.json
 !.claude/agents/

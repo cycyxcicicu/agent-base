@@ -1,47 +1,6 @@
 {
   "version": "1.0.0",
-  "default_project": "gdt-workspace",
-  "projects": [
-    {
-      "id": "gdt-workspace",
-      "name": "gdt-workspace",
-      "path": "~/Documents/gdt-workspace",
-      "doc_dir": "doc",
-      "diagrams_dir": "doc/hinh",
-      "mantis_csv": "doc/delivery/defects/mantis/mantis-ACCOUTING_Noi_Bo-2026-10-27.csv",
-      "desc": "Hệ thống Kế toán, Đơn hàng, Kho & CSKH Nội bộ",
-      "is_active": true
-    },
-    {
-      "id": "tiktok_shoppe_jt",
-      "name": "tiktok_shoppe_jt",
-      "path": "~/Documents/tiktok_shoppe_jt",
-      "doc_dir": "docs",
-      "diagrams_dir": "docs/hinh",
-      "mantis_csv": null,
-      "desc": "Đồng bộ đơn hàng TikTok Shop & Shopee với vận chuyển J&T Express",
-      "is_active": true
-    },
-    {
-      "id": "Humana-Handover-Package",
-      "name": "Humana-Handover-Package (Healthcare AI Platform)",
-      "path": "D:\\congviec\\Humana-Handover-Package",
-      "doc_dir": "doc",
-      "diagrams_dir": "doc/architecture/diagrams",
-      "tasks_dir": "doc/delivery/tasks",
-      "code_dir": "Humana-Handover",
-      "desc": "Hệ thống Nhân sự & Quản lý Onboarding/Tuyển dụng Humana AI",
-      "is_active": true
-    },
-    {
-      "id": "agent-base",
-      "name": "agent-base",
-      "path": "~/Documents/agent-base",
-      "doc_dir": "docs",
-      "diagrams_dir": "docs/hinh",
-      "mantis_csv": null,
-      "desc": "Dự án agent-base kết nối qua setup-project",
-      "is_active": true
-    }
-  ]
+  "description": "Cấu hình dự án mẫu cho agent-base. Để khai báo các dự án thực tế trên máy bạn, hãy sao chép thành projects.local.json (file này được .gitignore bảo vệ 100%, không bị đẩy lên Git).",
+  "default_project": null,
+  "projects": []
 }

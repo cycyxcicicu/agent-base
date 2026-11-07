@@ -28,7 +28,7 @@ def resolve_workspace_root() -> Path:
     if os.environ.get("WORKSPACE_ROOT"):
         return Path(os.environ["WORKSPACE_ROOT"]).expanduser().resolve()
 
-    for cfg_candidate in [Path.cwd() / ".agent-base.local.json", Path(__file__).resolve().parent.parent / "projects.json"]:
+    for cfg_candidate in [Path.cwd() / ".agent-base.local.json", Path(__file__).resolve().parent.parent / "projects.local.json", Path(__file__).resolve().parent.parent / "projects.json"]:
         if cfg_candidate.exists():
             try:
                 with open(cfg_candidate, "r", encoding="utf-8") as f:

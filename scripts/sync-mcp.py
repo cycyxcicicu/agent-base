@@ -33,7 +33,7 @@ ROOT = Path(__file__).resolve().parent.parent
 MCP_DIR = ROOT / "mcp"
 TEMPLATE_FILE = MCP_DIR / "mcp-servers.template.json"
 LOCAL_FILE = MCP_DIR / "mcp-servers.local.json"
-PROJECTS_FILE = ROOT / "projects.json"
+PROJECTS_FILE = ROOT / "projects.local.json" if (ROOT / "projects.local.json").exists() else (ROOT / "projects.json")
 
 
 def resolve_command_path(cmd: str) -> str:

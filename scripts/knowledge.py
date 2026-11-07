@@ -639,7 +639,7 @@ def _resolve_project_target(cli_root: str | None = None) -> tuple[Path, Path]:
         if (cwd / ".agentbase.json").exists() or (cwd / ".agent-base.json").exists() or (cwd / "doc").exists():
             p = cwd
         else:
-            pj_file = ROOT / "projects.json"
+            pj_file = ROOT / "projects.local.json" if (ROOT / "projects.local.json").exists() else (ROOT / "projects.json")
             p = cwd
             if pj_file.exists():
                 try:

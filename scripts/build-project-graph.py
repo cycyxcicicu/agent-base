@@ -53,8 +53,8 @@ def find_target_project_root(cli_root: str = None) -> Path:
     if (cwd / ".agentbase.json").exists() or (cwd / ".agent-base.json").exists() or (cwd / "doc").exists() or (cwd / "business").exists():
         return cwd
 
-    # Thử tìm trong projects.json nếu đang đứng ở agent-base
-    pj_file = ROOT_DIR / "projects.json"
+    # Thử tìm trong projects.local.json hoặc projects.json nếu đang đứng ở agent-base
+    pj_file = ROOT_DIR / "projects.local.json" if (ROOT_DIR / "projects.local.json").exists() else (ROOT_DIR / "projects.json")
     if pj_file.exists():
         try:
             with open(pj_file, 'r', encoding='utf-8') as f:

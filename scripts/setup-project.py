@@ -45,11 +45,19 @@ def register_project_in_dashboard(target_dir: Path) -> None:
     except ValueError:
         pass
 
-    projects_file = HUB_ROOT / "projects.json"
-    registry = {"version": "1.0.0", "default_project": "ACCOUTING_Noi_Bo", "projects": []}
+    # Ưu tiên ghi vào projects.local.json để bảo vệ dữ liệu dự án trên máy cá nhân không bị đẩy lên Git
+    projects_file = HUB_ROOT / "projects.local.json" if (HUB_ROOT / "projects.local.json").is_file() else (
+        HUB_ROOT / "projects.local.json" if (HUB_ROOT / "projects.json").is_file() else HUB_ROOT / "projects.json"
+    )
+    registry = {"version": "1.0.0", "default_project": "gdt-workspace", "projects": []}
     if projects_file.is_file():
         try:
             registry = json.loads(projects_file.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    elif (HUB_ROOT / "projects.json").is_file():
+        try:
+            registry = json.loads((HUB_ROOT / "projects.json").read_text(encoding="utf-8"))
         except Exception:
             pass
 

@@ -22,7 +22,7 @@ import urllib.parse
 
 ROOT = Path(__file__).resolve().parent.parent
 VIEWER_DIR = ROOT / "build" / "viewer"
-PROJECTS_FILE = ROOT / "projects.json"
+PROJECTS_FILE = ROOT / "projects.local.json" if (ROOT / "projects.local.json").exists() else (ROOT / "projects.json")
 
 MEDIA_EXTS = {".png", ".jpg", ".jpeg", ".svg", ".gif", ".webp", ".ico", ".drawio", ".pdf", ".md", ".txt"}
 

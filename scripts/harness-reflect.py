@@ -473,7 +473,7 @@ def main():
 
     if args.harvest:
         harvest_target = args.harvest.strip()
-        projects_file = ROOT / "projects.json"
+        projects_file = ROOT / "projects.local.json" if (ROOT / "projects.local.json").is_file() else (ROOT / "projects.json")
         if projects_file.is_file():
             try:
                 pdata = json.loads(projects_file.read_text(encoding="utf-8"))
