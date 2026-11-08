@@ -165,10 +165,12 @@ def ensure_gitignore(target_dir: Path) -> None:
         "mcp.json",
         "mcp.local.json",
         "*.mcp.local.json",
-        "GEMINI.md",
         "graphify-out/",
         "project-graph.json"
     ]
+    # Chỉ chặn GEMINI.md ở các dự án con kết nối (agent-base cần track GEMINI.md làm adapter)
+    if target_dir.resolve() != ROOT.resolve():
+        rules.append("GEMINI.md")
     existing = gitignore.read_text(encoding="utf-8") if gitignore.is_file() else ""
     missing = [r for r in rules if r not in existing]
     if missing:

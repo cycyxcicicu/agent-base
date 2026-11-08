@@ -33,7 +33,7 @@ Việc hoàn tác được trong phạm vi được giao thì cứ làm. **Hỏi
    - Tra cứu & nạp kỹ năng: `python scripts/knowledge.py query-skill -q "<từ khóa>" --role <vai>` (756 skills).
    - Tra cứu API & DB: `python scripts/knowledge.py query-api -q "<từ khóa>"`.
    - Đọc file `SKILL.md` tương ứng và ghi bằng chứng áp dụng vào Handoff Note (bắt buộc để qua `merge-gate.py`).
-   - Task đụng Backend/Logic: BẮT BUỘC dùng MCP `xerj_def`/`xerj_search` và `graphify` tra cứu theo AST. NGHIÊM CẤM dùng `cat` đọc file dài (>100 dòng) khi chỉ cần tìm định nghĩa (Anti-Context Bleeding). BẮT BUỘC ghi `Tra cứu mã nguồn (XERJ/AST): PASS` vào Handoff Note.
+   - Tra cứu mã nguồn (Mọi service / kho mã): BẮT BUỘC dùng MCP `xerj_def`/`xerj_search` và `graphify` tra cứu AST/symbol. CẤM TUYỆT ĐỐI dùng `grep`/`cat` dò tìm hàm/biến/component/file trong bất kỳ service hay worktree nào (chống tràn context). Ghi `Tra cứu mã nguồn (XERJ/AST): PASS` vào Handoff Note.
    - Task đụng Frontend: BẮT BUỘC kiểm thử trình duyệt (Playwright/CDP), ghi `Xác minh giao diện (CDP/Browser): PASS` kèm `Console errors: 0` vào Handoff Note.
 
 Chưa rõ thì hỏi, đừng đoán. Không có nguồn thì không khẳng định.

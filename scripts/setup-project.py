@@ -317,9 +317,9 @@ Dự án này sử dụng bộ khung chuẩn hóa từ `agent-base`.
 6. **Stateful Checkpoints & Auto-Compact:**
    - Trước khi compact hoặc chuyển khâu, luôn flush trạng thái ra đĩa (`BOARD.md`, card, `inbox/`).
    - Kích hoạt `/compact` khi context chạm >= 75% ngưỡng tối đa. Sau compact, chỉ đọc lại `BOARD.md` để tiếp tục.
-7. **Tra cứu Mã Nguồn AST Bắt Buộc (XERJ & Graphify):**
+7. **Tra cứu Mã Nguồn AST Bắt Buộc (Mọi service / kho mã):**
    - Khi tìm hiểu code, tìm class/method/variable, BẮT BUỘC dùng công cụ MCP `xerj_def` / `xerj_search` (hoặc lệnh `xerj def` / `xerj search`) và MCP `graphify`.
-   - NGHIÊM CẤM dùng `cat` hoặc đọc toàn bộ file dài (>100 dòng) khi chỉ cần định nghĩa một khối/hàm (chống tràn context).
+   - CẤM TUYỆT ĐỐI dùng `grep -rn` hoặc `cat` dò tìm hàm/biến/component/file trong bất kỳ service hay worktree nào (chống tràn context).
    - Handoff Note trước khi merge bắt buộc ghi: `Tra cứu mã nguồn (XERJ/AST): PASS`.
 """
         agents_rule_file.write_text(agents_content, encoding="utf-8")
