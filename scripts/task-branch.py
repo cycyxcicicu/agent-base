@@ -65,12 +65,15 @@ def branches_for(ticket: str) -> list:
 
 
 # ---------------- Chế độ WORKTREE (song song nhiều card code, mỗi card một thư mục riêng) ----------------
-# Thư mục chứa worktree: .deploy.json khóa "worktree_root", mặc định <thư mục cha của thư mục cha dự án>/humana-wt.
-# Phải trùng thư mục đã mở quyền "external_directory" trong cấu hình Kilo (D:/congviec/humana-wt/**).
+# Thư mục chứa worktree: .deploy.json khóa "worktree_root", hoặc biến môi trường WORKTREES_DIR.
 
 def wt_root(cfg) -> Path:
     r = cfg.get('worktree_root')
-    return Path(r) if r else ROOT.parent.parent / 'humana-wt'
+    if r:
+        return Path(r)
+    if os.environ.get('WORKTREES_DIR'):
+        return Path(os.environ['WORKTREES_DIR'])
+    return ROOT.parent / 'worktrees'
 
 
 def gitc(path, *args, check=True):
@@ -93,17 +96,51 @@ def worktree_for(ticket: str):
     return None
 
 
+def get_base_branch(cfg, branch_type: str = 'feature') -> str:
+    """Xác định nhánh gốc theo chuẩn GitFlow:
+    - hotfix: luôn tạo từ 'main' (hoặc production branch).
+    - feature/fix/chore/refactor/etc: ưu tiên 'develop' nếu tồn tại (cả local và remote),
+      nếu không có thì mới dùng cfg.get('branch', 'develop').
+    """
+    if branch_type == 'hotfix':
+        return cfg.get('prod_branch', cfg.get('branch', 'main'))
+
+    if 'dev_branch' in cfg:
+        return cfg['dev_branch']
+    if 'base_branch' in cfg:
+        return cfg['base_branch']
+
+    # Kiểm tra sự tồn tại của nhánh develop trong git
+    try:
+        r_local = git('rev-parse', '--verify', 'develop', check=False)
+        if r_local.returncode == 0:
+            return 'develop'
+        r_remote = git('rev-parse', '--verify', 'origin/develop', check=False)
+        if r_remote.returncode == 0:
+            return 'develop'
+    except Exception:
+        pass
+
+    return cfg.get('branch', 'develop')
+
+
+def branch_type_from_name(branch_name: str) -> str:
+    if '/' in branch_name:
+        return branch_name.split('/', 1)[0]
+    return 'feature'
+
+
 def start_worktree(args, cfg, branch):
-    main_branch = cfg['branch']
+    base_branch = get_base_branch(cfg, args.type)
     path = wt_root(cfg) / f'T-{args.ticket}-{TYPE_WORD.get(args.type, args.type)}-{args.slug}'
     if path.exists():
         fail(f'Thư mục worktree đã có: {path}. Dùng lại hoặc gỡ trước.')
     if args.dry_run:
-        print(f'[dry-run] sẽ tạo worktree {path} với nhánh {branch} từ {main_branch}.')
+        print(f'[dry-run] sẽ tạo worktree {path} với nhánh {branch} từ {base_branch}.')
         return
     path.parent.mkdir(parents=True, exist_ok=True)
-    git('worktree', 'add', str(path), '-b', branch, main_branch)
-    print(f'Đã tạo worktree: {path} (nhánh {branch} từ {main_branch}).')
+    git('worktree', 'add', str(path), '-b', branch, base_branch)
+    print(f'Đã tạo worktree: {path} (nhánh {branch} từ {base_branch}).')
     fe = path / 'frontend-v1-nextjs'
     if not args.no_install and (fe / 'package.json').is_file():
         print('Cài phụ thuộc frontend trong worktree (pnpm install --frozen-lockfile)...')
@@ -117,7 +154,7 @@ def start_worktree(args, cfg, branch):
 
 
 def finish_worktree(args, cfg, wt, branch, card_id):
-    main_branch = cfg['branch']
+    base_branch = get_base_branch(cfg, branch_type_from_name(branch))
     paths = [p.replace('\\', '/').rstrip('/') for p in cfg['paths']]
     # File kết quả của card nằm trong worktree cho tới khi gộp, nên kiểm tồn tại ở worktree (out_base=wt).
     errors, warns = load_card_audit().run(card_id, need_done=True, quiet=True, out_base=wt)
@@ -126,8 +163,8 @@ def finish_worktree(args, cfg, wt, branch, card_id):
     if errors:
         fail('Card chưa đạt, không gộp:\n  ' + '\n  '.join(errors), 6)
     cur_main = current_branch()
-    if cur_main != main_branch:
-        fail(f'Thư mục chính đang ở nhánh "{cur_main}", cần "{main_branch}" để gộp.')
+    if cur_main != base_branch:
+        fail(f'Thư mục chính đang ở nhánh "{cur_main}", cần "{base_branch}" để gộp.')
 
     def changed(*extra):
         out = gitc(wt, 'status', '--porcelain=v1', '-uall', *extra).stdout
@@ -174,7 +211,7 @@ def finish_worktree(args, cfg, wt, branch, card_id):
     ident = cfg['identity']
     idargs = ['-c', f'user.name={ident["name"]}', '-c', f'user.email={ident["email"]}']
     if args.dry_run:
-        print(f'[dry-run] sẽ commit trong worktree, gộp --no-ff {branch} vào {main_branch}, rồi gỡ worktree (không đẩy remote).')
+        print(f'[dry-run] sẽ commit trong worktree, gộp --no-ff {branch} vào {base_branch}, rồi gỡ worktree (không đẩy remote).')
         return
     if files:
         gitc(wt, 'add', '--', *paths)
@@ -182,13 +219,13 @@ def finish_worktree(args, cfg, wt, branch, card_id):
     m = git(*idargs, 'merge', '--no-ff', branch, '-m', f'Merge {card_id}: {args.message}', check=False)
     if m.returncode != 0:
         git('merge', '--abort', check=False)
-        fail(f'Merge vào {main_branch} lỗi (xung đột?), đã hủy merge; worktree {wt} giữ nguyên để sửa: '
+        fail(f'Merge vào {base_branch} lỗi (xung đột?), đã hủy merge; worktree {wt} giữ nguyên để sửa: '
              f'{(m.stderr or m.stdout).strip()[-300:]}', 7)
     head = git('rev-parse', '--short', 'HEAD').stdout.strip()
     git('worktree', 'remove', '--force', str(wt), check=False)
     if wt.exists():
         shutil.rmtree(wt, ignore_errors=True)
-    print(f'Đã gộp {branch} vào {main_branch} (merge {head}) và gỡ worktree {wt}. Chưa đẩy remote; người dùng báo "deploy" thì chạy scripts/deploy.py.')
+    print(f'Đã gộp {branch} vào {base_branch} (merge {head}) và gỡ worktree {wt}. Chưa đẩy remote; người dùng báo "deploy" thì chạy scripts/deploy.py.')
     print(f'Hoàn tác nếu cần: git revert -m 1 {head} (người dùng hoặc Lead lập phiếu rủi ro).')
 
 
@@ -199,7 +236,7 @@ def cmd_start(args, cfg):
         fail('--slug chỉ gồm chữ thường, số, dấu gạch ngang (tối đa 41 ký tự).')
     if args.type not in VALID_TYPES:
         fail('--type phải là một trong: ' + ', '.join(sorted(VALID_TYPES)))
-    main_branch = cfg['branch']
+    base_branch = get_base_branch(cfg, args.type)
     if args.type == 'feat':
         args.type = 'feature'
     branch = f'{args.type}/{args.ticket}-{args.slug}'
@@ -209,20 +246,19 @@ def cmd_start(args, cfg):
         fail(f'Đã có nhánh cho T-{args.ticket}: {", ".join(existing)}. Dùng lại nhánh đó, không tạo thêm.')
     if args.worktree:
         return start_worktree(args, cfg, branch)
-    if cur != main_branch:
-        fail(f'Đang ở nhánh "{cur}", chỉ tạo nhánh card mới từ "{main_branch}". Xong card hiện tại trước.')
+    if cur != base_branch:
+        fail(f'Đang ở nhánh "{cur}", chỉ tạo nhánh card mới từ "{base_branch}". Xong card hiện tại trước.')
     if git('status', '--porcelain=v1', '-uno').stdout.strip():
         print('LƯU Ý: có thay đổi chưa commit, chúng sẽ đi theo sang nhánh mới.')
     if args.dry_run:
-        print(f'[dry-run] sẽ tạo nhánh {branch} từ {main_branch}.')
+        print(f'[dry-run] sẽ tạo nhánh {branch} từ {base_branch}.')
         return
-    git('switch', '-c', branch)
-    print(f'Đã tạo và chuyển sang nhánh {branch}. Làm việc tại đây, xong thì: '
+    git('switch', '-c', branch, base_branch)
+    print(f'Đã tạo và chuyển sang nhánh {branch} (từ {base_branch}). Làm việc tại đây, xong thì: '
           f'python scripts/task-branch.py finish --ticket {args.ticket} -m "<type>(scope): <tóm tắt>"')
 
 
 def cmd_finish(args, cfg):
-    main_branch = cfg['branch']
     paths = [p.replace('\\', '/').rstrip('/') for p in cfg['paths']]
     card_id = f'T-{args.ticket}'
     if not deploy.COMMIT_RE.match(args.message):
@@ -234,6 +270,7 @@ def cmd_finish(args, cfg):
     cur = current_branch()
     if cur not in names:
         fail(f'Đang ở nhánh "{cur}", không phải nhánh của {card_id} ({", ".join(names) or "chưa có nhánh"}).')
+    base_branch = get_base_branch(cfg, branch_type_from_name(cur))
 
     errors, warns = load_card_audit().run(card_id, need_done=True, quiet=True)
     for w in warns:
@@ -263,21 +300,21 @@ def cmd_finish(args, cfg):
     ident = cfg['identity']
     idargs = ['-c', f'user.name={ident["name"]}', '-c', f'user.email={ident["email"]}']
     if args.dry_run:
-        print(f'[dry-run] sẽ commit trên {cur}, rồi gộp --no-ff vào {main_branch} (không đẩy remote).')
+        print(f'[dry-run] sẽ commit trên {cur}, rồi gộp --no-ff vào {base_branch} (không đẩy remote).')
         return
     if files:
         git('add', '--', *paths)
         git(*idargs, 'commit', '-m', args.message)
-    git('switch', main_branch)
+    git('switch', base_branch)
     # Tiêu đề merge bắt đầu bằng "Merge " để qua hook commit-msg.
     m = git(*idargs, 'merge', '--no-ff', cur, '-m', f'Merge {card_id}: {args.message}', check=False)
     if m.returncode != 0:
         git('merge', '--abort', check=False)
         git('switch', cur, check=False)
-        fail(f'Merge vào {main_branch} lỗi (xung đột?), đã hủy merge và quay lại {cur}: '
+        fail(f'Merge vào {base_branch} lỗi (xung đột?), đã hủy merge và quay lại {cur}: '
              f'{(m.stderr or m.stdout).strip()[-300:]}', 7)
     head = git('rev-parse', '--short', 'HEAD').stdout.strip()
-    print(f'Đã gộp {cur} vào {main_branch} (merge {head}). Chưa đẩy remote; người dùng báo "deploy" thì chạy scripts/deploy.py.')
+    print(f'Đã gộp {cur} vào {base_branch} (merge {head}). Chưa đẩy remote; người dùng báo "deploy" thì chạy scripts/deploy.py.')
     print(f'Hoàn tác nếu cần: git revert -m 1 {head} (người dùng hoặc Lead lập phiếu rủi ro).')
 
 

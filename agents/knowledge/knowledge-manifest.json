@@ -2834,7 +2834,7 @@
           "target": "Requirement:worktree-lifecycle"
         }
       ],
-      "content_sha256": "c97679a2f8ec499d50b4c95c59326e1b93d81d08a45d93ffc81783d74001cf1a",
+      "content_sha256": "0048a0f68244669929502f38c3a84b3f9631572aca51db99c81e79907d2157f9",
       "provenance": []
     },
     {
@@ -4746,7 +4746,7 @@
           "target": "Skill:skills-registry"
         }
       ],
-      "content_sha256": "44504ef711debe985b3bd513adcc4e9d72ca1ee86d701a90f2bc5815df41ef21",
+      "content_sha256": "8f087ec4ea187b5fa45458a2e965e68f8192dfda63e8b690144fbb56d3deca8f",
       "provenance": []
     },
     {

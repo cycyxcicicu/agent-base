@@ -39,7 +39,7 @@ if hasattr(sys.stderr, 'reconfigure'):
 ROOT_DIR = Path(__file__).resolve().parent.parent
 CONFIG_FILE = ROOT_DIR / "skills.config.json"
 REGISTRY_FILE = ROOT_DIR / "agents" / "knowledge" / "skills.md"
-DEFAULT_QUARANTINE = "D:/skills-quarantine"
+DEFAULT_QUARANTINE = str(Path.home() / "skills-quarantine")
 
 # Danh bạ các upstream repository tạo nên kho quarantine hoàn chỉnh
 QUARANTINE_REPOS = {
@@ -90,6 +90,18 @@ QUARANTINE_REPOS = {
     "graphify": {
         "url": "https://github.com/Graphify-Labs/graphify.git",
         "desc": "Graphify (bản đồ tri thức mã nguồn; chỉ lấy ý cho skill codebase-map, KHÔNG cài hook/công cụ nếu chưa duyệt)"
+    },
+    "ub-mode": {
+        "url": "https://github.com/unclebob/ub-mode.git",
+        "desc": "Uncle Bob Clean Code & TDD (First Make it Work -> Then Make it Right -> Follow Practice)"
+    },
+    "harness2": {
+        "url": "https://github.com/google-research/harness2.git",
+        "desc": "Harness2 (Động cơ phản tư & thu hoạch tri thức hội thoại)"
+    },
+    "xerj": {
+        "url": "https://github.com/xerj-org/xerj.git",
+        "desc": "XERJ Engine & Corpus Hub (Tìm kiếm mã nguồn AST & Hybrid)"
     }
 }
 
@@ -106,6 +118,18 @@ SUBFOLDER_MAP = {
     "systematic-debugging": "skills/systematic-debugging",
     "open-code-review": "skills/open-code-review",
     "i-have-adhd": "skills/i-have-adhd",
+    "springboot-patterns": "skills/springboot-patterns",
+    "springboot-tdd": "skills/springboot-tdd",
+    "jpa-patterns": "skills/jpa-patterns",
+    "postgres-patterns": "skills/postgres-patterns",
+    "api-design": "skills/api-design",
+    "security-scan": "skills/security-scan",
+    "test-value": ".agents/skills/test-value",
+    "retro": "skills/retro",
+    "wayfinder": "skills/wayfinder",
+    "ub-mode": "",
+    "xerj": "skills/xerj",
+    "xerj-hub": "skills/xerj-hub",
 }
 
 
@@ -214,6 +238,11 @@ def detect_existing_quarantine() -> Optional[Path]:
         is_bad, _ = check_forbidden_system_path(p)
         if p.exists() and not is_bad:
             return p
+
+    # Ưu tiên các thư mục quarantine phổ biến trên máy người dùng
+    doc_cand = Path.home() / "Documents" / "skill" / "repos"
+    if doc_cand.is_dir():
+        return doc_cand
 
     if sys.platform == "win32":
         for drive in ["D", "E", "F", "G", "H"]:
@@ -347,6 +376,19 @@ def get_quarantine_map(quarantine_dir: Path) -> Dict[str, Path]:
         "office-hours": quarantine_dir / "gstack/office-hours",
         "investigate": quarantine_dir / "gstack/investigate",
         "devex-review": quarantine_dir / "gstack/devex-review",
+        "springboot-patterns": quarantine_dir / "ECC/skills/springboot-patterns",
+        "springboot-tdd": quarantine_dir / "ECC/skills/springboot-tdd",
+        "jpa-patterns": quarantine_dir / "ECC/skills/jpa-patterns",
+        "postgres-patterns": quarantine_dir / "ECC/skills/postgres-patterns",
+        "api-design": quarantine_dir / "ECC/skills/api-design",
+        "security-scan": quarantine_dir / "ECC/skills/security-scan",
+        "test-value": quarantine_dir / "archify/.agents/skills/test-value",
+        "retro": quarantine_dir / "pocock-skills/skills/retro",
+        "wayfinder": quarantine_dir / "pocock-skills/skills/wayfinder",
+        "ub-mode": quarantine_dir / "ub-mode",
+        "harness2": quarantine_dir / "harness2",
+        "xerj": quarantine_dir / "xerj/skills/xerj",
+        "xerj-hub": quarantine_dir / "xerj/skills/xerj-hub",
     }
 
 
@@ -633,9 +675,21 @@ def print_status(quarantine_dir: Optional[Path], skills_dir: Path) -> None:
     print("1. KHO NGUỒN QUARANTINE TRÊN MÁY TÍNH:")
     print("-" * 80)
     for r_name, r_info in QUARANTINE_REPOS.items():
-        has_it = (quarantine_dir / r_name).exists() if quarantine_dir else False
+        has_it = False
+        detail = ""
+        if quarantine_dir and (quarantine_dir / r_name).exists():
+            has_it = True
+        elif r_name == "graphify" and (shutil.which("graphify") or shutil.which("graphify-mcp") or (Path.home() / ".local" / "bin" / "graphify").is_file()):
+            has_it = True
+            detail = " [Hệ thống: CLI/MCP]"
+        elif r_name == "xerj" and (shutil.which("xerj") or (Path.home() / ".local" / "bin" / "xerj").is_file()):
+            has_it = True
+            detail = " [Hệ thống: CLI/MCP]"
+        elif r_name == "harness2" and (Path.home() / "Documents" / "skill" / "repos" / "harness2").is_dir():
+            has_it = True
+
         status_label = "🟢 ĐÃ CÓ" if has_it else "🔴 THIẾU"
-        print(f"  {status_label}  {r_name:22} : {r_info['desc']}")
+        print(f"  {status_label}  {r_name:22} : {r_info['desc']}{detail}")
 
     print("\n" + "-" * 80)
     print("2. KỸ NĂNG TRONG DỰ ÁN (.agents/skills/):")

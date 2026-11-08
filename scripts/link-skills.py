@@ -181,7 +181,11 @@ def create_link(src: Path, dst: Path) -> str:
         return 'symlink'
 
     try:
-        os.symlink(src, dst, target_is_directory=True)
+        try:
+            target_path = os.path.relpath(src, dst.parent)
+        except ValueError:
+            target_path = src
+        os.symlink(target_path, dst, target_is_directory=True)
     except OSError as exc:
         raise RuntimeError(f"symlink lỗi ({exc})")
     return 'symlink'
@@ -208,7 +212,7 @@ def _banner(src: Path, src_fp: dict, check_only: bool) -> None:
 # Luồng chính
 # --------------------------------------------------------------------------- #
 
-def run_link(root: Path, src: Path, allow_copy: bool) -> int:
+def run_link(root: Path, src: Path, allow_copy: bool, relink: bool = False) -> int:
     src_fp = fingerprint(src)
     _banner(src, src_fp, check_only=False)
     targets = [root / t for t in TARGETS]
@@ -221,12 +225,25 @@ def run_link(root: Path, src: Path, allow_copy: bool) -> int:
         if mode in ('junction', 'symlink'):
             if same_target(dst, src):
                 print(f"[BỎ QUA] {label}: đã là {mode} trỏ đúng nguồn.")
+                continue
+            elif relink:
+                print(f"[RE-LINK] {label}: đang trỏ sai hoặc đứt link ({os.path.realpath(dst)}). Gỡ và tạo lại...")
+                try:
+                    if mode == 'junction' and os.name == 'nt':
+                        os.rmdir(dst)
+                    else:
+                        dst.unlink()
+                except OSError as exc:
+                    print(f"[LỖI]   {label}: không gỡ được link cũ: {exc}")
+                    problems += 1
+                    continue
+                mode = 'missing'
             else:
                 print(f"[LỖI]   {label}: đang là {mode} nhưng trỏ tới {os.path.realpath(dst)}, "
                       f"không phải {src}. Không xóa, không ghi đè.")
-                print("        Gỡ thủ công bằng os.rmdir/os.unlink rồi chạy lại.")
+                print("        Chạy lại với --relink hoặc gỡ thủ công bằng os.rmdir/os.unlink.")
                 problems += 1
-            continue
+                continue
 
         if mode == 'copy':
             if allow_copy and fingerprint(dst) == src_fp:
@@ -327,6 +344,8 @@ def main(argv=None) -> int:
                         help='Chỉ đọc: báo chế độ cầu nối và kiểm hash nội dung từng skill.')
     parser.add_argument('--copy', action='store_true',
                         help='Cho phép copy thư mục khi cả junction và symlink đều thất bại.')
+    parser.add_argument('--relink', action='store_true',
+                        help='Gỡ và tạo lại cầu nối nếu đích đang là symlink/junction trỏ sai hoặc đứt link.')
     parser.add_argument('--root', default='',
                         help=f'Thư mục gốc của repo (mặc định: {ROOT}).')
     parser.add_argument('--source', default='',
@@ -348,7 +367,7 @@ def main(argv=None) -> int:
 
     if args.check:
         return run_check(root, src)
-    return run_link(root, src, args.copy)
+    return run_link(root, src, args.copy, getattr(args, 'relink', False))
 
 
 if __name__ == '__main__':

@@ -24,7 +24,7 @@ triggers:
   - Thư mục dữ liệu: `~/.xerj-data/`
 - **MCP Server**: Được đăng ký trong `mcp/mcp-servers.local.json` và phân phối đến mọi agent:
   - Tên: `xerj`
-  - Lệnh: `/Users/ducnvh/.local/bin/xerj mcp`
+  - Lệnh: `xerj mcp` (hoặc `~/.local/bin/xerj mcp`)
   - Công cụ MCP khả dụng: `xerj_def`, `xerj_search`, `xerj_semantic_search`, `xerj_hybrid_search`, `xerj_code_search`, `xerj_map`, `xerj_hub_find`, `xerj_hub_ask`.
 
 ## 2. Cách lập chỉ mục (Indexing)

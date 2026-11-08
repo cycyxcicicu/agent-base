@@ -23,10 +23,10 @@ Gộp sai thì lập phiếu rủi ro `docs/risk/RK-<n>.md`, xin người dùng 
 
 ## Chế độ worktree (chạy song song nhiều card code)
 
-Người dùng đã mở quyền cho thư mục `D:\congviec\humana-wt\` (Kilo: `external_directory`). Dùng khi cần nhiều Dev cùng lúc.
+Thư mục tập trung được cấu hình qua biến môi trường `WORKTREES_DIR` (hoặc `worktree-manager.py`). Dùng khi cần nhiều Dev cùng lúc.
 
-1. **Bắt đầu** (Lead hoặc Dev): `python scripts/task-branch.py start --ticket <n> --slug <mô-tả> --worktree`. Tạo thư mục `D:\congviec\humana-wt\T-<n>` với nhánh `feature/<n>-<mô-tả>` từ `main` và cài phụ thuộc frontend (`--no-install` để bỏ qua). Mỗi card một worktree.
+1. **Bắt đầu** (Lead hoặc Dev): `python scripts/task-branch.py start --ticket <n> --slug <mô-tả> --worktree`. Tạo thư mục worktree riêng với nhánh `feature/<n>-<mô-tả>` từ nhánh tích hợp `develop` (theo chuẩn GitFlow; `hotfix/*` tạo từ `main`). Mỗi card một worktree.
 2. **Dev làm việc TRONG worktree**: sửa code bằng đường dẫn tuyệt đối dưới thư mục đó; chạy lệnh bash với `workdir` là thư mục đó. Chỉ sửa file thuộc `scope_edit` của card. **Không sửa `tasks/`, `docs/`** trong worktree: card và tài liệu nằm ở thư mục chính. Đặt card `review` ở thư mục chính.
 3. **QA** làm ở thư mục chính: chạy ứng dụng của worktree bằng bash với `workdir` là worktree, ghi bằng chứng vào `docs/qa/` ở thư mục chính, đặt card `done`.
-4. **Gộp**: `python scripts/task-branch.py finish --ticket <n> -m "<type>(scope): <tóm tắt>"`. Script nhận ra worktree, kiểm card, kiểm file ngoài `paths`, kiểm bí mật, chạy build trong worktree, commit, gộp `--no-ff` vào `main`, rồi gỡ worktree. Xung đột thì hủy gộp và giữ worktree để sửa. Gộp **tuần tự từng card**, thư mục chính phải ở `main`.
+4. **Gộp**: `python scripts/task-branch.py finish --ticket <n> -m "<type>(scope): <tóm tắt>"`. Script nhận ra worktree, kiểm card, kiểm file ngoài `paths`, kiểm bí mật, chạy build trong worktree, commit, gộp `--no-ff` vào `develop` (hoặc `main` nếu là hotfix), rồi gỡ worktree. Xung đột thì hủy gộp và giữ worktree để sửa. Gộp **tuần tự từng card**, thư mục chính phải ở nhánh tích hợp (`develop`).
 5. **Điều kiện song song**: các card chạy cùng lúc phải có `scope_edit` không chồng nhau; file dùng chung (`package.json`, `pnpm-lock.yaml`, `layout`, dữ liệu giả dùng chung) chỉ một card sửa. Tối đa 3 worktree cùng lúc.

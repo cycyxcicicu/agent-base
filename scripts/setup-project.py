@@ -413,6 +413,20 @@ Thư mục này được quản trị bởi agent-base. Mọi quy tắc cốt l�
                             shutil.copy2(child, dst_child)
                         print(f"✅ 5. Sao chép thành phần con: {adapter}/{child.name}")
 
+    # 5.1. Đồng bộ cầu nối kỹ năng (.claude/skills, .qoder/skills) trỏ về Hub chuẩn
+    link_skills_script = HUB_ROOT / "scripts" / "link-skills.py"
+    if link_skills_script.is_file():
+        try:
+            subprocess.run(
+                [sys.executable, str(link_skills_script), "--root", str(target_dir), "--source", str(HUB_ROOT / ".agents" / "skills"), "--relink"],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+            print("✅ 5.1. Đồng bộ cầu nối kỹ năng (.claude/skills, .qoder/skills) trỏ về Hub chuẩn")
+        except Exception as e:
+            print(f"⚪ 5.1. Cầu nối kỹ năng: {e}")
+
     # 6. Đồng bộ cấu hình MCP đa nền tảng (Universal MCP Hub)
     kilo_dir = target_dir / ".kilo"
     kilo_dir.mkdir(parents=True, exist_ok=True)
@@ -430,7 +444,25 @@ Thư mục này được quản trị bởi agent-base. Mọi quy tắc cốt l�
             print(f"⚠️ 6. Không thể đồng bộ MCP: {e}")
 
     # 7. Tự động kiểm tra và tải ngầm động cơ Harness² nếu máy người mới chưa có
-    harness2_dir = Path.home() / "Documents" / "skill" / "repos" / "harness2"
+    quarantine_base = None
+    for cfg_candidate in [HUB_ROOT / "skills.config.local.json", HUB_ROOT / "skills.config.json"]:
+        if cfg_candidate.is_file():
+            try:
+                cfg_obj = json.loads(cfg_candidate.read_text(encoding="utf-8"))
+                if cfg_obj.get("quarantine_dir"):
+                    quarantine_base = Path(cfg_obj["quarantine_dir"]).expanduser()
+                    break
+            except Exception:
+                pass
+    if not quarantine_base:
+        quarantine_base = Path.home() / "skills-quarantine"
+
+    harness2_candidates = [
+        quarantine_base / "harness2",
+        Path.home() / "Documents" / "skill" / "repos" / "harness2",
+        Path.home() / "skills-quarantine" / "harness2",
+    ]
+    harness2_dir = next((p for p in harness2_candidates if p.is_dir()), quarantine_base / "harness2")
     if not harness2_dir.is_dir():
         print("📥 7. Chưa phát hiện động cơ Harness² trên máy. Đang tự động tải ngầm...")
         try:
@@ -443,7 +475,7 @@ Thư mục này được quản trị bởi agent-base. Mọi quy tắc cốt l�
                 timeout=30
             )
             if harness2_dir.is_dir():
-                print("✅ 7. Đã tự động tải thành công Harness² về máy!")
+                print(f"✅ 7. Đã tự động tải thành công Harness² về máy: {harness2_dir}")
             else:
                 print("⚪ 7. Mạng offline — Hệ thống tự động dùng động cơ tích hợp sẵn.")
         except Exception:

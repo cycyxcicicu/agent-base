@@ -28,16 +28,36 @@ if hasattr(sys.stderr, "reconfigure"):
 ROOT = Path(__file__).resolve().parent.parent
 
 # Tìm kiếm vị trí repo harness2 trên máy
-CANDIDATE_PATHS = [
-    Path("D:/skills-quarantine/harness2"),
-    Path.home() / "Documents" / "skill" / "repos" / "harness2",
-    ROOT.parent / "skill" / "repos" / "harness2",
-    Path(os.environ.get("HARNESS2_HOME", "")) if os.environ.get("HARNESS2_HOME") else None,
-]
+def get_harness2_candidates() -> list[Path]:
+    candidates = []
+    # 1. Đọc từ skills.config.local.json hoặc skills.config.json
+    for cfg in [ROOT / "skills.config.local.json", ROOT / "skills.config.json"]:
+        if cfg.is_file():
+            try:
+                data = json.loads(cfg.read_text(encoding="utf-8"))
+                if data.get("quarantine_dir"):
+                    q_dir = Path(data["quarantine_dir"]).expanduser()
+                    candidates.append(q_dir / "harness2")
+            except Exception:
+                pass
+
+    # 2. Biến môi trường
+    if os.environ.get("HARNESS2_HOME"):
+        candidates.append(Path(os.environ["HARNESS2_HOME"]).expanduser())
+    if os.environ.get("SKILLS_QUARANTINE_DIR"):
+        candidates.append(Path(os.environ["SKILLS_QUARANTINE_DIR"]).expanduser() / "harness2")
+
+    # 3. Các vị trí tiêu chuẩn
+    candidates.extend([
+        Path.home() / "skills-quarantine" / "harness2",
+        Path.home() / "Documents" / "skill" / "repos" / "harness2",
+        ROOT.parent / "skill" / "repos" / "harness2",
+    ])
+    return candidates
 
 
 def find_harness2_path() -> Path | None:
-    for p in CANDIDATE_PATHS:
+    for p in get_harness2_candidates():
         if p and p.is_dir() and (p / "harness2").is_dir():
             return p
     return None
