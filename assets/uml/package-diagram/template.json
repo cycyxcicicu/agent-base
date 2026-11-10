@@ -1,32 +1,50 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "diagramType": "activity",
-  "title": "Chuẩn sơ đồ hoạt động (Activity Diagram Specification)",
-  "rules": {
-    "singleStart": true,
-    "singleEnd": true,
-    "errorBranchesInRed": true,
-    "swimlanesRequired": true
-  },
-  "swimlanes": [
-    {"id": "user", "name": "Người Dùng (Frontend)", "order": 1},
-    {"id": "system", "name": "Hệ Thống (Backend API / Services)", "order": 2},
-    {"id": "database", "name": "Cơ Sở Dữ Liệu (PostgreSQL / Redis)", "order": 3}
+  "type": "package",
+  "title": "Mẫu sơ đồ gói (ví dụ minh họa, không phải dữ liệu thật)",
+  "note": "Mũi tên nét đứt: gói này phụ thuộc gói kia. «import»: nhập công khai; «access»: nhập riêng.",
+  "out": "mau-package.drawio",
+  "png": "mau-package.png",
+  "packages": [
+    {
+      "id": "ui",
+      "label": "presentation",
+      "col": 0,
+      "row": 0,
+      "contains": [
+        "OrderController",
+        "OrderRequest"
+      ]
+    },
+    {
+      "id": "dom",
+      "label": "domain",
+      "col": 1,
+      "row": 0,
+      "contains": [
+        "Order",
+        "OrderService"
+      ]
+    },
+    {
+      "id": "db",
+      "label": "persistence",
+      "col": 2,
+      "row": 0,
+      "contains": [
+        "OrderRepository"
+      ]
+    }
   ],
-  "nodes": [
-    {"id": "start", "type": "initial", "swimlane": "user"},
-    {"id": "submit", "type": "action", "label": "Gửi thao tác", "swimlane": "user"},
-    {"id": "validate", "type": "decision", "label": "Kiểm tra hợp lệ?", "swimlane": "system"},
-    {"id": "persist", "type": "action", "label": "Lưu dữ liệu", "swimlane": "database"},
-    {"id": "rollback", "type": "action", "label": "Rollback & Báo lỗi", "swimlane": "system", "isError": true},
-    {"id": "end", "type": "final", "swimlane": "system"}
-  ],
-  "flows": [
-    {"from": "start", "to": "submit"},
-    {"from": "submit", "to": "validate"},
-    {"from": "validate", "to": "persist", "guard": "Hợp lệ"},
-    {"from": "validate", "to": "rollback", "guard": "Không hợp lệ", "color": "#ff0000"},
-    {"from": "persist", "to": "end"},
-    {"from": "rollback", "to": "end", "color": "#ff0000"}
+  "dependencies": [
+    {
+      "from": "ui",
+      "to": "dom",
+      "kind": "import"
+    },
+    {
+      "from": "db",
+      "to": "dom",
+      "kind": "access"
+    }
   ]
 }

@@ -1,32 +1,62 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "diagramType": "activity",
-  "title": "Chuẩn sơ đồ hoạt động (Activity Diagram Specification)",
-  "rules": {
-    "singleStart": true,
-    "singleEnd": true,
-    "errorBranchesInRed": true,
-    "swimlanesRequired": true
-  },
-  "swimlanes": [
-    {"id": "user", "name": "Người Dùng (Frontend)", "order": 1},
-    {"id": "system", "name": "Hệ Thống (Backend API / Services)", "order": 2},
-    {"id": "database", "name": "Cơ Sở Dữ Liệu (PostgreSQL / Redis)", "order": 3}
+  "type": "usecase",
+  "title": "Mẫu sơ đồ use case",
+  "system": "Hệ thống đơn hàng",
+  "note": "Tác nhân đặt tên theo vai thật. include: dùng chung bước; extend: mở rộng tùy điều kiện.",
+  "out": "mau-usecase.drawio",
+  "png": "mau-usecase.png",
+  "usecases": [
+    {
+      "id": "a",
+      "label": "Lọc đơn nâng cao"
+    },
+    {
+      "id": "b",
+      "label": "Kiểm tra bộ lọc hợp lệ"
+    },
+    {
+      "id": "c",
+      "label": "Xuất Excel theo bộ lọc"
+    }
   ],
-  "nodes": [
-    {"id": "start", "type": "initial", "swimlane": "user"},
-    {"id": "submit", "type": "action", "label": "Gửi thao tác", "swimlane": "user"},
-    {"id": "validate", "type": "decision", "label": "Kiểm tra hợp lệ?", "swimlane": "system"},
-    {"id": "persist", "type": "action", "label": "Lưu dữ liệu", "swimlane": "database"},
-    {"id": "rollback", "type": "action", "label": "Rollback & Báo lỗi", "swimlane": "system", "isError": true},
-    {"id": "end", "type": "final", "swimlane": "system"}
+  "actors": [
+    {
+      "id": "kt",
+      "label": "Kế toán",
+      "side": "left",
+      "near": "a"
+    },
+    {
+      "id": "cskh",
+      "label": "CSKH",
+      "side": "right",
+      "near": "c"
+    }
   ],
-  "flows": [
-    {"from": "start", "to": "submit"},
-    {"from": "submit", "to": "validate"},
-    {"from": "validate", "to": "persist", "guard": "Hợp lệ"},
-    {"from": "validate", "to": "rollback", "guard": "Không hợp lệ", "color": "#ff0000"},
-    {"from": "persist", "to": "end"},
-    {"from": "rollback", "to": "end", "color": "#ff0000"}
+  "links": [
+    [
+      "kt",
+      "a"
+    ],
+    [
+      "cskh",
+      "a"
+    ],
+    [
+      "cskh",
+      "c"
+    ]
+  ],
+  "relations": [
+    {
+      "from": "a",
+      "to": "b",
+      "type": "include"
+    },
+    {
+      "from": "c",
+      "to": "a",
+      "type": "extend"
+    }
   ]
 }

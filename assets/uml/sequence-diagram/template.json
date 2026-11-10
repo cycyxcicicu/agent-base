@@ -1,32 +1,52 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "diagramType": "activity",
-  "title": "Chuẩn sơ đồ hoạt động (Activity Diagram Specification)",
-  "rules": {
-    "singleStart": true,
-    "singleEnd": true,
-    "errorBranchesInRed": true,
-    "swimlanesRequired": true
-  },
-  "swimlanes": [
-    {"id": "user", "name": "Người Dùng (Frontend)", "order": 1},
-    {"id": "system", "name": "Hệ Thống (Backend API / Services)", "order": 2},
-    {"id": "database", "name": "Cơ Sở Dữ Liệu (PostgreSQL / Redis)", "order": 3}
+  "type": "sequence",
+  "title": "Mẫu sơ đồ tuần tự",
+  "out": "mau-seq.drawio",
+  "png": "mau-seq.png",
+  "participants": [
+    {
+      "id": "ui",
+      "name": "Trình duyệt",
+      "color": "blue"
+    },
+    {
+      "id": "api",
+      "name": "Controller\n(OrderController)"
+    },
+    {
+      "id": "db",
+      "name": "PostgreSQL",
+      "color": "green"
+    }
   ],
-  "nodes": [
-    {"id": "start", "type": "initial", "swimlane": "user"},
-    {"id": "submit", "type": "action", "label": "Gửi thao tác", "swimlane": "user"},
-    {"id": "validate", "type": "decision", "label": "Kiểm tra hợp lệ?", "swimlane": "system"},
-    {"id": "persist", "type": "action", "label": "Lưu dữ liệu", "swimlane": "database"},
-    {"id": "rollback", "type": "action", "label": "Rollback & Báo lỗi", "swimlane": "system", "isError": true},
-    {"id": "end", "type": "final", "swimlane": "system"}
-  ],
-  "flows": [
-    {"from": "start", "to": "submit"},
-    {"from": "submit", "to": "validate"},
-    {"from": "validate", "to": "persist", "guard": "Hợp lệ"},
-    {"from": "validate", "to": "rollback", "guard": "Không hợp lệ", "color": "#ff0000"},
-    {"from": "persist", "to": "end"},
-    {"from": "rollback", "to": "end", "color": "#ff0000"}
+  "messages": [
+    {
+      "from": "ui",
+      "to": "api",
+      "label": "Gửi yêu cầu lấy danh sách"
+    },
+    {
+      "from": "api",
+      "to": "api",
+      "kind": "self",
+      "label": "Kiểm tra điều kiện lọc"
+    },
+    {
+      "from": "api",
+      "to": "db",
+      "label": "SELECT id ..."
+    },
+    {
+      "from": "db",
+      "to": "api",
+      "kind": "return",
+      "label": "Danh sách mã đơn"
+    },
+    {
+      "from": "api",
+      "to": "ui",
+      "kind": "return",
+      "label": "Trang kết quả, HTTP 200"
+    }
   ]
 }
