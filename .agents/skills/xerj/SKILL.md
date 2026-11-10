@@ -58,3 +58,13 @@ Khi chat hoặc lập trình, Agent ưu tiên gọi các công cụ MCP:
 - `xerj_search`: Truy vấn theo ngôn ngữ tự nhiên hoặc truy vấn DSL, trả về passage chứa đoạn code khớp nhất.
 - `xerj_map`: Xem sơ đồ trường và các chỉ mục đã đánh của node hiện tại.
 
+## 5. Lưu ý bắt buộc (Tránh lỗi `0` kết quả & Lạm dụng `safe-search`)
+
+1. **LUÔN truyền `prefix` của dự án** (`prefix="gdt"` ở `gdt-workspace`, `prefix="agentbase"` ở `agent-base`, `prefix="tiktok"` ở `tiktok`). Nếu bỏ trống `prefix`, XERJ mặc định chỉ quét `ax-*` và sẽ trả về **`0` kết quả** dù repo đã index đầy đủ.
+2. **Nếu `graphify` (`graph_stats`) báo thiếu `graph.json`**: chuyển ngay sang dùng `xerj_def` / `xerj_search` kèm `prefix`, không rơi về tìm chữ thô.
+3. **Phân định ranh giới với `scripts/safe-search.py`**:
+   - `xerj_def` / `xerj_search` (kèm `prefix`): bắt buộc cho tra cứu AST/symbol (`class`, `enum`, `interface`, `method`, `function`).
+   - `read_file`: bắt buộc khi đã biết đường dẫn file.
+   - `safe-search.py` (giới hạn mặc định 10 dòng, tối đa 20 qua `-l` để chống tràn context): **CHỈ dùng cho chuỗi text thuần / nhãn UI / i18n / mã lỗi**, CẤM dùng thay `xerj` để dò tên `class` hay `enum`.
+4. **Khi sửa code/rule xong**: chạy lại `xerj autoindex <thư-mục> --prefix <prefix> --yes` (hoặc `xerj` cập nhật gia tăng) để tránh chỉ mục bị trễ dòng (`stale`).
+

@@ -46,7 +46,8 @@ Chia việc lớn thành các module độc lập, để nhiều Dev chạy song
 
 ## Đầu vào
 - Danh sách yêu cầu R-xxx đã duyệt, brief của Researcher (nếu có).
-- `PROJECT.md`, `agents/stacks/`, code hiện có (chỉ đọc).
+- `PROJECT.md`, `agents/stacks/`, `doc/features/<UC>/`, code hiện có (chỉ đọc).
+- **Quản trị phiên bản tài liệu (`agents/protocols/source-precedence.md` §2)**: trước khi phân tích chạy `python3 ~/Documents/agent-base/scripts/doc-preflight.py --root . --uc <UC>`; khi ban hành bản thiết kế/đặc tả mới thay thế bản cũ, đẩy bản cũ vào `archive/` (hoặc gắn đầu file `> **STATUS: SUPERSEDED BY:** <file-mới>`) và khai báo `> **Active Source:** <file-mới>` trong `<UC>/README.md`.
 
 ## Đầu ra
 - Spec trong `docs/spec/`: kiến trúc, module, giao diện giữa các module.
@@ -55,7 +56,7 @@ Chia việc lớn thành các module độc lập, để nhiều Dev chạy song
   + **Quy chuẩn vẽ sơ đồ bắt buộc (Skill `diagram-design` & `archify`)**:
     * Đóng gói sơ đồ vào file `.drawio` nhiều tab (`doc/features/<UC>/hinh/<UC>.drawio`) hoặc file `.html`/`.svg` trực quan từ `diagram-design`.
     * Bắt buộc có bản xuất ảnh `.png` độ nét cao lưu trực tiếp tại `doc/features/<UC>/hinh/<tên>.png` để nhúng vào Markdown (nghiêm cấm để Mermaid text trần trụi mà không có ảnh render thật).
-    * Tuân thủ 5 quy tắc vàng: (1) Bơi làn (Swimlane) rõ ràng giữa các tầng kiến trúc; (2) Đúng 1 điểm bắt đầu và ĐÚNG 1 điểm kết thúc; (3) Luôn có nhánh lỗi (Failure path) màu đỏ hoặc nét đứt; (4) 100% dữ liệu thật từ entity, schema DB và API endpoint; (5) Có nhãn giải thích luồng và số bước tương ứng.
+    * Tuân thủ 5 quy tắc vàng: (1) Sơ đồ hoạt động phân làn theo LỚP hoặc thành phần chạy mã (`type: activity` của `ve-so-do.py`), nhiều điểm bắt đầu và kết thúc được phép (`flow`, `swimlane` cũ vẫn một điểm kết thúc); (2) Một UC một file `.drawio` bốn tab ERD, Class, Sequence, Activity (`type: bundle`), đen trắng; (3) Luôn có nhánh lỗi (Failure path) tới nơi trả lỗi, viền đậm kèm nhãn; (4) 100% dữ liệu thật từ entity, schema DB và API endpoint; (5) Có nhãn giải thích luồng và số bước tương ứng.
   + Tham gia Swarm Gate 2 Review: Trực tiếp thẩm định kiến trúc, đối chiếu sơ đồ với code và ký Biên bản Gate 2 trước khi cho phép lập trình.
   + **Tự phản biện Generic Hóa & Tối Ưu Hóa Sâu (Generic-First vs Specific, AGENTS.md §0 & §18)**:
     * Bắt buộc tự chất vấn: *"Logic, DTO hoặc Component này có thể trừu tượng hóa Generic `<T>` để đưa vào `ws-library` hoặc thư viện dùng chung cho toàn bộ hệ sinh thái không?"*. Nghiêm cấm chấp nhận thiết kế cục bộ lặp lại giữa các Use Cases.

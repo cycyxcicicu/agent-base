@@ -29,7 +29,8 @@ Biến yêu cầu của người dùng thành công việc rõ ràng, đúng c�
 
 ## Đầu vào
 - Yêu cầu của người dùng (chat, hoặc danh sách R-xxx đã duyệt trong `docs/requirements/`).
-- `PROJECT.md`, `AGENTS.md`, các card hiện có trong `tasks/`.
+- `PROJECT.md`, `AGENTS.md`, bảng `doc/delivery/tasks/BOARD.md` (hoặc `tasks/BOARD.md`) và các card hiện có.
+- Khi giao việc theo `<UC>` từng có bản tài liệu cũ trước đó: chạy `python3 ~/Documents/agent-base/scripts/doc-preflight.py --root . --uc <UC>` để xác nhận `Active Source` duy nhất và đóng card cũ sang `superseded`/`cancelled` trước khi mở subagent.
 
 ## Đầu ra
 - Một task card cho mỗi việc từ cỡ "vừa" (mẫu `agents/protocols/task-card.md`), đủ phạm vi `scope_edit`, tiêu chí xong, người giữ.

@@ -21,7 +21,26 @@ Khi xuất hiện xung đột thông tin giữa các tài liệu, áp dụng th�
 
 ---
 
-## 2. Quy tắc xử lý: Bắt buộc báo cáo người dùng, tuyệt đối không im lặng chọn lựa
+## 2. Xử lý Nhiều Phiên bản của Cùng Một Tài Liệu (Single Active Spec · Supersede · Archive)
+
+Khi trước đó đã có tài liệu bản cũ rồi người dùng tạo hoặc cập nhật **bản mới** để triển khai, agent BẮT BUỘC tuân thủ 4 quy tắc sau:
+
+1. **Một bản Active Spec duy nhất**: Mỗi thư mục chức năng (`doc/features/<UC>/` hoặc `docs/spec/`) chỉ coi **1 tài liệu chính** là nguồn chân lý đang hiệu lực (`Active Source`, nên khai báo ngay đầu `README.md`: `> **Active Source:** <tên-file>`).
+2. **Dời hoặc đánh dấu bản cũ (`archive/` / `SUPERSEDED`)**:
+   - Khi sinh/gửi bản mới thay thế bản cũ, bản cũ cần dời vào thư mục `archive/` trong cùng chức năng (ví dụ `doc/features/<UC>/archive/`) **hoặc** chèn ngay đầu file cũ dòng:
+     `> **STATUS: SUPERSEDED BY:** <tên-file-mới> — KHÔNG DÙNG ĐỂ CODE`
+   - Task card thuộc thiết kế bị thay thế phải đổi trạng thái sang `superseded` hoặc `cancelled`.
+3. **Chạy Pre-Code Doc Preflight trước khi đọc sâu / tra XERJ**:
+   - Trước khi thiết kế hay code, chạy:
+     `python3 ~/Documents/agent-base/scripts/doc-preflight.py --root <gốc-workspace> --uc <UC>`
+   - Script kiểm tra tự động trên đĩa theo `mtime` mới nhất: bỏ qua `archive/`, `SUPERSEDED`, card `cancelled`/`superseded`, đồng thời bắt 2 bẫy chí mạng:
+     - **`[BINARY-NEWER-THAN-MD]`**: File `.docx`/`.xlsx`/`.pdf` mới hơn `.md` -> **CẤM dùng `.md` cũ để code**; phải báo người dùng và chuyển đổi/đối chiếu sang `.md` trước.
+     - **`[MULTIPLE-ACTIVE-DOCS]` / `[MULTIPLE-DRAWIO]`**: Tồn tại nhiều bản song song chưa dời vào `archive/` -> phải dừng 1 nhịp xác nhận bản mới nhất (`Active Source`), tuyệt đối không trộn lẫn 2 bản.
+4. **Vượt qua XERJ cũ (`index_stale`)**: Khi tài liệu vừa tạo/sửa trên đĩa và `xerj_search` trả `_xerj.hints` có `index_stale`, **bắt buộc dùng `safe-search.py` + `read_file` đọc trực tiếp từ đĩa** trong thư mục chức năng đó, không dựa vào đoạn trích cũ trong XERJ.
+
+---
+
+## 3. Quy tắc xử lý khi mâu thuẫn: Bắt buộc báo cáo người dùng, tuyệt đối không im lặng chọn lựa
 
 1. **Phát hiện mâu thuẫn**: Khi gặp hai nguồn có cấp ưu tiên ngang nhau hoặc cấp cao hơn có nội dung phi lý/lỗi thời, tác tử **TUYỆT ĐỐI KHÔNG TỰ Ý CHỌN MỘT BÊN VÀ IM LẶNG THỰC HIỆN**.
 2. **Lập biên bản sai lệch**: Ghi nhận mâu thuẫn vào mục "Câu hỏi mở cho người dùng" hoặc báo cáo phân tích, nêu rõ:
@@ -32,7 +51,7 @@ Khi xuất hiện xung đột thông tin giữa các tài liệu, áp dụng th�
 
 ---
 
-## 3. Liên kết với Quy trình Nhập liệu (Intake Protocol)
+## 4. Liên kết với Quy trình Nhập liệu (Intake Protocol)
 
 Giao thức này bổ trợ cho [agents/protocols/intake.md](intake.md):
 - Quy trình intake đảm bảo giữ nguyên bản gốc trong `docs/source/` và chuyển đổi trung thực sang `docs/converted/`.

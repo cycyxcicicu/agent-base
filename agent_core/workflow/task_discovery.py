@@ -80,6 +80,31 @@ def parse_task_frontmatter(text: str, path: Optional[Path] = None) -> Dict[str, 
                     meta[k] = v.strip("\"'")
             else:
                 current_key = None
+    else:
+        # Fallback cho card kiểu bảng Markdown (vd: | **Mã task** | `T-UC-06.4` |)
+        for line in text.splitlines():
+            row = re.match(r"^\|\s*(?:\*\*)?([^|*]+?)(?:\*\*)?\s*\|\s*(.+?)\s*\|", line)
+            if not row:
+                continue
+            rkey = row.group(1).strip().lower()
+            rval = row.group(2).strip()
+            if rkey in ("mã task", "ma task", "id"):
+                cand = re.sub(r"[`*]", "", rval.split("(")[0]).strip()
+                if cand:
+                    meta["id"] = cand
+            elif rkey in ("trạng thái", "trang thai", "status"):
+                cleaned = re.sub(r"[`*]", "", rval.split("(")[0]).strip()
+                first_tok = cleaned.split()[0] if cleaned else ""
+                if first_tok:
+                    meta["status"] = first_tok
+            elif "scope_edit" in rkey or "phạm vi sửa" in rkey:
+                tokens = [t.strip() for t in re.findall(r"`([^`]+)`", rval) if "/" in t or "*" in t]
+                if tokens:
+                    meta["scope_edit"] = tokens
+            elif "scope_deny" in rkey:
+                tokens = [t.strip() for t in re.findall(r"`([^`]+)`", rval) if "/" in t or "*" in t]
+                if tokens:
+                    meta["scope_deny"] = tokens
 
     # Tìm id nếu chưa có
     if not meta.get("id") and path:

@@ -4,7 +4,7 @@ Chuyển sang md **không chuẩn hóa được 100%**. Quy trình này có mụ
 
 ## Các bước
 
-1. **Lưu bản gốc**: đặt nguyên vẹn vào `docs/source/`. Không sửa, không đổi tên, không xóa.
+1. **Lưu bản gốc**: đặt nguyên vẹn vào `docs/source/` (hoặc `doc/features/<UC>/` theo cấu trúc dự án). Khi có **bản mới thay thế bản cũ**, thực hiện đúng `agents/protocols/source-precedence.md` §2: đẩy bản cũ vào `archive/` (hoặc gắn đầu file `STATUS: SUPERSEDED BY: ...`), cập nhật `Active Source` và chạy `scripts/doc-preflight.py` kiểm `mtime` trước khi code.
 2. **Chuyển đổi tự động**: Chạy kịch bản chuẩn của hệ thống (hỗ trợ cả Windows, macOS, Linux):
    - **Trên Windows (PowerShell)**:
      - Chuyển toàn bộ: `powershell -File scripts/convert-docs.ps1 -All`

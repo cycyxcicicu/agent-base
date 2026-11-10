@@ -727,6 +727,64 @@ permission:
     "*<(curl*": deny
     "*<(wget*": deny
     "*<(iwr*": deny
+    "grep *": deny
+    "grep": deny
+    "*| grep *": deny
+    "*|grep *": deny
+    "*&& grep *": deny
+    "*&&grep *": deny
+    "*; grep *": deny
+    "*;grep *": deny
+    "*|| grep *": deny
+    "*||grep *": deny
+    "rg *": deny
+    "rg": deny
+    "*| rg *": deny
+    "*|rg *": deny
+    "*&& rg *": deny
+    "*&&rg *": deny
+    "*; rg *": deny
+    "*;rg *": deny
+    "*|| rg *": deny
+    "*||rg *": deny
+    "find * -exec*": deny
+    "find * -execdir*": deny
+    "find * -name *.java*": deny
+    "find * -name *.ts*": deny
+    "find * -name *.tsx*": deny
+    "find * -name *.js*": deny
+    "find * -name *.jsx*": deny
+    "find * -name *.py*": deny
+    "find * -name *.go*": deny
+    "find * -name *.rs*": deny
+    "find * -name *.php*": deny
+    "find * -name *.cs*": deny
+    "find * -name *.kt*": deny
+    "find * -name *.swift*": deny
+    "find * -name \"*.java*\"": deny
+    "find * -name \"*.ts*\"": deny
+    "find * -name \"*.tsx*\"": deny
+    "find * -name \"*.js*\"": deny
+    "find * -name \"*.jsx*\"": deny
+    "find * -name \"*.py*\"": deny
+    "find * -name \"*.go*\"": deny
+    "find * -name \"*.rs*\"": deny
+    "find * -name \"*.php*\"": deny
+    "find * -name \"*.cs*\"": deny
+    "find * -name \"*.kt*\"": deny
+    "find * -name \"*.swift*\"": deny
+    "find * -name '*.java*'": deny
+    "find * -name '*.ts*'": deny
+    "find * -name '*.tsx*'": deny
+    "find * -name '*.js*'": deny
+    "find * -name '*.jsx*'": deny
+    "find * -name '*.py*'": deny
+    "find * -name '*.go*'": deny
+    "find * -name '*.rs*'": deny
+    "find * -name '*.php*'": deny
+    "find * -name '*.cs*'": deny
+    "find * -name '*.kt*'": deny
+    "find * -name '*.swift*'": deny
     "*scripts/gemini-research*": deny
     "git branch --list*": allow
     "git branch -a*": allow
@@ -787,8 +845,9 @@ Hoàn thành đúng một task: đúng phạm vi, có test, commit sạch, bàn 
 - **`verification-skills-cdp`** (`agents/knowledge/ky-thuat/verification-skills-cdp.md`): BẮT BUỘC khi sửa file giao diện/Frontend: tự chạy kiểm thử trên trình duyệt (Playwright/CDP), xác nhận Console error = 0, Network OK và ghi bằng chứng `Xác minh giao diện (CDP/Browser): PASS` vào Handoff Note. Cổng `merge-gate.py` sẽ từ chối nếu thiếu.
 
 ## Đầu vào
-- Task card của bạn (`scope_edit`, `scope_deny`, tiêu chí xong).
-- Spec liên quan trong `docs/spec/`, yêu cầu R-xxx, `PROJECT.md`, file stack.
+- Task card của bạn (`scope_edit`, `scope_deny`, tiêu chí xong) tại `doc/features/<UC>/tasks/` hoặc `doc/delivery/tasks/` (hoặc `tasks/`).
+- Spec liên quan (`doc/features/<UC>/` hoặc `docs/spec/`), `PROJECT.md`, file stack và `doc/architecture/engineering/` / `.ai-rules/` nếu có.
+- **Chống đọc nhầm bản cũ**: trước khi đọc sâu hay code theo `<UC>`, chạy `python3 ~/Documents/agent-base/scripts/doc-preflight.py --root . --uc <UC>` (theo `agents/protocols/source-precedence.md` §2: chỉ dùng `Active Source` mới nhất, bỏ qua `archive/`, `STATUS: SUPERSEDED BY`, card `cancelled`/`superseded`, và đọc trên đĩa nếu `.docx/.xlsx` mới hơn `.md` hoặc XERJ báo `index_stale`).
 
 ## Đầu ra
 - Code và test trong phạm vi `scope_edit`, trong nhánh và worktree riêng tại thư mục Worktree tập trung (ví dụ `$WORKTREES_DIR/<service>-<slug>` hoặc `../worktrees/<service>-<slug>`). Tuyệt đối KHÔNG tạo worktree bên trong workspace hoặc thư mục con của repo. Bắt buộc tra cứu sổ bộ bằng `python3 scripts/worktree-manager.py list` trước khi làm việc, tạo worktree và đăng ký qua `python3 scripts/worktree-manager.py add --service <tên> --name <tên-wt> --branch <nhánh> --task <task> --purpose '<mô tả>'`.

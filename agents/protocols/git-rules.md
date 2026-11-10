@@ -140,16 +140,16 @@ Với repo riêng tư, tính năng này có thể cần gói GitHub trả phí (
 
 Người dùng gộp một task bằng Merge Request nên có một merge commit. Quay lại một task = `git revert -m 1 <mã merge commit>` trên nhánh mới (bỏ `-m 1` nếu merge kiểu squash), chạy test, rồi Merge Request. Ghi mã merge commit vào task card sau khi merge. AI chỉ **viết lệnh** cho người dùng chạy, và **chỉ sau khi qua cổng rủi ro** (`agents/protocols/risk-gate.md`): đánh giá bằng lệnh chỉ đọc, phiếu rủi ro, người dùng chấp thuận rõ ràng. Commit hoàn tác mang dòng `Risk-Approved: RK-<số>`. Git không hoàn tác được thay đổi cơ sở dữ liệu, dữ liệu đã ghi và deploy: task nào đụng các thứ đó phải có "Kịch bản hoàn tác" trong card.
 
-## 12b. Phạm vi chặn lệnh bổ sung (công cụ, không chỉ quy tắc)
+## 12b. Phạm vi chặn lệnh bổ sung (công cụ 2 tầng, không chỉ quy tắc)
 
-Ngoài các lệnh ghi git ở mục 0, công cụ (Kilo qua `.kilo/agents/*.md`, Claude Code qua `.claude/settings.json`, cả `Bash` lẫn `PowerShell`) còn chặn:
+Ngoài các lệnh ghi git ở mục 0, công cụ được bảo vệ theo cơ chế **2 tầng** (sinh từ `scripts/sync-adapters.py` và chặn token bởi `scripts/security-hook.py`):
 
-- Lệnh git phá hoặc viết lại lịch sử: `filter-branch`, `filter-repo`, `update-ref`, `reflog expire/delete`, `gc`, `prune`, `replace`, `bisect`, `sparse-checkout`, `maintenance`.
-- Cách viết khiến mẫu chặn không khớp: tab hoặc hai dấu cách sau `git`, `git.exe`, `& git`, `Start-Process ... git`, `cmd /c "git ..."`, `command git`, `env git`, lệnh ghép (`&&`, `;`, `|`, `||`, xuống dòng).
-- GitHub CLI có tác dụng ghi hoặc công khai: `gh pr merge/close/create/review`, `gh repo delete/edit/archive`, `gh release create/delete`, `gh secret`, `gh api` kèm `-X`, `--method`, `-f`, `--input`.
-- Tải rồi chạy: `curl ... | sh`, `iwr ... | iex`, `Invoke-Expression`, `iex (...)`.
+- **Tầng cấu hình quyền tĩnh**: Kilo (`.kilo/agents/*.md`) và Claude Code (`.claude/settings.json` + `~/.claude/settings.json`) chặn mọi lệnh git phá/viết lại lịch sử (`filter-branch`, `filter-repo`, `update-ref`, `reflog expire/delete`, `gc`, `prune`, `replace`, `bisect`, `sparse-checkout`, `maintenance`), GitHub CLI có tác dụng ghi/xóa (`gh pr merge/close/create/review`, `gh repo delete/...`, `gh secret`, `gh api -X/-f`), và tải-rồi-chạy (`curl ... | sh`, `iwr ... | iex`, `Invoke-Expression`).
+- **Tầng chống lách luật & bẫy `subcommandResults` của Claude Code**:
+  - Tuyệt đối **không** đưa các wildcard `git` thiếu subcommand verb (`git\t*`, `git  *`, `"git" *`, `'git' *`, `command git *`, `/usr/bin/git *`, `*$(*git*)*`, `& git*`) vào `permissions.deny` của Claude Code, vì bộ tách subcommand của Claude rút gọn `\t` / nhiều dấu cách thành `' '` và bỏ ngoặc -> biến `git  *` / `git\t*` thành **`git *`**, chặn nhầm toàn bộ `git status` / `git -C ... log`.
+  - Ở Claude Code, mọi biến thể lách luật (`git\t`, `git  `, `"git"`, `'git'`, `command git`, `/usr/bin/git`, `& git`, `g`it`, `$(git ...)`, `` `git ...` ``) khi đi kèm lệnh ghi/phá lịch sử do `scripts/security-hook.py` (`PreToolUse` `Bash`) phân tích theo token và chặn cứng (exit `2`), đồng thời giữ thông thoáng 100% lệnh git chỉ đọc. Ở Kilo, YAML `permission.bash` vẫn giữ nguyên toàn bộ rule vì không có cơ chế rút gọn khoảng trắng như Claude.
 
-Lệnh chỉ đọc mà mục 0 cho phép (`git diff --name-only`, `git blame`, `git log --grep=...`, `git grep -n ...`, `gh pr view`, `gh pr list`...) không được bị chặn nhầm; `tests/test_security_rules.py` giữ điều này. File `.kilo/agents/*.md` phải luôn là YAML hợp lệ, không khoá lặp (`tests/test_kilo_frontmatter.py`, và `sync-adapters --check` cũng kiểm).
+Lệnh chỉ đọc mà mục 0 cho phép (`git status`, `git -C ... log`, `git diff --name-only`, `git blame`, `git remote -v`, `gh pr view`, `gh pr list`...) không được bị chặn nhầm ngay cả sau khi chuẩn hóa khoảng trắng/ngoặc; `tests/test_security_rules.py` (`TestClaudeNormalizationSafety`, `TestSecurityHookEvasionAndSafety`) giữ điều này. File `.kilo/agents/*.md` phải luôn là YAML hợp lệ, không khoá lặp (`tests/test_kilo_frontmatter.py`, và `sync-adapters --check` cũng kiểm).
 
 ## 13. Điều tôi chưa chắc, bạn xác nhận
 
