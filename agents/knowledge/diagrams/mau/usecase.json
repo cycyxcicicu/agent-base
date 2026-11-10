@@ -1,0 +1,62 @@
+{
+  "type": "usecase",
+  "title": "Mẫu sơ đồ use case",
+  "system": "Hệ thống đơn hàng",
+  "note": "Tác nhân đặt tên theo vai thật. include: dùng chung bước; extend: mở rộng tùy điều kiện.",
+  "out": "mau-usecase.drawio",
+  "png": "mau-usecase.png",
+  "usecases": [
+    {
+      "id": "a",
+      "label": "Lọc đơn nâng cao"
+    },
+    {
+      "id": "b",
+      "label": "Kiểm tra bộ lọc hợp lệ"
+    },
+    {
+      "id": "c",
+      "label": "Xuất Excel theo bộ lọc"
+    }
+  ],
+  "actors": [
+    {
+      "id": "kt",
+      "label": "Kế toán",
+      "side": "left",
+      "near": "a"
+    },
+    {
+      "id": "cskh",
+      "label": "CSKH",
+      "side": "right",
+      "near": "c"
+    }
+  ],
+  "links": [
+    [
+      "kt",
+      "a"
+    ],
+    [
+      "cskh",
+      "a"
+    ],
+    [
+      "cskh",
+      "c"
+    ]
+  ],
+  "relations": [
+    {
+      "from": "a",
+      "to": "b",
+      "type": "include"
+    },
+    {
+      "from": "c",
+      "to": "a",
+      "type": "extend"
+    }
+  ]
+}

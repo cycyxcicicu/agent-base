@@ -76,7 +76,7 @@ Khi nhận task thuộc loại nào, Agent tra cứu trực tiếp mã gói tư�
 - **Tri thức & Tiêu chuẩn Bắt buộc**:
   1. `agents/protocols/srs-workflow.md`: Quy trình đóng gói bộ hồ sơ Use Case trong `doc/features/<UC-tên>/`.
   2. `agents/knowledge/srs/srs-fdd-writing-standard.md`: Văn phong tài liệu đặc tả, bóc tách R-xxx và BR-xxx.
-  3. `agents/knowledge/srs/chuan-ve-so-do.md`: Quy chuẩn vẽ sơ đồ (1 điểm bắt đầu, ĐÚNG 1 điểm kết thúc duy nhất, bơi làn swimlane, nhánh lỗi đỏ, 100% dữ liệu thật, xuất ảnh PNG nhúng Markdown).
+  3. `agents/knowledge/srs/chuan-ve-so-do.md`: Quy chuẩn vẽ sơ đồ (activity theo làn lớp, nhiều điểm bắt đầu và kết thúc, đen trắng, mỗi UC một `.drawio` bốn tab, 100% dữ liệu thật, xuất ảnh PNG nhúng Markdown; chi tiết `agents/knowledge/diagrams/quy-trinh-ve-so-do-bang-json.md`).
   4. `doc/governance/standards/cau-truc-chuan-srs-fdd-excel.md`: Mẫu file Excel 14 sheets Copilot.
 - **Sản phẩm đầu ra bắt buộc**:
   - Bộ 3 file Markdown trong `doc/features/<UC>/` + File Excel 14 sheets + Sơ đồ `.drawio` + Ảnh `.png` + TestLink XML.

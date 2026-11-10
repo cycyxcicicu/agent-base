@@ -67,6 +67,7 @@ Nguồn: dự án gdt-workspace, đã dùng thật. Còn nhắc Mantis, TestLink
 | Năm gói tri thức bó sẵn theo từng loại việc (Bug fix, DB migration, REST API, Front-end, DevOps/Infra) | `quy-trinh/task-archetypes.md` |
 | Nhận một danh sách bug: lọc, gom nhóm, xếp ưu tiên, tái hiện từng nhóm trước khi sửa (bổ sung cho `protocols/bug-repro.md`, vốn xử lý từng bug) | `quy-trinh/xu-ly-bug-hang-loat.md` |
 | Review code: checklist dữ liệu/SQL, giao dịch và đồng thời, lỗi và log | `ky-thuat/chuan-code-va-review.md` |
+| 52 bộ luật review mã nguồn chi tiết theo ngôn ngữ (Java, Python, TS, Go, Rust, C/C++...) chuẩn Alibaba OCR | `review-rules/README.md` |
 | Viết SQL, xử lý lỗi cơ sở dữ liệu, giao dịch, migration | `ky-thuat/chuan-sql-va-loi.md` |
 | Vẽ sơ đồ: quy tắc theo loại (sequence, ERD, state, activity), checklist nộp sơ đồ (bổ sung cho `docs/design/diagram-guide.md`, vốn lo thẩm mỹ) | `srs/chuan-ve-so-do.md` |
 | Toàn diện 22+ loại sơ đồ UML 2.5, 8 sơ đồ cốt lõi Gate 2 & Sổ bộ 706 ảnh mẫu thực tế | `srs/uml-diagrams-mastery.md` |
@@ -89,7 +90,9 @@ Bắt đầu từ ba file đầu: chuẩn dự án đi trước, công cụ bổ
 |---|---|
 | Viết phần chữ mô tả hoạt động đi kèm sơ đồ (bước, nhánh, dữ liệu) để agent hiểu hết sơ đồ; đọc nhanh `.drawio` bằng `scripts/diagram-describe.py` | `diagrams/mo-ta-hoat-dong-so-do.md` |
 | Chọn công cụ nguồn cho từng loại sơ đồ, viết và sửa `.drawio`, xuất ảnh, bài học vẽ bơi làn | `diagrams/quy-uoc-draw-io-va-archify.md` |
-| Bài học thiết kế trước khi code, vẽ sơ đồ và bàn giao tài liệu | `diagrams/bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu.md` |
+| Bài học thiết kế trước khi code, vẽ sơ đồ, viết tài liệu bằng lời thường, sơ đồ lớp UML (có ảnh mẫu), lưu đồ thuật toán và bàn giao tài liệu | `diagrams/bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu.md` |
+| **Quy trình vẽ MỌI sơ đồ bằng JSON (8 bước bắt buộc, chuẩn lớp, lưu đồ, tuần tự, ERD, JSON mẫu, ảnh mẫu)** | `diagrams/quy-trinh-ve-so-do-bang-json.md` |
+| Ma trận mọi loại sơ đồ: câu hỏi nó trả lời, công cụ, JSON, mẫu, mức ưu tiên | `diagrams/ma-tran-loai-so-do.md` |
 | Ma trận chọn công cụ vẽ sơ đồ; thứ tự áp dụng chuẩn dự án đi trước | `diagrams/diagrams-cheatsheet-and-decision-matrix.md` |
 | Icon và bố cục hạ tầng AWS | `diagrams/aws-architecture-icons-guide.md` |
 | Quy trình nghiệp vụ theo BPMN 2.0 (Camunda) | `diagrams/bpmn-20-camunda-guide.md` |

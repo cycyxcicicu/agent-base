@@ -3,7 +3,7 @@
 > **Loại: tham khảo.** Chép từ dự án gdt-workspace để làm tri thức cho agent, không phải nguồn luật. Khi khác `AGENTS.md`, vai trò hoặc `agents/protocols/` thì theo các nơi đó (`agents/protocols/source-precedence.md`).
 > **Khác với chuẩn:** Checklist bổ sung cho vai `reviewer`; quy ước ngôn ngữ ở `agents/stacks/`.
 
-Áp dụng cho mọi service Java. Quy ước chi tiết đã có ở `doc/ky-thuat/engineering/` (api, architecture, persistence, liquibase, event, testing). File này không chép lại mà bổ sung phần chung và checklist review. Khi khác nhau, quy ước trong `doc/ky-thuat/engineering/` thắng; service có quy định chặt hơn thì theo đó.
+Áp dụng cho mọi service Java. Quy ước chi tiết đã có ở `doc/architecture/engineering/` (hoặc `doc/ky-thuat/engineering/` ở cấu trúc cũ). File này không chép lại mà bổ sung phần chung và checklist review. Khi khác nhau, quy ước trong `engineering/` thắng; service có quy định chặt hơn thì theo đó.
 
 ## 1. Cấu trúc code
 
@@ -63,10 +63,11 @@ Các con số là đề xuất, công ty chưa quy định.
    - **Nit:** gợi ý nhỏ, không chặn.
 6. **Reviewer ghi lý do** cho mỗi blocker và major, và đề xuất cách sửa.
 7. **Tác giả trả lời từng bình luận;** reviewer đóng khi đã giải quyết.
-8. **Công cụ review tự động (Alibaba open-code-review, lệnh `ocr`):** skill `open-code-review` đọc diff Git và sinh bình luận theo dòng. Dùng ở bước tự review (bước 1), trước khi mở MR. Điều kiện:
-   - Người dùng đồng ý chạy từng lần. Lệnh gửi diff (mã nguồn công ty) tới nhà cung cấp LLM đã cấu hình, nên chỉ dùng nhà cung cấp công ty cho phép (chưa xác nhận, cần hỏi).
-   - Cần cài CLI `ocr` và cấu hình nhà cung cấp LLM (xem skill).
-   - Truyền bối cảnh nghiệp vụ (mã task, đặc tả) vào `--background`.
+8. **Công cụ review tự động (Alibaba open-code-review qua `scripts/ocr.py`):** Chạy offline 100% không phụ thuộc dịch vụ ngoài. Hệ thống tự động ánh xạ tệp thay đổi sang 52 bộ quy tắc chi tiết theo từng ngôn ngữ tại `agents/knowledge/review-rules/` (`java.md`, `python.md`, `ts_js_tsx_jsx.md`, `go.md`, `rust.md`... chi tiết xem `agents/knowledge/review-rules/README.md`).
+   - Xem quy tắc tương ứng: `python scripts/ocr.py rule <tệp>`
+   - Quét kiểm định tĩnh theo luật: `python scripts/ocr.py check <tệp>`
+   - Xem trước danh sách review: `python scripts/ocr.py preview`
+   - Review theo commit/diff: `python scripts/ocr.py review [--from <ref>] [--to <ref>]`
    - Chỉ báo phát hiện; không để công cụ tự sửa code. Phát hiện được xếp mức Blocker/ Major/ Minor/ Nit như mục 5 và đối chiếu checklist mục 6.
    - Kết quả của `ocr` là gợi ý, không thay review của người.
 9. **AI hỗ trợ review:** chạy checklist và báo phát hiện kèm vị trí. AI không duyệt MR thay người, không merge.

@@ -1,0 +1,68 @@
+{
+  "type": "deployment",
+  "title": "Mẫu sơ đồ triển khai (ví dụ minh họa, không phải dữ liệu thật)",
+  "note": "Nút hình hộp 3D. Artifact nằm trong nút được triển khai. Đường liền ghi giao thức.",
+  "out": "mau-deployment.drawio",
+  "png": "mau-deployment.png",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Máy người dùng",
+      "stereo": "device",
+      "col": 0,
+      "row": 0,
+      "artifacts": [
+        {
+          "id": "a_web",
+          "label": "trình duyệt"
+        }
+      ]
+    },
+    {
+      "id": "app",
+      "label": "Máy chủ ứng dụng",
+      "stereo": "device",
+      "col": 1,
+      "row": 0,
+      "children": [
+        "jvm"
+      ]
+    },
+    {
+      "id": "jvm",
+      "label": "Java 21",
+      "stereo": "executionEnvironment",
+      "artifacts": [
+        {
+          "id": "a_jar",
+          "label": "order-service.jar"
+        }
+      ]
+    },
+    {
+      "id": "dbs",
+      "label": "Máy chủ CSDL",
+      "stereo": "device",
+      "col": 2,
+      "row": 0,
+      "artifacts": [
+        {
+          "id": "a_db",
+          "label": "PostgreSQL 16"
+        }
+      ]
+    }
+  ],
+  "paths": [
+    {
+      "from": "client",
+      "to": "app",
+      "label": "HTTPS"
+    },
+    {
+      "from": "app",
+      "to": "dbs",
+      "label": "JDBC"
+    }
+  ]
+}

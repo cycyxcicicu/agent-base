@@ -1,0 +1,52 @@
+{
+  "type": "sequence",
+  "title": "Mẫu sơ đồ tuần tự",
+  "out": "mau-seq.drawio",
+  "png": "mau-seq.png",
+  "participants": [
+    {
+      "id": "ui",
+      "name": "Trình duyệt",
+      "color": "blue"
+    },
+    {
+      "id": "api",
+      "name": "Controller\n(OrderController)"
+    },
+    {
+      "id": "db",
+      "name": "PostgreSQL",
+      "color": "green"
+    }
+  ],
+  "messages": [
+    {
+      "from": "ui",
+      "to": "api",
+      "label": "Gửi yêu cầu lấy danh sách"
+    },
+    {
+      "from": "api",
+      "to": "api",
+      "kind": "self",
+      "label": "Kiểm tra điều kiện lọc"
+    },
+    {
+      "from": "api",
+      "to": "db",
+      "label": "SELECT id ..."
+    },
+    {
+      "from": "db",
+      "to": "api",
+      "kind": "return",
+      "label": "Danh sách mã đơn"
+    },
+    {
+      "from": "api",
+      "to": "ui",
+      "kind": "return",
+      "label": "Trang kết quả, HTTP 200"
+    }
+  ]
+}

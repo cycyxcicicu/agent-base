@@ -93,7 +93,15 @@ def package_deps() -> set:
             continue
 
         for k in ('dependencies', 'devDependencies', 'peerDependencies'):
-            deps.update((data.get(k) or {}).keys())
+            val = data.get(k)
+            if isinstance(val, dict):
+                deps.update(str(x) for x in val.keys())
+            elif isinstance(val, (list, set)):
+                for item in val:
+                    if isinstance(item, str):
+                        deps.add(item)
+                    elif isinstance(item, dict) and 'name' in item:
+                        deps.add(str(item['name']))
     return deps
 
 

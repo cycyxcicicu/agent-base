@@ -421,21 +421,98 @@ def cmd_image(args: argparse.Namespace) -> int:
     query = args.query.lower().strip()
     diagram_filter = getattr(args, "type", None)
 
+    # Suy luận tự động loại sơ đồ từ truy vấn tiếng Việt / tiếng Anh
+    TYPE_MAP = {
+        "tuần tự": "sequence", "tuan tu": "sequence", "sequence": "sequence",
+        "hoạt động": "activity", "hoat dong": "activity", "activity": "activity",
+        "sơ đồ lớp": "class", "so do lop": "class", "class": "class",
+        "trạng thái": "state", "trang thai": "state", "state": "state",
+        "ca sử dụng": "use-case", "ca su dung": "use-case", "use case": "use-case", "usecase": "use-case",
+        "thành phần": "component", "thanh phan": "component", "component": "component",
+        "triển khai": "deployment", "trien khai": "deployment", "deployment": "deployment",
+        "sơ đồ gói": "package", "package": "package",
+        "giao tiếp": "communication", "giao tiep": "communication", "communication": "communication",
+        "tương tác": "interaction", "tuong tac": "interaction", "interaction": "interaction",
+    }
+    inferred_type = next((v for k, v in TYPE_MAP.items() if k in query), None)
+    if not diagram_filter and inferred_type:
+        diagram_filter = inferred_type
+
+    # Nạp từ điển đồng nghĩa để hỗ trợ truy vấn tiếng Việt -> ảnh tiếng Anh
+    syn_candidates = []
+    GENERIC_DIAGRAM_STOP = {"diagram", "so", "do", "uml", "anh", "image", "hinh", "mau", "sơ", "đồ"}
+    syn_path = reg_path.parent / "synonyms.json"
+    if not syn_path.exists():
+        syn_path = ROOT / "agents/knowledge/synonyms.json"
+    if syn_path.exists():
+        try:
+            with open(syn_path, "r", encoding="utf-8") as sf:
+                syn_map = json.load(sf)
+                for k, v in syn_map.items():
+                    if k.startswith("_"):
+                        continue
+                    if k in query or query in k:
+                        for term in v.split():
+                            t_clean = term.lower()
+                            if len(t_clean) > 2 and t_clean not in GENERIC_DIAGRAM_STOP and t_clean not in syn_candidates:
+                                syn_candidates.append(t_clean)
+        except Exception:
+            pass
+
     matched = []
+    matched_ids = set()
+
+    # Ưu tiên 1 (Tier 1): Khớp trực tiếp query gốc (hoặc khớp theo inferred diagram_type)
     for item in registry:
         if diagram_filter and diagram_filter.lower() not in item.get("diagram_type", "").lower():
             continue
-        text_corpus = f"{item.get('caption', '')} {item.get('image_name', '')} {item.get('diagram_type', '')}".lower()
-        if all(word in text_corpus for word in query.split()):
-            matched.append(item)
+        text_corpus = f"{item.get('caption', '')} {item.get('image_name', '')} {item.get('diagram_type', '')} {item.get('file_source', '')}".lower()
+        # Nếu đã lọc đúng diagram_type và query chỉ là tên loại sơ đồ, coi như khớp toàn bộ loại đó
+        sub_query_words = [w for w in query.split() if w not in {"so", "do", "sơ", "đồ", "uml", "anh"}]
+        if inferred_type and all(w in TYPE_MAP or w in GENERIC_DIAGRAM_STOP for w in query.split()):
+            matched.append((1, item))
+            matched_ids.add(item["id"])
+        elif sub_query_words and all(word in text_corpus for word in sub_query_words if word not in GENERIC_DIAGRAM_STOP):
+            matched.append((1, item))
+            matched_ids.add(item["id"])
+
+    # Ưu tiên 2 (Tier 2): Khớp qua từ khóa đồng nghĩa (Việt -> Anh)
+    if syn_candidates:
+        for item in registry:
+            if item["id"] in matched_ids:
+                continue
+            if diagram_filter and diagram_filter.lower() not in item.get("diagram_type", "").lower():
+                continue
+            text_corpus = f"{item.get('caption', '')} {item.get('image_name', '')} {item.get('diagram_type', '')} {item.get('file_source', '')}".lower()
+            if any(cand in text_corpus for cand in syn_candidates):
+                matched.append((2, item))
+                matched_ids.add(item["id"])
+
+    # Sắp xếp ưu tiên: Mẫu hợp lệ trước -> Tier khớp -> Mẫu chuẩn anhbv -> Template -> Core UML -> SourceMaking -> Mẫu cũ (cuối cùng)
+    def _img_rank(pair):
+        tier, item = pair
+        cap = item.get("caption", "")
+        rel = item.get("rel_path", "")
+        if "[MẪU CŨ" in cap or "KHÔNG DÙNG" in cap:
+            return (9, tier, 4, item.get("id", ""))
+        if "mau-anhbv" in rel:
+            return (0, tier, 0, item.get("id", ""))
+        if "[Template" in cap:
+            return (0, tier, 1, item.get("id", ""))
+        if item.get("is_core"):
+            return (0, tier, 2, item.get("id", ""))
+        return (0, tier, 3, item.get("id", ""))
+
+    matched.sort(key=_img_rank)
+    matched_items = [item for _, item in matched]
 
     limit = getattr(args, "limit", 5) or 5
-    print(f"🎯 KẾT QUẢ TRA CỨU ẢNH SƠ ĐỒ MẪU (Từ khóa: '{args.query}', Khớp: {len(matched)} ảnh)")
-    if not matched:
+    print(f"🎯 KẾT QUẢ TRA CỨU ẢNH SƠ ĐỒ MẪU (Từ khóa: '{args.query}', Khớp: {len(matched_items)} ảnh)")
+    if not matched_items:
         print("  Không tìm thấy ảnh nào khớp. Thử tìm với từ khóa ngắn hơn (ví dụ: 'sequence', 'state', 'class', 'alt', 'qr').")
         return 0
 
-    for idx, img in enumerate(matched[:limit], 1):
+    for idx, img in enumerate(matched_items[:limit], 1):
         rel = img.get("rel_path", "").replace("\\", "/")
         full_path = (ROOT / rel).resolve()
         file_uri = full_path.as_uri()

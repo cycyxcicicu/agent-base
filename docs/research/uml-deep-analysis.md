@@ -43,7 +43,7 @@ Khi Agent cần vẽ sơ đồ cho một Use Case:
 1. **Tra cứu Sổ bộ ảnh** `IMAGE_REGISTRY.json` để lấy mẫu chuẩn của phần tử (VD: cách vẽ Alt fragment, cách vẽ Port, Fork/Join).
 2. **Tuân thủ 5 quy tắc chuẩn (.ai-rules/srs/chuan-ve-so-do.md)**:
    - Bơi làn (swimlane) rõ ràng giữa các tầng kiến trúc.
-   - Đúng 1 điểm bắt đầu và ĐÚNG 1 điểm kết thúc duy nhất.
-   - Nhánh lỗi luôn tô màu đỏ `#dc2626` có chú thích mã lỗi.
+   - Đúng 1 điểm bắt đầu và ĐÚNG 1 điểm kết thúc duy nhất. (Tài liệu nghiên cứu cũ; chuẩn từ 09/11/2026: `agents/knowledge/diagrams/quy-trinh-ve-so-do-bang-json.md` mục 4.6, `activity` nhiều điểm đầu cuối.)
+   - Nhánh lỗi luôn tô màu đỏ `#dc2626` có chú thích mã lỗi. (Cũ; chuẩn mới: đen trắng, viền đậm kèm nhãn.)
    - 100% dữ liệu thật từ code/DB.
    - Xuất file `.drawio` nhiều tab kèm file ảnh `.png` độ nét cao lưu tại `doc/features/<UC>/hinh/`.

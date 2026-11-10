@@ -67,7 +67,7 @@ Nguồn (sửa bằng draw.io): [`hinh/UC-01.drawio`](hinh/UC-01.drawio), trang 
 - [ ] Mỗi nhãn mũi tên xuất hiện trong cột điều kiện.
 - [ ] Mọi quyết định có đủ nhánh và nhánh nào cũng có đích.
 - [ ] Có đường lỗi và xử lý của nó.
-- [ ] Có đúng một điểm kết thúc (sơ đồ hoạt động).
+- [ ] Có ít nhất một điểm kết thúc (sơ đồ hoạt động): `flow` và `swimlane` cũ đúng một; `activity` theo làn lớp được nhiều.
 - [ ] Trạng thái, bảng, endpoint là tên thật.
 - [ ] Có đường dẫn file nguồn và tên trang.
 - [ ] `diagram-describe.py --check` báo đạt (với `.drawio`).

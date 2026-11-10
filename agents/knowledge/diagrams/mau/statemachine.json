@@ -1,0 +1,101 @@
+{
+  "type": "statemachine",
+  "title": "Mẫu máy trạng thái: vòng đời một đơn (ví dụ minh họa, không phải dữ liệu thật)",
+  "note": "Chuyển ghi: sự_kiện [điều_kiện] / hành_động. Trạng thái lấy từ enum thật, không tự đặt.",
+  "out": "mau-statemachine.drawio",
+  "png": "mau-statemachine.png",
+  "states": [
+    {
+      "id": "i",
+      "kind": "initial",
+      "col": 0,
+      "row": 0
+    },
+    {
+      "id": "draft",
+      "label": "Nháp",
+      "col": 0,
+      "row": 1.2,
+      "actions": [
+        "entry / tạo mã đơn"
+      ]
+    },
+    {
+      "id": "conf",
+      "label": "Đã xác nhận",
+      "col": 1.3,
+      "row": 1.2
+    },
+    {
+      "id": "pack",
+      "label": "Đang đóng gói",
+      "col": 2.6,
+      "row": 1.2
+    },
+    {
+      "id": "ship",
+      "label": "Đang giao",
+      "col": 3.9,
+      "row": 1.2
+    },
+    {
+      "id": "done",
+      "label": "Đã giao",
+      "col": 3.9,
+      "row": 3
+    },
+    {
+      "id": "cancel",
+      "label": "Đã hủy",
+      "col": 1.3,
+      "row": 3
+    },
+    {
+      "id": "f",
+      "kind": "final",
+      "col": 2.6,
+      "row": 4.3
+    }
+  ],
+  "transitions": [
+    {
+      "from": "i",
+      "to": "draft"
+    },
+    {
+      "from": "draft",
+      "to": "conf",
+      "label": "khách xác nhận [đủ tồn kho] / trừ kho"
+    },
+    {
+      "from": "conf",
+      "to": "pack",
+      "label": "kho nhận đơn / in nhãn"
+    },
+    {
+      "from": "pack",
+      "to": "ship",
+      "label": "bàn giao đơn vị vận chuyển"
+    },
+    {
+      "from": "ship",
+      "to": "done",
+      "label": "vận chuyển báo giao xong / ghi COD"
+    },
+    {
+      "from": "conf",
+      "to": "cancel",
+      "label": "khách hủy / hoàn kho"
+    },
+    {
+      "from": "done",
+      "to": "f",
+      "label": "kết thúc vòng đời"
+    },
+    {
+      "from": "cancel",
+      "to": "f",
+      "label": "kết thúc vòng đời"
+    }
+  ]
+}

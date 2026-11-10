@@ -163,6 +163,11 @@ def check_file(path: Path, full: bool = False):
             local = resolve(path, target, warnings, n)
             if not local.is_file():
                 errors.append((n, f"ảnh sơ đồ không tồn tại: {target}"))
+            elif (re.search(r"(class|\blop\b|flow|luu-do|sequence|tuan-tu|erd|activity|hoat-dong)", local.name.lower())
+                  and "mockup" not in local.name.lower() and not local.with_suffix(".spec.json").is_file()):
+                # Quy tắc "JSON trước, rồi mới draw.io" (agent-base AGENTS.md mục 21): ảnh sơ đồ lớp, lưu đồ, tuần tự, ERD
+                # phải có file mô tả cạnh ảnh. Chạy với --strict để cảnh báo này làm thất bại.
+                warnings.append((n, f"ảnh {target} chưa có spec JSON cạnh ảnh ({local.stem}.spec.json): quy tắc JSON trước, rồi mới draw.io"))
             window = []
             for _, nl, nf in lines[idx + 1: idx + 61]:
                 if re.match(r"^#{1,3}\s", nl) or IMG.search(nl):

@@ -9,7 +9,8 @@ Một sơ đồ chỉ có **một** file nguồn là sự thật. Ảnh `.png`, 
 
 | Loại | Công cụ nguồn | File nguồn | Người sửa bằng tay |
 |---|---|---|---|
-| Activity (Swimlane), use case, luồng màn hình, thành phần và triển khai muốn tự chỉnh | draw.io | `<tên>.drawio` | Có (draw.io Desktop) |
+| Activity, class, sequence, ERD, use case | `ve-so-do.py` (JSON trước, rồi ra `.drawio`) | `<tên>.spec.json` | Có: sửa JSON; hoặc sửa `.drawio` rồi `--lay-tu-drawio` |
+| Luồng màn hình, thành phần và triển khai muốn tự chỉnh | draw.io | `<tên>.drawio` | Có (draw.io Desktop) |
 | ERD, sequence, vòng đời (trạng thái), kiến trúc sinh từ dữ liệu | archify | `<tên>.json` | Không: sửa JSON rồi vẽ lại |
 | Sơ đồ nhỏ trong tài liệu | Mermaid | khối mã trong md | Có (sửa chữ) |
 
@@ -45,10 +46,10 @@ File là XML **không nén**:
 ```
 
 Quy tắc:
-1. **Sơ đồ hoạt động chỉ có MỘT chấm kết thúc**; mọi nhánh dồn về đó.
+1. **Sơ đồ hoạt động theo làn lớp (`type: activity` của `ve-so-do.py`) được nhiều chấm bắt đầu và kết thúc**; `flow` và `swimlane` cũ vẫn một chấm kết thúc. Chuẩn: `quy-trinh-ve-so-do-bang-json.md` mục 4.6. Ưu tiên sinh bằng `ve-so-do.py`, chỉ viết XML tay khi chưa có công cụ.
 2. `id` duy nhất; ô tiền tố `n_`, mũi tên `e`. Mũi tên **luôn có `source` và `target`** để kéo ô thì đường đi theo.
 3. Nhãn có `& < > "` phải escape. Xuống dòng trong nhãn: `&#xa;` và `html=0`.
-4. Mỗi làn một màu; quyết định cam (`#fff7ed`, viền `#ea580c`); bắt đầu và kết thúc đen. Không dùng màu làm nghĩa duy nhất, nhánh lỗi phải có nhãn chữ.
+4. Mặc định ĐEN TRẮNG (người dùng chốt 09/11/2026): hộp nền trắng viền đen, đầu và cuối chấm đen. Không dùng màu làm nghĩa duy nhất; nhánh lỗi viền đậm kèm nhãn chữ.
 5. Tọa độ bội 10; ô cách nhau tối thiểu 30px; đường nối không đi xuyên ô khác.
 6. Một trang một sơ đồ; tiêu đề là ô `text` ở góc trên trái.
 7. Làn có thể vẽ bằng hai hình chữ nhật (khung nền `fillColor=none` và ô tiêu đề tô màu sát cạnh khung) hoặc bằng `swimlane`; `diagram-describe.py` nhận cả hai.

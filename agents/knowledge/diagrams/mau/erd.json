@@ -1,0 +1,67 @@
+{
+  "type": "erd",
+  "title": "Mẫu ERD",
+  "note": "PK khóa chính, FK khóa ngoại, UQ duy nhất. Tô cam: cột nằm trong chỉ mục.",
+  "out": "mau-erd.drawio",
+  "png": "mau-erd.png",
+  "tables": [
+    {
+      "id": "order",
+      "col": 1,
+      "name": "order",
+      "color": "green",
+      "hot": [
+        "order_date"
+      ],
+      "columns": [
+        [
+          "id",
+          "integer",
+          "PK"
+        ],
+        [
+          "order_number",
+          "varchar(50)",
+          "UQ"
+        ],
+        [
+          "order_date",
+          "timestamp",
+          ""
+        ],
+        [
+          "page_id",
+          "integer",
+          "FK"
+        ]
+      ]
+    },
+    {
+      "id": "page",
+      "col": 0,
+      "name": "page",
+      "color": "blue",
+      "columns": [
+        [
+          "id",
+          "integer",
+          "PK"
+        ],
+        [
+          "name",
+          "varchar(255)",
+          ""
+        ]
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "from": "page",
+      "from_col": "id",
+      "to": "order",
+      "to_col": "page_id",
+      "label": "page_id"
+    }
+  ]
+}

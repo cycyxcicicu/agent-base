@@ -67,6 +67,7 @@ class SrsCase(unittest.TestCase):
         self.dir = Path(self._tmp.name)
         (self.dir / "hinh").mkdir()
         (self.dir / "hinh" / "hoat-dong.png").write_bytes(b"png")
+        (self.dir / "hinh" / "hoat-dong.spec.json").write_text("{}", encoding="utf-8")
 
     def run_check(self, text, *args):
         import os
@@ -141,6 +142,7 @@ class TestSrsCheck(SrsCase):
     def test_erd_style_image_needs_only_some_explanation(self):
         text = GOOD.replace("Không thêm bảng.", "![ERD đơn hàng](hinh/erd.png)\n\n| Bảng | Cột chính | Quan hệ |\n|---|---|---|\n| orders | id | 1-n order_items |\n| order_items | order_id | n-1 orders |")
         (self.dir / "hinh" / "erd.png").write_bytes(b"png")
+        (self.dir / "hinh" / "erd.spec.json").write_text("{}", encoding="utf-8")
         r = self.run_check(text, "--strict")
         self.assertEqual(r.returncode, 0, r.stdout)
 

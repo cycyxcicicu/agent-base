@@ -1,0 +1,70 @@
+{
+  "type": "flow",
+  "title": "Mẫu lưu đồ",
+  "note": "Một điểm bắt đầu, một điểm kết thúc. Đỏ là nhánh lỗi.",
+  "out": "mau-flow.drawio",
+  "png": "mau-flow.png",
+  "nodes": [
+    {
+      "id": "s",
+      "kind": "start",
+      "col": 0,
+      "row": 0
+    },
+    {
+      "id": "d1",
+      "kind": "dec",
+      "col": 0,
+      "row": 1,
+      "label": "Có điều kiện lọc nào?"
+    },
+    {
+      "id": "p1",
+      "kind": "proc",
+      "col": 0,
+      "row": 2,
+      "label": "Kiểm tra từng điều kiện"
+    },
+    {
+      "id": "e1",
+      "kind": "err",
+      "col": 1,
+      "row": 1,
+      "label": "Báo lỗi (INVALID)"
+    },
+    {
+      "id": "end",
+      "kind": "end",
+      "col": 0,
+      "row": 3
+    }
+  ],
+  "edges": [
+    {
+      "from": "s",
+      "to": "d1"
+    },
+    {
+      "from": "d1",
+      "to": "p1",
+      "label": "Có",
+      "color": "green"
+    },
+    {
+      "from": "d1",
+      "to": "e1",
+      "label": "Không",
+      "color": "red"
+    },
+    {
+      "from": "p1",
+      "to": "end"
+    },
+    {
+      "from": "e1",
+      "to": "end",
+      "color": "red",
+      "via": 1250
+    }
+  ]
+}
