@@ -805,6 +805,64 @@ permission:
     "*<(curl*": deny
     "*<(wget*": deny
     "*<(iwr*": deny
+    "grep *": deny
+    "grep": deny
+    "*| grep *": deny
+    "*|grep *": deny
+    "*&& grep *": deny
+    "*&&grep *": deny
+    "*; grep *": deny
+    "*;grep *": deny
+    "*|| grep *": deny
+    "*||grep *": deny
+    "rg *": deny
+    "rg": deny
+    "*| rg *": deny
+    "*|rg *": deny
+    "*&& rg *": deny
+    "*&&rg *": deny
+    "*; rg *": deny
+    "*;rg *": deny
+    "*|| rg *": deny
+    "*||rg *": deny
+    "find * -exec*": deny
+    "find * -execdir*": deny
+    "find * -name *.java*": deny
+    "find * -name *.ts*": deny
+    "find * -name *.tsx*": deny
+    "find * -name *.js*": deny
+    "find * -name *.jsx*": deny
+    "find * -name *.py*": deny
+    "find * -name *.go*": deny
+    "find * -name *.rs*": deny
+    "find * -name *.php*": deny
+    "find * -name *.cs*": deny
+    "find * -name *.kt*": deny
+    "find * -name *.swift*": deny
+    "find * -name \"*.java*\"": deny
+    "find * -name \"*.ts*\"": deny
+    "find * -name \"*.tsx*\"": deny
+    "find * -name \"*.js*\"": deny
+    "find * -name \"*.jsx*\"": deny
+    "find * -name \"*.py*\"": deny
+    "find * -name \"*.go*\"": deny
+    "find * -name \"*.rs*\"": deny
+    "find * -name \"*.php*\"": deny
+    "find * -name \"*.cs*\"": deny
+    "find * -name \"*.kt*\"": deny
+    "find * -name \"*.swift*\"": deny
+    "find * -name '*.java*'": deny
+    "find * -name '*.ts*'": deny
+    "find * -name '*.tsx*'": deny
+    "find * -name '*.js*'": deny
+    "find * -name '*.jsx*'": deny
+    "find * -name '*.py*'": deny
+    "find * -name '*.go*'": deny
+    "find * -name '*.rs*'": deny
+    "find * -name '*.php*'": deny
+    "find * -name '*.cs*'": deny
+    "find * -name '*.kt*'": deny
+    "find * -name '*.swift*'": deny
   webfetch: deny
   websearch: deny
   codesearch: deny

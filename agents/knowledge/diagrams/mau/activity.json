@@ -1,0 +1,126 @@
+{
+  "type": "activity",
+  "title": "Mẫu sơ đồ hoạt động theo làn lớp (kiểu anhbv)",
+  "note": "Mỗi làn là một lớp hoặc thành phần. Nhiều điểm bắt đầu và kết thúc. Nét đứt là lời gọi sang làn khác. Đen trắng.",
+  "out": "mau-activity.drawio",
+  "png": "mau-activity.png",
+  "lanes": [
+    {
+      "id": "ctl",
+      "name": "OrderController"
+    },
+    {
+      "id": "svc",
+      "name": "OrderService (sub 0) và OrderValidator (sub 1)"
+    },
+    {
+      "id": "db",
+      "name": "PostgreSQL"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "s1",
+      "kind": "start",
+      "lane": "ctl",
+      "row": 0
+    },
+    {
+      "id": "a1",
+      "kind": "proc",
+      "lane": "ctl",
+      "row": 1,
+      "label": "Nhận yêu cầu GET /orders"
+    },
+    {
+      "id": "a2",
+      "kind": "proc",
+      "lane": "svc",
+      "row": 1,
+      "label": "Dựng bộ lọc từ tham số"
+    },
+    {
+      "id": "d1",
+      "kind": "dec",
+      "lane": "svc",
+      "row": 2,
+      "label": "Bộ lọc hợp lệ?"
+    },
+    {
+      "id": "x1",
+      "kind": "err",
+      "lane": "svc",
+      "sub": 1,
+      "row": 2,
+      "label": "Ném lỗi bộ lọc (ORDER-4027)"
+    },
+    {
+      "id": "e1",
+      "kind": "end",
+      "lane": "svc",
+      "sub": 1,
+      "row": 3,
+      "note": "Kết thúc: trả HTTP 400"
+    },
+    {
+      "id": "a3",
+      "kind": "proc",
+      "lane": "db",
+      "row": 4,
+      "label": "SELECT id ... một trang"
+    },
+    {
+      "id": "a4",
+      "kind": "proc",
+      "lane": "ctl",
+      "row": 5,
+      "label": "Trả HTTP 200 và danh sách"
+    },
+    {
+      "id": "e2",
+      "kind": "end",
+      "lane": "ctl",
+      "row": 6
+    }
+  ],
+  "edges": [
+    {
+      "from": "s1",
+      "to": "a1"
+    },
+    {
+      "from": "a1",
+      "to": "a2",
+      "label": "gọi service"
+    },
+    {
+      "from": "a2",
+      "to": "d1"
+    },
+    {
+      "from": "d1",
+      "to": "x1",
+      "label": "Không"
+    },
+    {
+      "from": "d1",
+      "to": "a3",
+      "label": "Có",
+      "first": "v"
+    },
+    {
+      "from": "x1",
+      "to": "e1"
+    },
+    {
+      "from": "a3",
+      "to": "a4",
+      "label": "danh sách mã đơn",
+      "first": "v"
+    },
+    {
+      "from": "a4",
+      "to": "e2"
+    }
+  ]
+}

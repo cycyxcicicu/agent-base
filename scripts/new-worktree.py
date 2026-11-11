@@ -8,10 +8,11 @@ Usage:
   python scripts/new-worktree.py --ticket 12 --slug token-check [--type feature] [--base develop] [--root /path/to/worktrees]
 """
 
-import sys
-import re
 import argparse
+import os
+import re
 import subprocess
+import sys
 from pathlib import Path
 
 try:
@@ -21,6 +22,17 @@ except Exception:
     pass
 
 VALID_TYPES = {'feature', 'bugfix', 'hotfix', 'fix', 'chore', 'refactor', 'docs', 'test', 'devops'}
+
+
+def _detect_workspace_root(repo_path: Path) -> Path:
+    home = Path.home().resolve()
+    for cand in [repo_path, *list(repo_path.parents[:4])]:
+        res = cand.resolve()
+        if res == home or res == Path(res.anchor):
+            break
+        if (res / "platform-services").is_dir() or (res / "doc" / "features").is_dir() or (res / "docs" / "features").is_dir():
+            return res
+    return repo_path.resolve()
 
 
 def main():
@@ -94,11 +106,24 @@ def main():
         print("ERROR: git worktree add failed")
         sys.exit(2)
 
-    # Tự động cấu hình MCP, Skills, Adapters và Rules cho Worktree vừa tạo
-    setup_script = Path(__file__).resolve().parent / "setup-project.py"
-    if setup_script.is_file():
-        print(f"\n🚀 Đang tự động cấu hình MCP & Rules cho Worktree...")
-        subprocess.run([sys.executable, str(setup_script), "--target", str(target_path)], check=False)
+    # Tự động cấu hình Rules workspace, doc.workspace, info/exclude và cập nhật Worktree Registry
+    wm_script = Path(__file__).resolve().parent / "worktree-manager.py"
+    if wm_script.is_file():
+        ws_root = _detect_workspace_root(repo_path)
+        sync_env = {
+            **os.environ,
+            "WORKSPACE_ROOT": str(ws_root),
+            "WORKTREES_DIR": str(wt_root),
+        }
+        print("\n🚀 Đang tự động đồng bộ Rules, doc.workspace & Sổ bộ Worktree...")
+        if (ws_root / "doc" / "governance" / "standards").is_dir():
+            subprocess.run([sys.executable, str(wm_script), "sync"], env=sync_env, check=False)
+        else:
+            subprocess.run(
+                [sys.executable, str(wm_script), "inject", "--path", str(target_path), "--service", name, "--task", f"T-{args.ticket}"],
+                env=sync_env,
+                check=False,
+            )
 
     print(f"\nWorktree: {target_path}")
     print(f"Branch:   {branch} (from {base})\n")

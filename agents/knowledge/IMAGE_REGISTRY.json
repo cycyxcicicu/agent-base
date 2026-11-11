@@ -7058,5 +7058,245 @@
     "caption": "ByteByteGo System Design: Netflix Overall Cloud Architecture (Edge, Microservices, Cassandra, Kafka, Open Connect CDN)",
     "is_core": true,
     "target_role": "architect"
+  },
+  {
+    "id": "IMG-0707",
+    "diagram_type": "class-diagram",
+    "file_source": "agents/knowledge/diagrams/bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu.md",
+    "image_name": "uml-class-mau-library.png",
+    "rel_path": "assets/uml/class-diagram/images/uml-class-mau-library.png",
+    "caption": "Mẫu PlantUML đơn giản, chỉ tham khảo cách ghi số lượng hai đầu 1, 0..*; KHÔNG phải chuẩn của dự án (chuẩn là IMG-0712)",
+    "is_core": false,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0712",
+    "diagram_type": "class-diagram",
+    "file_source": "agents/knowledge/diagrams/bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu.md",
+    "image_name": "uml-class-mau-thu-vien-sach.png",
+    "rel_path": "assets/uml/class-diagram/images/uml-class-mau-thu-vien-sach.png",
+    "caption": "Mẫu chuẩn sơ đồ lớp của dự án (người dùng xác nhận): hộp trắng ba ngăn không biểu tượng, <<interface>> và <<Abstract>> in đậm, Extends và implements bằng đường liền tam giác rỗng, thoi rỗng kết tập, thoi đặc hợp thành, không ghi số lượng",
+    "is_core": true,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0713",
+    "diagram_type": "class-diagram",
+    "file_source": "agents/knowledge/diagrams/bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu.md",
+    "image_name": "mau-so-do-lop-tu-script.png",
+    "rel_path": "assets/uml/class-diagram/images/mau-so-do-lop-tu-script.png",
+    "caption": "Ảnh do scripts/ve-so-do.py sinh từ agents/knowledge/diagrams/mau-so-do-lop.json: agent chỉ viết JSON, script tự bố trí, nối đường theo mẫu chuẩn và kiểm lỗi",
+    "is_core": false,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0714",
+    "diagram_type": "class-diagram",
+    "file_source": "agents/knowledge/diagrams/quy-trinh-ve-so-do-bang-json.md",
+    "image_name": "mau-lop-tu-script.png",
+    "rel_path": "assets/uml/class-diagram/images/mau-lop-tu-script.png",
+    "caption": "Sơ đồ lớp sinh từ agents/knowledge/diagrams/mau/class.json bằng scripts/ve-so-do.py (type class)",
+    "is_core": true,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0715",
+    "diagram_type": "activity-diagram",
+    "file_source": "agents/knowledge/diagrams/quy-trinh-ve-so-do-bang-json.md",
+    "image_name": "mau-flow-tu-script.png",
+    "rel_path": "assets/uml/activity-diagram/images/mau-flow-tu-script.png",
+    "caption": "[MẪU CŨ ĐÃ THAY THẾ - KHÔNG DÙNG] Lưu đồ thuật toán 1 làn cũ (type flow). Chuẩn mới dùng type activity đen trắng tại mau-anhbv/mau-activity.png",
+    "is_core": false,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0718",
+    "diagram_type": "activity-diagram",
+    "file_source": "agents/knowledge/diagrams/quy-trinh-ve-so-do-bang-json.md",
+    "image_name": "mau-swimlane-tu-script.png",
+    "rel_path": "assets/uml/activity-diagram/images/mau-swimlane-tu-script.png",
+    "caption": "[MẪU CŨ ĐÃ THAY THẾ - KHÔNG DÙNG] Sơ đồ hoạt động nhiều làn bơi cũ (type swimlane theo vai, tô màu mè). Chuẩn mới dùng type activity đen trắng tại mau-anhbv/mau-activity.png",
+    "is_core": false,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0716",
+    "diagram_type": "sequence-diagram",
+    "file_source": "agents/knowledge/diagrams/quy-trinh-ve-so-do-bang-json.md",
+    "image_name": "mau-seq-tu-script.png",
+    "rel_path": "assets/uml/sequence-diagram/images/mau-seq-tu-script.png",
+    "caption": "Sơ đồ tuần tự sinh từ agents/knowledge/diagrams/mau/sequence.json (type sequence): đánh số lời gọi, dòng trả về nét đứt, tự gọi chính mình",
+    "is_core": true,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0717",
+    "diagram_type": "entity-relationship-diagram",
+    "file_source": "agents/knowledge/diagrams/quy-trinh-ve-so-do-bang-json.md",
+    "image_name": "mau-erd-tu-script.png",
+    "rel_path": "assets/uml/class-diagram/images/mau-erd-tu-script.png",
+    "caption": "ERD sinh từ agents/knowledge/diagrams/mau/erd.json (type erd): bảng lưới 3 cột Tên, Kiểu, Khóa, cột chỉ mục tô cam, quan hệ chân chim nối đúng cột khóa ngoại với cột khóa chính (from_col, to_col)",
+    "is_core": true,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0708",
+    "diagram_type": "class-diagram",
+    "file_source": "agents/knowledge/diagrams/bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu.md",
+    "image_name": "uc04-class-thu-vien.png",
+    "rel_path": "assets/uml/class-diagram/images/uc04-class-thu-vien.png",
+    "caption": "Bản áp dụng mẫu UML: sơ đồ lớp thư viện lọc dùng chung của UC-04, tên lớp kèm nghĩa tiếng Việt",
+    "is_core": false,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0709",
+    "diagram_type": "class-diagram",
+    "file_source": "agents/knowledge/diagrams/bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu.md",
+    "image_name": "uc04-class-accounting.png",
+    "rel_path": "assets/uml/class-diagram/images/uc04-class-accounting.png",
+    "caption": "Bản áp dụng mẫu UML: sơ đồ lớp phần ghép vào accounting-service của UC-04, có lớp thư viện ngoài vẽ riêng",
+    "is_core": false,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0710",
+    "diagram_type": "activity-diagram",
+    "file_source": "agents/knowledge/diagrams/bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu.md",
+    "image_name": "uc04-luu-do-thuat-toan.png",
+    "rel_path": "assets/uml/activity-diagram/images/uc04-luu-do-thuat-toan.png",
+    "caption": "[MẪU CŨ ĐÃ THAY THẾ - KHÔNG DÙNG] Lưu đồ thuật toán cũ (type flow tô màu mè). Chuẩn mới gộp vào activity diagram đen trắng tại mau-anhbv/mau-activity.png",
+    "is_core": false,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0711",
+    "diagram_type": "sequence-diagram",
+    "file_source": "agents/knowledge/diagrams/bai-hoc-thiet-ke-chua-code-va-ban-giao-tai-lieu.md",
+    "image_name": "uc04-tuan-tu-ham.png",
+    "rel_path": "assets/uml/sequence-diagram/images/uc04-tuan-tu-ham.png",
+    "caption": "Sơ đồ tuần tự theo hàm: chỉ đánh số lời gọi, nhãn đặt phía trên đường, tên hàm trong ngoặc",
+    "is_core": false,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0719",
+    "diagram_type": "activity-diagram",
+    "file_source": "agents/knowledge/diagrams/quy-trinh-ve-so-do-bang-json.md",
+    "image_name": "mau-activity.png",
+    "rel_path": "agents/knowledge/diagrams/mau-anhbv/mau-activity.png",
+    "caption": "MẪU CHUẨN MỚI (anhbv 09/11/2026): Sơ đồ hoạt động theo làn lớp (type activity), đen trắng, không màu mè, làn là lớp mã nguồn thật, nhiều điểm đầu và cuối",
+    "is_core": true,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0720",
+    "diagram_type": "class-diagram",
+    "file_source": "agents/knowledge/diagrams/quy-trinh-ve-so-do-bang-json.md",
+    "image_name": "mau-class.png",
+    "rel_path": "agents/knowledge/diagrams/mau-anhbv/mau-class.png",
+    "caption": "MẪU CHUẨN MỚI (anhbv 09/11/2026): Sơ đồ lớp (type class), đen trắng, hộp 3 ngăn chuẩn UML",
+    "is_core": true,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0721",
+    "diagram_type": "sequence-diagram",
+    "file_source": "agents/knowledge/diagrams/quy-trinh-ve-so-do-bang-json.md",
+    "image_name": "mau-sequence.png",
+    "rel_path": "agents/knowledge/diagrams/mau-anhbv/mau-sequence.png",
+    "caption": "MẪU CHUẨN MỚI (anhbv 09/11/2026): Sơ đồ tuần tự (type sequence), đen trắng, đánh số thông điệp",
+    "is_core": true,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0722",
+    "diagram_type": "entity-relationship-diagram",
+    "file_source": "agents/knowledge/diagrams/quy-trinh-ve-so-do-bang-json.md",
+    "image_name": "mau-erd.png",
+    "rel_path": "agents/knowledge/diagrams/mau-anhbv/mau-erd.png",
+    "caption": "MẪU CHUẨN MỚI (anhbv 09/11/2026): Sơ đồ ERD CSDL (type erd), đen trắng, bảng lưới 3 cột, nối đúng cột khóa ngoại",
+    "is_core": true,
+    "target_role": "designer"
+  },
+  {
+    "id": "IMG-0723",
+    "diagram_type": "activity-diagram",
+    "file_source": "assets/uml/activity-diagram/spec.md",
+    "image_name": "template.png",
+    "rel_path": "assets/uml/activity-diagram/template.png",
+    "caption": "[Template Mẫu Chuẩn] Activity Diagram Template (Sơ đồ hoạt động UML chuẩn)",
+    "is_core": true,
+    "target_role": "ba"
+  },
+  {
+    "id": "IMG-0724",
+    "diagram_type": "class-diagram",
+    "file_source": "assets/uml/class-diagram/spec.md",
+    "image_name": "template.png",
+    "rel_path": "assets/uml/class-diagram/template.png",
+    "caption": "[Template Mẫu Chuẩn] Class Diagram Template (Sơ đồ lớp UML chuẩn)",
+    "is_core": true,
+    "target_role": "architect"
+  },
+  {
+    "id": "IMG-0725",
+    "diagram_type": "component-diagram",
+    "file_source": "assets/uml/component-diagram/spec.md",
+    "image_name": "template.png",
+    "rel_path": "assets/uml/component-diagram/template.png",
+    "caption": "[Template Mẫu Chuẩn] Component Diagram Template (Sơ đồ thành phần UML chuẩn)",
+    "is_core": true,
+    "target_role": "architect"
+  },
+  {
+    "id": "IMG-0726",
+    "diagram_type": "deployment-diagram",
+    "file_source": "assets/uml/deployment-diagram/spec.md",
+    "image_name": "template.png",
+    "rel_path": "assets/uml/deployment-diagram/template.png",
+    "caption": "[Template Mẫu Chuẩn] Deployment Diagram Template (Sơ đồ triển khai UML chuẩn)",
+    "is_core": true,
+    "target_role": "architect"
+  },
+  {
+    "id": "IMG-0727",
+    "diagram_type": "package-diagram",
+    "file_source": "assets/uml/package-diagram/spec.md",
+    "image_name": "template.png",
+    "rel_path": "assets/uml/package-diagram/template.png",
+    "caption": "[Template Mẫu Chuẩn] Package Diagram Template (Sơ đồ gói UML chuẩn)",
+    "is_core": true,
+    "target_role": "architect"
+  },
+  {
+    "id": "IMG-0728",
+    "diagram_type": "sequence-diagram",
+    "file_source": "assets/uml/sequence-diagram/spec.md",
+    "image_name": "template.png",
+    "rel_path": "assets/uml/sequence-diagram/template.png",
+    "caption": "[Template Mẫu Chuẩn] Sequence Diagram Template (Sơ đồ tuần tự UML chuẩn)",
+    "is_core": true,
+    "target_role": "all"
+  },
+  {
+    "id": "IMG-0729",
+    "diagram_type": "state-machine-diagram",
+    "file_source": "assets/uml/state-machine-diagram/spec.md",
+    "image_name": "template.png",
+    "rel_path": "assets/uml/state-machine-diagram/template.png",
+    "caption": "[Template Mẫu Chuẩn] State Machine Diagram Template (Sơ đồ trạng thái UML chuẩn)",
+    "is_core": true,
+    "target_role": "ba"
+  },
+  {
+    "id": "IMG-0730",
+    "diagram_type": "use-case-diagram",
+    "file_source": "assets/uml/use-case-diagram/how-to.md",
+    "image_name": "template.png",
+    "rel_path": "assets/uml/use-case-diagram/template.png",
+    "caption": "[Template Mẫu Chuẩn] Use Case Diagram Template (Sơ đồ ca sử dụng UML chuẩn)",
+    "is_core": true,
+    "target_role": "ba"
   }
 ]

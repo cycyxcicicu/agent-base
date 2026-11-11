@@ -1,14 +1,7 @@
 ---
-source_url: "https://www.uml-diagrams.org/state-machine-diagrams/behavioral.html"
-crawled_at: "2026-11-01 11:42:55"
+source_url: "https://www.uml-diagrams.org/state-machine-diagrams.html"
+crawled_at: "2026-11-10 06:47:12"
 title: "behavioral-state"
 ---
 
-Title: 404 Error - Page Not Found
-
-URL Source: https://www.uml-diagrams.org/state-machine-diagrams/behavioral.html
-
-Warning: Target URL returned error 404: Not Found
-
-Markdown Content:
-
+File này từng là bản tải lỗi 404 (đường dẫn sai). Không có trang riêng cho nội dung này: đọc mục "Behavioral State Machine" trong `spec.md` cùng thư mục (nguồn https://www.uml-diagrams.org/state-machine-diagrams.html).

@@ -1,32 +1,68 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "diagramType": "activity",
-  "title": "Chuẩn sơ đồ hoạt động (Activity Diagram Specification)",
-  "rules": {
-    "singleStart": true,
-    "singleEnd": true,
-    "errorBranchesInRed": true,
-    "swimlanesRequired": true
-  },
-  "swimlanes": [
-    {"id": "user", "name": "Người Dùng (Frontend)", "order": 1},
-    {"id": "system", "name": "Hệ Thống (Backend API / Services)", "order": 2},
-    {"id": "database", "name": "Cơ Sở Dữ Liệu (PostgreSQL / Redis)", "order": 3}
-  ],
+  "type": "deployment",
+  "title": "Mẫu sơ đồ triển khai (ví dụ minh họa, không phải dữ liệu thật)",
+  "note": "Nút hình hộp 3D. Artifact nằm trong nút được triển khai. Đường liền ghi giao thức.",
+  "out": "mau-deployment.drawio",
+  "png": "mau-deployment.png",
   "nodes": [
-    {"id": "start", "type": "initial", "swimlane": "user"},
-    {"id": "submit", "type": "action", "label": "Gửi thao tác", "swimlane": "user"},
-    {"id": "validate", "type": "decision", "label": "Kiểm tra hợp lệ?", "swimlane": "system"},
-    {"id": "persist", "type": "action", "label": "Lưu dữ liệu", "swimlane": "database"},
-    {"id": "rollback", "type": "action", "label": "Rollback & Báo lỗi", "swimlane": "system", "isError": true},
-    {"id": "end", "type": "final", "swimlane": "system"}
+    {
+      "id": "client",
+      "label": "Máy người dùng",
+      "stereo": "device",
+      "col": 0,
+      "row": 0,
+      "artifacts": [
+        {
+          "id": "a_web",
+          "label": "trình duyệt"
+        }
+      ]
+    },
+    {
+      "id": "app",
+      "label": "Máy chủ ứng dụng",
+      "stereo": "device",
+      "col": 1,
+      "row": 0,
+      "children": [
+        "jvm"
+      ]
+    },
+    {
+      "id": "jvm",
+      "label": "Java 21",
+      "stereo": "executionEnvironment",
+      "artifacts": [
+        {
+          "id": "a_jar",
+          "label": "order-service.jar"
+        }
+      ]
+    },
+    {
+      "id": "dbs",
+      "label": "Máy chủ CSDL",
+      "stereo": "device",
+      "col": 2,
+      "row": 0,
+      "artifacts": [
+        {
+          "id": "a_db",
+          "label": "PostgreSQL 16"
+        }
+      ]
+    }
   ],
-  "flows": [
-    {"from": "start", "to": "submit"},
-    {"from": "submit", "to": "validate"},
-    {"from": "validate", "to": "persist", "guard": "Hợp lệ"},
-    {"from": "validate", "to": "rollback", "guard": "Không hợp lệ", "color": "#ff0000"},
-    {"from": "persist", "to": "end"},
-    {"from": "rollback", "to": "end", "color": "#ff0000"}
+  "paths": [
+    {
+      "from": "client",
+      "to": "app",
+      "label": "HTTPS"
+    },
+    {
+      "from": "app",
+      "to": "dbs",
+      "label": "JDBC"
+    }
   ]
 }

@@ -5,9 +5,12 @@ Bảo đảm không chặn nhầm 6/18 lệnh Git chỉ đọc hợp lệ, các 
 """
 
 import functools
+import importlib.util
 import json
 import fnmatch
 import re
+import subprocess
+import sys
 import unittest
 from pathlib import Path
 
@@ -290,7 +293,12 @@ class TestExtraHardeningRules(unittest.TestCase):
         return any(glob_match(p, command) for p in patterns)
 
     def test_must_block_in_claude_bash_and_powershell(self):
+        # Các mẫu lách luật không gắn verb (`git\t*`, `git  *`) không nằm trong settings.json của Claude
+        # vì sẽ suy biến thành `git *` khi chuẩn hóa khoảng trắng; thay vào đó do security-hook.py chặn.
+        hook_only = {"git\tpush origin main", "git  push origin main", "git\tcommit -m x"}
         for cmd in HARDENED_MUST_BLOCK:
+            if cmd in hook_only:
+                continue
             self.assertTrue(self._blocked(self.bash, cmd), f"Bash lọt: {cmd!r}")
             self.assertTrue(self._blocked(self.ps, cmd), f"PowerShell lọt: {cmd!r}")
 
@@ -418,8 +426,18 @@ class TestUserRequestedGitWrites(unittest.TestCase):
                 self.assertEqual(claude_decision(deny, ask, cmd), "ask", f"{tool}: {cmd!r}")
 
     def test_claude_denies_dangerous_git_writes(self):
+        # Các mẹo lách khoảng trắng/wrapper không verb (`git\tcommit`, `git  commit`, `command git`, `& git`)
+        # được chặn bởi PreToolUse token parser trong scripts/security-hook.py thay vì wildcard `git\t*`/`git  *`.
+        hook_enforced = {
+            "git\tcommit -m x",
+            "git  commit -m x",
+            "command git commit -m x",
+            "& git commit -m x",
+        }
         for tool, (deny, ask) in self.tools.items():
             for cmd in GIT_WRITE_ALWAYS_DENIED:
+                if cmd in hook_enforced:
+                    continue
                 self.assertEqual(claude_decision(deny, ask, cmd), "deny", f"{tool}: {cmd!r}")
 
     def test_branch_names_containing_main_or_develop_are_not_denied(self):
@@ -450,6 +468,196 @@ class TestUserRequestedGitWrites(unittest.TestCase):
         for cmd in ("npm publish", "docker push img", "kubectl delete ns x", "terraform destroy", "helm uninstall x", "aws s3 rm s3://b --recursive"):
             for tool, (deny, ask) in self.tools.items():
                 self.assertEqual(claude_decision(deny, ask, cmd), "ask", f"{tool}: {cmd!r}")
+
+    def test_safe_search_and_knowledge_are_explicitly_allowed_in_claude(self):
+        data = json.loads((ROOT / ".claude" / "settings.json").read_text(encoding="utf-8"))
+        allow = [re.match(r"^Bash\((.*)\)$", r, re.S).group(1) for r in data["permissions"]["allow"] if r.startswith("Bash(")]
+        deny = self.tools["Bash"][0]
+        cmds = [
+            'python3 ~/Documents/agent-base/scripts/safe-search.py -q "kiểm tra trùng" -d doc',
+            'cd /Users/ducnvh/Documents/gdt-workspace && python3 ~/Documents/agent-base/scripts/safe-search.py -q "4.7" -d doc',
+            'safe-search -q "Check trùng" -d doc/features/UC-04-advanced-filter',
+            'python3 ~/Documents/agent-base/scripts/knowledge.py image -q "sơ đồ hoạt động"',
+            'python3 ~/Documents/agent-base/scripts/doc-preflight.py --root /Users/ducnvh/Documents/gdt-workspace --uc UC-06',
+        ]
+        for cmd in cmds:
+            self.assertFalse(any(glob_match(p, cmd) for p in deny), f"Bị deny chặn nhầm: {cmd!r}")
+            self.assertTrue(any(glob_match(p, cmd) for p in allow), f"Chưa có trong permissions.allow: {cmd!r}")
+
+
+def _simulate_claude_rule_normalize(pattern: str) -> str:
+    """Giả lập cách Claude Code rút gọn khoảng trắng và bỏ ngoặc quanh tên lệnh khi đánh giá subcommand."""
+    norm = re.sub(r"\s+", " ", pattern).strip()
+    norm = re.sub(r'^["\']git["\']\s+', "git ", norm, flags=re.I)
+    return norm
+
+
+class TestClaudeNormalizationSafety(unittest.TestCase):
+    """Khóa lỗi suy biến rule deny của Claude Code khiến `git status` / `git -C ... log` bị chặn hàng loạt."""
+
+    @classmethod
+    def setUpClass(cls):
+        data = json.loads((ROOT / ".claude" / "settings.json").read_text(encoding="utf-8"))
+        perms = data["permissions"]
+        cls.bash_allow = [re.match(r"^Bash\((.*)\)$", r, re.S).group(1) for r in perms["allow"] if r.startswith("Bash(")]
+        cls.bash_deny = [re.match(r"^Bash\((.*)\)$", r, re.S).group(1) for r in perms["deny"] if r.startswith("Bash(")]
+        cls.bash_ask = [re.match(r"^Bash\((.*)\)$", r, re.S).group(1) for r in perms.get("ask", []) if r.startswith("Bash(")]
+        cls.ps_deny = [re.match(r"^PowerShell\((.*)\)$", r, re.S).group(1) for r in perms["deny"] if r.startswith("PowerShell(")]
+
+    def test_no_deny_rule_collapses_into_blanket_git(self):
+        for tool_name, patterns in (("Bash", self.bash_deny), ("PowerShell", self.ps_deny)):
+            for raw in patterns:
+                norm = _simulate_claude_rule_normalize(raw).lower()
+                self.assertNotIn(norm, {"git *", "*git *", "git.exe *", "*git.exe *"}, f"{tool_name} suy biến từ {raw!r}")
+                self.assertNotIn("git\t", raw.lower(), f"{tool_name} vẫn còn git\\t: {raw!r}")
+                self.assertNotIn("git  ", raw.lower(), f"{tool_name} vẫn còn git  : {raw!r}")
+
+    def test_accounting_and_gdt_workspace_git_reads_survive_normalization(self):
+        norm_denies = [_simulate_claude_rule_normalize(p) for p in self.bash_deny]
+        read_cmds = [
+            "git status",
+            "git status -sb",
+            "git -C /Users/ducnvh/Documents/gdt-workspace/business/accounting-service status -sb",
+            "git -C /Users/ducnvh/Documents/gdt-workspace/business/accounting-service log develop -n 3 --oneline",
+            "git -C /Users/ducnvh/Documents/gdt-workspace/business/accounting-service branch --show-current",
+            "git -C /Users/ducnvh/Documents/gdt-workspace/business/accounting-service worktree list",
+            "cd /Users/ducnvh/Documents/worktrees/accounting-service-uc04-dev && git status --short",
+            "cd /Users/ducnvh/Documents/gdt-workspace/business/accounting-service && git branch --show-current",
+            "git remote -v",
+            "git -C /Users/ducnvh/Documents/gdt-workspace/business/accounting-service remote -v",
+            "cd /Users/ducnvh/Documents/gdt-workspace/business/accounting-service && git remote -v",
+            "cd /Users/ducnvh/Documents/gdt-workspace/business/accounting-service && git ls-tree HEAD",
+            "cd /Users/ducnvh/Documents/gdt-workspace/business/accounting-service && git cat-file -t HEAD",
+        ]
+        for cmd in read_cmds:
+            self.assertFalse(any(glob_match(p, cmd) for p in norm_denies), f"Bị deny chặn nhầm sau normalize: {cmd!r}")
+            self.assertTrue(any(glob_match(p, cmd) for p in self.bash_allow), f"Chưa có trong permissions.allow: {cmd!r}")
+
+    def test_user_requested_git_writes_remain_ask_not_deny_after_normalization(self):
+        norm_denies = [_simulate_claude_rule_normalize(p) for p in self.bash_deny]
+        norm_asks = [_simulate_claude_rule_normalize(p) for p in self.bash_ask]
+        for cmd in GIT_WRITE_NEEDS_APPROVAL:
+            self.assertEqual(claude_decision(norm_denies, norm_asks, cmd), "ask", f"Bị ép sai sau normalize: {cmd!r}")
+
+
+_HOOK_SPEC = importlib.util.spec_from_file_location("security_hook", str(ROOT / "scripts" / "security-hook.py"))
+security_hook = importlib.util.module_from_spec(_HOOK_SPEC)
+_HOOK_SPEC.loader.exec_module(security_hook)
+
+
+class TestSecurityHookEvasionAndSafety(unittest.TestCase):
+    """Kiểm tra scripts/security-hook.py chặn mẹo lách luật git & AST grep, không chặn nhầm lệnh hợp lệ."""
+
+    def test_blocks_git_evasions_and_dangerous_writes(self):
+        evasions = [
+            "git\tpush origin main",
+            "git  push origin main",
+            "git\tcommit -m x",
+            "git  commit -m x",
+            "git -C /tmp/repo  commit -m x",
+            "command git commit -m x",
+            "command git reset --hard",
+            "/usr/bin/git clean -fd",
+            '"git" push -f origin feature/x',
+            "'git' reset --hard",
+            "& git commit -m x",
+            "g`it push origin main",
+            "gi`t commit -m x",
+            "echo $(git commit -m x)",
+            "echo $(git reset --hard)",
+            "echo `git push origin develop`",
+            "git push --force origin feature/1",
+            "git -c alias.p=push p origin main",
+            "grep -rn TODO src",
+            "git -C /repo grep TODO",
+            "find . -name '*.java'",
+            "python3 -c 'print(1)'",
+            "cd /tmp && python -c \"import pathlib\"",
+            "PYTHONPATH=. python3 -c 'print(1)'",
+            "/usr/bin/python3 -Bc 'print(1)'",
+            "python3 - <<'EOF'\nprint(1)\nEOF",
+            "python3 <<'EOF'\nprint(1)\nEOF",
+        ]
+        for cmd in evasions:
+            blocked, reason = security_hook.check_command_violation(cmd)
+            self.assertTrue(blocked, f"Hook không chặn được: {cmd!r} ({reason})")
+
+    def test_allows_legitimate_reads_writes_and_safe_search(self):
+        allowed = [
+            "git status",
+            "git  status",
+            "git -C /Users/ducnvh/Documents/gdt-workspace/business/accounting-service status -sb",
+            "git -C /Users/ducnvh/Documents/gdt-workspace/business/accounting-service log develop -n 3 --oneline",
+            "git -C /Users/ducnvh/Documents/gdt-workspace/business/accounting-service branch --show-current",
+            "git -C /Users/ducnvh/Documents/gdt-workspace/business/accounting-service worktree list",
+            "cd /Users/ducnvh/Documents/worktrees/accounting-service-uc04-dev && git status --short",
+            "git remote -v",
+            'git log --oneline -i --grep="hoan tac"',
+            "git checkout -b feature/UC-04-test",
+            'git commit -m "feat(uc04): handle  two spaces and | grep text"',
+            "git push origin feature/12-token-check",
+            "echo $(git -C /repo rev-parse --short HEAD)",
+            "echo $(git -C /repo branch --show-current)",
+            'python3 ~/Documents/agent-base/scripts/safe-search.py -q "a | grep b" -d doc',
+            "python3 scripts/worktree-manager.py sync",
+            "python3 -m unittest discover -s tests",
+            "python3 scripts/knowledge.py query -q \"-c flag\"",
+        ]
+        for cmd in allowed:
+            blocked, reason = security_hook.check_command_violation(cmd)
+            self.assertFalse(blocked, f"Hook chặn nhầm lệnh hợp lệ: {cmd!r} -> {reason}")
+
+    def test_hook_cli_exits_2_on_evasion_and_0_on_valid_git(self):
+        bad_payload = json.dumps({"tool_name": "Bash", "tool_input": {"command": "git  commit -m x"}})
+        r_bad = subprocess.run([sys.executable, "scripts/security-hook.py"], cwd=ROOT, input=bad_payload, capture_output=True, text=True)
+        self.assertEqual(r_bad.returncode, 2)
+
+        ok_payload = json.dumps({
+            "tool_name": "Bash",
+            "tool_input": {"command": "git -C /Users/ducnvh/Documents/gdt-workspace/business/accounting-service log develop -n 3 --oneline"},
+        })
+        r_ok = subprocess.run([sys.executable, "scripts/security-hook.py"], cwd=ROOT, input=ok_payload, capture_output=True, text=True)
+        self.assertEqual(r_ok.returncode, 0)
+
+    def test_scope_lock_blocks_code_in_plan_mode_and_out_of_scope_in_implement_mode(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            ws = Path(tmp)
+            scope_file = ws / ".agentbase-scope.json"
+            (ws / "src" / "main").mkdir(parents=True)
+            (ws / "doc" / "features").mkdir(parents=True)
+
+            # 1. Mode plan: cho phép sửa doc/*.md, chặn sửa code Java
+            scope_file.write_text(json.dumps({"mode": "plan"}), encoding="utf-8")
+            blocked_code, msg = security_hook.check_file_edit_violation("src/main/Foo.java", cwd=str(ws))
+            self.assertTrue(blocked_code, msg)
+            self.assertIn("CHALLENGE / PLAN GATE", msg)
+
+            allowed_doc, _ = security_hook.check_file_edit_violation("doc/features/spec.md", cwd=str(ws))
+            self.assertFalse(allowed_doc)
+
+            # Không được sửa trực tiếp chính file .agentbase-scope.json qua Edit
+            blocked_self, _ = security_hook.check_file_edit_violation(".agentbase-scope.json", cwd=str(ws))
+            self.assertTrue(blocked_self)
+
+            # 2. Mode implement: chỉ cho sửa file trong scope_edit, chặn file ngoài scope hoặc nằm trong scope_deny
+            scope_file.write_text(json.dumps({
+                "mode": "implement",
+                "scope_edit": ["src/main/**"],
+                "scope_deny": ["src/main/Secret.java"],
+            }), encoding="utf-8")
+            self.assertFalse(security_hook.check_file_edit_violation("src/main/Service.java", cwd=str(ws))[0])
+            self.assertTrue(security_hook.check_file_edit_violation("src/main/Secret.java", cwd=str(ws))[0])
+            self.assertTrue(security_hook.check_file_edit_violation("pom.xml", cwd=str(ws))[0])
+
+            # 3. CLI stdin Edit payload bị chặn exit 2 khi vi phạm scope
+            edit_payload = json.dumps({
+                "tool_name": "Edit",
+                "cwd": str(ws),
+                "tool_input": {"file_path": str(ws / "pom.xml")},
+            })
+            res = subprocess.run([sys.executable, "scripts/security-hook.py"], cwd=ROOT, input=edit_payload, capture_output=True, text=True)
+            self.assertEqual(res.returncode, 2)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,124 @@
+{
+  "type": "swimlane",
+  "title": "Mẫu sơ đồ hoạt động nhiều làn bơi",
+  "note": "Mỗi làn là một tác nhân. Một điểm bắt đầu, một điểm kết thúc. Đỏ là nhánh lỗi.",
+  "out": "mau-swimlane.drawio",
+  "png": "mau-swimlane.png",
+  "lanes": [
+    {
+      "id": "u",
+      "name": "Người dùng",
+      "color": "gray"
+    },
+    {
+      "id": "fe",
+      "name": "Giao diện",
+      "color": "blue"
+    },
+    {
+      "id": "be",
+      "name": "Backend",
+      "color": "purple"
+    },
+    {
+      "id": "db",
+      "name": "PostgreSQL",
+      "color": "green"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "s",
+      "kind": "start",
+      "lane": "u",
+      "row": 0
+    },
+    {
+      "id": "n1",
+      "kind": "proc",
+      "lane": "u",
+      "row": 1,
+      "label": "Bấm [Áp dụng]"
+    },
+    {
+      "id": "d1",
+      "kind": "dec",
+      "lane": "fe",
+      "row": 2,
+      "label": "Giá trị nhập hợp lệ?"
+    },
+    {
+      "id": "e1",
+      "kind": "err",
+      "lane": "fe",
+      "row": 3,
+      "label": "Báo lỗi tại ô nhập"
+    },
+    {
+      "id": "n2",
+      "kind": "proc",
+      "lane": "be",
+      "row": 3,
+      "label": "Kiểm danh mục, dựng câu lọc"
+    },
+    {
+      "id": "n3",
+      "kind": "proc",
+      "lane": "db",
+      "row": 4,
+      "label": "SELECT id ... (lấy trang mã đơn)"
+    },
+    {
+      "id": "n4",
+      "kind": "proc",
+      "lane": "fe",
+      "row": 5,
+      "label": "Hiện bảng kết quả"
+    },
+    {
+      "id": "end",
+      "kind": "end",
+      "lane": "u",
+      "row": 6
+    }
+  ],
+  "edges": [
+    {
+      "from": "s",
+      "to": "n1"
+    },
+    {
+      "from": "n1",
+      "to": "d1"
+    },
+    {
+      "from": "d1",
+      "to": "e1",
+      "label": "Không",
+      "color": "red"
+    },
+    {
+      "from": "d1",
+      "to": "n2",
+      "label": "Có",
+      "color": "green"
+    },
+    {
+      "from": "n2",
+      "to": "n3"
+    },
+    {
+      "from": "n3",
+      "to": "n4"
+    },
+    {
+      "from": "n4",
+      "to": "end"
+    },
+    {
+      "from": "e1",
+      "to": "end",
+      "color": "red"
+    }
+  ]
+}

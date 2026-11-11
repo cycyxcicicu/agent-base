@@ -1,32 +1,81 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "diagramType": "activity",
-  "title": "Chuẩn sơ đồ hoạt động (Activity Diagram Specification)",
-  "rules": {
-    "singleStart": true,
-    "singleEnd": true,
-    "errorBranchesInRed": true,
-    "swimlanesRequired": true
-  },
-  "swimlanes": [
-    {"id": "user", "name": "Người Dùng (Frontend)", "order": 1},
-    {"id": "system", "name": "Hệ Thống (Backend API / Services)", "order": 2},
-    {"id": "database", "name": "Cơ Sở Dữ Liệu (PostgreSQL / Redis)", "order": 3}
+  "type": "class",
+  "title": "Mẫu sơ đồ lớp",
+  "note": "Tam giác rỗng: Extends, implements. Thoi rỗng: chứa. Mũi tên đặc: dùng.",
+  "out": "mau-lop.drawio",
+  "png": "mau-lop.png",
+  "classes": [
+    {
+      "id": "search",
+      "col": 0,
+      "name": "Search",
+      "sub": "tìm kiếm",
+      "stereo": "interface",
+      "methods": [
+        "+ searchByTitle(string title)",
+        "+ searchByAuthor(string author)"
+      ]
+    },
+    {
+      "id": "user",
+      "col": 0,
+      "name": "User",
+      "sub": "người dùng",
+      "stereo": "Abstract",
+      "abstract": true,
+      "attrs": [
+        "- id : string",
+        "- password : string"
+      ],
+      "methods": [
+        "+ resetPassword( ) : bool"
+      ]
+    },
+    {
+      "id": "catalog",
+      "col": 1,
+      "name": "Catalog",
+      "sub": "danh mục sách",
+      "attrs": [
+        "- bookTitles",
+        "- bookAuthors"
+      ],
+      "methods": [
+        "+ searchByTitle(string query)",
+        "+ searchByAuthor(string query)"
+      ]
+    },
+    {
+      "id": "member",
+      "col": 1,
+      "name": "Member",
+      "sub": "độc giả",
+      "attrs": [
+        "- dateOfMembership : date"
+      ],
+      "methods": [
+        "+ checkoutBookItem(BookItem bookItem) : bool"
+      ]
+    }
   ],
-  "nodes": [
-    {"id": "start", "type": "initial", "swimlane": "user"},
-    {"id": "submit", "type": "action", "label": "Gửi thao tác", "swimlane": "user"},
-    {"id": "validate", "type": "decision", "label": "Kiểm tra hợp lệ?", "swimlane": "system"},
-    {"id": "persist", "type": "action", "label": "Lưu dữ liệu", "swimlane": "database"},
-    {"id": "rollback", "type": "action", "label": "Rollback & Báo lỗi", "swimlane": "system", "isError": true},
-    {"id": "end", "type": "final", "swimlane": "system"}
-  ],
-  "flows": [
-    {"from": "start", "to": "submit"},
-    {"from": "submit", "to": "validate"},
-    {"from": "validate", "to": "persist", "guard": "Hợp lệ"},
-    {"from": "validate", "to": "rollback", "guard": "Không hợp lệ", "color": "#ff0000"},
-    {"from": "persist", "to": "end"},
-    {"from": "rollback", "to": "end", "color": "#ff0000"}
+  "relations": [
+    {
+      "from": "catalog",
+      "to": "search",
+      "kind": "ext",
+      "label": "implements"
+    },
+    {
+      "from": "member",
+      "to": "user",
+      "kind": "ext",
+      "label": "Extends"
+    },
+    {
+      "from": "catalog",
+      "to": "member",
+      "kind": "dep",
+      "label": "dùng"
+    }
   ]
 }

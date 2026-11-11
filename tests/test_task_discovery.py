@@ -145,6 +145,25 @@ Kiểm thử Unit test.
         self.assertTrue(t.has_ui)
         self.assertTrue(t.has_test)
 
+    def test_markdown_table_card_fallback_parsing(self):
+        card = self.root_tasks / "T-UC06.4-demo.md"
+        card.write_text(
+            """# Task Card: T-UC06.4-demo
+
+| Thuộc tính | Giá trị |
+|---|---|
+| **Mã task** | `T-UC-06.4` |
+| **Trạng thái** | `review` (chưa commit) |
+| **Phạm vi sửa đổi (scope_edit)** | `src/main/java/com/gdt/`, `src/main/resources/application.yml` |
+""",
+            encoding="utf-8",
+        )
+        cards = discover_tasks(self.root_tasks)
+        self.assertEqual(len(cards), 1)
+        self.assertEqual(cards[0]["id"], "T-UC-06.4")
+        self.assertEqual(cards[0]["status"], "review")
+        self.assertEqual(cards[0]["scope_edit"], ["src/main/java/com/gdt/", "src/main/resources/application.yml"])
+
 
 if __name__ == "__main__":
     unittest.main()

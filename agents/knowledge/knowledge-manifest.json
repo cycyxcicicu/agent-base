@@ -10,7 +10,7 @@
       "content_ref": "agents/roles/dev.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "6ae8b0a84f07c234a761746e049abcc0ac0cc76db6c13a868f965d4e8648640c",
+      "content_sha256": "ae0313ad815adaaa3245d8ed2005bfc2da114aaf0658fc2132b5332ea4fa266c",
       "provenance": []
     },
     {
@@ -46,7 +46,7 @@
       "content_ref": "agents/roles/ba.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "ace93e32716ef184c4916428b852d6537d969ac80bc7f8b3c9d903839069e801",
+      "content_sha256": "4b7ce4a4245901782d1fa2dd376d9bebd7796c0a7190d2407348dab599c635ae",
       "provenance": []
     },
     {
@@ -58,7 +58,7 @@
       "content_ref": "agents/roles/architect.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "fecaecc2e0bd165144b41fa78aac2b77daedc1cc06bb3d43b892b2fab5c40828",
+      "content_sha256": "fa5997148266b99567f77d75c321bea45e2e1cb8ab35a3dd36c1edf4391980ba",
       "provenance": []
     },
     {
@@ -82,7 +82,7 @@
       "content_ref": "agents/roles/lead.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "b7e6205d541e9fb1b3bab6da31db08205daf49ad86c17ac67f38fc4ffbec2042",
+      "content_sha256": "00cc7d7c6a242fde1628fa8707d3583e2a5cc0c1bd86a9eddd9c85528748fc08",
       "provenance": []
     },
     {
@@ -649,7 +649,7 @@
           "target": "Requirement:test-cases"
         }
       ],
-      "content_sha256": "e183430e80fe5689e517b656475d7367f9e131af62e68363c5743deee1003c1a",
+      "content_sha256": "4397780001eecbbed21b374b9c341e0003d716cd3415993ab45e972da48bd8f9",
       "provenance": [],
       "keywords": "vẽ sơ đồ erd sequence activity use case state checklist diagram"
     },
@@ -814,7 +814,7 @@
           "target": "Requirement:worktree-lifecycle"
         }
       ],
-      "content_sha256": "69788f0505b43c9ee9188509de092ce27442485fa86982be7b5aa523fc40539d",
+      "content_sha256": "c644731abb581047ce7f48fd3bfb64560ac3064256da41760495f8351a682650",
       "provenance": [],
       "keywords": "git commit nhánh branch merge request tag release gitflow message"
     },
@@ -1089,6 +1089,10 @@
         },
         {
           "type": "related_to",
+          "target": "Design:code-review-rules-by-language"
+        },
+        {
+          "type": "related_to",
           "target": "Requirement:atomic-changes"
         },
         {
@@ -1104,9 +1108,39 @@
           "target": "Design:gof-design-patterns-and-solid"
         }
       ],
-      "content_sha256": "31b976acec67f335f848677eeeac4112f378bbbfa6b1903edf8c5da7772bdb83",
+      "content_sha256": "b7f9bba1aa09966c1ecb635ef07cb60843f3704615380ed8dc4ec61c6c6670fa",
       "provenance": [],
       "keywords": "review code checklist soát code reviewer"
+    },
+    {
+      "id": "Design:code-review-rules-by-language",
+      "kind": "Design",
+      "title": "Danh mục 52 bộ quy tắc Review mã nguồn theo ngôn ngữ (Alibaba OCR)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/review-rules/README.md",
+      "owner_role": "reviewer",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:reviewer"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:atomic-changes"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:open-code-review"
+        },
+        {
+          "type": "related_to",
+          "target": "Requirement:pair-review"
+        }
+      ],
+      "content_sha256": "0e402cf439ddb54d739fd242f5c20855dcffb2022e828e6bfb8cc80253ba0b1a",
+      "provenance": [],
+      "keywords": "review rules ocr open-code-review java python typescript go rust c cpp solidity terraform language heuristics quy tac review theo ngon ngu"
     },
     {
       "id": "Design:chuan-sql-va-loi",
@@ -1293,7 +1327,7 @@
       "content_ref": "agents/roles/designer.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "aa44b1baab72dbd915c9f131dcfc244187f35ce705f968979047969eaf77f5b0",
+      "content_sha256": "d28921303e276ae7d1b23a5be40b08bdc5a44fa3aa592f92f38cd2a29d5d6cd3",
       "provenance": []
     },
     {
@@ -1526,7 +1560,7 @@
           "target": "Requirement:test-cases"
         }
       ],
-      "content_sha256": "cbc2559fed8aecd9faa3d867035d9a425c34246cca4df486570904f4210c15be",
+      "content_sha256": "c53016cd2746a7fff92475ed629d122dba1e487f4b59a2800df7fe045901e34e",
       "provenance": [],
       "keywords": "mô tả sơ đồ hoạt động bước nhánh activity diagram description đọc sơ đồ"
     },
@@ -1589,7 +1623,7 @@
           "target": "Requirement:test-cases"
         }
       ],
-      "content_sha256": "964be95a74aafc58c3bedefe63933ff5dccc036484797fa54e3090349e5676a6",
+      "content_sha256": "10020b6b26a59713925e11d169417f4dfb780852f95a921305528c914ce672b3",
       "provenance": []
     },
     {
@@ -1622,7 +1656,7 @@
           "target": "Skill:archify"
         }
       ],
-      "content_sha256": "9809db79dff772f187287dd73cfcb00880f7665445b246aa65742adb7839872a",
+      "content_sha256": "da18c725a64df493d0eca20d6b72dc4149240cc2e626df343933222ae77713b5",
       "provenance": [],
       "keywords": "vẽ xong xem lại sửa vòng lặp không xem được ảnh chưa kiểm tra bằng mắt sửa tại chỗ drawio người dùng chỉnh tay hàng đợi consumer làn queue thiết kế chưa code webhook tên api đối tác chưa kiểm chứng câu hỏi chờ xác nhận link tab draw.io tải lên drive google doc bàn giao tài liệu sơ đồ"
     },
@@ -2533,7 +2567,7 @@
           "target": "Rule:task-loop"
         }
       ],
-      "content_sha256": "80635c39456790fc0f5960b1410029e8da4aa09debc05c225abd9eaa2c7200b0",
+      "content_sha256": "dc645802aca0708878d079bda03db002d531d170aa506e0fdcaf2e34ad22b135",
       "provenance": []
     },
     {
@@ -2730,7 +2764,7 @@
           "target": "Requirement:change-request"
         }
       ],
-      "content_sha256": "a288b37030a8ac05559827b220c0afbf572ac00726c08d8db29beca7e32fd617",
+      "content_sha256": "0d234715840af17525fb856bc17dec722727b32b05e08368c19cedd99f87ad31",
       "provenance": []
     },
     {
@@ -2812,7 +2846,7 @@
           "target": "Design:md-to-office-fidelity"
         }
       ],
-      "content_sha256": "26a32b25dc6cd66cbc70233fabb40b7dd1d8b6cf1c8bacc609e6149f72ad9831",
+      "content_sha256": "b162fb0f3a5a123d95a26349687d5025ab372d6a0df813262b7743dbe7e6ec3e",
       "provenance": [],
       "keywords": "viết srs quy trình đặc tả từ đầu đến cuối checklist kiểm srs-check sơ đồ tối thiểu thư mục srs"
     },
@@ -2856,6 +2890,27 @@
         }
       ],
       "content_sha256": "e284ff90332c1322625ad5ce227b7eba5b39fabf76cff8719fb98fe5c5918aa5",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:task-execution-cycle",
+      "kind": "Requirement",
+      "title": "Chu trình Thực thi Task, Đóng gói Hồ sơ & Tự Phản tư (Mục 18 & 20)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/task-execution-cycle.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "d6b2a5ba225ca51b9b52ba5a76c3c8d33dc9705d9f1091915a8a7798f9c25969",
       "provenance": []
     },
     {
@@ -2965,6 +3020,258 @@
         }
       ],
       "content_sha256": "5a9a9a5b45c2ca633adbae5c244decf2444c6e99586e578393c6fbcfdc1dd304",
+      "provenance": []
+    },
+    {
+      "id": "Design:ma-tran-loai-so-do",
+      "kind": "Design",
+      "title": "Ma trận các loại sơ đồ: câu hỏi, công cụ, JSON, mẫu, mức ưu tiên",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/ma-tran-loai-so-do.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "66dfbdfee91d79fe7a9b8cc7e549764e531912ab88fcd0da9ea354a21397b7db",
+      "provenance": []
+    },
+    {
+      "id": "Design:00-quy-trinh-mot-uc",
+      "kind": "Design",
+      "title": "Từ phân tích tới bộ sơ đồ của MỘT UC (đọc trước khi vẽ bất kỳ sơ đồ nào)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/mau-phan-tich/00-quy-trinh-mot-uc.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "8d336867d6a75671b590518748aff959fe4d5b97c0b409e87ec82300aeeb8a73",
+      "provenance": []
+    },
+    {
+      "id": "Design:activity",
+      "kind": "Design",
+      "title": "Mẫu phân tích: sơ đồ hoạt động (`type: activity`)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/mau-phan-tich/activity.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "0177c239fcab48a7593a88db633bcc44d7f8b8f5c82131facab70816d5c86a00",
+      "provenance": []
+    },
+    {
+      "id": "Design:class",
+      "kind": "Design",
+      "title": "Mẫu phân tích: sơ đồ lớp (`type: class`)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/mau-phan-tich/class.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "fed085fc206bd070af66a0c61fb1e43cbe82a4b2c11386d052bc23a881acfd0d",
+      "provenance": []
+    },
+    {
+      "id": "Design:component",
+      "kind": "Design",
+      "title": "Mẫu phân tích: sơ đồ thành phần (`type: component`)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/mau-phan-tich/component.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "973f71c3c0ae32195f4c474f9a8af4ee6ac0229b6e978eec5f92582a7b2546f6",
+      "provenance": []
+    },
+    {
+      "id": "Design:deployment",
+      "kind": "Design",
+      "title": "Mẫu phân tích: sơ đồ triển khai (`type: deployment`)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/mau-phan-tich/deployment.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "641ff28bb47e20717822b94fb61f4488f23a88ffb7fa3a0b968167b3b39f14dd",
+      "provenance": []
+    },
+    {
+      "id": "Design:erd",
+      "kind": "Design",
+      "title": "Mẫu phân tích: sơ đồ bảng dữ liệu ERD (`type: erd`)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/mau-phan-tich/erd.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "775500263317f9f39bd599b62b2b502b71450f0e2334f44620e67eec9284533c",
+      "provenance": []
+    },
+    {
+      "id": "Design:package",
+      "kind": "Design",
+      "title": "Mẫu phân tích: sơ đồ gói (`type: package`)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/mau-phan-tich/package.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "d9c8062927d1656a5c908b41c5d8150c5673cc4952be1784533f56863069fbd9",
+      "provenance": []
+    },
+    {
+      "id": "Design:sequence",
+      "kind": "Design",
+      "title": "Mẫu phân tích: sơ đồ tuần tự (`type: sequence`)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/mau-phan-tich/sequence.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "873aa1f229af2495799a00745819db3c804f2d34d80f1302f9c5812b7a0c6e05",
+      "provenance": []
+    },
+    {
+      "id": "Design:state-machine",
+      "kind": "Design",
+      "title": "Mẫu phân tích: sơ đồ trạng thái (`type: statemachine`)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/mau-phan-tich/state-machine.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "3928f0eea1467c2c615a749c39f99716f5291c77ce97d11ddfd4f11e2a5a51eb",
+      "provenance": []
+    },
+    {
+      "id": "Design:use-case",
+      "kind": "Design",
+      "title": "Mẫu phân tích: sơ đồ use case (`type: usecase`)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/mau-phan-tich/use-case.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "be7e10f45a20a21fdc0ca6458d542dae259eebf7b9b86e0a75c6b8960d696256",
+      "provenance": []
+    },
+    {
+      "id": "Design:quy-trinh-ve-so-do-bang-json",
+      "kind": "Design",
+      "title": "Quy trình vẽ sơ đồ bằng JSON (bắt buộc cho mọi agent, mọi loại sơ đồ)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/diagrams/quy-trinh-ve-so-do-bang-json.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "b987c42e263583ab5e2e48d03c03189928783b35e7bb355022e9d6f8c2ac424d",
       "provenance": []
     },
     {
@@ -3358,7 +3665,7 @@
           "target": "Design:bug-handling-pipeline"
         }
       ],
-      "content_sha256": "032eea8937e99d8b5faf7c5a873bd8bb6a6e551ec170aa873bd2043a12379542",
+      "content_sha256": "2c6c714571aaf9899a8ffffe65e1073f73c8f37d93b854c219879d0d33bc9883",
       "provenance": []
     },
     {
@@ -3512,7 +3819,7 @@
     {
       "id": "Design:uml-diagrams-mastery",
       "kind": "Design",
-      "title": "Cẩm Nang Toàn Diện 22+ Loại Sơ Đồ UML 2.5 & Chuẩn Mực Vẽ Cho AI Agent",
+      "title": "Mục tra cứu sơ đồ: khái niệm, cách xây dựng, ảnh mẫu, công cụ",
       "state": "draft",
       "version": 1,
       "content_ref": "agents/knowledge/srs/uml-diagrams-mastery.md",
@@ -3527,7 +3834,7 @@
           "target": "Design:chuan-ve-so-do"
         }
       ],
-      "content_sha256": "99e55c0d6171c7d550ff312706ec232797a1b97d74cb37c43d9325e9ce5e9295",
+      "content_sha256": "abd01cc4adfc33e8b68a882ca4dcc9182af39d20708ee04778e943af43dc3d92",
       "provenance": []
     },
     {
@@ -4746,7 +5053,7 @@
           "target": "Skill:skills-registry"
         }
       ],
-      "content_sha256": "8f087ec4ea187b5fa45458a2e965e68f8192dfda63e8b690144fbb56d3deca8f",
+      "content_sha256": "32dd8db02e8a6e5cb23658e4d4dd532d23ef15f7bba897bc86e0e1f63b859fd0",
       "provenance": []
     },
     {

@@ -158,6 +158,27 @@ class TestChangedAgainst(HardCheckCase):
         code, out = self.run_check("--changed-against", "no-such-ref")
         self.assertEqual(code, 2, out)
 
+    def test_diff_lines_ignores_untouched_legacy_lines_in_modified_file(self):
+        self.git("init", "-q", "-b", "develop")
+        self.git("config", "user.email", "t@example.com")
+        self.git("config", "user.name", "T")
+        self.rules()
+        self.write("src/mixed.tsx", "useEffect(() => {}, []);\nexport const clean = 1;\n")
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base")
+
+        # Sửa dòng khác trong chính src/mixed.tsx (không sửa dòng useEffect cũ) -> --diff-lines phải PASS
+        self.git("checkout", "-q", "-b", "feature/fix")
+        self.write("src/mixed.tsx", "useEffect(() => {}, []);\nexport const clean = 2;\n")
+        code, out = self.run_check("--changed-against", "develop", "--diff-lines")
+        self.assertEqual(code, 0, out)
+
+        # Thêm dòng useEffect mới chưa commit -> --diff-lines phải FAIL ngay dòng mới
+        self.write("src/mixed.tsx", "useEffect(() => {}, []);\nexport const clean = 2;\nuseEffect(() => {}, [clean]);\n")
+        code2, out2 = self.run_check("--changed-against", "develop", "--diff-lines")
+        self.assertEqual(code2, 1, out2)
+        self.assertIn("src/mixed.tsx:3", out2)
+
 
 if __name__ == "__main__":
     unittest.main()

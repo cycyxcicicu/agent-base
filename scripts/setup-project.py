@@ -413,6 +413,19 @@ Thư mục này được quản trị bởi agent-base. Mọi quy tắc cốt l�
                             shutil.copy2(child, dst_child)
                         print(f"✅ 5. Sao chép thành phần con: {adapter}/{child.name}")
 
+            # Nếu .claude/settings.json là file thực tế, đảm bảo permissions được đồng bộ đầy đủ từ Hub
+            if adapter == ".claude":
+                hub_settings_file = HUB_ROOT / ".claude" / "settings.json"
+                proj_settings_file = dst_adapter / "settings.json"
+                if hub_settings_file.is_file() and proj_settings_file.is_file() and not proj_settings_file.is_symlink():
+                    try:
+                        hub_data = json.loads(hub_settings_file.read_text(encoding="utf-8"))
+                        proj_data = json.loads(proj_settings_file.read_text(encoding="utf-8"))
+                        proj_data["permissions"] = hub_data.get("permissions", {})
+                        proj_settings_file.write_text(json.dumps(proj_data, indent=2, ensure_ascii=False), encoding="utf-8")
+                    except Exception:
+                        pass
+
     # 5.1. Đồng bộ cầu nối kỹ năng (.claude/skills, .qoder/skills) trỏ về Hub chuẩn
     link_skills_script = HUB_ROOT / "scripts" / "link-skills.py"
     if link_skills_script.is_file():

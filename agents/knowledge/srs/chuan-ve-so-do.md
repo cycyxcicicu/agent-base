@@ -34,7 +34,7 @@ Tối thiểu cho một chức năng: luồng (use-case hoặc activity), sequen
 5. **Tên thống nhất** với văn bản: một thuật ngữ một tên.
 6. **Mũi tên có nhãn** là hành động hoặc điều kiện. Mũi tên trả về vẽ nét đứt (sequence).
 7. **Mã trạng thái đơn đúng `doc/thiet-ke/05-process-status`.**
-8. Không tô màu để truyền nghĩa duy nhất; nhánh lỗi dùng màu đỏ kèm nhãn chữ.
+8. Không tô màu để truyền nghĩa duy nhất. Với `activity`, ERD, tuần tự: đen trắng, nhánh lỗi viền đậm kèm nhãn chữ (không tô đỏ). Với `flow`, `swimlane` cũ: nhánh lỗi màu đỏ kèm nhãn chữ.
 9. **Giữ nguyên thuật ngữ tiếng Anh chuẩn:** Dùng *Swimlane Diagram* (hoặc *Swimlane*), tuyệt đối không dịch thành "bơi làn". Mọi thành phần kỹ thuật (Controller, Service, Worker, Consumer, Producer, Queue, Payload, Webhook, State Machine...) giữ nguyên tiếng Anh chuẩn công nghệ phần mềm, không dịch ép sang tiếng Việt khi gây ngô nghê hoặc tối nghĩa.
 
 ## 3. Quy tắc theo loại
@@ -55,7 +55,7 @@ Tối thiểu cho một chức năng: luồng (use-case hoặc activity), sequen
 - Có trạng thái kết thúc và chỉ rõ chuyển không được phép (nếu quan trọng).
 
 ### Activity và flowchart
-- **Một điểm bắt đầu và đúng MỘT điểm kết thúc** (người dùng chốt 19/10/2026, theo sơ đồ mẫu). Mọi nhánh kết thúc (lỗi, từ chối, hoàn tất) dồn về chấm kết thúc duy nhất ở cuối sơ đồ; không vẽ mỗi nhánh một chấm. Đường dồn đi theo lề của sơ đồ hoặc theo khe giữa hai hàng, không chui qua nút nào.
+- **Lưu đồ một làn (`flow`) và hoạt động theo vai (`swimlane`): một điểm bắt đầu và đúng MỘT điểm kết thúc** (người dùng chốt 19/10/2026). **Sơ đồ hoạt động chính của chức năng dùng `type: activity` (làn theo lớp, nhiều điểm bắt đầu và kết thúc, đen trắng), chốt 09/11/2026 theo mẫu anhbv**; luật một điểm kết thúc KHÔNG áp cho loại này. Chi tiết: `agents/knowledge/diagrams/quy-trinh-ve-so-do-bang-json.md` mục 4.6 đến 4.8. Mọi nhánh kết thúc (lỗi, từ chối, hoàn tất) dồn về chấm kết thúc duy nhất ở cuối sơ đồ; không vẽ mỗi nhánh một chấm. Đường dồn đi theo lề của sơ đồ hoặc theo khe giữa hai hàng, không chui qua nút nào.
 - Nhánh lỗi, từ chối, thất bại **bắt buộc dùng đường kẻ màu đỏ (`#EF4444`)** kèm nhãn điều kiện rõ ràng `[Lỗi...]`.
 - Mỗi hình thoi có từ hai nhánh, nhãn đầy đủ.
 

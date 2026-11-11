@@ -31,7 +31,7 @@ Không phải dự án nào cũng cần WBS, RTM 23 cột hay bộ hồ sơ Exce
 
 3. **Nguyên tắc kỹ thuật BẮT BUỘC cho MỌI DỰ ÁN (Bất kể chế độ nào):**
    - **Tư duy BA thực chiến (Code Reality & Edge Cases):** Trước khi viết đặc tả, bắt buộc phải đọc code hiện trạng. Không được chỉ viết Happy Path, bắt buộc phải suy diễn các ca biên thực tế (như ca chia đơn khi nhân viên nghỉ, thu hồi, concurrency locking, audit trail).
-   - **Quy chuẩn sơ đồ:** Hoạt động (Activity) bơi làn phải có **ĐÚNG 1 Start — ĐÚNG 1 End, nhánh lỗi màu đỏ**. Mockup phải đánh số tròn `①..⑦` trỏ xuống danh sách API.
+   - **Quy chuẩn sơ đồ:** Hoạt động (Activity) vẽ bằng `type: activity` của `ve-so-do.py`: **làn theo lớp, nhiều điểm bắt đầu và kết thúc được phép, đen trắng, nhánh lỗi viền đậm kèm nhãn** (chuẩn 09/11/2026; `flow` và `swimlane` cũ vẫn một End). Mockup phải đánh số tròn `①..⑦` trỏ xuống danh sách API.
    - **Phản biện trung thực (Anti-Flattery):** Không vuốt đuôi khi người dùng đưa ra phương án rủi ro; đưa 3 lựa chọn kèm khuyến nghị và biện pháp phòng ngừa rủi ro.
    - **Nghiệm thu bằng File (File-based GATE):** Duyệt qua file task/RTM, không duyệt miệng qua chat.
 

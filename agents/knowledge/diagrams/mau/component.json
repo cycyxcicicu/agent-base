@@ -1,0 +1,57 @@
+{
+  "type": "component",
+  "title": "Mẫu sơ đồ thành phần (ví dụ minh họa, không phải dữ liệu thật)",
+  "note": "Chấm tròn là giao diện cung cấp; mũi tên nét đứt «use» là thành phần cần giao diện đó.",
+  "out": "mau-component.drawio",
+  "png": "mau-component.png",
+  "components": [
+    {
+      "id": "web",
+      "label": "Giao diện web",
+      "col": 0,
+      "row": 0
+    },
+    {
+      "id": "ord",
+      "label": "Dịch vụ đơn hàng",
+      "col": 1,
+      "row": 0,
+      "provides": [
+        "IOrder"
+      ]
+    },
+    {
+      "id": "pay",
+      "label": "Cổng thanh toán",
+      "col": 2,
+      "row": 0,
+      "provides": [
+        "IPay"
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "label": "Hệ thống bán hàng",
+      "members": [
+        "web",
+        "ord"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "web",
+      "to": "ord",
+      "kind": "uses",
+      "interface": "IOrder"
+    },
+    {
+      "from": "ord",
+      "to": "pay",
+      "kind": "uses",
+      "interface": "IPay",
+      "label": "HTTPS"
+    }
+  ]
+}

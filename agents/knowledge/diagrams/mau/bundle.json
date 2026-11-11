@@ -1,0 +1,23 @@
+{
+  "type": "bundle",
+  "title": "Gộp nhiều sơ đồ thành các tab của MỘT file .drawio",
+  "out": "UC-XX.drawio",
+  "pages": [
+    {
+      "name": "ERD Database Schema",
+      "spec": "UC-XX-erd.spec.json"
+    },
+    {
+      "name": "Class Diagram",
+      "spec": "UC-XX-class.spec.json"
+    },
+    {
+      "name": "Sequence Diagram",
+      "spec": "UC-XX-sequence.spec.json"
+    },
+    {
+      "name": "Activity Diagram",
+      "spec": "UC-XX-activity.spec.json"
+    }
+  ]
+}

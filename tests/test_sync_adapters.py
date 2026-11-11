@@ -198,6 +198,66 @@ class TestQoderAdapters(unittest.TestCase):
         self.assertIn("Hướng dẫn riêng cho Gemini Code Assist", content)
         self.assertIn("agents/roles/", content)
 
+    def test_sync_global_claude_permissions_preserves_env_hooks_and_dirs(self):
+        import json
+        with tempfile.TemporaryDirectory() as tmp:
+            fake_claude_dir = Path(tmp) / ".claude"
+            fake_claude_dir.mkdir(parents=True)
+            target = fake_claude_dir / "settings.json"
+            target.write_text(json.dumps({
+                "env": {"TEST_KEY": "preserve-me"},
+                "hooks": {"PreToolUse": [{"matcher": "Bash"}]},
+                "theme": "dark",
+                "permissions": {
+                    "additionalDirectories": [tmp],
+                    "deny": ["Bash(git  *)"],
+                },
+            }), encoding="utf-8")
+            hub_settings = {
+                "permissions": {
+                    "additionalDirectories": [str(ROOT)],
+                    "allow": ["Bash(git status*)"],
+                    "deny": ["Bash(git reset*)"],
+                    "ask": ["Bash(git commit*)"],
+                }
+            }
+            with redirect_stdout(io.StringIO()):
+                backup = sync_adapters.sync_global_claude_permissions(hub_settings, target_path=target)
+            self.assertIsNotNone(backup)
+            self.assertTrue(backup.is_file())
+            updated = json.loads(target.read_text(encoding="utf-8"))
+            self.assertEqual(updated["env"], {"TEST_KEY": "preserve-me"})
+            self.assertEqual(updated["hooks"], {"PreToolUse": [{"matcher": "Bash"}]})
+            self.assertEqual(updated["theme"], "dark")
+            self.assertEqual(updated["permissions"]["allow"], ["Bash(git status*)"])
+            self.assertEqual(updated["permissions"]["deny"], ["Bash(git reset*)"])
+            self.assertEqual(updated["permissions"]["ask"], ["Bash(git commit*)"])
+            self.assertIn(str(Path(tmp).resolve()), updated["permissions"]["additionalDirectories"])
+            self.assertIn(str(ROOT.resolve()), updated["permissions"]["additionalDirectories"])
+
+    def test_load_registered_project_dirs_merges_active_projects_into_global_claude(self):
+        import json
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            ws_dir = tmp_path / "demo-workspace"
+            ws_dir.mkdir()
+            (tmp_path / "projects.local.json").write_text(json.dumps({
+                "projects": [
+                    {"id": "demo", "path": str(ws_dir), "is_active": True},
+                    {"id": "missing", "path": str(tmp_path / "does-not-exist"), "is_active": True},
+                    {"id": "inactive", "path": str(tmp_path), "is_active": False},
+                ]
+            }), encoding="utf-8")
+            dirs = sync_adapters._load_registered_project_dirs(tmp_path)
+            self.assertEqual(dirs, [str(ws_dir.resolve())])
+
+            target = tmp_path / "settings.json"
+            target.write_text(json.dumps({"permissions": {"additionalDirectories": []}}), encoding="utf-8")
+            with redirect_stdout(io.StringIO()):
+                sync_adapters.sync_global_claude_permissions({"permissions": {}}, target_path=target, extra_dirs=dirs)
+            updated = json.loads(target.read_text(encoding="utf-8"))
+            self.assertIn(str(ws_dir.resolve()), updated["permissions"]["additionalDirectories"])
+
 
 if __name__ == "__main__":
     unittest.main()

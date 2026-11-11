@@ -40,6 +40,11 @@ Lệnh dưới đây là mặc định phổ biến cho dự án Java/Spring Boo
   - Phân tầng rõ ràng: `Controller` → `Service` → `Repository` → `Entity` / `DTO`.
   - Không tiêm phụ thuộc qua trường `@Autowired`, ưu tiên tiêm qua constructor (kết hợp `@RequiredArgsConstructor` của Lombok).
   - Bắt lỗi tập trung bằng `@ControllerAdvice` / `@ExceptionHandler`.
+- **Clean Imports & An toàn sửa file**:
+  - Luôn `import` tường minh ở đầu file; **cấm viết tên lớp đầy đủ (FQN) nội tuyến** trong thân hàm (như `java.util.Objects`, `java.time.Instant`) trừ trường hợp 2 class trùng simple name trong cùng file.
+  - **Không để unused imports** sau khi sửa; nếu module có Spotless (`<removeUnusedImports/>`), chạy `./mvnw spotless:apply -DspotlessFiles='.*<TenFile>\.java'` chỉ trên các file mình tạo/sửa và xác nhận lại bằng `./mvnw spotless:check` (hoặc biên dịch). Tránh chạy `spotless:apply` không lọc nếu repo có sẵn nhiều file legacy vi phạm format.
+  - **Không hardcode magic String/number** cho vai trò, trạng thái, phòng ban, mã lỗi khi codebase đã có `enum` hoặc hằng số tập trung.
+  - **Cấm sửa file Java bằng inline heredoc script** (`python3 - <<'EOF'`, `sed`, `perl`) để tránh rác import và lệch format — luôn dùng tool `Edit`/`Write` chuẩn xác.
 
 ## Cơ sở dữ liệu & Middleware (PostgreSQL, Redis, RabbitMQ)
 

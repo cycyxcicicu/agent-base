@@ -1,0 +1,50 @@
+{
+  "type": "package",
+  "title": "Mẫu sơ đồ gói (ví dụ minh họa, không phải dữ liệu thật)",
+  "note": "Mũi tên nét đứt: gói này phụ thuộc gói kia. «import»: nhập công khai; «access»: nhập riêng.",
+  "out": "mau-package.drawio",
+  "png": "mau-package.png",
+  "packages": [
+    {
+      "id": "ui",
+      "label": "presentation",
+      "col": 0,
+      "row": 0,
+      "contains": [
+        "OrderController",
+        "OrderRequest"
+      ]
+    },
+    {
+      "id": "dom",
+      "label": "domain",
+      "col": 1,
+      "row": 0,
+      "contains": [
+        "Order",
+        "OrderService"
+      ]
+    },
+    {
+      "id": "db",
+      "label": "persistence",
+      "col": 2,
+      "row": 0,
+      "contains": [
+        "OrderRepository"
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "from": "ui",
+      "to": "dom",
+      "kind": "import"
+    },
+    {
+      "from": "db",
+      "to": "dom",
+      "kind": "access"
+    }
+  ]
+}

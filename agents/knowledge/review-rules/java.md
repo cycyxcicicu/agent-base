@@ -6,7 +6,12 @@
 #### Dead Code
 - Code blocks that can never be reached (e.g., branches where the condition is always false, code after a return statement)
 - Variables that are declared but never read or referenced
+- Unused or duplicate `import` statements left behind after edits or refactors
 - Large blocks of commented-out code (with no apparent intent to preserve)
+
+#### Maintainability & Clean Conventions
+- Inline fully-qualified class names (e.g., `java.util.Objects::nonNull`, `java.time.Instant`) inside method bodies when no simple-name collision exists; import them normally at the top of the file
+- Magic string or numeric literals (role codes, stages, statuses) duplicated in business logic where a project `enum` or typed constant already exists or should be used
 
 #### Logic Error Detection
 - Incorrect if-condition logic (use `file_read` to examine surrounding context and confirm expected logic)

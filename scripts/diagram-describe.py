@@ -12,7 +12,7 @@ Dùng:
   python scripts/diagram-describe.py <file.drawio> --check         chỉ kiểm quy tắc, mã thoát 1 nếu có lỗi
 
 Quy tắc kiểm (--check): id trang không trùng. Với sơ đồ hoạt động (trang có nút bắt đầu): mũi tên có đủ nguồn và đích;
-đúng một nút kết thúc; quyết định có ít nhất hai nhánh và nhánh có nhãn; không có nút mồ côi. Loại khác chỉ kiểm id trang.
+đúng một nút kết thúc (riêng kiểu activity theo làn lớp: nhiều điểm bắt đầu và kết thúc, ít nhất một kết thúc); quyết định có ít nhất hai nhánh và nhánh có nhãn; không có nút mồ côi. Loại khác chỉ kiểm id trang.
 
 Chỉ dùng thư viện chuẩn. File bị nén (draw.io lưu nén) thì báo lỗi: bỏ tích File > Properties > Compressed rồi lưu lại.
 """
@@ -166,11 +166,18 @@ def check_page(page):
     activity = any(n["kind"] == "bắt đầu" for n in nodes.values())
     if not activity:
         return problems
+    # Sơ đồ hoạt động theo làn lớp (type activity của ve-so-do.py, có hộp "Chú giải (UML Activity)"): cho phép nhiều điểm bắt đầu
+    # và kết thúc; chỉ xét các nút do công cụ sinh (id node_*), bỏ qua các ký hiệu trong chú giải.
+    multi = any(n["label"].startswith("Chú giải (UML Activity)") for n in page["nodes"])
+    if multi:
+        nodes = {k: n for k, n in nodes.items() if k.startswith("node_")}
     for e in page["edges"]:
         if e["source"] not in page["cells"] or e["target"] not in page["cells"]:
             problems.append(f"mũi tên {e['id']} thiếu nguồn hoặc đích")
     ends = [n for n in nodes.values() if n["kind"] == "kết thúc"]
-    if len(ends) != 1:
+    if multi and not ends:
+        problems.append("sơ đồ hoạt động theo làn lớp cần ít nhất một nút kết thúc")
+    elif not multi and len(ends) != 1:
         problems.append(f"sơ đồ hoạt động phải có đúng một nút kết thúc, đang có {len(ends)}")
     out_count = {}
     connected = set()

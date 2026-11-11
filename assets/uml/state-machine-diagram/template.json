@@ -1,32 +1,101 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "diagramType": "activity",
-  "title": "Chuẩn sơ đồ hoạt động (Activity Diagram Specification)",
-  "rules": {
-    "singleStart": true,
-    "singleEnd": true,
-    "errorBranchesInRed": true,
-    "swimlanesRequired": true
-  },
-  "swimlanes": [
-    {"id": "user", "name": "Người Dùng (Frontend)", "order": 1},
-    {"id": "system", "name": "Hệ Thống (Backend API / Services)", "order": 2},
-    {"id": "database", "name": "Cơ Sở Dữ Liệu (PostgreSQL / Redis)", "order": 3}
+  "type": "statemachine",
+  "title": "Mẫu máy trạng thái: vòng đời một đơn (ví dụ minh họa, không phải dữ liệu thật)",
+  "note": "Chuyển ghi: sự_kiện [điều_kiện] / hành_động. Trạng thái lấy từ enum thật, không tự đặt.",
+  "out": "mau-statemachine.drawio",
+  "png": "mau-statemachine.png",
+  "states": [
+    {
+      "id": "i",
+      "kind": "initial",
+      "col": 0,
+      "row": 0
+    },
+    {
+      "id": "draft",
+      "label": "Nháp",
+      "col": 0,
+      "row": 1.2,
+      "actions": [
+        "entry / tạo mã đơn"
+      ]
+    },
+    {
+      "id": "conf",
+      "label": "Đã xác nhận",
+      "col": 1.3,
+      "row": 1.2
+    },
+    {
+      "id": "pack",
+      "label": "Đang đóng gói",
+      "col": 2.6,
+      "row": 1.2
+    },
+    {
+      "id": "ship",
+      "label": "Đang giao",
+      "col": 3.9,
+      "row": 1.2
+    },
+    {
+      "id": "done",
+      "label": "Đã giao",
+      "col": 3.9,
+      "row": 3
+    },
+    {
+      "id": "cancel",
+      "label": "Đã hủy",
+      "col": 1.3,
+      "row": 3
+    },
+    {
+      "id": "f",
+      "kind": "final",
+      "col": 2.6,
+      "row": 4.3
+    }
   ],
-  "nodes": [
-    {"id": "start", "type": "initial", "swimlane": "user"},
-    {"id": "submit", "type": "action", "label": "Gửi thao tác", "swimlane": "user"},
-    {"id": "validate", "type": "decision", "label": "Kiểm tra hợp lệ?", "swimlane": "system"},
-    {"id": "persist", "type": "action", "label": "Lưu dữ liệu", "swimlane": "database"},
-    {"id": "rollback", "type": "action", "label": "Rollback & Báo lỗi", "swimlane": "system", "isError": true},
-    {"id": "end", "type": "final", "swimlane": "system"}
-  ],
-  "flows": [
-    {"from": "start", "to": "submit"},
-    {"from": "submit", "to": "validate"},
-    {"from": "validate", "to": "persist", "guard": "Hợp lệ"},
-    {"from": "validate", "to": "rollback", "guard": "Không hợp lệ", "color": "#ff0000"},
-    {"from": "persist", "to": "end"},
-    {"from": "rollback", "to": "end", "color": "#ff0000"}
+  "transitions": [
+    {
+      "from": "i",
+      "to": "draft"
+    },
+    {
+      "from": "draft",
+      "to": "conf",
+      "label": "khách xác nhận [đủ tồn kho] / trừ kho"
+    },
+    {
+      "from": "conf",
+      "to": "pack",
+      "label": "kho nhận đơn / in nhãn"
+    },
+    {
+      "from": "pack",
+      "to": "ship",
+      "label": "bàn giao đơn vị vận chuyển"
+    },
+    {
+      "from": "ship",
+      "to": "done",
+      "label": "vận chuyển báo giao xong / ghi COD"
+    },
+    {
+      "from": "conf",
+      "to": "cancel",
+      "label": "khách hủy / hoàn kho"
+    },
+    {
+      "from": "done",
+      "to": "f",
+      "label": "kết thúc vòng đời"
+    },
+    {
+      "from": "cancel",
+      "to": "f",
+      "label": "kết thúc vòng đời"
+    }
   ]
 }

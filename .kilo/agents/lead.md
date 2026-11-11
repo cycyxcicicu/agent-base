@@ -731,6 +731,64 @@ permission:
     "*<(curl*": deny
     "*<(wget*": deny
     "*<(iwr*": deny
+    "grep *": deny
+    "grep": deny
+    "*| grep *": deny
+    "*|grep *": deny
+    "*&& grep *": deny
+    "*&&grep *": deny
+    "*; grep *": deny
+    "*;grep *": deny
+    "*|| grep *": deny
+    "*||grep *": deny
+    "rg *": deny
+    "rg": deny
+    "*| rg *": deny
+    "*|rg *": deny
+    "*&& rg *": deny
+    "*&&rg *": deny
+    "*; rg *": deny
+    "*;rg *": deny
+    "*|| rg *": deny
+    "*||rg *": deny
+    "find * -exec*": deny
+    "find * -execdir*": deny
+    "find * -name *.java*": deny
+    "find * -name *.ts*": deny
+    "find * -name *.tsx*": deny
+    "find * -name *.js*": deny
+    "find * -name *.jsx*": deny
+    "find * -name *.py*": deny
+    "find * -name *.go*": deny
+    "find * -name *.rs*": deny
+    "find * -name *.php*": deny
+    "find * -name *.cs*": deny
+    "find * -name *.kt*": deny
+    "find * -name *.swift*": deny
+    "find * -name \"*.java*\"": deny
+    "find * -name \"*.ts*\"": deny
+    "find * -name \"*.tsx*\"": deny
+    "find * -name \"*.js*\"": deny
+    "find * -name \"*.jsx*\"": deny
+    "find * -name \"*.py*\"": deny
+    "find * -name \"*.go*\"": deny
+    "find * -name \"*.rs*\"": deny
+    "find * -name \"*.php*\"": deny
+    "find * -name \"*.cs*\"": deny
+    "find * -name \"*.kt*\"": deny
+    "find * -name \"*.swift*\"": deny
+    "find * -name '*.java*'": deny
+    "find * -name '*.ts*'": deny
+    "find * -name '*.tsx*'": deny
+    "find * -name '*.js*'": deny
+    "find * -name '*.jsx*'": deny
+    "find * -name '*.py*'": deny
+    "find * -name '*.go*'": deny
+    "find * -name '*.rs*'": deny
+    "find * -name '*.php*'": deny
+    "find * -name '*.cs*'": deny
+    "find * -name '*.kt*'": deny
+    "find * -name '*.swift*'": deny
     "*scripts/gemini-research*": deny
     "git branch --list*": allow
     "git branch -a*": allow
@@ -769,7 +827,8 @@ Biến yêu cầu của người dùng thành công việc rõ ràng, đúng c�
 
 ## Đầu vào
 - Yêu cầu của người dùng (chat, hoặc danh sách R-xxx đã duyệt trong `docs/requirements/`).
-- `PROJECT.md`, `AGENTS.md`, các card hiện có trong `tasks/`.
+- `PROJECT.md`, `AGENTS.md`, bảng `doc/delivery/tasks/BOARD.md` (hoặc `tasks/BOARD.md`) và các card hiện có.
+- Khi giao việc theo `<UC>` từng có bản tài liệu cũ trước đó: chạy `python3 ~/Documents/agent-base/scripts/doc-preflight.py --root . --uc <UC>` để xác nhận `Active Source` duy nhất và đóng card cũ sang `superseded`/`cancelled` trước khi mở subagent.
 
 ## Đầu ra
 - Một task card cho mỗi việc từ cỡ "vừa" (mẫu `agents/protocols/task-card.md`), đủ phạm vi `scope_edit`, tiêu chí xong, người giữ.

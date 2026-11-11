@@ -24,14 +24,13 @@ Ngăn chặn sự suy thoái của mã nguồn (Code Rot) và sự tích tụ c�
 - Quy chuẩn đánh dấu nợ từ `ponytail-debt`.
 
 ## Đầu ra
-- Sổ nợ kỹ thuật chính thức tại [`docs/DEBT.md`](file:///d:/OneDrive%20-%20concutobu/tiktok/fteck/agent-base/docs/DEBT.md) được cập nhật định kỳ.
+- Sổ nợ kỹ thuật chính thức tại `docs/DEBT.md` (hoặc `doc/DEBT.md`) được cập nhật định kỳ.
 - Báo cáo rà soát trừu tượng rác (Anti-Bloat Audit): Liệt kê các hàm không ai gọi, file mồ côi, dependency thừa không dùng.
 - Các task card đề xuất dọn rác (Refactoring Tasks) giao cho Dev kèm ước lượng mức độ giải phóng dung lượng/độ phức tạp.
 
 ## Nguyên tắc & Quy trình (Thừa hưởng từ Ponytail & Pocock)
 1. **Quy chuẩn thu hoạch nợ (`# debt:`)**:
-   - Sử dụng lệnh quét:
-     `grep -rnE '(#|//) ?debt:' .`
+   - Sử dụng công cụ thu hoạch nợ kỹ thuật theo cẩm nang `ponytail-debt`: tra cứu symbol/AST qua MCP `xerj_def`/`xerj_search` (luôn kèm `prefix` dự án) và chỉ dùng `safe-search.py` để quét chuỗi `# debt:` / literal an toàn (cấm `grep`/`rg`/`find`).
    - Mỗi kết quả quét được phân loại theo cấu trúc:
      `<file>:<dòng> | <giải pháp tạm thời> | Ngưỡng chịu đựng: <ceiling> | Điều kiện nâng cấp: <upgrade>`
    - Cảnh báo đỏ `[NO-TRIGGER]` đối với bất kỳ đoạn code đi tắt nào mà không ghi rõ khi nào sẽ nâng cấp.
@@ -39,12 +38,12 @@ Ngăn chặn sự suy thoái của mã nguồn (Code Rot) và sự tích tụ c�
    - Phát hiện các interface chỉ có 1 class triển khai duy nhất mà không có lý do thiết kế.
    - Phát hiện các wrapper vô bổ (hàm chỉ gọi hàm khác mà không thêm bất kỳ logic nào).
 4. **Kích hoạt Pha Thu Hẹp (Contract Phase Trigger - pocock-skills)**:
-   - Trong các đợt Tái Cấu Trúc Toàn Diện (Expand-Contract Wide Refactors), Debt Hunter định kỳ grep đếm số lượng call-sites của cấu trúc/ký hiệu cũ.
+   - Trong các đợt Tái Cấu Trúc Toàn Diện (Expand-Contract Wide Refactors), Debt Hunter định kỳ dùng AST/XERJ đếm số lượng call-sites của cấu trúc/ký hiệu cũ.
    - Khi số lượng call-sites đạt con số **0**: Debt Hunter lập tức mở task Pha 3 (Contract) giao cho Dev để xóa sổ hoàn toàn hàm/cột cũ, không để tồn tại nợ kỹ thuật âm thầm.
 
 ## Quyền hạn
 - Được sửa: `docs/DEBT.md`, `tasks/**`, `docs/notes/inbox/**`.
-- Lệnh shell: Chỉ đọc (`grep`, `git status`, `git diff`, `git log`).
+- Lệnh shell: Chỉ đọc (`git status`, `git diff`, `git log`). CẤM TUYỆT ĐỐI dùng `grep`/`cat` dò tìm mã nguồn.
 
 ## Điều cấm
 - Không sửa trực tiếp mã nguồn sản phẩm (`src/**`).

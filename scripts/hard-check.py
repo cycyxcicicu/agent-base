@@ -35,38 +35,23 @@ except Exception:
     pass
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from agent_core.workflow.diff_utils import (  # noqa: E402
+    DEFAULT_MAX_FILE_BYTES as MAX_FILE_BYTES,
+    SKIP_DIRS,
+    collect_changed_files,
+    collect_changed_line_diffs,
+    git_output,
+    glob_to_regex,
+    matches,
+)
+
 DEFAULT_RULES = 'docs/HARD-RULES.json'
-MAX_FILE_BYTES = 1_000_000
-SKIP_DIRS = {'.git', 'node_modules', 'build', 'dist', '__pycache__', 'graphify-out', '.venv', 'venv', '.next', 'coverage'}
+ALT_RULES_CANDIDATES = ('docs/HARD-RULES.json', 'doc/HARD-RULES.json', 'doc.workspace/HARD-RULES.json')
 RULE_TYPES = {'forbid_regex', 'max_file_lines', 'path_must_match'}
 SEVERITIES = {'error', 'warn'}
-
-
-def glob_to_regex(glob_str: str) -> str:
-    g = glob_str.replace('\\', '/')
-    out, i, n = [], 0, len(g)
-    while i < n:
-        c = g[i]
-        if c == '*':
-            if i + 1 < n and g[i + 1] == '*':
-                if i + 2 < n and g[i + 2] == '/':
-                    out.append('(?:.*/)?')
-                    i += 3
-                    continue
-                out.append('.*')
-                i += 2
-                continue
-            out.append('[^/]*')
-        elif c == '?':
-            out.append('[^/]')
-        else:
-            out.append(re.escape(c))
-        i += 1
-    return '^' + ''.join(out) + '$'
-
-
-def matches(path: str, globs) -> bool:
-    return any(re.match(glob_to_regex(g), path) for g in globs)
 
 
 def load_rules(path: Path):
@@ -114,19 +99,15 @@ def load_rules(path: Path):
     return out
 
 
-def git_lines(root: Path, *args):
-    return subprocess.check_output(['git', '-C', str(root), '-c', 'core.quotepath=false', *args],
-                                   text=True, encoding='utf-8', stderr=subprocess.DEVNULL).splitlines()
-
-
 def list_files(root: Path, changed_against):
-    """Danh sách đường dẫn (POSIX, tương đối gốc) cần quét."""
+    """Danh sách đường dẫn (POSIX, tương đối gốc) cần quét (gồm cả diff chưa commit khi dùng --changed-against)."""
     try:
         if changed_against:
-            names = git_lines(root, 'diff', '--name-only', '--diff-filter=ACMR', '--no-renames', f'{changed_against}...HEAD')
-        else:
-            names = git_lines(root, 'ls-files', '-co', '--exclude-standard')
+            return collect_changed_files(root, changed_against)
+        names = git_output(root, 'ls-files', '-co', '--exclude-standard').splitlines()
         return sorted({n.strip().replace('\\', '/') for n in names if n.strip()})
+    except ValueError:
+        raise
     except (subprocess.CalledProcessError, FileNotFoundError, OSError):
         if changed_against:
             raise ValueError(f"không lấy được danh sách file đổi so với {changed_against} (không phải repo git hoặc sai tên nhánh)")
@@ -137,7 +118,7 @@ def list_files(root: Path, changed_against):
         return sorted(found)
 
 
-def check(root: Path, rules, files):
+def check(root: Path, rules, files, diff_lines_map=None):
     """Trả về (vi phạm, số lần bỏ qua có lý do). Mỗi vi phạm: (đường dẫn, dòng, id, mức, thông điệp)."""
     violations, ignored = [], 0
     for rel in files:
@@ -162,16 +143,17 @@ def check(root: Path, rules, files):
 
         def is_ignored(rule_id, idx):
             marker = re.compile(r'hard-ignore:\s*' + re.escape(rule_id) + r'\s+\S{3,}')
-            return bool(marker.search(lines[idx]) or (idx > 0 and marker.search(lines[idx - 1])))
+            return bool((0 <= idx < len(lines) and marker.search(lines[idx])) or (idx > 0 and idx - 1 < len(lines) and marker.search(lines[idx - 1])))
 
+        target_rows = diff_lines_map.get(rel, []) if diff_lines_map is not None else list(enumerate(lines, 1))
         for rule in applicable:
             if rule['type'] == 'forbid_regex':
-                for i, line in enumerate(lines):
+                for line_no, line in target_rows:
                     if rule['regex'].search(line):
-                        if is_ignored(rule['id'], i):
+                        if is_ignored(rule['id'], line_no - 1):
                             ignored += 1
                         else:
-                            violations.append((rel, i + 1, rule['id'], rule['severity'], rule['message']))
+                            violations.append((rel, line_no, rule['id'], rule['severity'], rule['message']))
             elif len(lines) > rule['max']:
                 violations.append((rel, rule['max'] + 1, rule['id'], rule['severity'],
                                    f"{rule['message']} (file dài {len(lines)} dòng, tối đa {rule['max']})"))
@@ -182,13 +164,20 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Kiểm tra luật cứng khai báo bằng JSON.")
     ap.add_argument('--rules', default=DEFAULT_RULES, help=f"file luật (mặc định {DEFAULT_RULES})")
     ap.add_argument('--changed-against', metavar='REF', help="chỉ quét file đổi so với REF (ví dụ origin/develop)")
+    ap.add_argument('--diff-lines', action='store_true', help="chỉ áp dụng forbid_regex trên dòng mới thêm/sửa (tránh dính nợ code cũ trong file)")
     ap.add_argument('--root', default=str(ROOT), help="gốc dự án cần quét (mặc định: dự án chứa script này)")
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
     rules_path = Path(args.rules)
     if not rules_path.is_absolute():
-        rules_path = root / rules_path
+        candidate = root / rules_path
+        if args.rules == DEFAULT_RULES and not candidate.exists():
+            for rel_alt in ALT_RULES_CANDIDATES:
+                if (root / rel_alt).exists():
+                    candidate = root / rel_alt
+                    break
+        rules_path = candidate
     if not rules_path.exists():
         print(f"Chưa có {rules_path.relative_to(root) if rules_path.is_relative_to(root) else rules_path}: không có luật cứng nào để kiểm. "
               "Cách thêm luật: agents/protocols/hard-rules.md")
@@ -196,11 +185,14 @@ def main() -> int:
     try:
         rules = load_rules(rules_path)
         files = list_files(root, args.changed_against)
+        diff_lines_map = None
+        if args.diff_lines and args.changed_against:
+            diff_lines_map, _ = collect_changed_line_diffs(root, args.changed_against, max_file_bytes=MAX_FILE_BYTES)
     except ValueError as exc:
         print(f"LỖI: {exc}")
         return 2
 
-    violations, ignored = check(root, rules, files)
+    violations, ignored = check(root, rules, files, diff_lines_map=diff_lines_map)
     for rel, line, rid, sev, msg in violations:
         print(f"{rel}:{line}: [{rid}] {'LỖI' if sev == 'error' else 'cảnh báo'}: {msg}")
     errors = sum(1 for v in violations if v[3] == 'error')

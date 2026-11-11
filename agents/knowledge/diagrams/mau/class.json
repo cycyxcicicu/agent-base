@@ -1,0 +1,81 @@
+{
+  "type": "class",
+  "title": "Mẫu sơ đồ lớp",
+  "note": "Tam giác rỗng: Extends, implements. Thoi rỗng: chứa. Mũi tên đặc: dùng.",
+  "out": "mau-lop.drawio",
+  "png": "mau-lop.png",
+  "classes": [
+    {
+      "id": "search",
+      "col": 0,
+      "name": "Search",
+      "sub": "tìm kiếm",
+      "stereo": "interface",
+      "methods": [
+        "+ searchByTitle(string title)",
+        "+ searchByAuthor(string author)"
+      ]
+    },
+    {
+      "id": "user",
+      "col": 0,
+      "name": "User",
+      "sub": "người dùng",
+      "stereo": "Abstract",
+      "abstract": true,
+      "attrs": [
+        "- id : string",
+        "- password : string"
+      ],
+      "methods": [
+        "+ resetPassword( ) : bool"
+      ]
+    },
+    {
+      "id": "catalog",
+      "col": 1,
+      "name": "Catalog",
+      "sub": "danh mục sách",
+      "attrs": [
+        "- bookTitles",
+        "- bookAuthors"
+      ],
+      "methods": [
+        "+ searchByTitle(string query)",
+        "+ searchByAuthor(string query)"
+      ]
+    },
+    {
+      "id": "member",
+      "col": 1,
+      "name": "Member",
+      "sub": "độc giả",
+      "attrs": [
+        "- dateOfMembership : date"
+      ],
+      "methods": [
+        "+ checkoutBookItem(BookItem bookItem) : bool"
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "from": "catalog",
+      "to": "search",
+      "kind": "ext",
+      "label": "implements"
+    },
+    {
+      "from": "member",
+      "to": "user",
+      "kind": "ext",
+      "label": "Extends"
+    },
+    {
+      "from": "catalog",
+      "to": "member",
+      "kind": "dep",
+      "label": "dùng"
+    }
+  ]
+}
