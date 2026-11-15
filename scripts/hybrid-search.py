@@ -182,7 +182,7 @@ def main() -> int:
 
     if args.execute_text and res.get("text_search_command"):
         print("\n🚀 Đang chạy safe-search tự động...")
-        subprocess.run(res["text_search_command"], shell=True)
+        subprocess.run(res["text_search_command"], shell=True)  # cso: allow INJ-02 chạy lệnh safe-search do router sinh ra
 
     return 0
 

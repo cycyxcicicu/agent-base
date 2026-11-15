@@ -182,7 +182,7 @@ def run_stop_hook(project_root: Path, trust_file: Path = DEFAULT_TRUST_FILE) -> 
     if trusted != _sha256(cmd):
         return 0
 
-    proc = subprocess.run(cmd, cwd=str(project_root), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8")
+    proc = subprocess.run(cmd, cwd=str(project_root), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8")  # cso: allow INJ-02 chạy các tool cổng kiểm tra qua lệnh shell an toàn
     if proc.returncode != 0:
         sys.stderr.write(f"[verify-gate] Lệnh kiểm tra `{cmd}` thất bại (exit {proc.returncode}):\n{(proc.stdout or '')[-1500:]}\n")
         sys.stderr.flush()

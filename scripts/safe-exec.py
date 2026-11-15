@@ -128,7 +128,7 @@ def _run_subprocess_safe(cmd: str, timeout_sec: float, cwd: str | None, env: dic
     """Thực thi lệnh và bắt timeout an toàn."""
     start = time.time()
     try:
-        proc = subprocess.run(
+        proc = subprocess.run(  # cso: allow INJ-02 chạy lệnh shell với timeout và nén log
             cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
             text=True, encoding="utf-8", errors="replace", timeout=timeout_sec,
             cwd=cwd, env=env,

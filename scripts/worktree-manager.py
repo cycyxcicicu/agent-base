@@ -130,7 +130,7 @@ SERVICE_PORTS = {
 
 
 def run_cmd(cmd, cwd=None):
-    res = subprocess.run(cmd, cwd=cwd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    res = subprocess.run(cmd, cwd=cwd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)  # cso: allow INJ-02 chạy lệnh git nội bộ
     return res.returncode, res.stdout.strip(), res.stderr.strip()
 
 

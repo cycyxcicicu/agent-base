@@ -103,7 +103,7 @@ def process_and_save_post(meta: dict, posts_dir: Path, images_dir: Path) -> dict
         parsed = urllib.parse.urlparse(img_url)
         img_name = os.path.basename(parsed.path)
         if not img_name or "." not in img_name:
-            h = hashlib.md5(img_url.encode()).hexdigest()[:8]
+            h = hashlib.sha256(img_url.encode()).hexdigest()[:8]
             img_name = f"img_{h}.png"
         img_name = sanitize_filename(img_name)
         dest_file = images_dir / img_name

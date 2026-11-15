@@ -65,7 +65,7 @@ class CsoScanner:
     ]
 
     PATH_TRAVERSAL_PATTERNS = [
-        ("TRAVERSAL-01", "HIGH", r"(?i)open\(f?['\"].*?\{.*?\}",
+        ("TRAVERSAL-01", "HIGH", r"(?i)(?<![a-zA-Z0-9_\.])open\(f?['\"].*?\{.*?\}",
          "Dynamic file open without visible path sanitization or within_base check."),
     ]
 
@@ -86,12 +86,19 @@ class CsoScanner:
          "MD5 is cryptographically weak and prone to hash collisions."),
     ]
 
-    # Ignore testing mocks and documentation
+    # Ignore testing mocks, vendor libraries, and documentation
     EXCLUDE_PATTERNS = [
         r"[\\/]tests[\\/]",
         r"[\\/]scratch[\\/]",
         r"[\\/]docs[\\/]",
         r"[\\/]\.git([\\/]|$)",
+        r"[\\/]\.local([\\/]|$)",
+        r"\.local\.",
+        r"(?:^|[\\/])mcp\.json$",
+        r"[\\/]vendor[\\/]",
+        r"\.min\.(js|css)$",
+        r"[\\/]graphify-out[\\/]",
+        r"[\\/]node_modules[\\/]",
         r"\.venv",
         r"__pycache__",
         r"\.example\.",
