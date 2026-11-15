@@ -57,7 +57,10 @@ if "-p" in sys.argv:
         sys.stdout.write(json.dumps({"status": "SUCCESS", "response": "pong"}) + "\\n")
         sys.exit(0)
 
-for line in sys.stdin:
+while True:
+    line = sys.stdin.readline()
+    if not line:
+        break
     line = line.strip()
     if not line:
         continue

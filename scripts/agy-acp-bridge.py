@@ -918,7 +918,7 @@ class ACPController:
         self.err_thread: threading.Thread | None = None
 
     def start(self):
-        cmd = [sys.executable, self.agy_bin] if self.agy_bin.endswith(".py") else [self.agy_bin]
+        cmd = [sys.executable, "-u", self.agy_bin] if self.agy_bin.endswith(".py") else [self.agy_bin]
         cmd.extend(["acp", "--sandbox"])
         popen_kwargs = {
             "cwd": str(self.cwd),
@@ -1132,7 +1132,7 @@ def run_quota_probe(
     Trả về: (is_success, raw_output_or_error, parsed_json)
     Thành công khi parsed_json có status == "SUCCESS" và có response.
     """
-    base_cmd = [sys.executable, agy_bin] if agy_bin.endswith(".py") else [agy_bin]
+    base_cmd = [sys.executable, "-u", agy_bin] if agy_bin.endswith(".py") else [agy_bin]
     cmd = base_cmd + [
         "-p",
         "Trả lời đúng một từ: pong.",
@@ -1664,7 +1664,22 @@ def main(argv: list[str] | None = None) -> int:
                 if m:
                     pid = int(m.group(1))
                     try:
-                        os.kill(pid, 0)
+                        if sys.platform == "win32":
+                            import ctypes
+                            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+                            SYNCHRONIZE = 0x00100000
+                            h = ctypes.windll.kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | SYNCHRONIZE, False, pid)
+                            if h:
+                                exit_code = ctypes.c_ulong()
+                                if ctypes.windll.kernel32.GetExitCodeProcess(h, ctypes.byref(exit_code)):
+                                    stale = (exit_code.value != 259)
+                                else:
+                                    stale = False
+                                ctypes.windll.kernel32.CloseHandle(h)
+                            else:
+                                stale = True
+                        else:
+                            os.kill(pid, 0)
                     except ProcessLookupError:
                         stale = True
                     except PermissionError:
