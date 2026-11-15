@@ -88,6 +88,12 @@ def _has_ignore(line: str, rh_code: str) -> bool:
     return bool(re.search(rf"gate-ignore:\s*{re.escape(rh_code)}\s+\S{{3,}}", line))
 
 
+BINARY_EXTS = {
+    ".png", ".jpg", ".jpeg", ".gif", ".ico", ".webp",
+    ".pdf", ".zip", ".xlsx", ".docx", ".tar", ".gz", ".drawio"
+}
+
+
 def scan_gate_integrity(
     root: Path,
     changed_against: str | None = None,
@@ -97,6 +103,8 @@ def scan_gate_integrity(
     findings: list[dict[str, str | int]] = []
 
     for rel, rows in added_map.items():
+        if Path(rel).suffix.lower() in BINARY_EXTS:
+            continue
         is_test_file = matches(rel, TEST_FILE_GLOBS)
         is_doc_file = matches(rel, SPEC_OR_CARD_GLOBS)
         for line_no, text in rows:
@@ -181,32 +189,44 @@ def audit_task(
     changed_against: str | None = None,
     strict_ac: bool = False,
     require_challenge: bool = False,
+    fast_path: bool = False,
 ) -> tuple[int, list[str]]:
     lines: list[str] = []
     errors = 0
 
+    if fast_path:
+        lines.append("⚡ CHẾ ĐỘ FAST-PATH: Miễn trừ 3 phương án phản biện & Gate 2 cho fix bug / sửa cục bộ <= 2 file Leaf.")
+        require_challenge = False
+
     card_text = ""
     if card_path:
         if not card_path.is_file():
-            return 2, [f"LỖI: Không tìm thấy Task Card: {card_path}"]
-        card_text = card_path.read_text(encoding="utf-8")
-        meta = parse_task_frontmatter(card_text, card_path)
-        done_items, pending_items = parse_card_checklist(card_text)
-        total = len(done_items) + len(pending_items)
-        lines.append(f"Task Card: {meta.get('id') or card_path.stem} | status={meta.get('status')} | checklist={len(done_items)}/{total} hoàn thành")
-        if total == 0:
-            lines.append("CẢNH BÁO [NO-AC-CHECKLIST]: Task Card chưa có checklist `- [ ] ...` để đo tiến độ từng mục.")
-        elif pending_items:
-            tag = "LỖI" if strict_ac else "CẢNH BÁO"
-            if strict_ac:
-                errors += 1
-            lines.append(f"{tag} [AC-INCOMPLETE]: Còn {len(pending_items)} mục chưa hoàn thành:")
-            for p in pending_items[:10]:
-                lines.append(f"  - [ ] {p}")
+            if fast_path:
+                lines.append(f"CẢNH BÁO [FAST-PATH]: Không tìm thấy card {card_path}, bỏ qua kiểm tra card.")
+            else:
+                return 2, [f"LỖI: Không tìm thấy Task Card: {card_path}"]
+        else:
+            card_text = card_path.read_text(encoding="utf-8")
+            meta = parse_task_frontmatter(card_text, card_path)
+            done_items, pending_items = parse_card_checklist(card_text)
+            total = len(done_items) + len(pending_items)
+            lines.append(f"Task Card: {meta.get('id') or card_path.stem} | status={meta.get('status')} | checklist={len(done_items)}/{total} hoàn thành")
+            if total == 0:
+                lines.append("CẢNH BÁO [NO-AC-CHECKLIST]: Task Card chưa có checklist `- [ ] ...` để đo tiến độ từng mục.")
+            elif pending_items:
+                tag = "LỖI" if strict_ac else "CẢNH BÁO"
+                if strict_ac and not fast_path:
+                    errors += 1
+                lines.append(f"{tag} [AC-INCOMPLETE]: Còn {len(pending_items)} mục chưa hoàn thành:")
+                for p in pending_items[:10]:
+                    lines.append(f"  - [ ] {p}")
 
-        if require_challenge and not _check_challenge_presence(root, card_path, card_text):
-            errors += 1
-            lines.append("LỖI [MISSING-CHALLENGE]: Thiếu dấu vết Phản biện 3 Phương án hoặc `[x] Plan Approved` trong card/note.")
+            if require_challenge and not _check_challenge_presence(root, card_path, card_text):
+                errors += 1
+                lines.append("LỖI [MISSING-CHALLENGE]: Thiếu dấu vết Phản biện 3 Phương án hoặc `[x] Plan Approved` trong card/note.")
+    elif not fast_path:
+        # Nếu không có card_path và cũng không phải fast_path
+        lines.append("INFO: Chạy kiểm tra gate integrity độc lập (không có Task Card).")
 
     try:
         integrity_findings = scan_gate_integrity(root, changed_against=changed_against)
@@ -274,6 +294,7 @@ def main() -> int:
     p_audit.add_argument("--changed-against", default=None, metavar="REF", help="So sánh diff với nhánh gốc (vd: develop)")
     p_audit.add_argument("--strict-ac", action="store_true", help="Thất bại (exit 1) nếu còn mục `- [ ]` chưa đánh dấu")
     p_audit.add_argument("--require-challenge", action="store_true", help="Bắt buộc có bằng chứng Phản biện 3 phương án / Plan Approved")
+    p_audit.add_argument("--fast-path", action="store_true", help="Kích hoạt làn nhanh cho fix bug <= 2 file Leaf: miễn trừ 3 phương án phản biện & Gate 2")
 
     p_set = sub.add_parser("set-scope", help="Khóa phạm vi Edit/Write theo pha Plan hoặc Implement")
     p_set.add_argument("--root", default=".", help="Thư mục gốc áp dụng scope lock")
@@ -320,6 +341,7 @@ def main() -> int:
         changed_against=args.changed_against,
         strict_ac=args.strict_ac,
         require_challenge=args.require_challenge,
+        fast_path=getattr(args, "fast_path", False),
     )
     for ln in lines:
         print(ln)

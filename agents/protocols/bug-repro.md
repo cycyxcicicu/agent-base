@@ -4,6 +4,22 @@ Lý do: báo lỗi thường mơ hồ ("nút này đơ ???", một ảnh chụp 
 
 Dùng cho mọi báo lỗi (người dùng, QA, Reviewer, giám sát). Lỗi đang xảy ra trên môi trường chạy thật: `sre` điều tra bằng lệnh chỉ đọc trước (vai `sre`), vẫn phải tái hiện được ở môi trường thử trước khi sửa.
 
+## 0. Làn Sửa Lỗi Tự Trị Siêu Tốc (Fast-Path Autonomous Bug-Fix — $\le 5$ phút)
+
+Khi nhận ảnh chụp màn hình lỗi, stack trace hoặc báo lỗi cụ thể $\le 2$ file từ người dùng:
+- **TỰ ĐỘNG KÍCH HOẠT FAST-PATH**: Miễn trừ toàn bộ thủ tục hành chính ghi phiếu (Bước 1), Feature Map (Bước 2), và không đọc `BOARD.md` hay `doc-preflight`.
+- **Chốt chặn tìm kiếm (Search Ceiling & Anti-Exploratory)**:
+  - Trần tìm kiếm = 1 call: Thấy file đích là DỪNG NGAY. Nếu lần 1 không ra: DỪNG LẠI và HỎI NGƯỜI DÙNG tọa độ, cấm xoay vòng thử nhiều tool khác.
+  - CẤM TUYỆT ĐỐI: `ls -R`, `tree`, `find .`, `git grep`, `git log -S/-G` diện rộng; CẤM gọi `graphify` quét mạng lưới phụ thuộc; CẤM spawn subagent `@research` đi khảo sát codebase khi fix bug.
+  - CẤM TUYỆT ĐỐI đọc dây chuyền (cascade read) theo các file import.
+- **Quy trình 5 bước tinh gọn**:
+  1. **Anchor (Mỏ neo độc nhất)**: Tự động trích xuất chuỗi text/nhãn UI/URL API/mã lỗi độc nhất từ ảnh hoặc log.
+  2. **Pinpoint (Định vị hẹp)**: Dùng `safe-search` hoặc `xerj_def` nhắm thẳng thư mục đích (< 1s) để tìm đúng file. CẤM gọi Xerj broadcast toàn cụm 227 index.
+  3. **Micro-Read (Ngân sách đọc cực hạn)**: Chỉ đọc $\le 50$ dòng xung quanh điểm gãy bằng `read_file`.
+  4. **Reproduce & Fix**: Viết 1 test tái hiện đơn vị (Red) $\to$ sửa code bằng `edit_file` (Green) $\to$ chạy test đơn vị pass $\to$ xuất `git diff`.
+  5. **Autonomous Self-Learning (Tự kích hoạt học hỏi)**: Test pass xong $\to$ Agent tự động chạy ngầm `python3 ~/Documents/agent-base/scripts/knowledge.py learn` ghi bài học & `python3 ~/Documents/agent-base/scripts/harness-reflect.py --archive` để hấp thu vào `PROJECT-NOTES.md` và cập nhật Knowledge Graph trước khi báo diff. Toàn bộ chu trình $\le 5$ phút.
+- *Lưu ý: Quy trình bàn giao đầy đủ từ Bước 1 đến Bước 6 bên dưới chỉ áp dụng cho lỗi kiến trúc lớn, bug phức tạp liên quan nhiều service hoặc môi trường production.*
+
 ## Bước 1. Ghi phiếu lỗi (Lead hoặc QA)
 
 Lưu ở đâu: việc nhỏ ghi một dòng vào `tasks/quick-log.md` và dẫn chứng ở `docs/qa/bugs/<Mã>/`; từ cỡ "vừa" thì ghi trong task card. `<Mã>` là mã card (`T-12`) hoặc mã dòng quick-log.

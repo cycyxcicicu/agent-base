@@ -1,0 +1,369 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="d1" name="Diagram">
+    <mxGraphModel dx="1000" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="2476" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="v1" value="Quy trình điều khiển agy acp qua cầu nối tự trị (agy-acp-bridge)" style="text;html=0;whiteSpace=wrap;fontSize=18;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="10" width="1020" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="par_user" value="Người chỉ đạo&#10;(AI Coordinator)" style="rounded=1;arcSize=12;whiteSpace=wrap;html=0;fontSize=12;fontStyle=1;fillColor=#f2f2f2;strokeColor=#1f1f1f;" vertex="1" parent="1">
+          <mxGeometry x="25" y="90" width="200" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="v3" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="123" y="164" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v4" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="123" y="2414" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;strokeColor=#94a3b8;dashed=1;endArrow=none;" edge="1" parent="1" source="v3" target="v4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="par_bridge" value="Cầu nối ACP&#10;(agy-acp-bridge.py)" style="rounded=1;arcSize=12;whiteSpace=wrap;html=0;fontSize=12;fontStyle=1;fillColor=#f2f2f2;strokeColor=#1f1f1f;" vertex="1" parent="1">
+          <mxGeometry x="250" y="90" width="200" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="v7" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="164" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v8" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="2414" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;strokeColor=#94a3b8;dashed=1;endArrow=none;" edge="1" parent="1" source="v7" target="v8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="par_acp" value="Tiến trình ACP&#10;(agy acp --sandbox)" style="rounded=1;arcSize=12;whiteSpace=wrap;html=0;fontSize=12;fontStyle=1;fillColor=#f2f2f2;strokeColor=#1f1f1f;" vertex="1" parent="1">
+          <mxGeometry x="475" y="90" width="200" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="v11" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="164" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v12" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="2414" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;strokeColor=#94a3b8;dashed=1;endArrow=none;" edge="1" parent="1" source="v11" target="v12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="par_git" value="Hạ tầng Git&#10;(Worktree / Repo gốc)" style="rounded=1;arcSize=12;whiteSpace=wrap;html=0;fontSize=12;fontStyle=1;fillColor=#f2f2f2;strokeColor=#1f1f1f;" vertex="1" parent="1">
+          <mxGeometry x="700" y="90" width="200" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="v15" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="798" y="164" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v16" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="798" y="2414" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" value="" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;strokeColor=#94a3b8;dashed=1;endArrow=none;" edge="1" parent="1" source="v15" target="v16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v18" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="123" y="224" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v19" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="224" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_1" value="1. Gọi run --dir &lt;repo&gt;&#10;--task-file &lt;brief&gt; [flags]" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;" edge="1" parent="1" source="v18" target="v19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v21" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="274" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v22" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="798" y="274" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_2" value="2. Tạo worktree nhánh agy/&lt;slug&gt;-&lt;ts&gt; (nếu có --worktree)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;" edge="1" parent="1" source="v21" target="v22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v24" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="798" y="324" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v25" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="324" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_3" value="Worktree sẵn sàng, nạp file --seed" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v24" target="v25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v27" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="374" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v28" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="798" y="374" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_4" value="3. Chụp ảnh trạng thái baseline (git status, HEAD)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;" edge="1" parent="1" source="v27" target="v28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v30" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="798" y="424" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v31" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="424" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_5" value="Baseline snapshot hoàn tất" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v30" target="v31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v33" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="490" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v34" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="490" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_6" value="4. Khởi chạy tiến trình agy&#10;acp --sandbox qua stdio" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;" edge="1" parent="1" source="v33" target="v34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v36" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="556" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v37" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="556" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_7" value="5. Gửi initialize&#10;(protocolVersion: 1)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;" edge="1" parent="1" source="v36" target="v37">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v39" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="606" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v40" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="606" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_8" value="Xác nhận initialize thành công" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v39" target="v40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v42" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="672" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v43" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="672" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_9" value="6. Gửi session/new (hoặc&#10;session/load nếu có --session)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;" edge="1" parent="1" source="v42" target="v43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v45" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="722" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v46" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="722" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_10" value="Trả về sessionId" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v45" target="v46">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v48" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="804" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v49" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="804" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_11" value="7. Gửi session/set_model&#10;(modelId:&#10;gemini-3.8-flash-...)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;" edge="1" parent="1" source="v48" target="v49">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v51" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="854" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v52" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="854" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_12" value="Xác nhận cấu hình model" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v51" target="v52">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v54" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="936" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v55" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="936" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_13" value="8. Gửi session/prompt (kèm&#10;luật cứng &amp; nội dung task&#10;brief)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;" edge="1" parent="1" source="v54" target="v55">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v57" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="1018" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v58" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1018" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_14" value="9. [loop: Mỗi yêu cầu quyền]&#10;session/request_permission&#10;(toolCall)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;" edge="1" parent="1" source="v57" target="v58">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v60" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1068" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v61" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1108" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_15" value="10. Đối chiếu chính sách: allow-write, allow-cmd, an toàn" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;align=left;strokeColor=#1f1f1f;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="v60" target="v61">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="410" y="1070" />
+              <mxPoint x="410" y="1110" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v63" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1190" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v64" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="1190" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_16" value="[alt: Cho phép] outcome: allow&#10;(ghi trong scope / lệnh an&#10;toàn)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v63" target="v64">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v66" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1272" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v67" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="1272" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_17" value="[alt: Từ chối cấm cứng]&#10;outcome: deny (git&#10;commit/push, rm -rf)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v66" target="v67">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v69" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1338" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v70" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="1338" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_18" value="[alt: Từ chối lệnh lạ]&#10;outcome: deny (NEEDS-HUMAN)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v69" target="v70">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v72" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1388" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v73" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1428" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_19" value="11. [opt: autocont &lt;= 3 &amp; chưa ghi file] Kích hoạt auto-continue" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;align=left;strokeColor=#1f1f1f;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="v72" target="v73">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="410" y="1390" />
+              <mxPoint x="410" y="1430" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v75" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1510" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v76" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="1510" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_20" value="12. Tự gửi session/prompt nhắc&#10;dùng công cụ tích hợp (lượt&#10;autocont n/3)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;" edge="1" parent="1" source="v75" target="v76">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v78" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="1560" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v79" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1560" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_21" value="Tiếp tục thực thi turn kế tiếp" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v78" target="v79">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v81" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="1626" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v82" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1626" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_22" value="[alt: Hết quota] Phát hiện&#10;keyword quota / 429 / billing" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v81" target="v82">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v84" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1676" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v85" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1716" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_23" value="13. Đánh dấu quota_detected = True, dừng phiên" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;align=left;strokeColor=#1f1f1f;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="v84" target="v85">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="410" y="1678" />
+              <mxPoint x="410" y="1718" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v87" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1782" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v88" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="123" y="1782" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_24" value="STATUS quota, DOI-TAI-KHOAN-&#10;AGY &amp; dừng ngay (mã thoát 7)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v87" target="v88">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v90" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="573" y="1864" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v91" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1864" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_25" value="[alt: Hoàn tất turn]&#10;session/update &amp; prompt result&#10;(end_turn)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v90" target="v91">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v93" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1914" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v94" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="798" y="1914" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_26" value="14. Kiểm tra sau phiên: git status, rev-parse HEAD, file đổi" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;" edge="1" parent="1" source="v93" target="v94">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v96" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="798" y="1964" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v97" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="1964" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_27" value="Trạng thái git thực tế sau lượt chạy" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v96" target="v97">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v99" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="2014" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v100" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="2054" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_28" value="15. So sánh baseline: kiểm tra file đổi ngoài scope, commit HEAD" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;align=left;strokeColor=#1f1f1f;edgeStyle=orthogonalEdgeStyle;rounded=0;" edge="1" parent="1" source="v99" target="v100">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="410" y="2016" />
+              <mxPoint x="410" y="2056" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="v102" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="2136" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v103" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="123" y="2136" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_29" value="[alt: Vi phạm] Báo STATUS&#10;fail, VIOLATION / commit (mã&#10;thoát 3)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v102" target="v103">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v105" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="2202" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v106" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="798" y="2202" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_30" value="16. [alt: Hợp lệ] Áp dụng thay đổi (--apply): đối chiếu conflict&#10;và copy" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;" edge="1" parent="1" source="v105" target="v106">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v108" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="798" y="2252" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v109" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="2252" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_31" value="Áp dụng thành công về repo gốc" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v108" target="v109">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v111" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="2334" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="v112" value="" style="ellipse;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="123" y="2334" width="4" height="4" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_32" value="Trả 3 dòng stdout (STATUS&#10;ok/warn, FILES, REPORT) (mã&#10;thoát 0)" style="endArrow=block;endFill=1;strokeWidth=1.5;html=0;fontSize=12;labelBackgroundColor=#ffffff;verticalAlign=bottom;spacingBottom=4;strokeColor=#1f1f1f;dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="v111" target="v112">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

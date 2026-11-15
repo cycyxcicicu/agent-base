@@ -484,6 +484,47 @@ class TestUserRequestedGitWrites(unittest.TestCase):
             self.assertFalse(any(glob_match(p, cmd) for p in deny), f"Bị deny chặn nhầm: {cmd!r}")
             self.assertTrue(any(glob_match(p, cmd) for p in allow), f"Chưa có trong permissions.allow: {cmd!r}")
 
+    def test_agy_commands_are_explicitly_allowed_in_claude(self):
+        data = json.loads((ROOT / ".claude" / "settings.json").read_text(encoding="utf-8"))
+        allow = [re.match(r"^Bash\((.*)\)$", r, re.S).group(1) for r in data["permissions"]["allow"] if r.startswith("Bash(")]
+        deny = self.tools["Bash"][0]
+        cmds = [
+            'agy',
+            'agy -p "viết báo cáo"',
+            'agy acp',
+            'agy:subagent',
+            'agy-bridge:run',
+            'python3 scripts/agy-bridge.py run --task T-01',
+            'python3 /Users/ducnvh/Documents/agent-base/scripts/agy-bridge.py:run',
+            'python3 /Users/ducnvh/Documents/agent-base/scripts/doc-preflight.py:check',
+            'python3 /Users/ducnvh/Documents/agent-base/scripts/verify-gate.py:run',
+            'python3 /Users/ducnvh/Documents/agent-base/scripts/hard-check.py:check',
+            'python3 /Users/ducnvh/Documents/agent-base/scripts/glossary-check.py:check',
+            'python3 /Users/ducnvh/Documents/agent-base/scripts/task-gate.py:audit',
+            'python3 -m unittest:tests',
+            'git -C /Users/ducnvh/Documents/gdt-workspace status:short',
+            'git -C /Users/ducnvh/Documents/gdt-workspace diff:staged',
+            'git -C /Users/ducnvh/Documents/gdt-workspace log:oneline',
+            'cd /Users/ducnvh/Documents/gdt-workspace && agy -p "check diff"',
+            'cd /Users/ducnvh/Documents/gdt-workspace && agy:run',
+        ]
+        for cmd in cmds:
+            self.assertFalse(any(glob_match(p, cmd) for p in deny), f"Bị deny chặn nhầm: {cmd!r}")
+            self.assertTrue(any(glob_match(p, cmd) for p in allow), f"Chưa có trong permissions.allow: {cmd!r}")
+
+        # Các lệnh ghi có cú pháp colon hoặc cờ nguy hiểm phải bị deny
+        colon_denies = [
+            'git commit: -m fix',
+            'git push: origin main',
+            'git add: .',
+            'git -C /tmp commit: -m fix',
+            'git -C /tmp push: origin main',
+            'git -C /tmp add: .',
+            'something --dangerously-skip-permissions',
+        ]
+        for cmd in colon_denies:
+            self.assertTrue(any(glob_match(p, cmd) for p in deny), f"Phải bị deny: {cmd!r}")
+
 
 def _simulate_claude_rule_normalize(pattern: str) -> str:
     """Giả lập cách Claude Code rút gọn khoảng trắng và bỏ ngoặc quanh tên lệnh khi đánh giá subcommand."""

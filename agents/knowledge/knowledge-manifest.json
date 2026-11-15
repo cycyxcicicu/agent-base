@@ -34,7 +34,7 @@
       "content_ref": "agents/roles/reviewer.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "8e13dd76bc50da4106d47af90e036a94a58b59ca48b4b599b0db6c89b966145b",
+      "content_sha256": "7afc8d0c4ad9937a0f27cfe3a36a8e22c5b6b2fb7f70fa7720cfdb0477dd531a",
       "provenance": []
     },
     {
@@ -781,7 +781,7 @@
           "target": "Requirement:release-note"
         }
       ],
-      "content_sha256": "2838e00aed6a0b76d9704eb92f8b65bade5d4ba8c46e7a362e39cb1bc5706010",
+      "content_sha256": "f456d041780e0ce6b0d66000ff3f2c2e64cc25728913f66d62092f2548ea00a7",
       "provenance": []
     },
     {
@@ -2261,6 +2261,27 @@
       "provenance": []
     },
     {
+      "id": "Requirement:agy-delegation",
+      "kind": "Requirement",
+      "title": "Giao thức ủy thác cho Antigravity qua agy-bridge (agy-delegation)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/agy-delegation.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "6a22eefa6d4d1f4b31b1f3c11d4d04d3e072b145a071d9fa0ffdac02eab7e7f0",
+      "provenance": []
+    },
+    {
       "id": "Requirement:approval",
       "kind": "Requirement",
       "title": "Giao thức duyệt bằng file bởi con người (File-Based Approval Protocol)",
@@ -2336,7 +2357,7 @@
           "target": "Skill:systematic-debugging"
         }
       ],
-      "content_sha256": "f21195af0ab577cdc5ddb7bae933dab8c966ad59864144df1987293404ff362b",
+      "content_sha256": "5d5734a49f50472c0a8731064cd623d24b3fc2c1de0deaf95f8ecd2184043f66",
       "provenance": []
     },
     {
@@ -2353,7 +2374,7 @@
           "target": "Role:architect"
         }
       ],
-      "content_sha256": "789d26b783494424f7f3ad9c71bf677d9de7e2b2f9b33035209898d7e7ab8879",
+      "content_sha256": "6dd31c30b03797d12cc74f7a4fa918391f78abcb70ca9211d3bbff683953f456",
       "provenance": []
     },
     {
@@ -2403,7 +2424,7 @@
           "target": "Design:bug-handling-pipeline"
         }
       ],
-      "content_sha256": "51194791719a7ddbfa7a99e13bccdf674a45be680e9c486dec713dd58125e784",
+      "content_sha256": "be5625cd6da07b385948e2167c4802698ba83f876b5be285a7834d10b140ab75",
       "provenance": []
     },
     {
@@ -2487,7 +2508,7 @@
           "target": "Rule:task-loop"
         }
       ],
-      "content_sha256": "10e6daf4c8e30f504ba88a5ceef4b81a02454b631c07dc888f761e8b755da1fc",
+      "content_sha256": "04ecda4ba351cff6212f8aac17b23414fe9bf5378b883b7e73aa55eab314209e",
       "provenance": []
     },
     {
@@ -2568,6 +2589,27 @@
         }
       ],
       "content_sha256": "dc645802aca0708878d079bda03db002d531d170aa506e0fdcaf2e34ad22b135",
+      "provenance": []
+    },
+    {
+      "id": "Requirement:launch-readiness",
+      "kind": "Requirement",
+      "title": "Quy Chuẩn Đánh Giá An Toàn, Bằng Chứng Agentic & Cổng Phát Hành (Launch Readiness)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/protocols/launch-readiness.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Rule:task-loop"
+        }
+      ],
+      "content_sha256": "54903a3f36ee249db14c686aeab09e16ed58c041c527868fd4908042954e9d9f",
       "provenance": []
     },
     {
@@ -2910,7 +2952,7 @@
           "target": "Rule:task-loop"
         }
       ],
-      "content_sha256": "d6b2a5ba225ca51b9b52ba5a76c3c8d33dc9705d9f1091915a8a7798f9c25969",
+      "content_sha256": "0bc86ab50f2cb1af97e5d463b4f4e3df5d33fc01d4cba75e8f8f6a7c9f11e012",
       "provenance": []
     },
     {
@@ -3271,7 +3313,7 @@
           "target": "Design:chuan-ve-so-do"
         }
       ],
-      "content_sha256": "b987c42e263583ab5e2e48d03c03189928783b35e7bb355022e9d6f8c2ac424d",
+      "content_sha256": "2eef52654898b0aee2367d44f8284287e68662a168d61eaa0161615900b9a693",
       "provenance": []
     },
     {
@@ -4242,6 +4284,27 @@
         }
       ],
       "content_sha256": "8689a03b55e47fcccf91f6b486327e3e139646e24f46a7e02a54ea5df281078b",
+      "provenance": []
+    },
+    {
+      "id": "Skill:humanizer",
+      "kind": "Skill",
+      "title": "humanizer: |",
+      "state": "draft",
+      "version": 1,
+      "content_ref": ".agents/skills/humanizer/SKILL.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Skill:skills-registry"
+        }
+      ],
+      "content_sha256": "70938f3cce25970e1ded5fdd194b755c03f1e4e4fa76820958ce78f86b677b1a",
       "provenance": []
     },
     {
