@@ -7,6 +7,7 @@ Unit test cho công cụ scripts/safe-exec.py (nén và gọt output thông minh
 from __future__ import annotations
 
 import importlib.util
+import sys
 import unittest
 from pathlib import Path
 
@@ -65,7 +66,7 @@ class TestSafeExec(unittest.TestCase):
         self.assertEqual(res["timed_out"], False)
 
     def test_execute_command_failure_exit_code(self):
-        res = safe_exec.execute_command("python3 -c 'import sys; sys.exit(42)'", max_lines=10)
+        res = safe_exec.execute_command(f'"{sys.executable}" -c "import sys; sys.exit(42)"', max_lines=10)
         self.assertEqual(res["exit_code"], 42)
 
 

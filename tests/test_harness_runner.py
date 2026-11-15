@@ -11,11 +11,16 @@ ROOT = Path(__file__).resolve().parent.parent
 
 class TestHarnessRunner(unittest.TestCase):
     def test_harness_runner_status(self):
-        cmd = [sys.executable, str(ROOT / "scripts" / "harness-runner.py"), "--status"]
-        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
-        self.assertEqual(res.returncode, 0)
-        self.assertIn("HARNESS² ENGINE STATUS", res.stdout)
-        self.assertIn("SẴN SÀNG THỰC THI", res.stdout)
+        with tempfile.TemporaryDirectory() as td:
+            mock_h2 = Path(td) / "harness2"
+            (mock_h2 / "harness2" / "core").mkdir(parents=True)
+            env = os.environ.copy()
+            env["HARNESS2_HOME"] = str(mock_h2)
+            cmd = [sys.executable, str(ROOT / "scripts" / "harness-runner.py"), "--status"]
+            res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", env=env)
+            self.assertEqual(res.returncode, 0)
+            self.assertIn("HARNESS² ENGINE STATUS", res.stdout)
+            self.assertIn("SẴN SÀNG THỰC THI", res.stdout)
 
     def test_harness_runner_probe(self):
         cmd = [sys.executable, str(ROOT / "scripts" / "harness-runner.py"), "--probe", "--task", "T-TEST"]

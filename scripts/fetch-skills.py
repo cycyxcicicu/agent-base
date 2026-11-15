@@ -164,10 +164,17 @@ def check_forbidden_system_path(path: Path) -> Tuple[bool, str]:
     except Exception:
         expanded = path
 
-    # 1. Windows: Cấm ổ C:
+    # 1. Windows: Cấm gốc C:\ và thư mục hệ thống Windows
     if sys.platform == "win32" or getattr(expanded, "drive", ""):
-        if getattr(expanded, "drive", "").upper() == "C:":
-            return True, "NGHIÊM CẤM CẤU HÌNH VÀO Ổ C: (ổ hệ điều hành Windows)! Vui lòng chọn ổ dữ liệu khác (D:, E:, F:...)."
+        drv = getattr(expanded, "drive", "").upper()
+        str_p = str(expanded).replace("\\", "/")
+        if drv:
+            if str_p.rstrip("/") == drv:
+                return True, f"NGHIÊM CẤM lưu trực tiếp vào thư mục gốc hệ thống ({drv}/)! Vui lòng lưu vào thư mục con hoặc thư mục người dùng."
+            win_sys_dirs = [f"{drv}/Windows", f"{drv}/Program Files", f"{drv}/Program Files (x86)", f"{drv}/ProgramData"]
+            for f_dir in win_sys_dirs:
+                if str_p.lower() == f_dir.lower() or str_p.lower().startswith(f_dir.lower() + "/"):
+                    return True, f"NGHIÊM CẤM lưu vào thư mục hệ thống ({f_dir})! Vui lòng lưu vào thư mục người dùng (~/skills-quarantine) hoặc ổ đĩa riêng."
 
     # 2. macOS & Linux: Cấm root và thư mục hệ thống
     if sys.platform != "win32":
