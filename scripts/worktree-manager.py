@@ -8,7 +8,10 @@ Sổ bộ lưu trữ: doc/governance/standards/worktree-registry.json
 """
 
 import argparse
-import fcntl
+try:
+    import fcntl
+except ImportError:
+    fcntl = None
 import json
 import os
 import re
@@ -669,7 +672,8 @@ def sync_all(debounce_sec: float = 0.0):
     lock_path = Path(tempfile.gettempdir()) / f"agentbase-wt-sync-{slug}.lock"
     try:
         with open(lock_path, "w", encoding="utf-8") as lock_file:
-            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+            if fcntl:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
             return _sync_all_impl()
     except OSError:
         return _sync_all_impl()

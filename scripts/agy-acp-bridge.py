@@ -282,7 +282,7 @@ def check_single_segment_argv(
             script_args = [a for a in argv[1:] if not a.startswith("-")]
             if script_args:
                 script_path = script_args[0]
-                if script_path.startswith("/") or ".." in Path(script_path).parts or ".." in script_path:
+                if Path(script_path).is_absolute() or script_path.startswith("/") or script_path.startswith("\\") or (len(script_path) > 1 and script_path[1] == ":") or ".." in Path(script_path).parts or ".." in script_path:
                     return False, f"python3 chỉ chấp nhận script trong repo với đường dẫn tương đối sạch: {script_path}"
 
     # Node -e / --eval và script file
@@ -293,7 +293,7 @@ def check_single_segment_argv(
         script_args = [a for a in argv[1:] if not a.startswith("-")]
         if script_args:
             script_path = script_args[0]
-            if script_path.startswith("/") or ".." in Path(script_path).parts or ".." in script_path:
+            if Path(script_path).is_absolute() or script_path.startswith("/") or script_path.startswith("\\") or (len(script_path) > 1 and script_path[1] == ":") or ".." in Path(script_path).parts or ".." in script_path:
                 return False, f"node chỉ chấp nhận script trong repo với đường dẫn tương đối sạch: {script_path}"
 
     # Find -delete / -exec / -ok / -fprint / -fls

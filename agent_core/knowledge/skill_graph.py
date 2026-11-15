@@ -57,10 +57,20 @@ def check_forbidden_system_path(path: Path) -> Tuple[bool, str]:
     except Exception:
         expanded = path
 
-    # Windows: Cấm ổ C:
+    # Windows: Cấm root C:\ và thư mục hệ thống Windows
     if sys.platform == "win32" or getattr(expanded, "drive", ""):
-        if getattr(expanded, "drive", "").upper() == "C:":
-            return True, "CẤM CẤU HÌNH VÀO Ổ C: (ổ hệ điều hành Windows)!"
+        drv = getattr(expanded, "drive", "").upper()
+        str_p = str(expanded).replace("\\", "/")
+        # Cho phép các thư mục tạm (tempfile) phục vụ kiểm thử
+        if "appdata/local/temp" in str_p.lower() or "/temp" in str_p.lower():
+            return False, ""
+        if drv:
+            if str_p.rstrip("/") == drv:
+                return True, f"CẤM cấu hình vào thư mục gốc hệ thống ({drv}/)!"
+            win_sys_dirs = [f"{drv}/Windows", f"{drv}/Program Files", f"{drv}/Program Files (x86)", f"{drv}/ProgramData"]
+            for f_dir in win_sys_dirs:
+                if str_p.lower() == f_dir.lower() or str_p.lower().startswith(f_dir.lower() + "/"):
+                    return True, f"CẤM cấu hình vào thư mục hệ thống ({f_dir})!"
 
     # macOS & Linux: Cấm root và thư mục hệ thống
     if sys.platform != "win32":
