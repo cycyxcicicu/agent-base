@@ -564,6 +564,12 @@ VIETNAMESE_SKILL_SYNONYMS: Dict[str, List[str]] = {
     "review code": ["open-code-review", "review", "code-review"],
     "khóa bảng": ["lock", "deadlock", "postgres", "migration"],
     "di chuyển dữ liệu": ["migration", "database-migrations"],
+    "viết": ["writing", "humanizer", "write", "prose", "copy"],
+    "viết văn": ["writing", "humanizer", "write", "prose"],
+    "viết như người": ["humanizer", "writing", "natural"],
+    "văn phong": ["humanizer", "tone", "style", "voice"],
+    "tự nhiên": ["humanizer", "natural", "human"],
+    "humanize": ["humanizer", "writing"],
 }
 
 
