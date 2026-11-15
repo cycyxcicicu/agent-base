@@ -134,7 +134,10 @@ danger_deny = [
     'cmd /c git *', 'cmd.exe /c git *',
     '*&&*rm *', '*;*rm *', '*|*rm *',
     '*&&*Remove-Item*', '*;*Remove-Item*',
-    '*&&*del *', '*;*del *'
+    '*&&*del *', '*;*del *',
+    '*--dangerously-skip-permissions*',
+    'git commit:*', 'git push:*', 'git add:*',
+    'git -C * commit:*', 'git -C * push:*', 'git -C * add:*'
 ]
 
 
@@ -428,7 +431,32 @@ claude_read_allow = [
     'cd * && python3 *glossary-check.py*',
     'cd * && python3 *task-gate.py audit*',
     'cd * && python3 *verify-gate.py run*',
-    'cd * && safe-search *'
+    'cd * && safe-search *',
+
+    # 5. Antigravity CLI (agy) & orchestration bridge
+    'agy', 'agy *', 'agy:*',
+    'agy-bridge', 'agy-bridge *', 'agy-bridge:*',
+    'python3 *agy-bridge.py*', 'python *agy-bridge.py*',
+    'python3 *agy-bridge.py:*', 'python *agy-bridge.py:*',
+    'python3 /Users/ducnvh/Documents/agent-base/scripts/agy-bridge.py:*',
+    'python3 /Users/ducnvh/Documents/agent-base/scripts/doc-preflight.py:*',
+    'python3 /Users/ducnvh/Documents/agent-base/scripts/verify-gate.py:*',
+    'python3 /Users/ducnvh/Documents/agent-base/scripts/hard-check.py:*',
+    'python3 /Users/ducnvh/Documents/agent-base/scripts/glossary-check.py:*',
+    'python3 /Users/ducnvh/Documents/agent-base/scripts/task-gate.py:*',
+    'python3 *doc-preflight.py:*', 'python *doc-preflight.py:*',
+    'python3 *verify-gate.py:*', 'python *verify-gate.py:*',
+    'python3 *verify-gate.py*', 'python *verify-gate.py*',
+    'python3 *hard-check.py:*', 'python *hard-check.py:*',
+    'python3 *glossary-check.py:*', 'python *glossary-check.py:*',
+    'python3 *task-gate.py:*', 'python *task-gate.py:*',
+    'python3 *task-gate.py*', 'python *task-gate.py*',
+    'python3 -m unittest:*', 'python3 -m unittest *', 'python -m unittest:*', 'python -m unittest *',
+    'git -C * status:*', 'git -C * diff:*', 'git -C * log:*',
+    'cd * && agy', 'cd * && agy *', 'cd * && agy:*',
+    'cd * && agy-bridge', 'cd * && agy-bridge *', 'cd * && agy-bridge:*',
+    'cd * && python3 *agy-bridge.py*', 'cd * && python *agy-bridge.py*',
+    'cd * && python3 *agy-bridge.py:*', 'cd * && python *agy-bridge.py:*'
 ]
 
 
@@ -831,28 +859,34 @@ def main():
         except Exception:
             pass
 
-    # Chuẩn hóa đường dẫn: hỗ trợ WORKTREES_DIR đa máy, tự động mở rộng ~/ thành path tuyệt đối
-    wt_env = os.environ.get("WORKTREES_DIR")
-    if wt_env:
-        worktrees_dir = str(Path(os.path.expanduser(wt_env)).resolve())
-    else:
-        worktrees_dir = str((Path.home() / "Documents" / "worktrees").resolve())
-    agentbase_dir = str(ROOT.resolve())
+    # Chuẩn hóa đường dẫn tương đối đa nền tảng (mỗi máy một khác):
+    # Dùng đường dẫn tương đối (ví dụ: ../worktrees) thay vì đường dẫn tuyệt đối gắn cứng username
+    default_dirs = ["../worktrees"]
+    rel_dirs = []
+    for d in (existing_dirs or default_dirs):
+        if not isinstance(d, str):
+            continue
+        p = Path(d)
+        if p.is_absolute():
+            try:
+                rel_p = os.path.relpath(str(p), str(ROOT))
+                rel_dirs.append(rel_p.replace("\\", "/"))
+            except Exception:
+                pass
+        else:
+            rel_dirs.append(d.replace("\\", "/"))
 
-    # Hợp nhất: giữ nguyên mọi thư mục người dùng đã cấu hình trước đó, đồng thời đảm bảo worktrees và agent-base luôn có mặt
-    merged_dirs = []
-    for d in existing_dirs:
-        norm_d = str(Path(os.path.expanduser(d)).resolve()) if isinstance(d, str) else str(d)
-        if norm_d not in merged_dirs:
-            merged_dirs.append(norm_d)
-    for d in [worktrees_dir, agentbase_dir]:
-        if d not in merged_dirs:
-            merged_dirs.append(d)
+    final_dirs = []
+    for d in (rel_dirs or default_dirs):
+        if d not in final_dirs and d != ".":
+            final_dirs.append(d)
+    if not final_dirs:
+        final_dirs = default_dirs
 
     claude_settings = {
         "$schema": "https://json.schemastore.org/claude-code-settings.json",
         "permissions": {
-            "additionalDirectories": merged_dirs,
+            "additionalDirectories": final_dirs,
             "allow": claude_allow,
             "deny": claude_deny,
             "ask": claude_ask
@@ -907,6 +941,7 @@ def main():
     else:
         if '--sync-global-claude' in sys.argv:
             sync_global_claude_permissions(claude_settings)
+        sync_registered_projects_claude(claude_settings, ROOT)
         # Tự động đồng bộ MCP đa nền tảng (Universal MCP Sync)
         mcp_sync_script = ROOT / "scripts" / "sync-mcp.py"
         if mcp_sync_script.is_file():
@@ -914,6 +949,39 @@ def main():
                 subprocess.run([sys.executable, str(mcp_sync_script), "--global", "--all-projects"], check=False)
             except Exception as e:
                 print(f"⚠️ Không thể chạy sync-mcp: {e}")
+
+
+def sync_registered_projects_claude(claude_settings: dict, root: Path) -> list[Path]:
+    """Đồng bộ .claude/settings.json sang tất cả các dự án trong projects.local.json / projects.json."""
+    updated: list[Path] = []
+    for proj_dir in _load_registered_project_dirs(root):
+        p = Path(proj_dir)
+        if p.resolve() == root.resolve():
+            continue
+        proj_claude = p / ".claude"
+        if not proj_claude.is_dir():
+            continue
+        # Bỏ qua nếu .claude hoặc settings.json là symlink về agent-base để tránh ghi đè vòng
+        if proj_claude.is_symlink():
+            continue
+        proj_settings = proj_claude / "settings.json"
+        if proj_settings.is_symlink():
+            continue
+        try:
+            existing = {}
+            if proj_settings.is_file():
+                try:
+                    existing = json.loads(proj_settings.read_text(encoding="utf-8"))
+                except Exception:
+                    existing = {}
+            existing["$schema"] = claude_settings.get("$schema", "https://json.schemastore.org/claude-code-settings.json")
+            existing["permissions"] = claude_settings.get("permissions", {})
+            proj_settings.write_text(json.dumps(existing, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+            updated.append(proj_settings)
+            print(f"synced   {proj_settings}")
+        except Exception as e:
+            print(f"WARNING: Không thể đồng bộ {proj_settings}: {e}")
+    return updated
 
 
 def _load_registered_project_dirs(root: Path) -> list[str]:

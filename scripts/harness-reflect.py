@@ -163,9 +163,22 @@ def find_next_proposal_id(proposals_dir: Path) -> int:
     return max(ids) + 1 if ids else 1
 
 
-def detect_core_rule_proposals(notes: list[dict], existing_project_notes: str) -> list[dict]:
+def detect_core_rule_proposals(notes: list[dict], existing_project_notes: str, proposals_dir: Path | None = None) -> list[dict]:
     """Phát hiện các lưu ý hoặc bài học chạm đến Quy tắc Cốt lõi hoặc xuất hiện >= 2 lần."""
     proposals_needed = []
+
+    # Thu thập bằng chứng từ các đề xuất đã có để chống trùng lặp
+    existing_prop_texts = []
+    if proposals_dir and proposals_dir.is_dir():
+        for p in proposals_dir.glob("PRP-*.md"):
+            try:
+                p_txt = p.read_text(encoding="utf-8")
+                for m in re.finditer(r'>\s*"(.*?)"', p_txt):
+                    existing_prop_texts.append(m.group(1).strip().lower())
+            except Exception:
+                pass
+
+    seen_in_batch = set()
 
     for note in notes:
         # Gom toàn bộ các ý kiến từ note
@@ -179,6 +192,13 @@ def detect_core_rule_proposals(notes: list[dict], existing_project_notes: str) -
 
         for c_type, text in candidates:
             text_lower = text.lower()
+
+            # Bỏ qua nếu đã tồn tại đề xuất tương tự trước đó hoặc trong cùng lô
+            if any(text_lower[:50] in ep or ep[:50] in text_lower for ep in existing_prop_texts):
+                continue
+            if text_lower[:50] in seen_in_batch:
+                continue
+
             is_core_rule = any(kw in text_lower for kw in CORE_RULE_KEYWORDS)
 
             # Đếm số lần xuất hiện tương tự trong PROJECT-NOTES.md
@@ -193,6 +213,7 @@ def detect_core_rule_proposals(notes: list[dict], existing_project_notes: str) -
                 repeat_count = matches
 
             if is_core_rule or repeat_count >= 1:  # Xuất hiện thêm lần này nữa là >= 2 lần
+                seen_in_batch.add(text_lower[:50])
                 proposals_needed.append({
                     "source_note": note["filename"],
                     "task": note["task"],
@@ -573,7 +594,7 @@ def main():
     existing_content = project_notes_path.read_text(encoding="utf-8") if project_notes_path.is_file() else ""
 
     # 3. Phát hiện đề xuất liên quan Quy tắc Cốt lõi hoặc Bài học lặp lại >= 2 lần
-    proposals = detect_core_rule_proposals(notes, existing_content)
+    proposals = detect_core_rule_proposals(notes, existing_content, proposals_dir)
     created_proposals = []
     if proposals:
         current_pid = find_next_proposal_id(proposals_dir)

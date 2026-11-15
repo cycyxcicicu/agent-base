@@ -82,13 +82,34 @@ def record_trust(project_root: Path, cmd: str, trust_file: Path = DEFAULT_TRUST_
     return trust_file
 
 
-def run_bundle(
+def _build_security_and_craft_steps(changed_against: str | None) -> list[tuple[str, list[str]]]:
+    """Tập hợp các bước kiểm an ninh, toàn vẹn và Clean Code."""
+    scripts = [
+        ("trojan-check", "trojan-check.py"),
+        ("test-integrity", "test-integrity-check.py"),
+        ("dependency-guard", "dependency-guard.py"),
+        ("markdown-leak-guard", "markdown-leak-guard.py"),
+        ("code-craft", "code-craft-check.py"),
+        ("liquibase-guard", "liquibase-guard.py"),
+    ]
+    res: list[tuple[str, list[str]]] = []
+    for label, script_name in scripts:
+        cmd = [sys.executable, str(SCRIPTS_DIR / script_name)]
+        if changed_against:
+            cmd.extend(["--changed-against", changed_against])
+        res.append((label, cmd))
+    return res
+
+
+def _build_all_gate_steps(
     root: Path,
-    changed_against: str | None = None,
-    card: str = "",
-    strict_ac: bool = False,
-    require_challenge: bool = False,
-) -> int:
+    changed_against: str | None,
+    card: str,
+    strict_ac: bool,
+    require_challenge: bool,
+    fast_path: bool,
+) -> list[tuple[str, list[str]]]:
+    """Tập hợp danh sách câu lệnh kiểm tra cổng hợp nhất."""
     steps: list[tuple[str, list[str]]] = []
 
     hc_cmd = [sys.executable, str(SCRIPTS_DIR / "hard-check.py"), "--root", str(root)]
@@ -101,17 +122,32 @@ def run_bundle(
         gc_cmd.extend(["--changed-against", changed_against])
     steps.append(("glossary-check", gc_cmd))
 
-    tg_cmd = [sys.executable, str(SCRIPTS_DIR / "task-gate.py"), "audit", "--root", str(root)]
-    if changed_against:
-        tg_cmd.extend(["--changed-against", changed_against])
-    if card:
-        tg_cmd.extend(["--card", card])
-    if strict_ac:
-        tg_cmd.append("--strict-ac")
-    if require_challenge:
-        tg_cmd.append("--require-challenge")
-    steps.append(("task-gate", tg_cmd))
+    steps.extend(_build_security_and_craft_steps(changed_against))
 
+    if not fast_path:
+        tg_cmd = [sys.executable, str(SCRIPTS_DIR / "task-gate.py"), "audit", "--root", str(root)]
+        if changed_against:
+            tg_cmd.extend(["--changed-against", changed_against])
+        if card:
+            tg_cmd.extend(["--card", card])
+        if strict_ac:
+            tg_cmd.append("--strict-ac")
+        if require_challenge:
+            tg_cmd.append("--require-challenge")
+        steps.append(("task-gate", tg_cmd))
+
+    return steps
+
+
+def run_bundle(
+    root: Path,
+    changed_against: str | None = None,
+    card: str = "",
+    strict_ac: bool = False,
+    require_challenge: bool = False,
+    fast_path: bool = False,
+) -> int:
+    steps = _build_all_gate_steps(root, changed_against, card, strict_ac, require_challenge, fast_path)
     overall_rc = 0
     for label, cmd in steps:
         print(f"=== [{label}] ===")
@@ -146,7 +182,7 @@ def run_stop_hook(project_root: Path, trust_file: Path = DEFAULT_TRUST_FILE) -> 
     if trusted != _sha256(cmd):
         return 0
 
-    proc = subprocess.run(cmd, cwd=str(project_root), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8")
+    proc = subprocess.run(cmd, cwd=str(project_root), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8")  # cso: allow INJ-02 chạy các tool cổng kiểm tra qua lệnh shell an toàn
     if proc.returncode != 0:
         sys.stderr.write(f"[verify-gate] Lệnh kiểm tra `{cmd}` thất bại (exit {proc.returncode}):\n{(proc.stdout or '')[-1500:]}\n")
         sys.stderr.flush()
@@ -164,6 +200,7 @@ def main() -> int:
     p_run.add_argument("--card", default="", help="Task Card .md")
     p_run.add_argument("--strict-ac", action="store_true")
     p_run.add_argument("--require-challenge", action="store_true")
+    p_run.add_argument("--fast-path", action="store_true", help="Bỏ qua task-gate, chỉ chạy hard-check và glossary-check trên diff nhỏ")
 
     p_hook = sub.add_parser("hook", help="Chạy chế độ Claude Stop hook")
     p_hook.add_argument("--root", default=".")
@@ -194,6 +231,7 @@ def main() -> int:
             card=args.card,
             strict_ac=args.strict_ac,
             require_challenge=args.require_challenge,
+            fast_path=args.fast_path,
         )
 
     ap.print_help()

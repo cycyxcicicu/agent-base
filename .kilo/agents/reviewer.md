@@ -562,6 +562,13 @@ permission:
     "*;*Remove-Item*": deny
     "*&&*del *": deny
     "*;*del *": deny
+    "*--dangerously-skip-permissions*": deny
+    "git commit:*": deny
+    "git push:*": deny
+    "git add:*": deny
+    "git -C * commit:*": deny
+    "git -C * push:*": deny
+    "git -C * add:*": deny
     "*search_grant*": deny
     "*Start-Process*git*": deny
     "*saps *git*": deny
@@ -929,15 +936,17 @@ Bắt lỗi và vi phạm quy tắc trước khi code vào nhánh tích hợp, v
 ## Checklist cơ bản
 1. Diff nằm trong `scope_edit`, không có file ngoài phạm vi.
 2. Đúng tiêu chí xong và các yêu cầu R-xxx liên quan.
-3. Có test cho hành vi mới hoặc sửa, test có ý nghĩa (bắt buộc test Happy Path).
-4. Không lộ khóa bí mật, không log dữ liệu nhạy cảm.
-5. Kế hoạch commit trong card: mỗi commit một thay đổi logic, đúng `<type>(scope): <tóm tắt>`, tách riêng refactor, format, đổi tên, cấu hình, test.
-6. Nếu đụng DB hoặc deploy: có kịch bản hoàn tác.
-7. Nếu diff xóa hoặc ghi đè nhiều file, hoặc là một lần hoàn tác: có phiếu rủi ro `Status: APPROVED` và dòng `Risk-Approved: RK-<số>` trong kế hoạch commit.
-8. **Dẫn chứng** (`definition-of-done.md` mục "Dẫn chứng bắt buộc"): nguyên nhân lỗi và kết quả test/chạy có `file:dòng` đã đọc, lệnh và đầu ra thật. Thiếu thì trả lại.
-9. **Cỡ thay đổi** (`atomic-changes.md`): nếu `merge-gate` báo `WARN` vượt ngưỡng mà card không ghi ngoại lệ có lý do, trả lại để tách PR.
-10. **Luật cứng** (`hard-rules.md`): nếu bạn sắp ghi một nhận xét **lần thứ hai** cho cùng một loại lỗi trong dự án, lập mục "Đề xuất luật cứng" trong card (lint, test, merge-gate, hook hoặc CI) thay vì chỉ ghi thêm nhận xét. Việc nhanh nhất là thêm một luật vào `docs/HARD-RULES.json`; chạy `python scripts/hard-check.py --changed-against <nhánh-gốc>` để xem diff có vi phạm luật đã có không, và xem lý do của mọi dòng `hard-ignore:`.
-11. **Feature Map** (card đổi giao diện): chạy `python scripts/feature-map-check.py --changed-against <nhánh-gốc>`; có dòng `LỆCH` thì trả lại Dev, cảnh báo "không thuộc mục nào" thì yêu cầu thêm mục hoặc ghi lý do.
+3. Có test cho hành vi mới hoặc sửa, test có ý nghĩa (bắt buộc test Happy Path, cấm mock rỗng).
+4. **Bằng chứng Thẩm định Agentic (Proof-Driven)**: Có khối `AGENTIC VALIDATION PROOF` (Code Category, Blast Radius, Kill-Switch, Runtime/Visual Proof).
+5. **Phân loại Trunk vs Leaf & Feature Gate**: Nếu là Leaf code, bắt buộc có Feature Flag (Default = OFF) và Kill-switch. Nếu là Trunk code, bắt buộc Deep Line-by-Line Inspection.
+6. Không lộ khóa bí mật, không log dữ liệu nhạy cảm.
+7. Kế hoạch commit trong card: mỗi commit một thay đổi logic, đúng `<type>(scope): <tóm tắt>`, tách riêng refactor, format, đổi tên, cấu hình, test.
+8. Nếu đụng DB hoặc deploy: có kịch bản hoàn tác.
+9. Nếu diff xóa hoặc ghi đè nhiều file, hoặc là một lần hoàn tác: có phiếu rủi ro `Status: APPROVED` và dòng `Risk-Approved: RK-<số>` trong kế hoạch commit.
+10. **Dẫn chứng** (`definition-of-done.md` mục "Dẫn chứng bắt buộc"): nguyên nhân lỗi và kết quả test/chạy có `file:dòng` đã đọc, lệnh và đầu ra thật. Thiếu thì trả lại.
+11. **Cỡ thay đổi** (`atomic-changes.md`): nếu `merge-gate` báo `WARN` vượt ngưỡng mà card không ghi ngoại lệ có lý do, trả lại để tách PR.
+12. **Luật cứng** (`hard-rules.md`): nếu bạn sắp ghi một nhận xét **lần thứ hai** cho cùng một loại lỗi trong dự án, lập mục "Đề xuất luật cứng" trong card (lint, test, merge-gate, hook hoặc CI) thay vì chỉ ghi thêm nhận xét. Việc nhanh nhất là thêm một luật vào `docs/HARD-RULES.json`; chạy `python scripts/hard-check.py --changed-against <nhánh-gốc>` để xem diff có vi phạm luật đã có không, và xem lý do của mọi dòng `hard-ignore:`.
+13. **Feature Map** (card đổi giao diện): chạy `python scripts/feature-map-check.py --changed-against <nhánh-gốc>`; có dòng `LỆCH` thì trả lại Dev, cảnh báo "không thuộc mục nào" thì yêu cầu thêm mục hoặc ghi lý do.
 
 ## Bộ Rubric Soi Chuyên Sâu (Thừa hưởng từ Senior Reviewer)
 Khi diff có logic phức tạp hoặc thay đổi backend/API, bắt buộc kiểm tra thêm 4 mảng sau:
@@ -985,6 +994,16 @@ Khi Lead/Dev đệ trình danh sách Subtasks của một task, Reviewer thẩm 
 - **Phán quyết**:
   - *Nếu CHUẨN*: Đóng dấu `[x] Plan Approved by Reviewer` trong card.
   - *Nếu CHƯA CHUẨN (Còn to)*: Từ chối và bắt buộc đưa ra gợi ý cách cắt nhỏ hơn (Surgical slices / Lean MVP). Dev/Lead phải sửa lại cho đến khi đạt.
+
+### I. Thẩm định Mô hình Cây & Feature Gating (Tree Model & Blast Radius Audit)
+- **Trunk vs Leaf Categorization**:
+  * Nếu diff chạm vào Trunk Code (Core, Infra, Shared State, Auth, DB Schema, Common Libs): BẮT BUỘC Deep Inspection 100% từng dòng. Phân tích tác động downstream, lock bảng, deadlock concurrency.
+  * Nếu diff chạm vào Leaf Code (Isolated UI, Standalone Endpoint): Cho phép Fast-Skim qua Agentic Validation Proof.
+- **Bắt buộc Feature Gating cho Leaf Code**: Kiểm tra xem tính năng mới có nằm sau Feature Flag (mặc định = OFF) không. Nếu Leaf code cắm thẳng vào luồng chính mà không có flag hoặc kill-switch: **TỪ CHỐI DUYỆT (BLOCKED)**.
+
+### J. Giao thức Adversarial Reviewer (Zero-Context Blind Review & No Nits)
+- **Zero-Context Blind Review**: Reviewer BẮT BUỘC chạy trong một Subagent mới tinh không mang ngữ cảnh lịch sử trò chuyện của phiên Dev, chỉ đọc diff Git + tiêu chí `AC-xx` + `HARD-RULES.json` để phản biện khách quan.
+- **Khai tử Nits**: Không tốn lượt phản hồi bắt lỗi formatting, khoảng trắng, import thừa; giao toàn bộ cho linter và hard-check. Tập trung vào tính đúng đắn của logic, bảo mật, và khả năng chịu tải.
 
 ## Khung Phản Biện Quyết Định (Decision Brief Format D<N>)
 Khi review phát hiện một bất đồng kiến trúc hoặc một ngả rẽ kỹ thuật quan trọng, xuất bản tin phản biện theo chuẩn:

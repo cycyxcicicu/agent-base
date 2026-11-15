@@ -61,7 +61,8 @@ python3 ~/Documents/agent-base/scripts/ve-so-do.py spec.json --check-only   # ch
 python3 ~/Documents/agent-base/scripts/ve-so-do.py spec.json                # ghi .drawio, xuất .png, kiểm
 ```
 
-- Trường chung: `type` (`class`, `flow`, `swimlane`, `sequence`, `erd`), `title`, `note`, `out` (tên `.drawio`), `png` (tên ảnh), `page` (tên trang). File ra nằm cạnh file spec.
+- Trường chung: `type` (`class`, `flow`, `swimlane`, `sequence`, `erd`, `activity`, `usecase`), `out` (tên `.drawio`), `png` (tên ảnh), `page` (tên trang). File ra nằm cạnh file spec.
+- **QUY TẮC BỎ HEADER (CẤM `title` và `note` TRÊN CANVAS):** Tuyệt đối KHÔNG khai báo `title` và `note` vào trong file `.spec.json`. Tiêu đề và diễn giải sơ đồ đã được trình bày rõ ràng trong văn bản Markdown đặc tả (tiêu đề `###`, bảng mô tả, chú thích); việc vẽ thêm dòng tiêu đề in đậm và ghi chú chữ nhỏ lên canvas sơ đồ gây rối mắt, chiếm diện tích và thừa thãi.
 - Xuất ảnh cần draw.io Desktop (`brew install --cask drawio`, hoặc đặt biến `DRAWIO_CLI`). Không có thì script vẫn ghi `.drawio` và kiểm lỗi; báo rõ "chưa xuất ảnh".
 - **Quy ước tên file:** file spec đặt cạnh ảnh và **cùng tên gốc với ảnh**: ảnh `hinh/UC-04-erd.png` thì spec là `hinh/UC-04-erd.spec.json` (và `out` là `UC-04-erd.drawio`). `srs-check.py` dựa vào quy ước này để báo ảnh sơ đồ thiếu spec.
 - Ảnh quá lớn (trên khoảng 4000 điểm mỗi chiều) bị draw.io cắt cụt khi xuất; công cụ tự giảm tỉ lệ xuất để tránh.

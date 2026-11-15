@@ -79,3 +79,6 @@ projects.local.json
 skills.config.local.json
 mcp/mcp-servers.local.json
 mcp-servers.local.json
+
+# Tài liệu tham khảo ngoài nặng (~50MB)
+docs/source/dwh_integration/

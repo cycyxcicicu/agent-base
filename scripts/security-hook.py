@@ -40,8 +40,36 @@ BLOCKED_CODE_EXTS = (
     ".cs", ".php", ".c", ".cpp", ".h", ".vue",
 )
 
+# Danh sách hạ tầng bất biến chống Trust Handoff (CVE-2026-48124) và tự sửa luật
+CRITICAL_IMMUTABLE_PATTERNS = (
+    ".git/hooks",
+    ".git/config",
+    ".gitattributes",
+    ".gitmodules",
+    ".vscode",
+    ".idea",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+    "CODEX.md",
+    ".agents/rules",
+    "HARD-RULES.json",
+    "GLOSSARY.json",
+    ".env",
+    ".bashrc",
+    ".zshrc",
+    ".profile",
+)
+
 _WRAPPERS = {"sudo", "env", "command", "nohup", "time"}
 _OBFUSCATING_WRAPPERS = {"command", "env"}
+
+# Biến môi trường nguy hiểm có thể chiếm quyền thực thi gián tiếp (Hijacking)
+DANGEROUS_ENV_VARS = {
+    "GIT_EXTERNAL_DIFF", "GIT_SSH_COMMAND", "GIT_EDITOR", "GIT_PAGER", "GIT_EXEC_PATH",
+    "LD_PRELOAD", "LD_LIBRARY_PATH", "DYLD_INSERT_LIBRARIES", "DYLD_LIBRARY_PATH",
+    "NODE_OPTIONS", "PYTHONPATH", "RUBYOPT", "PERL5OPT",
+}
 
 _GIT_GLOBAL_VAL_FLAGS = {
     "-C", "-c", "--git-dir", "--work-tree", "--namespace",
@@ -388,6 +416,34 @@ def check_command_violation(cmd: str) -> tuple[bool, str]:
     if not cmd or not cmd.strip():
         return False, ""
 
+    # 0. PHÒNG THỦ TẦNG CHUỖI: Chặn các kỹ thuật né tránh tinh vi (Polyglot / Pipeline / Trust Handoff)
+    # a. Chặn tải script từ mạng rồi pipe thẳng vào shell (Unverified Remote Execution)
+    if re.search(r"\b(curl|wget)\b.*\|\s*(?:ba|z)?sh\b", cmd, re.I):
+        return True, (
+            "[SECURITY GATE] Chặn đứng hành vi tải script từ mạng rồi thực thi trực tiếp qua shell (`curl/wget | sh`).\n"
+            "Mọi script phải được kiểm tra nguồn gốc và lưu thành file tĩnh có thể kiểm toán."
+        )
+
+    # b. Chặn giải mã base64/hex rồi pipe thẳng vào shell (Decode Execution Pipeline)
+    if re.search(r"\b(base64\s+-(?:d|-decode)|xxd\s+-r|openssl\s+enc\s+-d)\b.*\|\s*(?:ba|z)?sh\b", cmd, re.I):
+        return True, (
+            "[SECURITY GATE] Chặn đứng hành vi giải mã mã độc rồi pipe vào shell (`base64/xxd | sh`).\n"
+            "Cấm obfuscation payload trong môi trường agent."
+        )
+
+    # c. Chặn can thiệp/ghi file vào .git/hooks qua shell redirection
+    if re.search(r"(?:>|>>|tee\s+|cp\s+.*|mv\s+.*)\s*.*\.git/hooks", cmd, re.I):
+        return True, (
+            "[SECURITY GATE] Chặn đứng hành vi ghi đè file hook của Git (`.git/hooks/`).\n"
+            "Phòng thủ lỗ hổng Trust Handoff (CVE-2026-48124) — ngăn ngừa chiếm quyền máy Host."
+        )
+
+    # d. Chặn lệnh xóa hàng loạt nguy hiểm (bắt cả -rf, -fr, -r -f, -f -r)
+    if re.search(r"\brm\s+(?:-(?:[a-zA-Z]*r[a-zA-Z]*f|[a-zA-Z]*f[a-zA-Z]*r)|-[a-zA-Z]*r\b\s+-[a-zA-Z]*f\b|-[a-zA-Z]*f\b\s+-[a-zA-Z]*r\b)\s+([/~*]|\$HOME|\.\.?/?)", cmd, re.I):
+        return True, (
+            "[SECURITY GATE] Lệnh 'rm -rf' trên thư mục gốc/nhà/toàn bộ workspace bị chặn cứng theo Cổng rủi ro."
+        )
+
     for seg, in_subshell in _extract_subshells_and_split(cmd):
         tokens = _tokenize_segment(seg)
         if not tokens:
@@ -403,6 +459,12 @@ def check_command_violation(cmd: str) -> tuple[bool, str]:
         while idx < len(tokens):
             raw_tok = tokens[idx][0]
             if _ENV_ASSIGN_RE.match(raw_tok):
+                var_name = raw_tok.split("=", 1)[0].strip().upper()
+                if var_name in DANGEROUS_ENV_VARS:
+                    return True, (
+                        f"[SECURITY GATE] Biến môi trường nguy hiểm '{var_name}' bị chặn cứng!\n"
+                        "Ngăn ngừa kỹ thuật chiếm quyền thực thi gián tiếp (Environment Variable Hijacking)."
+                    )
                 idx += 1
                 continue
             base = os.path.basename(raw_tok.replace("\\", "/")).lower()
@@ -444,6 +506,32 @@ def check_command_violation(cmd: str) -> tuple[bool, str]:
             if blocked:
                 return True, msg
 
+        # 3.1. Chặn các ngôn ngữ kịch bản chạy inline (Node, Perl, Ruby, PHP) để lách luật
+        after_tokens = [t[0] for t in tokens[idx + 1:]]
+        if first in ("node", "nodejs") and any(t in ("-e", "--eval", "-p", "--print") for t in after_tokens):
+            return True, "[SECURITY GATE - VI PHẠM AGENTS.md] Lệnh Node.js inline (`-e`/`--eval`) bị chặn cứng!"
+
+        if first == "perl" and any(t in ("-e", "-E") for t in after_tokens):
+            return True, "[SECURITY GATE - VI PHẠM AGENTS.md] Lệnh Perl inline (`-e`) bị chặn cứng theo AGENTS.md!"
+
+        if first == "ruby" and any(t == "-e" for t in after_tokens):
+            return True, "[SECURITY GATE - VI PHẠM AGENTS.md] Lệnh Ruby inline (`-e`) bị chặn cứng!"
+
+        # 3.2. Chặn sed -i sửa code trực tiếp (bắt buộc dùng Edit/Write theo §4 AGENTS.md)
+        if first == "sed" and any(t in ("-i", "-i''", "-i.bak") or t.startswith("-i") for t in after_tokens):
+            return True, "[SECURITY GATE - VI PHẠM AGENTS.md] Lệnh 'sed -i' bị chặn cứng! Bắt buộc sửa code bằng Edit/Write."
+
+        # 3.3. Chặn awk gọi system() thực thi mã gián tiếp
+        if first in ("awk", "gawk", "nawk") and "system(" in seg:
+            return True, "[SECURITY GATE] Lệnh 'awk' gọi system() bị chặn cứng chống Command Injection!"
+
+        # 3.4. Chặn ln -s trỏ vào file nhạy cảm chống Symlink Escape
+        if first == "ln" and any(t in ("-s", "-sf", "-fs") for t in after_tokens):
+            for t in after_tokens:
+                if t.startswith(("/etc", "/var", "/root", "/Users")) or "~" in t or ".." in t:
+                    if any(k in t.lower() for k in (".ssh", "passwd", "shadow", "id_rsa", "config", ".bash", ".zsh")):
+                        return True, f"[SECURITY GATE] Lệnh 'ln -s' trỏ tới file nhạy cảm '{t}' bị chặn cứng chống Symlink Escape!"
+
         # 4. Kiểm tra lệnh git (bao gồm git.exe, "git", 'git', g`it, command git, /usr/bin/git, & git, git\t, git  )
         git_exe = _normalize_git_exe(norm_cmd)
         if git_exe in ("git", "git.exe"):
@@ -480,12 +568,23 @@ def _find_scope_file(target: Path, cwd: str | None = None) -> Path | None:
 
 
 def check_file_edit_violation(file_path: str, cwd: str | None = None) -> tuple[bool, str]:
-    """Kiểm tra khóa phạm vi Edit/Write (.agentbase-scope.json) — fail-open khi không bật, fail-closed khi bật."""
+    """Kiểm tra khóa phạm vi Edit/Write (.agentbase-scope.json) & hạ tầng bất biến chống Trust Handoff."""
     if not file_path or not file_path.strip():
         return False, ""
     base_dir = Path(os.path.expanduser(cwd)).resolve() if cwd else Path.cwd().resolve()
     raw_target = Path(os.path.expanduser(file_path))
     target = raw_target.resolve() if raw_target.is_absolute() else (base_dir / raw_target).resolve()
+    target_posix = target.as_posix()
+
+    # 1. BẢO VỆ HẠ TẦNG BẤT BIẾN TOÀN CỤC (GLOBAL IMMUTABLE INFRASTRUCTURE LOCK)
+    # Chống Trust Handoff Flaws (CVE-2026-48124) và ngăn chặn Agent tự sửa luật để vượt quyền
+    for imm_pat in CRITICAL_IMMUTABLE_PATTERNS:
+        if imm_pat in target_posix or target.name == imm_pat:
+            return True, (
+                f"[SECURITY GATE - IMMUTABLE INFRASTRUCTURE] File '{target.name}' thuộc hạ tầng bất biến!\n"
+                f"Nghiêm cấm mọi hành vi sửa đổi file nhạy cảm ({imm_pat}) qua công cụ tự động của Agent.\n"
+                "-> Để cập nhật luật hoặc cấu hình, người dùng phải trực tiếp thao tác hoặc dùng script chuẩn hóa."
+            )
 
     scope_file = _find_scope_file(target, cwd=str(base_dir))
     if not scope_file:

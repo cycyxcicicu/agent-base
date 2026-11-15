@@ -8,7 +8,10 @@ Sổ bộ lưu trữ: doc/governance/standards/worktree-registry.json
 """
 
 import argparse
-import fcntl
+try:
+    import fcntl
+except ImportError:
+    fcntl = None
 import json
 import os
 import re
@@ -127,7 +130,7 @@ SERVICE_PORTS = {
 
 
 def run_cmd(cmd, cwd=None):
-    res = subprocess.run(cmd, cwd=cwd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    res = subprocess.run(cmd, cwd=cwd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)  # cso: allow INJ-02 chạy lệnh git nội bộ
     return res.returncode, res.stdout.strip(), res.stderr.strip()
 
 
@@ -669,7 +672,8 @@ def sync_all(debounce_sec: float = 0.0):
     lock_path = Path(tempfile.gettempdir()) / f"agentbase-wt-sync-{slug}.lock"
     try:
         with open(lock_path, "w", encoding="utf-8") as lock_file:
-            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+            if fcntl:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
             return _sync_all_impl()
     except OSError:
         return _sync_all_impl()

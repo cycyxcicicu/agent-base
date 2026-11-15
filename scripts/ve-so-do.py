@@ -218,7 +218,8 @@ class Doc:
         self.root = ET.SubElement(gm, "root")
         ET.SubElement(self.root, "mxCell", id="0")
         ET.SubElement(self.root, "mxCell", id="1", parent="0")
-        self.vertex(MARGIN, 10, width - 80, 30, spec.get("title", ""), "text;html=0;whiteSpace=wrap;fontSize=18;fontStyle=1;align=left;")
+        if spec.get("title"):
+            self.vertex(MARGIN, 10, width - 80, 30, spec["title"], "text;html=0;whiteSpace=wrap;fontSize=18;fontStyle=1;align=left;")
         if spec.get("note"):
             self.vertex(MARGIN, 42, width - 80, 24, spec["note"], "text;html=0;whiteSpace=wrap;fontSize=12;fontColor=#475569;align=left;")
 
@@ -850,15 +851,18 @@ def run_activity(spec):
         else:
             doc.vertex(n["_x"], n["_y"], n["_w"], n["_h"], n["label"], styles[k] + "whiteSpace=wrap;html=0;fontSize=12;fontColor=#000000;", nid)
     for k, (e, (_, _, pts), (lab, lab_x)) in enumerate(zip(es, routes, act_labels), 1):
-        doc.edge(pts, lab, INK, "", e["_cross"] or e.get("dashed", False), eid=f"edge_{k}",
+        doc.edge(pts, lab, INK, "", e.get("dashed", e["_cross"]), eid=f"edge_{k}",
                  src=f"node_{e['from']}", dst=f"node_{e['to']}", ra=rect(by[e["from"]]), rb=rect(by[e["to"]]), lab_x=lab_x)
     if spec.get("legend", True):
         ly = bottom + 30
         doc.vertex(MARGIN, ly, 520, legend_h - 20, "", f"rounded=0;fillColor=none;strokeColor={SEP};")
         doc.vertex(MARGIN + 12, ly + 6, 300, 22, "Chú giải (UML Activity)", "text;html=0;fontStyle=1;fontSize=12;align=left;")
+        co_net_dut = any(e.get("dashed", e["_cross"]) for e in es)
         rows = [("Nút bắt đầu (initial node)", "start"), ("Nút kết thúc (activity final node)", "end"), ("Hành động (action)", "proc"),
-                ("Rẽ nhánh (decision), điều kiện dạng [guard] trên cạnh ra", "dec"), ("Luồng điều khiển trong một làn", "line"),
-                ("Lời gọi hoặc message sang làn khác", "dash")]
+                ("Rẽ nhánh (decision), điều kiện dạng [guard] trên cạnh ra", "dec"),
+                ("Luồng điều khiển trong một làn" if co_net_dut else "Luồng điều khiển (trong làn và giữa các làn)", "line")]
+        if co_net_dut:
+            rows.append(("Lời gọi hoặc message sang làn khác", "dash"))
         for i, (txt, sym) in enumerate(rows):
             yy = ly + 36 + i * 32
             if sym == "start":
@@ -1652,7 +1656,7 @@ def run_bundle(spec_path, spec, args):
         if not png:
             continue
         gm = d.find("mxGraphModel")
-        big = max(int(gm.get("pageWidth")), int(gm.get("pageHeight")))
+        big = max(int(float(gm.get("pageWidth"))), int(float(gm.get("pageHeight"))))
         scale = str(round(min(2.0, 4000 / big), 2))
         r = subprocess.run([cli, "-x", "-f", "png", "-p", str(i), "-s", scale, "-b", "10", "-o", str(png), str(out)], capture_output=True, text=True)
         print(f"Đã xuất {png}" if png.exists() else f"Xuất ảnh lỗi ({png.name}): {r.stderr[:200]}")

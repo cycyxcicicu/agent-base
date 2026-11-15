@@ -555,6 +555,13 @@ permission:
     "*;*Remove-Item*": deny
     "*&&*del *": deny
     "*;*del *": deny
+    "*--dangerously-skip-permissions*": deny
+    "git commit:*": deny
+    "git push:*": deny
+    "git add:*": deny
+    "git -C * commit:*": deny
+    "git -C * push:*": deny
+    "git -C * add:*": deny
     "*search_grant*": deny
     "*Start-Process*git*": deny
     "*saps *git*": deny

@@ -259,6 +259,51 @@ def verify_ui_verification(repo: str, branch: str, inbox_notes: list) -> bool:
     return False
 
 
+def is_trunk_file(f: str) -> bool:
+    """Xác định xem file có thuộc Trunk Code (vùng ảnh hưởng cao/core/infra/auth/db) hay không."""
+    lower = f.lower()
+    trunk_indicators = [
+        'auth/', 'security/', 'iam/', 'middleware/', 'filters/',
+        'migration/', 'migrations/', 'changelog/', 'liquibase/',
+        'db/schema', 'core/', 'shared/', 'common/', 'ws-library/',
+        'infra/', 'infrastructure/', 'config/', 'application.yml',
+        'application.properties', 'pom.xml', 'build.gradle', 'docker-compose'
+    ]
+    return any(ind in lower for ind in trunk_indicators)
+
+
+def verify_agentic_proof(repo: str, branch: str, card_text: str, inbox_notes: list, files: list) -> tuple:
+    """Kiểm tra thẻ Bằng chứng Agentic Validation Proof (Tree Model, Blast Radius, Kill-Switch, Proof Matrix)."""
+    combined_text = card_text or ""
+    for nf in inbox_notes:
+        p = Path(repo) / nf
+        if p.exists():
+            combined_text += "\n" + p.read_text(encoding='utf-8', errors='replace')
+        else:
+            try:
+                c = subprocess.check_output(
+                    ['git', '-C', repo, 'show', f"{branch}:{nf}"],
+                    text=True, encoding='utf-8', stderr=subprocess.DEVNULL
+                )
+                combined_text += "\n" + c
+            except Exception:
+                pass
+
+    has_proof_header = bool(re.search(r'(?i)(agentic\s+validation\s+proof|bằng\s+chứng\s+agentic|proof\s+matrix)', combined_text))
+    has_category = bool(re.search(r'(?i)(code\s+category|trunk|leaf|blast\s+radius)', combined_text))
+
+    trunk_files = [f for f in files if is_trunk_file(f)]
+    if trunk_files:
+        has_trunk_mention = bool(re.search(r'(?i)(trunk|deep\s+(inspection|review)|blast\s+radius:\s*(high|medium))', combined_text))
+        if not has_trunk_mention:
+            return False, f"Task touches {len(trunk_files)} Trunk file(s) (e.g. '{trunk_files[0]}'). Must declare 'Code Category: Trunk' and require Deep Review."
+
+    if not (has_proof_header or has_category):
+        return False, "Missing 'AGENTIC VALIDATION PROOF' or 'Code Category: Trunk/Leaf' block in task card or handoff note."
+
+    return True, "OK"
+
+
 def main():
     parser = argparse.ArgumentParser(description="Check branch file changes against task card scope.")
     parser.add_argument("--branch", required=True, help="Feature branch name.")
@@ -272,6 +317,7 @@ def main():
     parser.add_argument("--no-strict-ui", dest="strict_ui", action="store_false", help="Tắt kiểm tra xác minh giao diện CDP.")
     parser.add_argument("--strict-ast", action="store_true", default=True, help="Bắt buộc tra cứu mã nguồn AST (XERJ/Graphify) nếu thay đổi code logic (mặc định: bật).")
     parser.add_argument("--no-strict-ast", dest="strict_ast", action="store_false", help="Tắt kiểm tra tra cứu XERJ/AST.")
+    parser.add_argument("--strict-proof", action="store_true", help="Bắt buộc có thẻ Bằng chứng Agentic Validation Proof (Trunk/Leaf, Blast Radius, Kill-Switch).")
     args = parser.parse_args()
 
     try:
@@ -502,6 +548,18 @@ def main():
             print("  Handoff note must document code retrieval via XERJ/AST:")
             print("    - 'Tra cứu mã nguồn (XERJ/AST): PASS'")
             print("  See: AGENTS.md §1 & .agents/skills/xerj/SKILL.md")
+            sys.exit(1)
+
+    # -------------------------------------------------------------------------
+    # C7: Thẩm định Bằng chứng Agentic & Blast Radius (Trunk vs Leaf)
+    # -------------------------------------------------------------------------
+    proof_ok, proof_msg = verify_agentic_proof(repo, args.branch, worktree_card_text or base_card_text, inbox_notes, files)
+    if not proof_ok:
+        level = "FAIL" if args.strict_proof else "WARN"
+        print(f"{level}: Agentic Validation Proof check: {proof_msg}")
+        print("  Bắt buộc xuất trình Thẻ Bằng Chứng AGENTIC VALIDATION PROOF (Trunk/Leaf, Blast Radius, Kill-Switch).")
+        print("  Xem quy chuẩn: agents/protocols/launch-readiness.md")
+        if args.strict_proof:
             sys.exit(1)
 
     print("PASS: all changed files are within scope.")

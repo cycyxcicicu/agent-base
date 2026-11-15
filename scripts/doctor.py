@@ -168,7 +168,7 @@ def run_diagnostics():
             def_proj_id = pj_data.get("default_project")
             for p_item in pj_data.get("projects", []):
                 if p_item.get("id") == def_proj_id:
-                    p_path = Path(p_item.get("path", ""))
+                    p_path = Path(p_item.get("path", "")).expanduser()
                     doc_folder = p_path / p_item.get("doc_dir", "doc") / "architecture"
                     pj_graph_file = doc_folder / "project-graph.json"
                     if pj_graph_file.exists():

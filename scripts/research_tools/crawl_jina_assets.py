@@ -35,7 +35,7 @@ def sanitize_filename(name: str, max_len: int = 80) -> str:
     name = re.sub(r"\s+", "_", name).strip("._")
     if len(name) > max_len:
         base, ext = os.path.splitext(name)
-        h = hashlib.md5(name.encode("utf-8")).hexdigest()[:8]
+        h = hashlib.sha256(name.encode("utf-8")).hexdigest()[:8]
         return f"{base[:max_len-10]}_{h}{ext}"
     return name or "unnamed"
 
@@ -171,7 +171,7 @@ def crawl_page(
                 parsed_img = urllib.parse.urlparse(img_url)
                 img_name = os.path.basename(parsed_img.path)
                 if not img_name or "." not in img_name:
-                    h = hashlib.md5(img_url.encode("utf-8")).hexdigest()[:8]
+                    h = hashlib.sha256(img_url.encode("utf-8")).hexdigest()[:8]
                     img_name = f"image_{h}.png"
                 img_name = sanitize_filename(img_name)
                 dest_file = images_dir / img_name
@@ -179,7 +179,7 @@ def crawl_page(
                 # Tránh trùng tên từ các URL khác nhau
                 counter = 1
                 while dest_file.exists() and url_to_relpath.get(img_url) != f"images/{dest_file.name}":
-                    if hashlib.md5(img_url.encode("utf-8")).hexdigest()[:6] in dest_file.name:
+                    if hashlib.sha256(img_url.encode("utf-8")).hexdigest()[:6] in dest_file.name:
                         break
                     base, ext = os.path.splitext(img_name)
                     dest_file = images_dir / f"{base}_{counter}{ext}"

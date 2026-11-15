@@ -37,7 +37,8 @@ class TestSafeSearch(unittest.TestCase):
             self.assertEqual(rc, 0)
             text = out.getvalue()
             self.assertIn("UC-04.md:1:", text)
-            self.assertLess(text.index("UC-04.md"), text.index("archive/old.md"))
+            archive_target = "archive\\old.md" if "archive\\old.md" in text else "archive/old.md"
+            self.assertLess(text.index("UC-04.md"), text.index(archive_target))
 
     def test_vietnamese_nfc_nfd_normalization(self):
         with tempfile.TemporaryDirectory() as tmp:

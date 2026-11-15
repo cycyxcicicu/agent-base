@@ -29,7 +29,9 @@ from datetime import datetime
 from pathlib import Path
 
 if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 FIXED_PROMPT_PREFIX = (
     "LUẬT CỨNG BẮT BUỘC:\n"
@@ -991,7 +993,22 @@ def main(argv: list[str] | None = None) -> int:
                 if m:
                     pid = int(m.group(1))
                     try:
-                        os.kill(pid, 0)
+                        if sys.platform == "win32":
+                            import ctypes
+                            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+                            SYNCHRONIZE = 0x00100000
+                            h = ctypes.windll.kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION | SYNCHRONIZE, False, pid)
+                            if h:
+                                exit_code = ctypes.c_ulong()
+                                if ctypes.windll.kernel32.GetExitCodeProcess(h, ctypes.byref(exit_code)):
+                                    stale = (exit_code.value != 259)
+                                else:
+                                    stale = False
+                                ctypes.windll.kernel32.CloseHandle(h)
+                            else:
+                                stale = True
+                        else:
+                            os.kill(pid, 0)
                     except ProcessLookupError:
                         stale = True
                     except PermissionError:
@@ -1114,14 +1131,21 @@ def main(argv: list[str] | None = None) -> int:
             )
 
             try:
+                popen_cmd = list(cmd)
+                if popen_cmd and popen_cmd[0].endswith(".py"):
+                    popen_cmd = [sys.executable, "-u"] + popen_cmd
+                popen_kwargs = {
+                    "cwd": effective_dir,
+                    "stdin": subprocess.PIPE,
+                    "stdout": subprocess.PIPE,
+                    "stderr": subprocess.PIPE,
+                    "text": True,
+                }
+                if sys.platform != "win32":
+                    popen_kwargs["start_new_session"] = True
                 proc = subprocess.Popen(
-                    cmd,
-                    cwd=effective_dir,
-                    stdin=subprocess.PIPE,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                    start_new_session=True,
+                    popen_cmd,
+                    **popen_kwargs,
                 )
                 stdout_text, stderr_text = proc.communicate(timeout=args.timeout)
                 exit_code = proc.returncode
@@ -1130,16 +1154,22 @@ def main(argv: list[str] | None = None) -> int:
                 stdout_text = ""
                 stderr_text = f"Phiên làm việc vượt quá thời gian tối đa {args.timeout}s"
                 try:
-                    pgid = os.getpgid(proc.pid)
-                    os.killpg(pgid, signal.SIGTERM)
+                    if hasattr(os, "getpgid") and hasattr(signal, "SIGTERM"):
+                        pgid = os.getpgid(proc.pid)
+                        os.killpg(pgid, signal.SIGTERM)
+                    else:
+                        proc.terminate()
                 except Exception:
                     pass
                 try:
                     proc.wait(timeout=3)
                 except Exception:
                     try:
-                        pgid = os.getpgid(proc.pid)
-                        os.killpg(pgid, signal.SIGKILL)
+                        if hasattr(os, "getpgid") and hasattr(signal, "SIGKILL"):
+                            pgid = os.getpgid(proc.pid)
+                            os.killpg(pgid, signal.SIGKILL)
+                        else:
+                            proc.kill()
                     except Exception:
                         pass
                     try:
