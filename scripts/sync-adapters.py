@@ -859,28 +859,34 @@ def main():
         except Exception:
             pass
 
-    # Chuẩn hóa đường dẫn: hỗ trợ WORKTREES_DIR đa máy, tự động mở rộng ~/ thành path tuyệt đối
-    wt_env = os.environ.get("WORKTREES_DIR")
-    if wt_env:
-        worktrees_dir = str(Path(os.path.expanduser(wt_env)).resolve())
-    else:
-        worktrees_dir = str((Path.home() / "Documents" / "worktrees").resolve())
-    agentbase_dir = str(ROOT.resolve())
+    # Chuẩn hóa đường dẫn tương đối đa nền tảng (mỗi máy một khác):
+    # Dùng đường dẫn tương đối (ví dụ: ../worktrees) thay vì đường dẫn tuyệt đối gắn cứng username
+    default_dirs = ["../worktrees"]
+    rel_dirs = []
+    for d in (existing_dirs or default_dirs):
+        if not isinstance(d, str):
+            continue
+        p = Path(d)
+        if p.is_absolute():
+            try:
+                rel_p = os.path.relpath(str(p), str(ROOT))
+                rel_dirs.append(rel_p.replace("\\", "/"))
+            except Exception:
+                pass
+        else:
+            rel_dirs.append(d.replace("\\", "/"))
 
-    # Hợp nhất: giữ nguyên mọi thư mục người dùng đã cấu hình trước đó, đồng thời đảm bảo worktrees và agent-base luôn có mặt
-    merged_dirs = []
-    for d in existing_dirs:
-        norm_d = str(Path(os.path.expanduser(d)).resolve()) if isinstance(d, str) else str(d)
-        if norm_d not in merged_dirs:
-            merged_dirs.append(norm_d)
-    for d in [worktrees_dir, agentbase_dir]:
-        if d not in merged_dirs:
-            merged_dirs.append(d)
+    final_dirs = []
+    for d in (rel_dirs or default_dirs):
+        if d not in final_dirs and d != ".":
+            final_dirs.append(d)
+    if not final_dirs:
+        final_dirs = default_dirs
 
     claude_settings = {
         "$schema": "https://json.schemastore.org/claude-code-settings.json",
         "permissions": {
-            "additionalDirectories": merged_dirs,
+            "additionalDirectories": final_dirs,
             "allow": claude_allow,
             "deny": claude_deny,
             "ask": claude_ask
