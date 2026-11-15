@@ -918,16 +918,21 @@ class ACPController:
         self.err_thread: threading.Thread | None = None
 
     def start(self):
-        cmd = [self.agy_bin, "acp", "--sandbox"]
+        cmd = [sys.executable, self.agy_bin] if self.agy_bin.endswith(".py") else [self.agy_bin]
+        cmd.extend(["acp", "--sandbox"])
+        popen_kwargs = {
+            "cwd": str(self.cwd),
+            "stdin": subprocess.PIPE,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "text": True,
+            "bufsize": 1,
+        }
+        if sys.platform != "win32":
+            popen_kwargs["start_new_session"] = True
         self.proc = subprocess.Popen(
             cmd,
-            cwd=str(self.cwd),
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            bufsize=1,
-            start_new_session=True,
+            **popen_kwargs,
         )
         self.reader_thread = threading.Thread(target=self._stdout_worker, daemon=True)
         self.err_thread = threading.Thread(target=self._stderr_worker, daemon=True)
@@ -997,8 +1002,11 @@ class ACPController:
     def close(self):
         if self.proc:
             try:
-                pgid = os.getpgid(self.proc.pid)
-                os.killpg(pgid, signal.SIGTERM)
+                if hasattr(os, "getpgid") and hasattr(signal, "SIGTERM"):
+                    pgid = os.getpgid(self.proc.pid)
+                    os.killpg(pgid, signal.SIGTERM)
+                else:
+                    self.proc.terminate()
             except Exception:
                 try:
                     self.proc.terminate()
@@ -1008,8 +1016,11 @@ class ACPController:
                 self.proc.wait(timeout=3)
             except Exception:
                 try:
-                    pgid = os.getpgid(self.proc.pid)
-                    os.killpg(pgid, signal.SIGKILL)
+                    if hasattr(os, "getpgid") and hasattr(signal, "SIGKILL"):
+                        pgid = os.getpgid(self.proc.pid)
+                        os.killpg(pgid, signal.SIGKILL)
+                    else:
+                        self.proc.kill()
                 except Exception:
                     try:
                         self.proc.kill()
@@ -1121,8 +1132,8 @@ def run_quota_probe(
     Trả về: (is_success, raw_output_or_error, parsed_json)
     Thành công khi parsed_json có status == "SUCCESS" và có response.
     """
-    cmd = [
-        agy_bin,
+    base_cmd = [sys.executable, agy_bin] if agy_bin.endswith(".py") else [agy_bin]
+    cmd = base_cmd + [
         "-p",
         "Trả lời đúng một từ: pong.",
         "--model",
@@ -1133,20 +1144,27 @@ def run_quota_probe(
     ]
     proc = None
     try:
+        popen_kwargs = {
+            "cwd": str(cwd),
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.PIPE,
+            "text": True,
+        }
+        if sys.platform != "win32":
+            popen_kwargs["start_new_session"] = True
         proc = subprocess.Popen(
             cmd,
-            cwd=str(cwd),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            start_new_session=True,
+            **popen_kwargs,
         )
         try:
             stdout_data, stderr_data = proc.communicate(timeout=timeout)
         except subprocess.TimeoutExpired:
             try:
-                pgid = os.getpgid(proc.pid)
-                os.killpg(pgid, signal.SIGTERM)
+                if hasattr(os, "getpgid") and hasattr(signal, "SIGTERM"):
+                    pgid = os.getpgid(proc.pid)
+                    os.killpg(pgid, signal.SIGTERM)
+                else:
+                    proc.terminate()
             except Exception:
                 try:
                     proc.terminate()
@@ -1156,8 +1174,11 @@ def run_quota_probe(
                 stdout_data, stderr_data = proc.communicate(timeout=3.0)
             except Exception:
                 try:
-                    pgid = os.getpgid(proc.pid)
-                    os.killpg(pgid, signal.SIGKILL)
+                    if hasattr(os, "getpgid") and hasattr(signal, "SIGKILL"):
+                        pgid = os.getpgid(proc.pid)
+                        os.killpg(pgid, signal.SIGKILL)
+                    else:
+                        proc.kill()
                 except Exception:
                     try:
                         proc.kill()
