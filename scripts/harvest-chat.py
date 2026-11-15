@@ -59,15 +59,20 @@ def is_meaningful_text(text: str) -> bool:
 
 def harvest_antigravity(limit: int = 50) -> list[dict]:
     """Quét các phiên chat của Antigravity / Gemini."""
-    brain_dir = Path.home() / ".gemini" / "antigravity" / "brain"
-    if not brain_dir.is_dir():
+    candidate_dirs = [
+        Path.home() / ".gemini" / "antigravity-cli" / "brain",
+        Path.home() / ".gemini" / "antigravity" / "brain",
+        Path.home() / ".gemini" / "brain",
+    ]
+    files = []
+    for d in candidate_dirs:
+        if d.is_dir():
+            files.extend(d.glob("*/.system_generated/logs/transcript.jsonl"))
+
+    if not files:
         return []
 
-    files = sorted(
-        brain_dir.glob("*/.system_generated/logs/transcript.jsonl"),
-        key=lambda p: p.stat().st_mtime,
-        reverse=True
-    )
+    files = sorted(files, key=lambda p: p.stat().st_mtime, reverse=True)
     if limit > 0:
         files = files[:limit]
 

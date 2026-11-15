@@ -14,6 +14,24 @@ Bộ nhớ chung của dự án cho mọi agent. **Đọc file này (và `docs/n
 
 | ID | Ngày | Nguồn | Phạm vi | Lưu ý |
 |---|---|---|---|---|
+| N-401 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | Bẫy vội vàng code khi chưa vẽ sơ đồ: Tuyệt đối cấm nhảy vào viết code khi chưa hoàn thiện sơ đồ luồng Sequence Diagram phân làn Swimlane và hồ sơ đặc tả Spec-First. |
+| N-402 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | Bẫy học vẹt code cũ: Khi tối ưu tính năng lọc, cấm bê nguyên logic cũ vào Use Case mới mà bắt buộc tự phản biện chuyển sang Generic Specification cho ws-library. |
+| N-403 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | Bẫy hardcoded đường dẫn máy cá nhân: Không bao giờ gắn cứng /Users/... vào code hay script; bắt buộc dùng Smart Worktree Discovery và biến môi trường. |
+| N-404 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | Bẫy tốn tài nguyên do Cronjob Polling: Thay vì polling quét liên tục làm nghẽn DB, bắt buộc dùng Async Event-Driven Worker kích hoạt theo sự kiện. |
+| N-405 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | Bẫy khen sơ đồ mà không xem ảnh: Sơ đồ vẽ xong bắt buộc xuất ảnh PNG và xem lại trực quan bằng mắt, cấm nói "đẹp" mà chưa kiểm tra. |
+| N-406 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | [Bài học] Bài học về luồng xuất đơn J&T: Không cần trạng thái trung gian chờ thừa thãi; bấm đẩy đơn là kết nối API J&T lấy Waybill và cập nhật ngay. |
+| N-407 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | [Bài học] Bài học về ẩn/hiện cột kế toán: Cho phép lưu cấu hình hiển thị cột theo từng vai trò người dùng trong hệ thống kế toán nội bộ. |
+| N-408 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | [Bài học] Bài học về chuyển giao môi trường: Luôn chạy scripts/doctor.py kiểm tra cổng và Git identity trước khi chạy dự án trên máy mới. |
+| N-409 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | [Bài học] Bài học về bóc tách tri thức từ chat: Thường xuyên chạy harvest-chat để thu hoạch các bài học người dùng chỉ đạo trên cả Claude Code và Antigravity. |
+| N-384 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | Bẫy vội vàng code khi chưa vẽ sơ đồ: Tuyệt đối cấm nhảy vào viết code khi chưa hoàn thiện sơ đồ luồng Sequence Diagram phân làn Swimlane và hồ sơ đặc tả Spec-First. |
+| N-385 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | Bẫy học vẹt code cũ: Khi tối ưu tính năng lọc, cấm bê nguyên logic cũ vào Use Case mới mà bắt buộc tự phản biện chuyển sang Generic Specification cho ws-library. |
+| N-386 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | Bẫy hardcoded đường dẫn máy cá nhân: Không bao giờ gắn cứng /Users/... vào code hay script; bắt buộc dùng Smart Worktree Discovery và biến môi trường. |
+| N-387 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | Bẫy tốn tài nguyên do Cronjob Polling: Thay vì polling quét liên tục làm nghẽn DB, bắt buộc dùng Async Event-Driven Worker kích hoạt theo sự kiện. |
+| N-388 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | Bẫy khen sơ đồ mà không xem ảnh: Sơ đồ vẽ xong bắt buộc xuất ảnh PNG và xem lại trực quan bằng mắt, cấm nói "đẹp" mà chưa kiểm tra. |
+| N-389 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | [Bài học] Bài học về luồng xuất đơn J&T: Không cần trạng thái trung gian chờ thừa thãi; bấm đẩy đơn là kết nối API J&T lấy Waybill và cập nhật ngay. |
+| N-390 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | [Bài học] Bài học về ẩn/hiện cột kế toán: Cho phép lưu cấu hình hiển thị cột theo từng vai trò người dùng trong hệ thống kế toán nội bộ. |
+| N-391 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | [Bài học] Bài học về chuyển giao môi trường: Luôn chạy scripts/doctor.py kiểm tra cổng và Git identity trước khi chạy dự án trên máy mới. |
+| N-392 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | [Bài học] Bài học về bóc tách tri thức từ chat: Thường xuyên chạy harvest-chat để thu hoạch các bài học người dùng chỉ đạo trên cả Claude Code và Antigravity. |
 | N-367 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | Bẫy vội vàng code khi chưa vẽ sơ đồ: Tuyệt đối cấm nhảy vào viết code khi chưa hoàn thiện sơ đồ luồng Sequence Diagram phân làn Swimlane và hồ sơ đặc tả Spec-First. |
 | N-368 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | Bẫy học vẹt code cũ: Khi tối ưu tính năng lọc, cấm bê nguyên logic cũ vào Use Case mới mà bắt buộc tự phản biện chuyển sang Generic Specification cho ws-library. |
 | N-369 | 2026-11-15 | `HARVEST-ALL-CHATS` | Toàn cục | Bẫy hardcoded đường dẫn máy cá nhân: Không bao giờ gắn cứng /Users/... vào code hay script; bắt buộc dùng Smart Worktree Discovery và biến môi trường. |
@@ -197,6 +215,14 @@ Bộ nhớ chung của dự án cho mọi agent. **Đọc file này (và `docs/n
 
 | ID | Ngày | Quyết định | ADR |
 |---|---|---|---|
+| N-410 | 2026-11-15 | Quyết định áp dụng tư duy Generic-First: Mọi logic lọc và tìm kiếm dùng chung toàn hệ thống phải đưa vào ws-library với kiểu Generic <T>. | Theo `HARVEST-ALL-CHATS` |
+| N-411 | 2026-11-15 | Quyết định quy trình 3 phương án đối trọng: Mỗi lần đề xuất giải pháp bắt buộc phải có 3 phương án (A: bám code cũ, B: over-engineering, C: tối ưu đúng trọng tâm) và 1 khuyến nghị dứt khoát. | Theo `HARVEST-ALL-CHATS` |
+| N-412 | 2026-11-15 | Quyết định đối soát vận đơn J&T Express: Đẩy đơn trực tiếp nhận mã Waybill và đối soát cước tự động với sàn TikTok Shop & Shopee. | Theo `HARVEST-ALL-CHATS` |
+| N-413 | 2026-11-15 | Quyết định chuẩn hóa đa nền tảng: Bác sĩ chẩn đoán scripts/doctor.py Mục 7 tự động phát hiện OS, Git identity, thư mục worktree và xung đột cổng. | Theo `HARVEST-ALL-CHATS` |
+| N-393 | 2026-11-15 | Quyết định áp dụng tư duy Generic-First: Mọi logic lọc và tìm kiếm dùng chung toàn hệ thống phải đưa vào ws-library với kiểu Generic <T>. | Theo `HARVEST-ALL-CHATS` |
+| N-394 | 2026-11-15 | Quyết định quy trình 3 phương án đối trọng: Mỗi lần đề xuất giải pháp bắt buộc phải có 3 phương án (A: bám code cũ, B: over-engineering, C: tối ưu đúng trọng tâm) và 1 khuyến nghị dứt khoát. | Theo `HARVEST-ALL-CHATS` |
+| N-395 | 2026-11-15 | Quyết định đối soát vận đơn J&T Express: Đẩy đơn trực tiếp nhận mã Waybill và đối soát cước tự động với sàn TikTok Shop & Shopee. | Theo `HARVEST-ALL-CHATS` |
+| N-396 | 2026-11-15 | Quyết định chuẩn hóa đa nền tảng: Bác sĩ chẩn đoán scripts/doctor.py Mục 7 tự động phát hiện OS, Git identity, thư mục worktree và xung đột cổng. | Theo `HARVEST-ALL-CHATS` |
 | N-376 | 2026-11-15 | Quyết định áp dụng tư duy Generic-First: Mọi logic lọc và tìm kiếm dùng chung toàn hệ thống phải đưa vào ws-library với kiểu Generic <T>. | Theo `HARVEST-ALL-CHATS` |
 | N-377 | 2026-11-15 | Quyết định quy trình 3 phương án đối trọng: Mỗi lần đề xuất giải pháp bắt buộc phải có 3 phương án (A: bám code cũ, B: over-engineering, C: tối ưu đúng trọng tâm) và 1 khuyến nghị dứt khoát. | Theo `HARVEST-ALL-CHATS` |
 | N-378 | 2026-11-15 | Quyết định đối soát vận đơn J&T Express: Đẩy đơn trực tiếp nhận mã Waybill và đối soát cước tự động với sàn TikTok Shop & Shopee. | Theo `HARVEST-ALL-CHATS` |
@@ -291,6 +317,16 @@ Bộ nhớ chung của dự án cho mọi agent. **Đọc file này (và `docs/n
 | N-006 | 2026-10-28 | Quyết định phân tách tri thức: Giữ nguyên doc/ và .ai-rules/ ở gốc workspace làm la bàn chung; agent-base chỉ sao phần dùng chung được (quy trình, chuẩn, mẫu) vào agents/knowledge và agents/templates, dữ liệu dự án ở lại bên ngoài. | Theo `KNOWLEDGE-DIAGRAMS-EPIC` |
 
 ## Quy ước phát hiện thêm
+
+- **[N-414 - 2026-11-15]** (`HARVEST-ALL-CHATS`): Quy ước kiểm tra sơ đồ bằng mắt: Mọi sơ đồ Draw.io vẽ ra bắt buộc xuất ảnh PNG và xem lại trực quan trước khi kết luận đạt yêu cầu.
+- **[N-415 - 2026-11-15]** (`HARVEST-ALL-CHATS`): Quy ước giải trình Git Diff: Khi cập nhật AGENTS.md, giải thích rõ ràng cho người dùng nguồn gốc ~2.000 dòng diff do cơ chế nhân bản sang 25+ adapters.
+- **[N-416 - 2026-11-15]** (`HARVEST-ALL-CHATS`): Quy ước Zero-Chat Bleeding: Cấm xả log kiểm thử dài vào khung chat, luôn ghi chi tiết ra file note và chỉ báo tóm tắt 3 dòng.
+- **[N-417 - 2026-11-15]** (`HARVEST-ALL-CHATS`): Quy ước quản lý Git Worktrees tập trung: 100% Worktrees tạo tại thư mục tập trung ngoài workspace và cập nhật sổ bộ qua worktree-manager.py.
+
+- **[N-397 - 2026-11-15]** (`HARVEST-ALL-CHATS`): Quy ước kiểm tra sơ đồ bằng mắt: Mọi sơ đồ Draw.io vẽ ra bắt buộc xuất ảnh PNG và xem lại trực quan trước khi kết luận đạt yêu cầu.
+- **[N-398 - 2026-11-15]** (`HARVEST-ALL-CHATS`): Quy ước giải trình Git Diff: Khi cập nhật AGENTS.md, giải thích rõ ràng cho người dùng nguồn gốc ~2.000 dòng diff do cơ chế nhân bản sang 25+ adapters.
+- **[N-399 - 2026-11-15]** (`HARVEST-ALL-CHATS`): Quy ước Zero-Chat Bleeding: Cấm xả log kiểm thử dài vào khung chat, luôn ghi chi tiết ra file note và chỉ báo tóm tắt 3 dòng.
+- **[N-400 - 2026-11-15]** (`HARVEST-ALL-CHATS`): Quy ước quản lý Git Worktrees tập trung: 100% Worktrees tạo tại thư mục tập trung ngoài workspace và cập nhật sổ bộ qua worktree-manager.py.
 
 - **[N-380 - 2026-11-15]** (`HARVEST-ALL-CHATS`): Quy ước kiểm tra sơ đồ bằng mắt: Mọi sơ đồ Draw.io vẽ ra bắt buộc xuất ảnh PNG và xem lại trực quan trước khi kết luận đạt yêu cầu.
 - **[N-381 - 2026-11-15]** (`HARVEST-ALL-CHATS`): Quy ước giải trình Git Diff: Khi cập nhật AGENTS.md, giải thích rõ ràng cho người dùng nguồn gốc ~2.000 dòng diff do cơ chế nhân bản sang 25+ adapters.

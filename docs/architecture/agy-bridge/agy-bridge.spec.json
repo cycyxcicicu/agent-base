@@ -1,0 +1,207 @@
+{
+  "type": "sequence",
+  "title": "Quy trình điều khiển agy acp qua cầu nối tự trị (agy-acp-bridge)",
+  "out": "agy-bridge.drawio",
+  "png": "agy-bridge.png",
+  "plain": true,
+  "participants": [
+    {
+      "id": "user",
+      "name": "Người chỉ đạo\n(AI Coordinator)"
+    },
+    {
+      "id": "bridge",
+      "name": "Cầu nối ACP\n(agy-acp-bridge.py)"
+    },
+    {
+      "id": "acp",
+      "name": "Tiến trình ACP\n(agy acp --sandbox)"
+    },
+    {
+      "id": "git",
+      "name": "Hạ tầng Git\n(Worktree / Repo gốc)"
+    }
+  ],
+  "messages": [
+    {
+      "from": "user",
+      "to": "bridge",
+      "label": "Gọi run --dir <repo> --task-file <brief> [flags]"
+    },
+    {
+      "from": "bridge",
+      "to": "git",
+      "label": "Tạo worktree nhánh agy/<slug>-<ts> (nếu có --worktree)"
+    },
+    {
+      "from": "git",
+      "to": "bridge",
+      "kind": "return",
+      "label": "Worktree sẵn sàng, nạp file --seed"
+    },
+    {
+      "from": "bridge",
+      "to": "git",
+      "label": "Chụp ảnh trạng thái baseline (git status, HEAD)"
+    },
+    {
+      "from": "git",
+      "to": "bridge",
+      "kind": "return",
+      "label": "Baseline snapshot hoàn tất"
+    },
+    {
+      "from": "bridge",
+      "to": "acp",
+      "label": "Khởi chạy tiến trình agy acp --sandbox qua stdio"
+    },
+    {
+      "from": "bridge",
+      "to": "acp",
+      "label": "Gửi initialize (protocolVersion: 1)"
+    },
+    {
+      "from": "acp",
+      "to": "bridge",
+      "kind": "return",
+      "label": "Xác nhận initialize thành công"
+    },
+    {
+      "from": "bridge",
+      "to": "acp",
+      "label": "Gửi session/new (hoặc session/load nếu có --session)"
+    },
+    {
+      "from": "acp",
+      "to": "bridge",
+      "kind": "return",
+      "label": "Trả về sessionId"
+    },
+    {
+      "from": "bridge",
+      "to": "acp",
+      "label": "Gửi session/set_model (modelId: gemini-3.8-flash-...)"
+    },
+    {
+      "from": "acp",
+      "to": "bridge",
+      "kind": "return",
+      "label": "Xác nhận cấu hình model"
+    },
+    {
+      "from": "bridge",
+      "to": "acp",
+      "label": "Gửi session/prompt (kèm luật cứng & nội dung task brief)"
+    },
+    {
+      "from": "acp",
+      "to": "bridge",
+      "label": "[loop: Mỗi yêu cầu quyền] session/request_permission (toolCall)"
+    },
+    {
+      "from": "bridge",
+      "to": "bridge",
+      "kind": "self",
+      "label": "Đối chiếu chính sách: allow-write, allow-cmd, an toàn"
+    },
+    {
+      "from": "bridge",
+      "to": "acp",
+      "kind": "return",
+      "label": "[alt: Cho phép] outcome: allow (ghi trong scope / lệnh an toàn)"
+    },
+    {
+      "from": "bridge",
+      "to": "acp",
+      "kind": "return",
+      "label": "[alt: Từ chối cấm cứng] outcome: deny (git commit/push, rm -rf)"
+    },
+    {
+      "from": "bridge",
+      "to": "acp",
+      "kind": "return",
+      "label": "[alt: Từ chối lệnh lạ] outcome: deny (NEEDS-HUMAN)"
+    },
+    {
+      "from": "bridge",
+      "to": "bridge",
+      "kind": "self",
+      "label": "[opt: autocont <= 3 & chưa ghi file] Kích hoạt auto-continue"
+    },
+    {
+      "from": "bridge",
+      "to": "acp",
+      "label": "Tự gửi session/prompt nhắc dùng công cụ tích hợp (lượt autocont n/3)"
+    },
+    {
+      "from": "acp",
+      "to": "bridge",
+      "kind": "return",
+      "label": "Tiếp tục thực thi turn kế tiếp"
+    },
+    {
+      "from": "acp",
+      "to": "bridge",
+      "kind": "return",
+      "label": "[alt: Hết quota] Phát hiện keyword quota / 429 / billing"
+    },
+    {
+      "from": "bridge",
+      "to": "bridge",
+      "kind": "self",
+      "label": "Đánh dấu quota_detected = True, dừng phiên"
+    },
+    {
+      "from": "bridge",
+      "to": "user",
+      "kind": "return",
+      "label": "STATUS quota, DOI-TAI-KHOAN-AGY & dừng ngay (mã thoát 7)"
+    },
+    {
+      "from": "acp",
+      "to": "bridge",
+      "kind": "return",
+      "label": "[alt: Hoàn tất turn] session/update & prompt result (end_turn)"
+    },
+    {
+      "from": "bridge",
+      "to": "git",
+      "label": "Kiểm tra sau phiên: git status, rev-parse HEAD, file đổi"
+    },
+    {
+      "from": "git",
+      "to": "bridge",
+      "kind": "return",
+      "label": "Trạng thái git thực tế sau lượt chạy"
+    },
+    {
+      "from": "bridge",
+      "to": "bridge",
+      "kind": "self",
+      "label": "So sánh baseline: kiểm tra file đổi ngoài scope, commit HEAD"
+    },
+    {
+      "from": "bridge",
+      "to": "user",
+      "kind": "return",
+      "label": "[alt: Vi phạm] Báo STATUS fail, VIOLATION / commit (mã thoát 3)"
+    },
+    {
+      "from": "bridge",
+      "to": "git",
+      "label": "[alt: Hợp lệ] Áp dụng thay đổi (--apply): đối chiếu conflict và copy"
+    },
+    {
+      "from": "git",
+      "to": "bridge",
+      "kind": "return",
+      "label": "Áp dụng thành công về repo gốc"
+    },
+    {
+      "from": "bridge",
+      "to": "user",
+      "kind": "return",
+      "label": "Trả 3 dòng stdout (STATUS ok/warn, FILES, REPORT) (mã thoát 0)"
+    }
+  ]
+}

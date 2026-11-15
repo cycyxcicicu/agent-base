@@ -45,6 +45,7 @@ Khi Subtask hiện tại BẮT BUỘC phải sửa một file thuộc quyền s�
 
 ## Nhỏ (Cơ Chế Fast-Track: Diff $\le 50$ dòng, không đổi schema DB/API)
 - [ ] Áp dụng Fast-Track: Dev được phép viết code ngay, **không bắt buộc chờ Reviewer duyệt Plan**.
+- [ ] Miễn trừ thủ tục nặng: Bỏ qua tạo task card, bỏ qua xuất TestLink XML và Excel 14 sheets; chỉ cần 1 test đơn vị tái hiện lỗi chuyển sang Xanh (Pass).
 - [ ] Reviewer được phép Quick Fix các lỗi cực nhỏ (typo, formatting $\le 5$ dòng) để đóng task ngay.
 - [ ] Sửa trong nhánh riêng (`<type>/<ticket>-<mô-tả>`).
 - [ ] Test và lint chạy qua (có thể nhờ `runner` chạy).

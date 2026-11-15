@@ -7,6 +7,8 @@
 
 ## 1. Khi Nào Bắt Buộc Kích Hoạt Challenger Protocol?
 
+> **Miễn trừ Fast-Path Tự Động:** Tuyệt đối **KHÔNG kích hoạt Challenger Protocol** đối với tác vụ sửa lỗi (Bug-Fix $\le 2$ files), sửa lỗi giao diện hoặc lỗi runtime từ ảnh chụp màn hình/log. Fast-Path đi thẳng vào định vị anchor, tái hiện lỗi và sửa code; cấm xuất ma trận 3 phương án lý thuyết làm chậm quá trình sửa lỗi.
+
 Mọi agent thuộc nhóm Tuyến Đầu Tiếp Nhận (Product, BA, Architect, Reviewer, Lead Dev) **bắt buộc** phải kích hoạt quy trình phản biện này khi:
 1. Người dùng hoặc Stakeholder đưa ra yêu cầu mơ hồ, thiếu tiêu chí thành công cụ thể.
 2. Yêu cầu có dấu hiệu của **Vấn đề XY (XY Problem)**: Người ra đề yêu cầu làm giải pháp X (ví dụ: "thêm một bảng mới vào DB và 5 nút bấm"), trong khi vấn đề thực sự là Y (ví dụ: "người dùng cần lọc báo cáo nhanh hơn").

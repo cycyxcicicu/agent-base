@@ -38,7 +38,7 @@ Luồng việc lớn: Người dùng → Lead ↔ Product → BA / Analyst (nế
 ## 16. Phân Rã Subtasks Kiểu Scrum & Cổng Duyệt Kế Hoạch Cho Toàn Bộ Agent
 
 - **Phạm Vi Áp Dụng**: Bắt buộc với **mọi vai trò thực thi** (`dev`, `mobile`, `ai-eng`, `dba`, `data-eng`, `devops`, `designer`, `ba`, `architect`, v.v.).
-- **Cấm Bắt Tay Làm Việc Ngay**: Khi nhận task từ cỡ "vừa" trở lên, agent thực thi **tuyệt đối không bắt tay viết code, tài liệu lớn hay chạy lệnh ngay**. Bắt buộc phân tích và bóc tách thành **Subtasks hạt mịn**: mỗi Subtask một mục đích, độc lập, kiểm tra được, vừa một phiên ngắn (2–5 phút); số file chỉ để ước lượng. Mỗi Subtask phải có **Mục đích cụ thể** (làm gì để đạt gì) kèm tiêu chí nghiệm thu rõ ràng.
+- **Cấm Bắt Tay Làm Việc Ngay**: Khi nhận task từ cỡ "vừa" trở lên, agent thực thi **tuyệt đối không bắt tay viết code, tài liệu lớn hay chạy lệnh ngay**. Bắt buộc phân tích và bóc tách thành **Subtasks hạt mịn**: mỗi Subtask một mục đích, độc lập, kiểm tra được, vừa một phiên ngắn (2–5 phút); số file chỉ để ước lượng. Mỗi Subtask phải có **Mục đích cụ thể** (làm gì để đạt gì) kèm tiêu chí nghiệm thu rõ ràng, đồng thời phân định rõ thuộc **Trunk Code** (Core/Infra/Shared State - Deep Review) hay **Leaf Code** (Isolated - Fast-Skim sau Feature Gate).
 - **Cổng Duyệt Kế Hoạch Bắt Buộc (Plan Review Gate)**:
   1. Agent thực thi / Lead gửi danh sách Subtasks cho **Người thẩm định chuyên trách** tương ứng:
      * Code nghiệp vụ / Tính năng: `reviewer`
@@ -47,12 +47,13 @@ Luồng việc lớn: Người dùng → Lead ↔ Product → BA / Analyst (nế
      * Module AI / LLM / RAG / Prompts: `ai-eng` hoặc `architect`
      * Kiến trúc lớn & Ranh giới Module: `architect`
      * Quyết định tối cao: `lead` hoặc `Người dùng`.
-  2. Người thẩm định kiểm tra: Subtask có quá to không? Có nguy cơ chạy quá 8–10 bước làm phình context không? Thứ tự phụ thuộc có hợp lý không?
+  2. Người thẩm định kiểm tra: Subtask có quá to không? Có nguy cơ chạy quá 8–10 bước làm phình context không? Thứ tự phụ thuộc có hợp lý không? **Đối với Leaf code: Đã thiết kế Feature Flag (Kill-switch) chưa?**
   3. **Nếu từ chối (Chưa chuẩn / Còn to)**: Chỉ rõ điểm còn to, gợi ý phương án chia nhỏ hơn (Lean MVP / Surgical Slices); Agent thực thi bắt buộc hiệu chỉnh lại kế hoạch cho đến khi đạt `Plan Approved`.
   4. **Nếu duyệt (Chuẩn)**: Đóng dấu `[x] Plan Approved by <vai-thẩm-định>` trong card, mới được phép cấp Subtask cho Subagent bắt đầu làm.
-- **Quy Tắc Thực Thi Subagent (Fresh Subagent per Subtask)**:
+- **Quy Tắc Thực Thi Subagent (Fresh Subagent per Subtask & Adversarial Review)**:
   1. **Quy chuẩn mã Subtask**: Đánh số theo dạng `T-<ticket>.<số_thứ_tự>` (ví dụ: `T-57.1`, `T-57.2`). Mỗi Subtask được giao cho một **Subagent mới tinh** với ngữ cảnh cách ly (Clean Context). CẤM giao nguyên cả task card lớn cho 1 subagent chạy liên tục.
-  2. **Trần số bước & Micro Handoff Note**: Mỗi Subagent chỉ được chạy tối đa **8 – 10 tool calls**. Hoàn thành subtask hoặc chạm trần là phải dừng, tạo ghi chú bàn giao siêu gọn (3–5 dòng) tại `docs/notes/inbox/<Task>.<Subtask>-<agent>.md` (ví dụ `T-57.1-dev.md`) theo `agents/protocols/handoff-note.md` rồi đóng phiên.
+  2. **Adversarial Review Subagent**: Khi review PR/Diff, BẮT BUỘC spawn một Subagent Reviewer mới tinh (Zero-Context), không mang lịch sử hội thoại trước đó của Dev. Reviewer chỉ đọc diff + spec + hard-rules để phản biện khách quan, xóa bỏ thiên vị (confirmation bias).
+  3. **Trần số bước & Micro Handoff Note**: Mỗi Subagent chỉ được chạy tối đa **8 – 10 tool calls**. Hoàn thành subtask hoặc chạm trần là phải dừng, tạo ghi chú bàn giao siêu gọn (3–5 dòng) tại `docs/notes/inbox/<Task>.<Subtask>-<agent>.md` (ví dụ `T-57.1-dev.md`) theo `agents/protocols/handoff-note.md` rồi đóng phiên.
   3. **Xử lý sự cố tràn ngữ cảnh (`Compaction exhausted` / `gateway_timeout`)**: TUYỆT ĐỐI CẤM resume session cũ. Coi phiên đó đã kết thúc, mở phiên mới tinh cho bước kế tiếp hoặc Lead tự nghiệm thu bằng lệnh chỉ đọc.
   4. **Nén Output (Output Bounding)**: Mọi lệnh terminal bắt buộc chạy chế độ rút gọn (`pytest -q --tb=short`, `git status -s`, `docker compose ps`). Không in file lớn (>200 dòng) ra terminal, chỉ đọc bằng slice dòng (`StartLine`/`EndLine`).
   5. **Quy tắc sửa file chéo (Cross-Subtask Edits - 7 Kịch bản)**: Cấm sửa lan man file của subtask khác. Tuân thủ nghiêm ngặt 7 kịch bản (`definition-of-done.md`): (1) File subtask đã xong: chỉ surgical patch + chạy lại regression test; (2) File subtask chưa làm: chỉ stub/mock, cấm code hộ; (3) File config/init: chỉ append/register, cấm xóa/sửa dòng cũ; (4) Breaking Change: DỪNG LẠI NGAY $\rightarrow$ `BLOCKED` báo Lead/Reviewer; (5) File DB Migration: cấm sửa migration cũ, luôn tạo revision mới nối tiếp head; (6) File Test dùng chung (`conftest.py`): chỉ thêm fixture mới, cấm đổi behavior fixture cũ; (7) File Spec (`docs/spec/`): đóng băng đối với Dev, cấm tự sửa spec để hợp thức hóa code.
@@ -76,3 +77,14 @@ Luồng việc lớn: Người dùng → Lead ↔ Product → BA / Analyst (nế
 - **Bằng chứng Nghiệm thu Bắt buộc**: Trong Handoff Note (`docs/notes/inbox/` hoặc `doc/notes/inbox/`) BẮT BUỘC có 2 dòng (cổng `merge-gate.py` sẽ tự động FAIL nếu thiếu khi task chạm file frontend):
   1. `Xác minh giao diện (CDP/Browser): PASS`
   2. `Console errors: 0` (hoặc `Network OK / UI Verified`)
+
+## 19. Quy Tắc 80/20 & Chu Trình Launch Readiness (Meta Senior Staff Standard)
+
+- **Merge-Ready (80% chặng đường)**: Nhánh đạt trạng thái pass `merge-gate.py`, linter sạch sẽ, unit/integration test pass, scope đúng card và có đầy đủ thẻ `AGENTIC VALIDATION PROOF`. Khi đạt bước này, code chỉ mới sẵn sàng tích hợp vào nhánh chung `develop`/`main`.
+- **Launch-Ready (20% còn lại - Quyết định độ an toàn Production)**: Trước khi kích hoạt Feature Flag mở traffic cho người dùng thật, bắt buộc thực thi tổng kiểm toán qua `python scripts/launch-gate.py`:
+  1. **Security CSO**: Quét an ninh 4 chiều, kiểm tra IDOR, SQLi, SSRF, và Secret leaks.
+  2. **Scalability & Latency**: Rà soát truy vấn cơ sở dữ liệu (chống N+1, đủ Index) và độ trễ dưới SLA.
+  3. **Human Taste & UX Audit**: Trải nghiệm thực tế mượt mà, vi tương tác chuẩn mực, độ tương phản $\ge 4.5:1$.
+  4. **Kill-Switch Drill**: Diễn tập tắt cờ khẩn cấp, đảm bảo fallback an toàn về hệ thống cũ trong vòng 1 giây.
+  5. **Canary Phased Rollout**: Kế hoạch mở dần lưu lượng: `0% -> 5% -> 25% -> 100%`.
+- Chi tiết quy chuẩn xem tại `agents/protocols/launch-readiness.md`.

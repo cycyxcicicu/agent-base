@@ -13,6 +13,7 @@ Giao thức này quy chuẩn hóa cơ chế quản lý cửa sổ ngữ cảnh (
 | Chủ thể | Trần token hoạt động | Phạm vi nạp ngữ cảnh | Nguyên tắc kiểm soát |
 |---|---|---|---|
 | **Lead (Orchestrator)** | ≤ 50.000 tokens | `PROJECT.md`, `BOARD.md`, Task Cards mục tiêu, `INDEX.md`, tóm tắt 3 dòng từ Subagents | **Zero-Execution Leaks**: Cấm Lead đọc raw logs, test outputs hàng nghìn dòng, hoặc diff chi tiết. Lead chỉ nhìn thấy trạng thái và đồ thị nhiệm vụ (DAG). |
+| **Fast-Path Bug-Fix (Sửa lỗi $\le 2$ file)** | ≤ 15.000 tokens | 1 file điểm lỗi (≤ 50 dòng) + 1 test file | **Micro-Budget**: Tối đa 2 calls đọc (`read_file`), 1 call sửa (`edit_file`), 1 lệnh test (`-Dtest=...`). CẤM cascade read, cấm gọi Xerj toàn cục. |
 | **Subagent (Worker/Specialist)** | ≤ 30.000 tokens (cho 1 Subtask) | Task card con, `scope_edit`, 1-2 file liên quan trực tiếp, test suite tương ứng | **Fresh & Ephemeral**: Mỗi Subtask chạy trong một instance/context riêng biệt. Hoàn thành xong thì thoát và trả kết quả, không giữ phiên lâu. |
 | **JIT Knowledge (Tra cứu)** | ≤ 1.200 tokens (mỗi truy vấn) | Kết quả từ `python scripts/knowledge.py query -q "<chủ đề>" --role <vai>` | **Just-In-Time Injection**: Cấm đọc toàn bộ tài liệu dự án vào ngữ cảnh; chỉ nạp đúng node tri thức cần thiết cho bước hiện tại. |
 
@@ -67,3 +68,14 @@ Việc thu gọn ngữ cảnh (Compact) phải diễn ra có kiểm soát để 
   - Dùng cơ chế Subagent Task Delegation; tự động kích hoạt `/compact` khi token phình to; dùng hooks (`PreToolUse` / `PostToolUse`) để giám sát dung lượng file đọc.
 - **Kilo Code / Roo Code**:
   - Dùng Profile/Role switching kết hợp Context Window Truncation (tự động cắt tỉa các block terminal cũ). Subagent xả artifact ra `docs/notes/inbox/` theo chuẩn chung.
+
+---
+
+## 6. Nén & Gọt Output Đầu Ra Công Cụ (Tool Output Smart-Compression)
+
+Để triệt tiêu hiện tượng Context Rot (RAM bloat) do lệnh shell nhả ra hàng trăm dòng log, build trace, test output:
+- **Nguyên tắc**: BẮT BUỘC ưu tiên sử dụng `python3 scripts/safe-exec.py -c "<lệnh>" [-l <dòng>]` khi chạy các lệnh kiểm thử hoặc build có nguy cơ xả output dài (ví dụ: `mvn test`, `npm test`, `pytest`, `cargo test`, `git diff`).
+- **Cơ chế hoạt động**:
+  - `safe-exec` tự động giữ lại thông điệp khởi động (head), bảo tồn nguyên vẹn toàn bộ vùng traceback / exception / failure blocks, gập các dòng tiến độ lặp lại và in tóm tắt ngắn gọn $\le 30$ dòng.
+  - Bảo toàn 100% mã thoát (exit code) nguyên bản của lệnh con.
+  - Hỗ trợ cờ `--json` cho các subagent cần truyền dữ liệu có cấu trúc về cho Lead.
