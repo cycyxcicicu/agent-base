@@ -308,7 +308,7 @@ class TestGateChangeSize(GateRepoTestCase):
         self.big_branch("s-ok", lines=5)
         code, out = self.run_gate_args("s-ok", "--max-lines", "10", "--strict-size")
         self.assertEqual(code, 0, out)
-        self.assertNotIn("WARN", out)
+        self.assertNotIn("vượt ngưỡng", out)
 
     def test_limit_read_from_project_md(self):
         self.branch("s-proj")
