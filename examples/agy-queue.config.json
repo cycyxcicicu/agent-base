@@ -1,0 +1,17 @@
+{
+  "case_glob": "/Users/ducnvh/Documents/gdt-workspace/doc/features/UC-04-advanced-filter/test-case/happy-case/MAN-*.md",
+  "result_dir": "/Users/ducnvh/Documents/gdt-workspace/doc/features/UC-04-advanced-filter/test-case/chay-test-agy/ket-qua",
+  "guide": "/Users/ducnvh/Documents/gdt-workspace/doc/features/UC-04-advanced-filter/test-case/chay-test-agy/HUONG-DAN-AGY.md",
+  "id_regex": "[A-Z]{2}-MAN\\d\\d-\\d\\d",
+  "skip_ids_file": "/Users/ducnvh/Documents/gdt-workspace/doc/features/UC-04-advanced-filter/test-case/chay-test-agy/danh-sach-case-ghi-du-lieu.md",
+  "lanes": {
+    "A": "/Users/ducnvh/Documents/gdt-workspace/doc/features/UC-04-advanced-filter/test-case/chay-test-agy",
+    "B": "/Users/ducnvh/Documents/gdt-workspace/doc/features/UC-04-advanced-filter/test-case",
+    "C": "/Users/ducnvh/Documents/gdt-workspace/doc/features/UC-04-advanced-filter"
+  },
+  "model": "Gemini 3.8 Flash (High)",
+  "extra_rules": [
+    "Cột trống chỉ là Fail khi DB (SELECT chỉ đọc, có LIMIT) có giá trị cho cột đó.",
+    "Không ghi DB, không bấm nút ghi dữ liệu, không sửa code."
+  ]
+}
