@@ -64,7 +64,10 @@ Nguồn: dự án gdt-workspace, đã dùng thật. Còn nhắc Mantis, TestLink
 | Khi nào | Đọc |
 |---|---|
 | Biết quy trình công ty yêu cầu gì (vòng SDLC, DoR/DoD, CR, kiểm thử, dùng AI, Git/CI-CD) và khung còn thiếu gì | `quy-trinh/quy-trinh-cong-ty.md` |
-| Năm gói tri thức bó sẵn theo từng loại việc (Bug fix, DB migration, REST API, Front-end, DevOps/Infra) | `quy-trinh/task-archetypes.md` |
+| Sáu gói tri thức bó sẵn theo từng loại việc (Bug, DB, API, SRS, Delegation, Spec & Tách Story) | `quy-trinh/task-archetypes.md` |
+| Chi tiết Gói 1 (Sửa lỗi Bug) và Gói 2 (Cơ sở dữ liệu & Migration) | `quy-trinh/task-archetypes-chi-tiet-1.md` |
+| Chi tiết Gói 3 (Xây dựng API) và Gói 4 (Đặc tả SRS & Thiết kế kỹ thuật) | `quy-trinh/task-archetypes-chi-tiet-2.md` |
+| Chi tiết Gói 5 (Điều phối Subagent) và Gói 6 (Viết đặc tả & Tách story) | `quy-trinh/task-archetypes-chi-tiet-3.md` |
 | Nhận một danh sách bug: lọc, gom nhóm, xếp ưu tiên, tái hiện từng nhóm trước khi sửa (bổ sung cho `protocols/bug-repro.md`, vốn xử lý từng bug) | `quy-trinh/xu-ly-bug-hang-loat.md` |
 | Review code: checklist dữ liệu/SQL, giao dịch và đồng thời, lỗi và log | `ky-thuat/chuan-code-va-review.md` |
 | 52 bộ luật review mã nguồn chi tiết theo ngôn ngữ (Java, Python, TS, Go, Rust, C/C++...) chuẩn Alibaba OCR | `review-rules/README.md` |
@@ -73,9 +76,48 @@ Nguồn: dự án gdt-workspace, đã dùng thật. Còn nhắc Mantis, TestLink
 | Toàn diện 22+ loại sơ đồ UML 2.5, 8 sơ đồ cốt lõi Gate 2 & Sổ bộ 706 ảnh mẫu thực tế | `srs/uml-diagrams-mastery.md` |
 | Mô hình hóa thực chiến 4 tầng theo Case Study sân bay (SourceMaking UML Airport), Query vs Mutation Events, Tích hợp hệ thống | `srs/sourcemaking-uml-case-study.md` |
 | Phân tích nghiệp vụ thực chiến, Use Case vs User Story, Luồng thanh toán QR/POS/CITAD | `quy-trinh/ba-business-analysis-mastery.md` |
+| Đánh giá một user story theo 4 tiêu chí (loại tương tác, quy tắc, thực thể, thao tác dữ liệu), độ đủ, và tách task cha thành bao nhiêu story | `quy-trinh/danh-gia-user-story.md` |
+| Cầu nối User Story -> Tiêu chí chấp nhận (A/C) -> Test Case và ma trận truy vết RTM hai chiều | `quy-trinh/story-ac-test-cau-noi.md` |
+| Kỹ thuật kiểm thử ISTQB chuẩn, ma trận chọn kỹ thuật, ước lượng số ca test và cổng biện minh | `quy-trinh/istqb-test-engineering-playbook.md` |
+| Bản đồ định tuyến kỹ thuật test theo lát cắt bài toán và triggers tự động từ mã nguồn | `quy-trinh/istqb-playbook-routing-matrix.md` |
+| Định lượng số ca test hướng bài toán (Dynamic Sizing) và 3 tiêu chuẩn nghiệm thu bộ test | `quy-trinh/istqb-playbook-test-sizing.md` |
+| Ma trận truy vết RTM và 3 điều luật cứng phê duyệt kịch bản kiểm thử tại Gate 2 | `quy-trinh/istqb-playbook-gate2-justification.md` |
+| Chi tiết kỹ thuật hộp đen ISTQB (Hub điều phối và tổng quan kỹ thuật) | `quy-trinh/testing/istqb-blackbox-techniques.md` |
+| Chi tiết Phân vùng tương đương (EP), Giá trị biên (BVA) và Kiểm thử miền (Domain Testing) | `quy-trinh/testing/istqb-blackbox-ep-bva.md` |
+| Chi tiết Bảng quyết định (DTT), Biểu đồ Nhân - Quả và Cây phân loại (CTM) | `quy-trinh/testing/istqb-blackbox-decision-table.md` |
+| Chi tiết Chuyển trạng thái FSM (STT), Thuật toán Chow's W và Ma trận trực giao Pairwise | `quy-trinh/testing/istqb-blackbox-state-and-pairwise.md` |
+| Kỹ thuật hộp trắng và kiểm thử đột biến (Hub điều phối và tổng quan kỹ thuật) | `quy-trinh/testing/istqb-whitebox-and-mutation.md` |
+| Chi tiết Độ phức tạp chu trình McCabe, Bao phủ nhánh và Chuẩn an toàn sinh mạng MC/DC | `quy-trinh/testing/istqb-whitebox-control-flow.md` |
+| Chi tiết Kiểm thử đột biến (PIT Mutation Testing) và Property-Based Testing (PBT) | `quy-trinh/testing/istqb-whitebox-mutation-testing.md` |
+| Ước lượng số lượng test case, ma trận rủi ro kiểm thử và hiệu năng (Hub điều phối) | `quy-trinh/testing/test-estimation-and-risk.md` |
+| Chi tiết Phân tích điểm kiểm thử TPA và Mô hình xác suất 3 điểm PERT | `quy-trinh/testing/test-estimation-tpa-pert.md` |
+| Chi tiết Ma trận rủi ro PRISMA và Mô hình hiệu năng Little's Law, USL | `quy-trinh/testing/test-risk-prisma-performance.md` |
+| Test Heuristics, Bẫy lỗi và Oracles nhận diện bug (Hub điều phối) | `quy-trinh/testing/test-heuristics-and-oracles.md` |
+| Chi tiết Mô hình SFDIPOT, Đòn tấn công biến số và Bộ 11 Oracles FEW HICCUPPS | `quy-trinh/testing/test-heuristics-few-hiccups.md` |
+| Chi tiết Danh mục bẫy lỗi kinh nghiệm, OWASP API Security Top 10 và UI/UX WCAG 2.1 AA | `quy-trinh/testing/test-heuristics-owasp-security.md` |
+| Quản trị dữ liệu kiểm thử (TDM), 3 tầng dữ liệu, che PII và dọn dẹp sau test | `quy-trinh/testing/test-data-management.md` |
+| Quy trình bàn giao sang môi trường UAT/Staging và tiêu chí ký duyệt nghiệm thu người dùng | `quy-trinh/uat-handoff-va-sign-off.md` |
+| Phân loại lỗi đợt UAT (Bug vs Clarification vs CR) và quy trình hotfix hỏa tốc | `quy-trinh/uat-defect-triage-va-hotfix.md` |
+| Cổng phát hành 20% Launch-Ready, diễn tập Kill-switch runtime và Rollback CSDL | `quy-trinh/launch-gate-va-rollback-drill.md` |
+| Sổ quản trị nợ kỹ thuật DEBT.md, chuẩn ponytail và chu trình refactor an toàn | `quy-trinh/tech-debt-va-safe-refactoring.md` |
 | Kiến trúc sạch, Tối ưu CSDL & 4 Giải thuật tinh hoa (RepoMap, Diff compression, JPA Concurrency, ArchUnit) | `architecture/clean-architecture-and-db-patterns.md` |
 | 16 Bản thiết kế kiến trúc tinh hoa Big Tech (Figma 100x Postgres, Shopify Resilient Payments, Zero-Copy Kafka) | `architecture/system-design-elite-patterns.md` |
-| Viết tài liệu đặc tả theo mẫu SRS_FDD: văn phong, checklist, NFR, ba file mỗi chức năng | `srs/srs-fdd-writing-standard.md` |
+| Kiểm thử hợp đồng vi dịch vụ Consumer-Driven Contract Testing (Pact / Spring Cloud Contract) | `architecture/microservices-contract-testing.md` |
+| Quy chuẩn lập và quản trị Bản ghi Quyết định Kiến trúc (Architecture Decision Record - ADR) | `architecture/architecture-decision-records-standard.md` |
+| Kiến trúc ứng dụng di động Offline-First, lưu trữ cục bộ và giải quyết xung đột đồng bộ | `mobile/mobile-offline-first-and-sync.md` |
+| Kỹ thuật tối ưu render 60 FPS, chống jank, chống rò rỉ bộ nhớ và vòng đời ứng dụng di động | `mobile/mobile-performance-and-lifecycle.md` |
+| Chuẩn viết SRS_FDD lõi: cấu trúc 3 file mỗi chức năng, checklist, NFR, danh mục biểu mẫu | `srs/srs-fdd-writing-standard.md` |
+| Văn phong tài liệu đặc tả, bóc tách yêu cầu R-xxx và quy tắc nghiệp vụ BR-xxx | `srs/srs-van-phong-ky-thuat.md` |
+| Hướng dẫn chi tiết từng sheet Excel SRS_FDD (Phần 1: Nhật ký, Component Design) | `srs/srs-fdd-tung-sheet-1.md` |
+| Hướng dẫn chi tiết sheet Functions_Services_Detail_Design (Phần 2) | `srs/srs-fdd-tung-sheet-2.md` |
+| Hướng dẫn chi tiết WBS, checklist, danh sách lỗi Mantis và sheet mở rộng (Phần 3) | `srs/srs-fdd-tung-sheet-3.md` |
+| Quy trình 5 bước viết tài liệu MD và ánh xạ cấu trúc thư mục doc/features/<UC>/ | `srs/srs-quy-trinh-md-va-xuat-excel-1.md` |
+| Quy trình đồng bộ và xuất Excel 14 sheets Copilot | `srs/srs-quy-trinh-md-va-xuat-excel-2.md` |
+| Bộ kiểm tra 12 lỗi và checklist nghiệm thu hồ sơ SRS_FDD | `srs/srs-quy-trinh-md-va-xuat-excel-3.md` |
+| Chuẩn vẽ sơ đồ và vị trí neo ảnh trong Markdown (Phần 1: Sơ đồ 1-7) | `srs/srs-so-do-va-vi-tri-neo-1.md` |
+| Vị trí neo ảnh sơ đồ 8-13 và ô công thức Excel (Phần 2) | `srs/srs-so-do-va-vi-tri-neo-2.md` |
+| Tiêu chuẩn sẵn sàng DoR, tiêu chuẩn hoàn thành DoD và đóng gói hồ sơ Use Case | `srs/srs-dor-dod-va-dong-goi.md` |
+| Kỹ năng áp dụng khi viết tài liệu SRS và thiết kế hệ thống | `srs/srs-skill-ap-dung.md` |
 | Khung hồ sơ hoàn chỉnh bắt buộc cho từng Use Case / Feature | `srs/ho-so-hoan-chinh-khung-bat-buoc.md` |
 | Chuẩn thiết kế Happy Path, Happy Case & Test Plan Excel (SRS / FDD / UAT) từ mẫu thực chiến | `srs/chuan-form-happy-path-va-test-plan-excel.md` |
 | Chuyển đổi Markdown sang định dạng Office (Word, Excel) giữ nguyên độ nét | `srs/md-to-office-fidelity.md` |

@@ -22,7 +22,7 @@
       "content_ref": "agents/roles/qa.md",
       "owner_role": "catalog",
       "relations": [],
-      "content_sha256": "acdcb13ad48b366045476664efe1b954c22d2dcc4ccebe7990c3eef61002f31e",
+      "content_sha256": "37e468d650165595f4dd45e421125b697bb52a1dada36a61242041a5ea2a7af7",
       "provenance": []
     },
     {
@@ -240,7 +240,7 @@
           "target": "Design:md-to-office-fidelity"
         }
       ],
-      "content_sha256": "0843c31939fabb0623ea09a8c55250a79548e70e841bdcaf949abb65e447c03f",
+      "content_sha256": "fbf3570010c31072122e30b858efae9233fe4f8dd85f2f1d0111b02ba2a054f3",
       "provenance": [
         "Source:notebook1-agile-sdlc"
       ],
@@ -505,7 +505,7 @@
           "target": "Role:architect"
         }
       ],
-      "content_sha256": "2ee417de69663509732824ad51bf1aa0324011750c0b87a5332bc1f4db2f9df1",
+      "content_sha256": "f43b94132500d40f9511b9a45b920894c922b642d837a9ccb31fe7214f9d119c",
       "provenance": []
     },
     {
@@ -2952,7 +2952,7 @@
           "target": "Rule:task-loop"
         }
       ],
-      "content_sha256": "0bc86ab50f2cb1af97e5d463b4f4e3df5d33fc01d4cba75e8f8f6a7c9f11e012",
+      "content_sha256": "4255c7eac5c28dca206ef9edfac51a117504869a57038169b26fdb7a2f4d50b3",
       "provenance": []
     },
     {
@@ -2981,7 +2981,7 @@
           "target": "Design:junit5-mockito-testcontainers-and-jest"
         }
       ],
-      "content_sha256": "f9429c7b4548390c252bbfc05bf3b751053f00af36647db30da3123c6abf9d61",
+      "content_sha256": "e7f3b72e6d8c4a1f98ce6c52dcf15c4e6019b625ab7ab1bbf5f38c0e4583020c",
       "provenance": []
     },
     {
@@ -3023,6 +3023,27 @@
       "provenance": []
     },
     {
+      "id": "Design:architecture-decision-records-standard",
+      "kind": "Design",
+      "title": "Quy Chuẩn Lập Bản Ghi Quyết Định Kiến Trúc (Architecture Decision Record - ADR)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/architecture/architecture-decision-records-standard.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "88735e7ade624de62a8be3c91912cd8545967f5058927a26437b3f0a41a16218",
+      "provenance": []
+    },
+    {
       "id": "Design:clean-architecture-and-db-patterns",
       "kind": "Design",
       "title": "Cẩm Nang Kiến Trúc Sạch, Tối Ưu CSDL & 4 Giải Thuật Tinh Hoa",
@@ -3041,6 +3062,27 @@
         }
       ],
       "content_sha256": "bbcaf10e444a7f22722e92c44fbcf38245b570b8ade65f3105f3bc84626b4745",
+      "provenance": []
+    },
+    {
+      "id": "Design:microservices-contract-testing",
+      "kind": "Design",
+      "title": "Kiểm Thử Hợp Đồng Vi Dịch Vụ (Consumer-Driven Contract Testing)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/architecture/microservices-contract-testing.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "10f3e555d1e6a49fddf51a168c3f9b8d7a7f4d04e3d5ce2aa9790462927730bc",
       "provenance": []
     },
     {
@@ -3657,6 +3699,48 @@
       "provenance": []
     },
     {
+      "id": "Design:mobile-offline-first-and-sync",
+      "kind": "Design",
+      "title": "Kiến Trúc Offline-First & Đồng Bộ Dữ Liệu Di Động (Mobile Offline-First & Sync)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/mobile/mobile-offline-first-and-sync.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "3e142f8affc283b8af699cee76a2348706c8ab1a0b629e12de96d6b28c1c9534",
+      "provenance": []
+    },
+    {
+      "id": "Design:mobile-performance-and-lifecycle",
+      "kind": "Design",
+      "title": "Tối Ưu Hiệu Năng 60 FPS & Vòng Đời Ứng Dụng Di Động (Mobile Performance & Lifecycle)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/mobile/mobile-performance-and-lifecycle.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "9e74f8ad7f3b9366695b997d23f68534c9256cc9efe93edca549f1274475ef78",
+      "provenance": []
+    },
+    {
       "id": "Design:ba-business-analysis-mastery",
       "kind": "Design",
       "title": "Cẩm Nang Phân Tích Nghiệp Vụ Thực Chiến (BA Mastery)",
@@ -3678,9 +3762,219 @@
       "provenance": []
     },
     {
+      "id": "Design:danh-gia-user-story",
+      "kind": "Design",
+      "title": "Đánh giá User Story theo 4 tiêu chí (Độ đủ & Khi nào tách)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/danh-gia-user-story.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "485dac3dd15bfc80b4bd3fe13959cab6aa94bbdcef4b95b935f28579da4e3e62",
+      "provenance": []
+    },
+    {
+      "id": "Design:istqb-playbook-gate2-justification",
+      "kind": "Design",
+      "title": "Thẩm Định Kỹ Thuật Test Tại Cổng Gate 2 (Gate 2 Test Justification)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/istqb-playbook-gate2-justification.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "f5f5640a7532804ffe2339758a45bc17490728fd808fa67b48145b5e42a445b1",
+      "provenance": []
+    },
+    {
+      "id": "Design:istqb-playbook-routing-matrix",
+      "kind": "Design",
+      "title": "Bản Đồ Định Tuyến Kỹ Thuật Test Theo Lát Cắt Bài Toán",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/istqb-playbook-routing-matrix.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "e84eb74cd1e4c3c23b8b39df23295b6a7edaf2c7721118b6435f55d0d29af967",
+      "provenance": []
+    },
+    {
+      "id": "Design:istqb-playbook-test-sizing",
+      "kind": "Design",
+      "title": "Định Lượng Số Ca Test Hướng Bài Toán (Problem-Driven Test Sizing)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/istqb-playbook-test-sizing.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "dbaac7e36c1b4bf6aa460424cbb96cf1dae88639e49ba52126cc96cc2d014fd0",
+      "provenance": []
+    },
+    {
+      "id": "Design:istqb-test-engineering-playbook",
+      "kind": "Design",
+      "title": "Cẩm Nang Kỹ Nghệ Thiết Kế & Định Lượng Kiểm Thử (ISTQB Test Engineering Hub)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/istqb-test-engineering-playbook.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "6715b75200c9b26c048e3f32cad530eab795e7b31692127819dc3939a74a3f12",
+      "provenance": []
+    },
+    {
+      "id": "Design:launch-gate-va-rollback-drill",
+      "kind": "Design",
+      "title": "Cổng Phát Hành 20% & Diễn Tập Hoàn Tác (Launch Gate & Rollback Drill)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/launch-gate-va-rollback-drill.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "20f0cdbf494ddd4b473808838e5300789392f7540a2ccee6539aec39fbb528b7",
+      "provenance": []
+    },
+    {
+      "id": "Design:story-ac-test-cau-noi",
+      "kind": "Design",
+      "title": "Cầu nối User Story -> Tiêu chí chấp nhận (A/C) -> Test Case",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/story-ac-test-cau-noi.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "23ec9437b4328af5c42528b72c3a67de1c3af0f244111f411985618dbe43dd0f",
+      "provenance": []
+    },
+    {
+      "id": "Design:task-archetypes-chi-tiet-1",
+      "kind": "Design",
+      "title": "Chi Tiết Gói Tri Thức Bó Theo Loại Việc (Phần 1: Gói 1 - 2)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/task-archetypes-chi-tiet-1.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "f735ddec99266ca720db2c54ec11c3ccb4a75317afd6f588562b38d927e45fd9",
+      "provenance": []
+    },
+    {
+      "id": "Design:task-archetypes-chi-tiet-2",
+      "kind": "Design",
+      "title": "Chi Tiết Gói Tri Thức Bó Theo Loại Việc (Phần 2: Gói 3 - 4)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/task-archetypes-chi-tiet-2.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "fe7d6500ffbc7acfb9ea38fece293fe4f1de4a18196572ba92560c7a393849c1",
+      "provenance": []
+    },
+    {
+      "id": "Design:task-archetypes-chi-tiet-3",
+      "kind": "Design",
+      "title": "Chi Tiết Gói Tri Thức Bó Theo Loại Việc (Phần 3: Gói 5 - 6)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/task-archetypes-chi-tiet-3.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "757545a86d7cf226280c1d96c324dead8abecba5cbf406d62dd4f05ae72cbe35",
+      "provenance": []
+    },
+    {
       "id": "Design:task-archetypes",
       "kind": "Design",
-      "title": "Năm Gói Tri Thức Bó Theo Loại Việc (Task Archetype Bundles)",
+      "title": "Sáu Gói Tri Thức Bó Theo Loại Việc (Task Archetype Bundles)",
       "state": "draft",
       "version": 1,
       "content_ref": "agents/knowledge/quy-trinh/task-archetypes.md",
@@ -3707,7 +4001,364 @@
           "target": "Design:bug-handling-pipeline"
         }
       ],
-      "content_sha256": "2c6c714571aaf9899a8ffffe65e1073f73c8f37d93b854c219879d0d33bc9883",
+      "content_sha256": "345cd7c757fff0f101788b1cfa748569fedc7383052584c833ede4c721118c35",
+      "provenance": []
+    },
+    {
+      "id": "Design:tech-debt-va-safe-refactoring",
+      "kind": "Design",
+      "title": "Quản Trị Nợ Kỹ Thuật & Tái Cấu Trúc An Toàn (Tech Debt & Safe Refactoring)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/tech-debt-va-safe-refactoring.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "9daa8cf0a5d62814cec101565bc986f6ffc5f08f5869cc808d5883ba4261f362",
+      "provenance": []
+    },
+    {
+      "id": "Design:istqb-blackbox-decision-table",
+      "kind": "Design",
+      "title": "Bảng Quyết Định & Sơ Đồ Nhân - Quả (Decision Table & Cause-Effect)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/istqb-blackbox-decision-table.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "4541a1014d5071be2712fdc9f4398c0fddd2a3e9f245abfde46e7167fbd5a5a1",
+      "provenance": []
+    },
+    {
+      "id": "Design:istqb-blackbox-ep-bva",
+      "kind": "Design",
+      "title": "Phân Vùng Tương Đương & Phân Tích Giá Trị Biên (EP, BVA & Domain Testing)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/istqb-blackbox-ep-bva.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "bb016c79155827218ec87afcba2dd360f51f37e47b1738ba9d0a4c9515ccbe2f",
+      "provenance": []
+    },
+    {
+      "id": "Design:istqb-blackbox-state-and-pairwise",
+      "kind": "Design",
+      "title": "Kiểm Thử Trạng Thái & Tổ Hợp Cặp (State Transition & Pairwise Testing)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/istqb-blackbox-state-and-pairwise.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "15372138e059b5b3bf1ab5170d17c3158645793fb41ea59ad6f39104db0f9b6d",
+      "provenance": []
+    },
+    {
+      "id": "Design:istqb-blackbox-techniques",
+      "kind": "Design",
+      "title": "Toàn Thư Kỹ Thuật Kiểm Thử Hộp Đen (ISTQB Black-Box Test Design)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/istqb-blackbox-techniques.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "922cd3e866500a56c44f613db49b9abfb2f04186f75cb6436983e9cdfc47f1d2",
+      "provenance": []
+    },
+    {
+      "id": "Design:istqb-whitebox-and-mutation",
+      "kind": "Design",
+      "title": "Toàn Thư Kỹ Thuật Kiểm Thử Hộp Trắng & Đột Biến (White-Box & Mutation Testing)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/istqb-whitebox-and-mutation.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "7568cc3ddfec2309a7c1c5f35ae6cbf2b1b0e0fc47b3a560a10e45af3b08a64d",
+      "provenance": []
+    },
+    {
+      "id": "Design:istqb-whitebox-control-flow",
+      "kind": "Design",
+      "title": "Kiểm Thử Hộp Trắng & Luồng Điều Khiển (White-Box Control Flow Testing)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/istqb-whitebox-control-flow.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "ca3280feb7f503b20ccff6969e98d9cedf40f6ce62040a55b9f128890559e66c",
+      "provenance": []
+    },
+    {
+      "id": "Design:istqb-whitebox-mutation-testing",
+      "kind": "Design",
+      "title": "Kiểm Thử Đột Biến & Đặc Tính (Mutation & Property-Based Testing)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/istqb-whitebox-mutation-testing.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "d1b1166b96e9ead58f44b3be2c00805a54a12eb189d1c106f218c007c4022a36",
+      "provenance": []
+    },
+    {
+      "id": "Design:test-data-management",
+      "kind": "Design",
+      "title": "Quản Trị Dữ Liệu Kiểm Thử (Test Data Management - TDM)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/test-data-management.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "1480b5b519c92aa598f80fa73c2d4c33478c63a8f38b5b1029ab3de01d4f586e",
+      "provenance": []
+    },
+    {
+      "id": "Design:test-estimation-and-risk",
+      "kind": "Design",
+      "title": "Ước Lượng Quy Mô & Quản Trị Rủi Ro Kiểm Thử (Estimation & Risk Management)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/test-estimation-and-risk.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "a57a9e0d8b9aeb351d5ba2817f6211a4645b25bca0227818344b382f56027803",
+      "provenance": []
+    },
+    {
+      "id": "Design:test-estimation-tpa-pert",
+      "kind": "Design",
+      "title": "Ước Lượng Quy Mô & Giờ Công Kiểm Thử (TPA & PERT 3-Point)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/test-estimation-tpa-pert.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "0486780e6a2f1a10fe290cbfee39fabbad3ff43871d80ad503adadee20ff4880",
+      "provenance": []
+    },
+    {
+      "id": "Design:test-heuristics-and-oracles",
+      "kind": "Design",
+      "title": "Heuristics Kiểm Thử, Bẫy Lỗi & Oracles (Exploratory Testing Hub)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/test-heuristics-and-oracles.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "5298e9e72a22482d5571eb83c6fa91458d31f98f0361cde95a4753f3262f7b66",
+      "provenance": []
+    },
+    {
+      "id": "Design:test-heuristics-few-hiccups",
+      "kind": "Design",
+      "title": "Heuristics Phân Tích & Bộ Nhận Diện Lỗi FEW HICCUPPS (Test Oracles & SFDIPOT)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/test-heuristics-few-hiccups.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "193ade68644e0508f9f048711fba725137d666f68abcc7922fbd3201742f720f",
+      "provenance": []
+    },
+    {
+      "id": "Design:test-heuristics-owasp-security",
+      "kind": "Design",
+      "title": "Danh Mục Bẫy Lỗi, OWASP API Security & UI/UX (Defect Taxonomy & Security)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/test-heuristics-owasp-security.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "5c8a4180384a7f7fc86a7636e6f6a0c7a0c483e1345ec6318e7ecc5a6c93545a",
+      "provenance": []
+    },
+    {
+      "id": "Design:test-risk-prisma-performance",
+      "kind": "Design",
+      "title": "Ma Trận Rủi Ro PRISMA & Kiểm Thử Hiệu Năng (Risk & Performance Testing)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/testing/test-risk-prisma-performance.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "9af967d17de964b1f5e398aa7c19f4a8645d0848451a7ceb558ee00de4be6feb",
+      "provenance": []
+    },
+    {
+      "id": "Design:uat-defect-triage-va-hotfix",
+      "kind": "Design",
+      "title": "Phân loại Lỗi & Quy trình Hotfix UAT (UAT Defect Triage & Hotfix)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/uat-defect-triage-va-hotfix.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "668613741085180fceab022018bb539022ea3df0a3a195e253d407d835006c1a",
+      "provenance": []
+    },
+    {
+      "id": "Design:uat-handoff-va-sign-off",
+      "kind": "Design",
+      "title": "Quy trình Bàn giao & Nghiệm thu UAT (UAT Handoff & Sign-Off)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/quy-trinh/uat-handoff-va-sign-off.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "36c4c5f65d17f3e5a7ea02f2212d1c788bb324233ee608c655128726da29d2c4",
       "provenance": []
     },
     {
@@ -3856,6 +4507,237 @@
         }
       ],
       "content_sha256": "b4048e528eded88a2e0b98df39718f0626d6ef06c9cb2d58b7fbaead06ce0aff",
+      "provenance": []
+    },
+    {
+      "id": "Design:srs-dor-dod-va-dong-goi",
+      "kind": "Design",
+      "title": "Chuẩn Hóa Đóng Gói Excel SRS_FDD 11 Sheets & Vòng Đời DoR/DoD (Mục M, Chốt 04/11/2026)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/srs-dor-dod-va-dong-goi.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "0817e389207f322e72ff6c30f62e15c08c5a32196c9a74c0a8be122f62d3ba66",
+      "provenance": []
+    },
+    {
+      "id": "Design:srs-fdd-tung-sheet-1",
+      "kind": "Design",
+      "title": "Chuẩn viết từng sheet SRS_FDD — Phần 1: Nhật ký, Định nghĩa & Thiết kế tổng thể",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/srs-fdd-tung-sheet-1.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "892a5c43d3adc3c3f1a71d4cb08fbd668adf2bc80bcebe595da17c7178e83707",
+      "provenance": []
+    },
+    {
+      "id": "Design:srs-fdd-tung-sheet-2",
+      "kind": "Design",
+      "title": "Chuẩn viết từng sheet SRS_FDD — Phần 2: Chi tiết Chức năng & Dịch vụ",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/srs-fdd-tung-sheet-2.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "72e2c236925dd841bfc2d11e069c09399faee67dab5b9c8872969dd7fc44c6cd",
+      "provenance": []
+    },
+    {
+      "id": "Design:srs-fdd-tung-sheet-3",
+      "kind": "Design",
+      "title": "Chuẩn viết từng sheet SRS_FDD — Phần 3: Kế hoạch WBS, RTM, Actor & Kiểm thử",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/srs-fdd-tung-sheet-3.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "e6966f6be67180c42152b1963bd299b2c64191ff806a8a0c6bcb0c8aeab37ce1",
+      "provenance": []
+    },
+    {
+      "id": "Design:srs-quy-trinh-md-va-xuat-excel-1",
+      "kind": "Design",
+      "title": "Quy trình soạn thảo Markdown & Xuất Excel SRS_FDD — Phần 1: Khung 3 File",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/srs-quy-trinh-md-va-xuat-excel-1.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "0354e4a43fbce0e0c714b2b49be2f01eebdae0bf4c3b70e721f852ac3b51f170",
+      "provenance": []
+    },
+    {
+      "id": "Design:srs-quy-trinh-md-va-xuat-excel-2",
+      "kind": "Design",
+      "title": "Quy trình soạn thảo Markdown & Xuất Excel SRS_FDD — Phần 2: Lệnh Xuất & Ánh Xạ Sheet",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/srs-quy-trinh-md-va-xuat-excel-2.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "ae24a96827a43734e707894ffcb49ef392be2793f3b5cf349086dd4e5db99f16",
+      "provenance": []
+    },
+    {
+      "id": "Design:srs-quy-trinh-md-va-xuat-excel-3",
+      "kind": "Design",
+      "title": "Quy trình soạn thảo Markdown & Xuất Excel SRS_FDD — Phần 3: Tài Liệu Theo Màn & Câu Hỏi Mở",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/srs-quy-trinh-md-va-xuat-excel-3.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "29495e0fb8146c19624df929928b34d0a6f0c9557ca4b79a4f8eaa3255167665",
+      "provenance": []
+    },
+    {
+      "id": "Design:srs-skill-ap-dung",
+      "kind": "Design",
+      "title": "Kỹ năng (Skill) áp dụng khi viết tài liệu thiết kế SRS_FDD (Mục G)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/srs-skill-ap-dung.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "c909033bfea8ec2c8b72e357d9e6e4d52da8148030b93bd3d295fe47d553b5e4",
+      "provenance": []
+    },
+    {
+      "id": "Design:srs-so-do-va-vi-tri-neo-1",
+      "kind": "Design",
+      "title": "Chuẩn sơ đồ & Vị trí dòng neo Excel SRS_FDD — Phần 1: Sơ đồ Kiến trúc & Hệ thống",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/srs-so-do-va-vi-tri-neo-1.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "4522c770918aa1226ae91cfa1b41553db140f77fc9a9b59463663f41b3444a9f",
+      "provenance": []
+    },
+    {
+      "id": "Design:srs-so-do-va-vi-tri-neo-2",
+      "kind": "Design",
+      "title": "Chuẩn sơ đồ & Vị trí dòng neo Excel SRS_FDD — Phần 2: Sơ đồ Chi tiết & Ô Công thức",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/srs-so-do-va-vi-tri-neo-2.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "7fa0e990c56afaf3de332ba7f06ee83a5ae4954fccd262216702a753b41ea0fe",
+      "provenance": []
+    },
+    {
+      "id": "Design:srs-van-phong-ky-thuat",
+      "kind": "Design",
+      "title": "Văn phong kỹ thuật khi viết tài liệu thiết kế SRS_FDD (Mục F)",
+      "state": "draft",
+      "version": 1,
+      "content_ref": "agents/knowledge/srs/srs-van-phong-ky-thuat.md",
+      "owner_role": "lead",
+      "relations": [
+        {
+          "type": "owned_by",
+          "target": "Role:lead"
+        },
+        {
+          "type": "related_to",
+          "target": "Design:chuan-ve-so-do"
+        }
+      ],
+      "content_sha256": "a6584d3461f3d4025da80aab7e8e86370a39c3b0d557a014abcfd21c71b50e53",
       "provenance": []
     },
     {
@@ -4293,11 +5175,15 @@
       "state": "draft",
       "version": 1,
       "content_ref": ".agents/skills/humanizer/SKILL.md",
-      "owner_role": "lead",
+      "owner_role": "ba",
       "relations": [
         {
           "type": "owned_by",
-          "target": "Role:lead"
+          "target": "Role:ba"
+        },
+        {
+          "type": "owned_by",
+          "target": "Role:dev"
         },
         {
           "type": "related_to",

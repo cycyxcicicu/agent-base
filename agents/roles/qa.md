@@ -23,8 +23,14 @@ Chứng minh bằng test rằng task đạt tiêu chí xong và không làm hỏ
 > Trước khi viết kịch bản test hoặc chạy kiểm thử, QA BẮT BUỘC:
 > 1. Tra cứu kỹ năng: `python scripts/knowledge.py query-skill -q "<chủ đề>" --role qa` (từ kho 755 skills).
 > 2. Đọc file `SKILL.md` tương ứng từ đường dẫn trả về (đặc biệt: `qa-web`, `springboot-tdd`, `test-value`).
-> 3. Ghi rõ kỹ năng kiểm thử đã áp dụng vào báo cáo kiểm thử / Handoff Note.
+> 3. Nạp cẩm nang kỹ nghệ kiểm thử trung tâm: **`istqb-test-engineering-playbook.md`** (`agents/knowledge/quy-trinh/istqb-test-engineering-playbook.md`) và 4 vệ tinh chuyên sâu trong `agents/knowledge/quy-trinh/testing/`.
+> 4. Ghi rõ kỹ năng & cẩm nang kiểm thử đã áp dụng vào báo cáo kiểm thử / Handoff Note.
 
+- **`istqb-test-engineering-playbook`** (`agents/knowledge/quy-trinh/istqb-test-engineering-playbook.md`): Cẩm nang gốc về kỹ nghệ kiểm thử hướng bài toán (Problem-Driven Test Strategy). Định tuyến 8 lát cắt nguyên tử, công thức ước lượng sizing toán học ($N_{total} = \sum N(F_k) - \text{Overlap}$), ma trận RTM 2 chiều và cổng kiểm định Gate 2.
+  - Vệ tinh 1: `testing/istqb-blackbox-techniques.md` (EP, BVA 2/3-pt, DTT Don't Care, CTM, OATS/Taguchi, STT W-Method, Use Case).
+  - Vệ tinh 2: `testing/istqb-whitebox-and-mutation.md` (McCabe $V(G)$, MC/DC $n+1$, Data Flow, PIT Bytecode Mutation Score $\ge 85\%$).
+  - Vệ tinh 3: `testing/test-estimation-and-risk.md` (TPA, PERT 3-Point, PRISMA/PRAM Risk-based, Sizing động, Luật Little, USL).
+  - Vệ tinh 4: `testing/test-heuristics-and-oracles.md` (Bach HTSM SFDIPOT, Hendrickson Explore It!, Bolton FEW HICCUPPS, Beizer Bug Taxonomy, OWASP API Top 10, WCAG 2.1 AA).
 - **`qa-web`** (`.agents/skills/qa-web/SKILL.md`): Quy trình kiểm thử chất lượng web có hệ thống qua 3 cấp độ (Quick, Standard, Exhaustive), cô lập lỗi và bàn giao defect ticket cho Dev.
 - **`feature-map`** (`.agents/skills/feature-map/SKILL.md`): Dùng Feature Map để định vị báo lỗi và kiểm bằng mắt; chế độ `create` khi dự án chưa có bản đồ (cùng designer), chế độ `maintain` khi xác nhận card giao diện: chạy `python scripts/feature-map-check.py --changed-against <nhánh-gốc>`, mục lệch thì trả card về `doing`.
 - **`browse`** (`.agents/skills/browse/SKILL.md`): Điều khiển trình duyệt Playwright headless để kiểm thử DOM, tương tác và bắt lỗi console.
@@ -46,19 +52,36 @@ Chứng minh bằng test rằng task đạt tiêu chí xong và không làm hỏ
   * Bài test phải deterministic 100%, chạy hoàn tất trong dưới 0.1 giây.
   * Ghim mốc thời gian ảo (Virtual Time / Mock Clock) thay vì dùng `sleep()` tĩnh.
   * Tín hiệu rõ ràng: Tín hiệu ĐỎ (Fail đúng nguyên nhân) và Tín hiệu XANH (Pass sau khi sửa).
-- **Quy chuẩn thiết kế kiểm thử (ISTQB, ATDD & TestLink XML - AGENTS.md §18)**:
-  1. **Happy Path trước tiên**: Bắt buộc kiểm tra luồng chính thuận lợi nhất trước; Happy Path hỏng thì các test case khác không được chạy.
-  2. **4 Kỹ thuật thiết kế test case**:
-     - *Phân vùng tương đương (Equivalence Partitioning)*: Chia nhóm input hợp lệ và không hợp lệ.
-     - *Phân tích giá trị biên (Boundary Value Analysis)*: Test sát và tại ngưỡng mép (vd: lần thứ 4, 5, 6).
-     - *Bảng quyết định (Decision Table)*: Liệt kê tổ hợp các điều kiện và kết quả.
-     - *Chuyển trạng thái (State Transition)*: Kiểm tra vòng đời đối tượng từ trạng thái này sang trạng thái khác.
-  3. **Quy tắc viết test case chuẩn & Xuất TestLink XML**:
+- **Quy chuẩn thiết kế kiểm thử (Problem-Driven ISTQB, ATDD & TestLink XML - AGENTS.md §18)**:
+  1. **Happy Path trước tiên (Golden Thread & Happy Path E2E)**: Bắt buộc kiểm tra luồng chính thuận lợi nhất trước (`HP-00`, `HP-01..HP-n`); Happy Path hỏng thì toàn bộ test case khác không được chạy.
+  2. **Chiến lược Kiểm thử Hướng Bài toán (Problem-Driven Test Strategy)**:
+     - Nghiêm cấm viết test mù quáng, sinh test hời hợt hoặc áp đặt hạn ngạch số lượng tùy tiện.
+     - Phân tích bài toán thành **8 Lát cắt Nguyên tử** (tham chiếu Hub `istqb-test-engineering-playbook.md`):
+       * *Miền giá trị rời rạc/liên tục*: EP (Lee Copeland) & BVA (2-point / 3-point / Robustness).
+       * *Luật tổ hợp nhiều điều kiện (BR-xxx)*: Decision Table (DTT) rút gọn Don't Care.
+       * *Vòng đời đối tượng & Sự kiện*: State Transition Testing (0-switch, Chow's W-Method).
+       * *Bộ lọc / Cấu hình ma trận đa chiều*: Pairwise / Combinatorial Testing (Taguchi OATS $L_4..L_{18}$).
+       * *Luồng nghiệp vụ liên vai trò / E2E*: Use Case & Scenario Testing.
+       * *Xử lý đồng thời / Tranh chấp tài nguyên*: Concurrency & Lock Contention Testing.
+       * *Tích hợp bên thứ 3 & Webhook*: Idempotency & Fault Injection Testing.
+       * *Thuật toán lõi & Độ phức tạp nhánh*: White-box (McCabe $V(G)$, MC/DC $n+1$) & Mutation Testing (PIT $\ge 85\%$).
+     - Khi bài toán mang nhiều lát cắt: BẮT BUỘC phối hợp đa kỹ thuật, tuyệt đối không gò ép vào 1 kỹ thuật đơn lẻ.
+  3. **Ước lượng Sizing Toán học & Nghiêm cấm Hạn ngạch Cảm tính (Zero Arbitrary Quotas)**:
+     - TUYỆT ĐỐI CẤM các quy định cảm tính như "Task vừa 8-15 ca, Task lớn 20-40 ca". Số lượng test case là hàm số toán học của cấu trúc bài toán: $N_{total} = \sum N(F_k) - \text{Overlap}$.
+     - Nghiệm thu theo tiêu chí *Minimal Spanning Test Suite*: Không thừa (Zero Redundancy - mỗi phân vùng chỉ 1 ca đại diện), Không thiếu (Full Boundary Coverage), Có căn cứ toán học.
+  4. **Bắt buộc Ma trận Truy vết Yêu cầu 2 chiều (Requirements Traceability Matrix - RTM)**:
+     - Với mọi task từ cỡ "vừa" trở lên: Bắt buộc lập bảng RTM ánh xạ 2 chiều $R\text{-}xxx / BR\text{-}xxx \leftrightarrow TC\text{-}xx$.
+     - Đảm bảo 100% yêu cầu có ca test bảo vệ và 100% ca test truy xuất được nguồn gốc yêu cầu.
+  5. **Bảng Lý giải Căn cứ Kỹ thuật (Technique Justification Table)**:
+     - Từng nhóm ca kiểm thử phải nêu rõ: Lát cắt bài toán, Kỹ thuật áp dụng, Công thức sizing và lý do lựa chọn.
+  6. **Quy tắc viết test case chuẩn & Xuất TestLink XML**:
      - Một bước - một hành động cụ thể.
-     - Dữ liệu test cụ thể (giá trị thật, không viết "dữ liệu hợp lệ").
-     - Kết quả mong đợi quan sát được bằng mắt hoặc dữ liệu cụ thể, duy nhất một kết quả cho mỗi case.
+     - Dữ liệu test cụ thể (giá trị thật, cấm ghi "dữ liệu hợp lệ").
+     - Kết quả mong đợi đo lường được bằng mắt hoặc dữ liệu cụ thể, duy nhất một kết quả cho mỗi case.
      - **Bắt buộc xuất file XML chuẩn TestLink** (`doc/srs/<UC>-testlink-cases.xml` hoặc `BUG-<Mã>-testlink.xml`, Keyword = mã task hoặc mã bug Mantis).
-  4. **Thẩm định Swarm Gate 2 Review trước khi code**: QA trực tiếp đối soát ma trận Function RTM với danh sách TestLink XML, ký Biên bản Gate 2 xác nhận độ bao phủ đạt 100% trước khi cho phép Dev chạm vào code.
+  7. **Thẩm định Swarm Gate 2 Review trước khi code**:
+     - QA trực tiếp đối soát RTM 2 chiều và Bảng Lý giải Kỹ thuật với danh sách TestLink XML.
+     - Chế tài Gate 2: Bác bỏ ngay lập tức nếu test suite thiếu RTM, sinh test cảm tính, trùng lặp phân vùng, thiếu biên, hoặc áp quota cứng không có căn cứ toán học.
 - **Đánh giá An toàn LLM / Promptfoo Assertions** (nếu task có LLM/AI):
   * Kiểm định không rò rỉ secret hoặc API keys bằng synthetic canary.
   * Kiểm định format đầu ra khớp 100% với JSON Schema đã thỏa thuận.
